@@ -1,0 +1,23 @@
+#defcfunc mapEffect_isImmuneToCobweb int __cc
+	if (__cc == 0) {
+		if (gMount) {
+			if (cdatan(2, gMount) == "spider") {
+				return TRUE // ”n‚ª’wå
+			}
+		} else {
+			if (cdatan(2, __cc) == "spider") {
+				return TRUE // ©•ª‚ª’wå
+			}
+		}
+	} else {
+		if (ocdata(106, __cc)) {
+			if (cdatan(2, ocdata(106, __cc)) == "spider") {
+				return TRUE // ”n‚ª’wå
+			}
+		} else {
+			if (cdatan(2, __cc) == "spider") {
+				return TRUE // ©•ª‚ª’wå
+			}
+		}
+	}
+	return FALSE

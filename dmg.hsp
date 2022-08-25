@@ -1,0 +1,1687 @@
+#deffunc dmghp int __jjj, int __kkk, int __lll, int __mmm, int __nnn
+	ele@m141 = __mmm
+	if (txt3rd == 0) {
+		c3@m141 = __lll
+	} else {
+		c3@m141 = -1
+	}
+	if (cState(__jjj) != 1) {
+		gosub *label_0580
+		return 0
+	}
+	lint_damage_hp = double(__kkk) * (1 + (cFurious(__jjj) > 0))
+	if (__lll == 0) {
+		if (gettrait(__lll, 97)) {
+			p(36) = stat
+			f@m141 = pethealthcheck()
+			if (f@m141) {
+				lint_damage_hp += calc5traitmulti(p(36), lint_damage_hp)
+			}
+		}
+	}
+	if (__lll > (-1)) {
+		if (cHp(__lll) >= cMaxHp(__lll) * 9 / 10) {
+			if (nc_gettrait(__lll, 115) > 0) {
+				lint_damage_hp *= 1.5
+			}
+		}
+		if (cHp(__lll) <= cMaxHp(__lll) * 3 / 10) {
+			if (nc_gettrait(__lll, 116) > 0) {
+				lint_damage_hp *= 3.0
+			}
+		}
+	}
+	if (__lll >= 0) {
+		if (cFurious(__lll) > 0) {
+			if (gettrait(__lll, 59) >= 3) {
+				lint_damage_hp += lint_damage_hp * (200 - limitmin(cSp(__lll), 0) * 100 / cMaxSp(__lll)) / 100
+			} else {
+				lint_damage_hp *= 2.0
+			}
+		}
+	}
+	if (__lll == 0) {
+		if (ogdata(477) == 2) {
+			if (godcheck(__lll) == godcheck(__jjj)) {
+				lint_damage_hp *= 0.8
+			} else {
+				lint_damage_hp *= 1.2
+			}
+		}
+		if (ogdata(447) == 2) {
+			s@m141 = refchara(cId(__jjj), 8, 1)
+			if (instr(s@m141, 0, "/undead/") != (-1)) {
+				if (cSex(__jjj) == 1) {
+					lint_damage_hp *= 1.1
+				}
+			}
+		}
+	}
+	if (cStoned(__jjj) > 0) {
+		lint_damage_hp *= 0.75
+	}
+	if (ele@m141 == 0 | ele@m141 >= 61) {
+	} else {
+		r@m141 = sdata(ele@m141, __jjj) / 50
+		if (r@m141 < 3) {
+			lint_damage_hp = lint_damage_hp * (140 - r@m141 * 20) / 100
+		} elseif (r@m141 < 10) {
+			lint_damage_hp = lint_damage_hp * 100 / (r@m141 * 50 + 50)
+		} else {
+			lint_damage_hp = 0.0
+		}
+		lint_damage_hp = lint_damage_hp * 100 / (sdata(60, __jjj) / 2 + 50)
+	}
+	if (cWet(__jjj) > 0) {
+		if (ele@m141 == 50 | __lll == (-9)) {
+			lint_damage_hp /= 3.0
+			ele@m141 = 0
+		}
+		if (ele@m141 == 52) {
+			lint_damage_hp *= 1.5
+		}
+	}
+	if (gettrait(0, 194) < 0) {
+		if (cQuality(__jjj) == 6 & __jjj > 15) {
+			lint_damage_hp *= 0.5
+		}
+		// ナイトメアモード時、敵対NPCのダメージ25%カット
+		if (nc_intb_nightmare) {
+			if (__jjj > 15) {
+				if (cRelationship(__jjj) == (-3)) {
+					lint_damage_hp *= 0.75
+				}
+			}
+		}
+	}
+	if (ele@m141) {
+		if (ele@m141 != 60) {
+			if (cbit(26, __jjj)) {
+				lint_damage_hp = 0.0
+			}
+		}
+		if (ele@m141 == 63) {
+			if (eqfaction(__jjj, "acidresist")) {
+				lint_damage_hp = 0.0
+			}
+		}
+	}
+	if (cbit(28, __jjj)) {
+		if (ogdata(505) != 2) {
+			tempdmg = int(limitf(lint_damage_hp, 0, 20000000))
+		} else {
+			tempdmg = int(limitf(lint_damage_hp, 0, 2000000000))
+		}
+		tempdmg = rndex(tempdmg / 10 + 2)
+		if (gettrait(0, 194) < 0 & __jjj < 16) {
+			tempdmg *= 3
+		}
+		lint_damage_hp = double(tempdmg)
+	}
+	// ncキャラ専用のダメージ処理
+	if (eqfaction(__jjj, "ncdungeon")) {
+		if (eqfaction(__jjj, "Morphy")) {
+			if (cHp(__jjj) >= cMaxHp(__jjj)) {
+				lint_damage_hp *= 0.01
+			}
+		}
+	}
+	if (magicflag@se & ocbit(13, __jjj)) {
+		if (ogdata(505) != 2) {
+			tempdmg = int(limitf(lint_damage_hp, 0, 20000000))
+		} else {
+			tempdmg = int(limitf(lint_damage_hp, 0, 2000000000))
+		}
+		tempdmg = rndex(lint_damage_hp / 10 + 2)
+		lint_damage_hp = double(tempdmg)
+	}
+	magicflag@se = 0
+	if (findbuff(__jjj, 61) != (-1)) {
+		lint_damage_hp /= 2.0
+	}
+	if (cbit(980, __jjj)) {
+		if (lint_damage_hp - cHp(__jjj) > 0) {
+			if (limit(25 + ocdata(192 + findbuff(__jjj, 18) * 3 + 1, __jjj) / 17, 25, 80) >= rnd(100)) {
+				lint_damage_hp *= -1.0
+			}
+		}
+	}
+	if (gCurrentMap != 210) {
+		if (cNullifyDamage(__jjj) > 0) {
+			if (cNullifyDamage(__jjj) > rnd(100)) {
+				lint_damage_hp = 0.0
+			}
+		}
+	} else {
+		if (ncgdata(312) & __jjj > 56) {
+			if (rnd(4) == 0) {
+				lint_damage_hp = 0.0
+			}
+		}
+		if (ncgdata(304) & __lll > 56) {
+			lint_damage_hp *= 10.0
+		}
+	}
+	if (gettrait(__jjj, 75)) {
+		p@m141 = get_ueq(__jjj, 5)
+		if (p@m141 != -1) {
+			if (iSkill(p@m141) == 100 | iSkill(p@m141) == 101) {
+				if (rnd(20) == 0) {
+					lint_damage_hp = 0.0
+				}
+			}
+		}
+	}
+	if (godcheck(__jjj) == "opatos") {
+		graceofgod = cPietyPoint(__jjj) / 500
+		if (graceofgod > 40) {
+			graceofgod = 40
+		}
+		lint_damage_hp = lint_damage_hp * (90 - graceofgod) / 100
+	}
+	if (findbuff(__jjj, 82) != (-1)) {
+		lint_damage_hp = (lint_damage_hp - 999) / 50
+	} elseif (findbuff(__jjj, 92) != (-1)) {
+		lint_damage_hp *= 5.0
+	}
+	if (petcheck(__lll)) {
+		if (implevel(cImpression(__lll)) >= 8) {
+			if (ogdata(506) == 2) {
+					lint_damage_hp *= 1.2
+			}
+		}
+	}
+	if (ogdata(505) != 2) {
+		lint_damage_hp = int(limitf(lint_damage_hp, -20000000, 20000000))
+	} else {
+		lint_damage_hp = int(limitf(lint_damage_hp, -2000000000, 2000000000))
+	}
+	if (eqfaction(__jjj, "overwish")) {
+		lint_damage_hp = int(limitf(lint_damage_hp, -200000, 200000))
+	}
+	oo_specialpower = 0
+	if (ele@m141 == 658 | __lll == (-11)) {
+		lint_damage_hp = __kkk
+	} elseif (ele@m141 == sId_falseSwipe) {
+		if (lint_damage_hp > cHp(__jjj)) {
+			lint_damage_hp = cHp(__jjj)
+		}
+	} elseif (ele@m141 == 70 | ele@m141 == 71) {
+		lint_damage_hp = 0
+	} elseif (__lll >= 0) {
+		f@m157 = carmor(__jjj)
+		if (f@m157 == 169) {
+			if (limit(sqrt(sdata(169, __jjj)) - 3, 1, 5) + (__jjj == 0) * 5 > rnd(100)) {
+				lint_damage_hp = 0
+				if (gdata(809) != 2) {
+					if (cfg_dmgtxttype == 0) {
+						txt -1, lang(name(__jjj) + "は攻撃を弾き返した！", "The attack glances off " + name(__jjj) + your(__jjj) + " armor!")
+					}
+				}
+				oo_specialpower = f@m157
+			}
+		} elseif (f@m157 == 170) {
+			if (limit(sqrt(sdata(170, __jjj)) - 3, 1, 5) + (__jjj == 0) * 5 > rnd(100)) {
+				lint_damage_hp /= 2
+				if (cHp(__jjj) <= lint_damage_hp) {
+					lint_damage_hp = cHp(__jjj) - 1
+				}
+				if (gdata(809) != 2) {
+					if (cfg_dmgtxttype == 0) {
+						txt -1, lang(name(__jjj) + "は攻撃を受けとめた！", name(__jjj) + " block" + _s(__jjj) + " the attack!")
+					}
+				}
+				oo_specialpower = f@m157
+			}
+		}
+		if (findbuff(__jjj, buffId_weakShield) != -1) {
+			lint_damage_hp = int(0.9 * lint_damage_hp)
+		}
+	}
+	if (dbg_godmode) {
+		if (__jjj == 0) {
+			lint_damage_hp = 0
+		}
+	}
+	if (gettrait(__jjj, 192) < 0 | (gCurrentMap == 210 & ncgdata(313))) {
+		cHp(__jjj) = -1
+	}
+	if (lint_damage_hp > 2000000000) {
+		lint_damage_hp = 2000000000
+	}
+	rtdmg = int(lint_damage_hp)
+	cHp(__jjj) -= int(lint_damage_hp)
+	if (ele@m141 == 56) {
+		if (__lll >= 0) {
+			if (lint_damage_hp > 0) {
+				p@se = int(limitf(double(lint_damage_hp) * (300 + __nnn) / 1000 + 10, 0, 50000))
+				p@se = limit(rndex(p@se), 1, cMaxHp(__lll) / 10 + rnd(5))
+				healhp __lll, p@se
+			}
+		}
+	}
+	if (synccheck(__jjj, -1)) {
+		if (showdamagecheck(int(lint_damage_hp))) {
+			f@00m = 0
+			_switch_val = cfg_dmgmonitortype
+			repeat 1
+				if (_switch_val == 0) {
+					f@00m = 1
+					break
+				}
+				if (_switch_val == 1) {
+					if (dmgpack(0, __jjj) == 1 & dmgpack(2, __jjj) == 1) {
+						if (dmgdisplayflag == 1) {
+							f@00m = 1
+						}
+					}
+					break
+				}
+				break
+			loop
+			if (f@00m == 1 | (dmgdisplayflag == 2 & weaponenc(1) == 0)) {
+				if (f@00m == 1) {
+				} else {
+					dmgpack(3, __jjj) += 1000
+				}
+				mondmgn(mondmgcnt) = "" + int(lint_damage_hp)
+				mondmg(0, mondmgcnt) = timeGetTime(), 0, 255, 255, 255, 0, 0, 0, __jjj, __lll
+				if (ele@m141 == 0 | ele@m141 >= 61) {
+					ccolor 108
+					if (stat == 0) {
+						mondmg(2, mondmgcnt) = 255, 255, 255, 0, 0, 0
+					}
+				} else {
+					i@m66 = ele@m141
+					ccolor 109
+					if (stat == 0) {
+						colorres
+						mondmg(2, mondmgcnt) = 255, 255, 255, ginfo(16), ginfo(17), ginfo(18)
+					}
+				}
+				mondmgcnt = (mondmgcnt + 1) \ length2(mondmg)
+			} else {
+				dmgpack(1, __jjj) += lint_damage_hp
+				dmgpack(3, __jjj)++
+			}
+		}
+	}
+	if (__jjj == 0) {
+		if (__lll == 0) {
+			lasttc = __jjj
+		}
+		gdata(30) = 0
+		if (cHp(__jjj) < 0) {
+			if (evid() != (-1)) {
+				if (evid() != 21) {
+					cHp(__jjj) = 1
+				}
+			}
+			if (gCurrentMap == 40 | gCurrentMap == 49) {
+				cHp(__jjj) = 1
+			}
+		}
+	}
+	if (lint_damage_hp <= 0) {
+		dmglevel@m141 = -1
+	} else {
+		dmglevel@m141 = lint_damage_hp * 6 / cMaxHp(__jjj)
+	}
+	if (cHp(__jjj) < 0) {
+		if (ogdata(458) == 2) {
+			if (godcheck(__jjj) == "jure" & rnd(10) == 0) {
+				cHp(__jjj) = 0
+				txt -1, lang(name(__jjj) + "は死を免れた。", name(__jjj) + " " + is(__jjj) + " healed.")
+			}
+		}
+		if (ocbit(9, __jjj) & gettrait(__jjj, 58) != 0) {
+			cHp(__jjj) = cMaxHp(__jjj) / (5 - stat)
+			txt -1, lang(name(__jjj) + "は回復した。", name(__jjj) + " " + is(__jjj) + " healed.")
+			ocbitmod 9, __jjj, 0
+		} elseif (__jjj < 16) {
+			if (cbit(985, __jjj)) {
+				cHp(__jjj) = 0
+			}
+			if (cHp(__jjj) < 0) {
+				repeat 16
+					if (__jjj == cnt) {
+						continue
+					}
+					if (cState(cnt) != 1) {
+						continue
+					}
+					if (cbit(21, cnt) == 0) {
+						continue
+					}
+					if (cbit(974, cnt) == 0) {
+						continue
+					}
+					cbitmod 974, cnt, 0
+					ccbk = cc
+					tcbk = tc
+					cc = cnt
+					tc = __jjj
+					txtef 9
+					ctalk cc, 979, cc, tc
+					if (stat == 0) {
+						txtef 9
+						ctalk tc, 1200, cc, tc
+						if ( stat == 0 ) {
+							txt -1, lang(name(cnt) + "は叫んだ。「この者にジュアの加護を。レイハンド！」", name(cnt) + " shout" + _s(cnt) + ", " + cnvtalk("Lay hand!"))
+						}
+					}
+					if (__jjj == 0) {
+						if (gCatchesGodSignal) {
+							txtgod godcheck(), 13
+						}
+					}
+					txt -1, lang(name(__jjj) + "は回復した。", name(__jjj) + " " + is(__jjj) + " healed.")
+					cHp(__jjj) = cMaxHp(__jjj) / 2
+					animeid = 19
+					animode = 100 + __jjj
+					cc = ccbk
+					tc = tcbk
+					gosub *label_0630
+					snd 120
+					break
+				loop
+				if (trophycheck(18) == 2) {
+						rf = 0
+						inv_getheader __jjj
+						repeat invrange, invhead
+								if (iId(cnt) == 708 & iNumber(cnt) > 0) {
+									iNumber(cnt)--
+									txt -1, lang(name(__jjj) + "の" + itemname(cnt, 1) + "は塵となって崩れ落ちた。", itemname(cnt, 1) + " falls apart.")
+									ccbk = cc
+									tcbk = tc
+									cc = __lll
+									tc = __jjj
+									txtef 9
+									txt -1, lang(name(__jjj) + "の耳元で、誰かが呟いた。「神は言っている、ここで死ぬ定めではないと」", name(__jjj) + " shout" + _s(__jjj) + ", " + cnvtalk("Lay hand!"))
+									if (__jjj == 0) {
+										if (gCatchesGodSignal) {
+											txtgod godcheck(), 13
+										}
+									}
+									txt -1, lang(name(__jjj) + "は回復した。", name(__jjj) + " " + is(__jjj) + " healed.")
+									cHp(__jjj) = cMaxHp(__jjj) / 2
+									animeid = 19
+									animode = 100 + __jjj
+									cc = ccbk
+									tc = tcbk
+									gosub *label_0630
+									snd 120
+									break
+							}
+						loop
+				}
+			}
+		} elseif (cId(__jjj) == 366) {
+			repeat 188, 57
+				if (__jjj == cnt) {
+					continue
+				}
+				if (cState(cnt) != 1) {
+					continue
+				}
+				if (cbit(21, cnt) == 0) {
+					continue
+				}
+				if (cbit(974, cnt) == 0) {
+					continue
+				}
+				cbitmod 974, cnt, 0
+				ccbk = cc
+				tcbk = tc
+				cc = cnt
+				tc = __jjj
+				txtef 9
+				ctalk cc, 979, cc, tc
+				if (stat == 0) {
+					txtef 9
+					txt -1, lang(name(cnt) + "は叫んだ。「この者にジュアの加護を。レイハンド！」", name(cnt) + " shout" + _s(cnt) + ", " + cnvtalk("Lay hand!"))
+				}
+				txt -1, lang(name(__jjj) + "は回復した。", name(__jjj) + " " + is(__jjj) + " healed.")
+				cHp(__jjj) = cMaxHp(__jjj) / 2
+				animeid = 19
+				animode = 100 + __jjj
+				cc = ccbk
+				tc = tcbk
+				gosub *label_0630
+				snd 120
+				break
+			loop
+			if (cbit(985, __jjj)) {
+				cHp(__jjj) = cMaxHp(__jjj)
+			}
+		} elseif (cbit(985, __jjj)) {
+			cHp(__jjj) = cMaxHp(__jjj)
+		}
+	}
+	if (cHp(__jjj) >= 0) {
+		if (dmglevel@m141 > 1) {
+			spillblood cX(__jjj), cY(__jjj), 1 + rnd(2)
+		}
+		if (gdata(809) == 1) {
+			if (cfg_dmgtxttype == 0) {
+				txteledmg 0, c3@m141, __jjj, ele@m141
+			}
+			goto *label_0579
+		}
+		if (dmglevel@m141 > 0) {
+			if (cMaxHp(__jjj) / 2 > cHp(__jjj)) {
+				dmglevel@m141++
+				if (cMaxHp(__jjj) / 4 > cHp(__jjj)) {
+					dmglevel@m141++
+					if (cMaxHp(__jjj) / 10 > cHp(__jjj)) {
+						dmglevel@m141++
+					}
+				}
+			}
+		}
+		if (cfg_dmgtxttype == 0 | cfg_dmgmonitortype == 0) {
+			if (cfg_dmgtxttype == 0) {
+				if (gdata(809) == 2) {
+					txtcontinue
+					if (oo_specialpower == 169) {
+						txt -1, lang("弾き返された。", his(cc) + " attack is repelled.")
+						goto *label_0579
+					} elseif (oo_specialpower == 170) {
+						txt -1, lang("受けとめられたものの", his(cc) + " attack is blocked, but ")
+					}
+					if (dmglevel@m141 == (-1)) {
+						txt -1, lang("かすり傷をつけた。", "make" + _s(c3@m141) + " a scratch.")
+					}
+					if (dmglevel@m141 == 0) {
+						txtef 5
+						txt -1, lang("軽い傷を負わせた。", "slightly wound" + _s(c3@m141) + " " + him(__jjj) + ".")
+					}
+					if (dmglevel@m141 == 1) {
+						txtef 11
+						txt -1, lang("傷つけた。", "moderately wound" + _s(c3@m141) + " " + him(__jjj) + ".")
+						if (__jjj >= 0 & __lll >= 0) {
+							txtef 9
+							ctalk __jjj, 107, __lll, __jjj
+						}
+					}
+					if (dmglevel@m141 == 2) {
+						txtef 10
+						txt -1, lang("深い傷を負わせた。", "severely wound" + _s(c3@m141) + " " + him(__jjj) + ".")
+						if (__jjj >= 0 & __lll >= 0) {
+							txtef 9
+							ctalk __jjj, 108, __lll, __jjj
+						}
+					}
+					if (dmglevel@m141 >= 3) {
+						txtef 3
+						txt -1, lang("致命傷を与えた。", "critically wound" + _s(c3@m141) + " " + him(__jjj) + "!")
+						if (__jjj >= 0 & __lll >= 0) {
+							txtef 9
+							ctalk __jjj, 109, __lll, __jjj
+						}
+					}
+					goto *label_0579
+				}
+				if (dmglevel@m141 == 1) {
+					if (synccheck(__jjj, -1)) {
+						txtef 11
+						txt -1, lang(name(__jjj) + "は痛手を負った。", name(__jjj) + " scream" + _s(__jjj) + ".")
+						if (__jjj >= 0 & __lll >= 0) {
+							txtef 9
+							ctalk __jjj, 107, __lll, __jjj
+						}
+					}
+				}
+				if (dmglevel@m141 == 2) {
+					if (synccheck(__jjj, -1)) {
+						txtef 10
+						txt -1, lang(name(__jjj) + "は苦痛にもだえた。", name(__jjj) + " writhe" + _s(__jjj) + " in pain.")
+						if (__jjj >= 0 & __lll >= 0) {
+							txtef 9
+							ctalk __jjj, 108, __lll, __jjj
+						}
+					}
+				}
+				if (dmglevel@m141 >= 3) {
+					if (synccheck(__jjj, -1)) {
+						txtef 3
+						txt -1, lang(name(__jjj) + "は悲痛な叫び声をあげた。", name(__jjj) + " " + is(__jjj) + " severely hurt!")
+						if (__jjj >= 0 & __lll >= 0) {
+							txtef 9
+							ctalk __jjj, 109, __lll, __jjj
+						}
+					}
+				}
+			}
+		}
+		if (lint_damage_hp < 0) {
+			if (cHp(__jjj) > cMaxHp(__jjj)) {
+				cHp(__jjj) = cMaxHp(__jjj)
+			}
+			if (synccheck(__jjj, -1)) {
+				txtef 4
+				txt -1, lang(name(__jjj) + "は回復した。", name(__jjj) + " " + is(__jjj) + " healed.")
+			}
+		}
+*label_0579
+		if (lint_damage_hp < 0) {
+			if (cHp(__jjj) > cMaxHp(__jjj)) {
+				cHp(__jjj) = cMaxHp(__jjj)
+			}
+		}
+		rowact_check __jjj
+		if (cHp(__jjj) < cMaxHp(__jjj) / 5) {
+			if (__jjj != 0) {
+				if (cFear(__jjj) == 0) {
+					if (cbit(10, __jjj) == 0) {
+						if (lint_damage_hp * 100 / cMaxHp(__jjj) + 10 > rnd(200)) {
+							f@m141 = 1
+						} else {
+							f@m141 = 0
+						}
+						if (__lll >= 0) {
+							if (gettrait(__lll, 44)) {
+								f@m141 = 0
+							}
+						}
+						if (f@m141) {
+							cFear(__jjj) = rnd(20) + 5
+							if (synccheck(__jjj, -1)) {
+								txtef 4
+								txt -1, lang(name(__jjj) + "は恐怖して逃げ出した。", name(__jjj) + " run" + _s(__jjj) + " away in terror.")
+							}
+						}
+					}
+				}
+			}
+		}
+		if (findbuff(__jjj, 63) == (-1)) {
+			if (ele@m141) {
+				if (ele@m141 == 59) {
+					if (rnd(10) < __nnn / 75 + 4) {
+						dmgcon __jjj, 4, rndex(__nnn / 3 * 2 + 1)
+					}
+					if (rnd(20) < __nnn / 50 + 4) {
+						dmgcon __jjj, 3, rndex(__nnn / 3 * 2 + 1)
+					}
+					if (rnd(20) < __nnn / 50 + 4) {
+						dmgcon __jjj, 5, rndex(__nnn / 3 * 2 + 1)
+					}
+					if (rnd(20) < __nnn / 50 + 4) {
+						dmgcon __jjj, 1, rndex(__nnn / 3 * 2 + 1)
+					}
+					if (rnd(20) < __nnn / 50 + 4) {
+						dmgcon __jjj, 2, rndex(__nnn / 3 * 2 + 1)
+					}
+				}
+				if (ele@m141 == 52) {
+					if (rnd(3 + (cQuality(__jjj) >= 4) * 3) == 0) {
+						cParalyzed(__jjj)++
+					}
+				}
+				if (ele@m141 == 53) {
+					dmgcon __jjj, 4, rndex(__nnn + 1)
+				}
+				if (ele@m141 == 58) {
+					dmgcon __jjj, 3, rndex(__nnn + 1)
+				}
+				if (ele@m141 == 54) {
+					dmgcon __jjj, 5, rndex(__nnn + 1)
+				}
+				if (ele@m141 == 57) {
+					dmgcon __jjj, 5, rndex(__nnn + 1)
+				}
+				if (ele@m141 == 55) {
+					dmgcon __jjj, 1, rndex(__nnn + 1)
+				}
+				if (ele@m141 == 61) {
+					dmgcon __jjj, 9, rndex(__nnn + 1)
+				}
+				if (ele@m141 == 62) {
+					if (__jjj == 0) {
+						modcorrupt rndex(__nnn + 1)
+					}
+				}
+				if (ele@m141 == 63) {
+					if (eqfaction(__jjj, "acidresist") == 0) {
+						if (__jjj == 0 | rnd(3) == 0) {
+							item_acid __jjj, -1
+						}
+					}
+					if (cStoned(__jjj) > 0) {
+						recoverstorn __jjj
+					}
+				}
+				if (ele@m141 == 70) {
+					f = 0
+					repeat rnd(limit(sqrt(__kkk) / 500, 1, 20))
+						lovemiracle __jjj
+					loop
+					modimp __jjj, efp / 200 + 1
+					dmgcon __jjj, 13, efp
+				}
+				if (ele@m141 == 71) {
+					if (trophycheck(15) == 2) {
+						dmgcon __jjj, 8, efp * 2
+					} else {
+						dmgcon __jjj, 8, efp
+					}
+				}
+			}
+		}
+		if (ele@m141 == 50 | __lll == (-9)) {
+			item_fire __jjj, -1
+		}
+		if (ele@m141 == 51 | __lll == (-10)) {
+			item_cold __jjj, -1
+		}
+		if (cSleep(__jjj) != 0) {
+			if (ele@m141 != 52 & ele@m141 != 54 & ele@m141 != 58 & ele@m141 != 59 & __lll != (-4)) {
+				if (cfg_dmgtxttype == 0) {
+					cSleep(__jjj) = 0
+					txt -1, lang(name(__jjj) + "は眠りを妨げられた。", name(__jjj) + your(__jjj) + " sleep " + is(__jjj) + " disturbed.")
+				}
+			}
+		}
+		if (__lll == 0) {
+			pcnoise = 60
+			hostileaction 0, __jjj
+			gdata(94) = __jjj
+		}
+		if (__jjj == 0) {
+			if (cMaxHp(__jjj) / 4 > cHp(__jjj)) {
+				if (cfg_sound == 1) {
+					if (cfg_heart == 1) {
+						CHECKPLAY 32
+						if (stat == 0) {
+							snd 32
+						}
+					}
+				}
+			}
+		}
+		if (cStoned(__jjj) == 0) {
+			if (cbit(18, __jjj)) {
+				if (rnd(3) == 0) {
+					cbitmod 972, __jjj, 1
+					if (cfg_dmgtxttype == 0) {
+						txtef 9
+						txt -1, lang(" *カチッ* ", "*click*")
+					}
+				}
+			}
+			if (cbit(23, __jjj)) {
+				if (gdata(809) != 1) {
+					if (lint_damage_hp > 0) {
+						if (lint_damage_hp > cMaxHp(__jjj) / 20 | rnd(10) == 0) {
+							if (mapType != 1) {
+								copy_chara -1, __jjj
+								if (stat == 1) {
+									if (cRelationship(__jjj) == 10) {
+										ocbitmod 14, c@m139, 1
+									}
+									if (cfg_dmgtxttype == 0) {
+										txt -1, lang(name(__jjj) + "は分裂した！", name(__jjj) + " split" + _s(__jjj) + "!")
+									}
+									cAiActSubFreq(c@m139) = limitmax(cAiActSubFreq(c@m139), 100)
+									addcrowd gCrowdDensity, 1
+								}
+							}
+						}
+					}
+				}
+			}
+			if (cbit(27, __jjj)) {
+				if (gdata(809) != 1) {
+					if (lint_damage_hp > 0) {
+						if (rnd(3) == 0) {
+							if (cConfused(__jjj) == 0 & cDimmed(__jjj) == 0 & cPoisoned(__jjj) == 0 & cParalyzed(__jjj) == 0 & cStoned(__jjj) == 0 & cBlind(__jjj) == 0) {
+								if (mapType != 1) {
+									copy_chara -1, __jjj
+									if (stat == 1) {
+										if (cRelationship(__jjj) == 10) {
+											ocbitmod 14, c@m139, 1
+										}
+										if (cfg_dmgtxttype == 0) {
+											txt -1, lang(name(__jjj) + "は分裂した！", name(__jjj) + " split" + _s(__jjj) + "!")
+										}
+										cAiActSubFreq(c@m139) = limitmax(cAiActSubFreq(c@m139), 100)
+										addcrowd gCrowdDensity, 1
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if (cbit(32, __jjj)) {
+			r1 = __jjj
+			gosub *label_1846
+		}
+		if (petcheck(__jjj)) {
+			if (cdata(50, __jjj) < cdata(51, __jjj) * 3 / 4) {
+				if (gettrait(0, 97)) {
+					refreshspeed 0
+				}
+			}
+		}
+		if (__lll >= 0) {
+			f@m141 = 0
+			if (cRelationship(__jjj) <= (-3)) {
+				if (cOriginalRelationship(__lll) > (-3)) {
+					if (cHate(__jjj) == 0 | rnd(4) == 0) {
+						f@m141 = 1
+					}
+				}
+			} elseif (cOriginalRelationship(__lll) <= (-3)) {
+				if (cHate(__jjj) == 0 | rnd(4) == 0) {
+					f@m141 = 1
+				}
+			}
+			if (__lll != 0) {
+				if (ocdata(155, __lll)) {
+					if (ocdata(150, __lll) - 1 == __jjj) {
+						if (rnd(3) == 0) {
+							f@m141 = 1
+						}
+					}
+				}
+			}
+			if (f@m141) {
+				if (__jjj != 0) {
+					lockon __jjj, __lll, 4
+					if (cHate(__jjj) == 0) {
+						cEmotionIcon(__jjj) = 18 + 100 * 2
+						cHate(__jjj) = 20
+					} else {
+						cHate(__jjj) += 2
+					}
+				}
+			}
+		}
+	}
+	if (cHp(__jjj) < 0) {
+		se@m141 = eleinfo(ele@m141, 1)
+		if (se@m141) {
+			snd se@m141, 0, 1
+		}
+		txtef 3
+		if (__lll >= 0) {
+			if (cfg_dmgtxttype == 0 | cfg_dmgmonitortype == 0) {
+				if (cfg_dmgtxttype == 0) {
+					if (ele@m141) {
+						if (__jjj >= 16 & cRole(__jjj) != 10001 & cRole(__jjj) != 10018 & eqfaction(__jjj, "petshop") == 0 & gdata(809) == 2) {
+							txtcontinue
+							txteledmg 1, c3@m141, __jjj, ele@m141
+						} else {
+							txteledmg 2, c3@m141, __jjj, ele@m141
+						}
+					} else {
+						p@m141 = rnd(4)
+						if (p@m141 == 0) {
+							if (__jjj >= 16 & cRole(__jjj) != 10001 & cRole(__jjj) != 10018 & eqfaction(__jjj, "petshop") == 0 & gdata(809) == 2) {
+								txtcontinue
+								txt -1, lang("粉々の肉片に変えた。", "transform" + _s(c3@m141) + " " + him(__jjj) + " into several pieces of meat.")
+							} else {
+								txt -1, lang(name(__jjj) + "は粉々の肉片に変えられた。", name(__jjj) + " " + is(__jjj) + " transformed into several pieces of meat.")
+							}
+						}
+						if (p@m141 == 1) {
+							if (__jjj >= 16 & cRole(__jjj) != 10001 & cRole(__jjj) != 10018 & eqfaction(__jjj, "petshop") == 0 & gdata(809) == 2) {
+								txtcontinue
+								txt -1, lang("破壊した。", "destroy" + _s(c3@m141) + " " + him(__jjj) + ".")
+							} else {
+								txt -1, lang(name(__jjj) + "は破壊された。", name(__jjj) + " " + is(__jjj) + " killed.")
+							}
+						}
+						if (p@m141 == 2) {
+							if (__jjj >= 16 & cRole(__jjj) != 10001 & cRole(__jjj) != 10018 & eqfaction(__jjj, "petshop") == 0 & gdata(809) == 2) {
+								txtcontinue
+								txt -1, lang("ミンチにした。", "mince" + _s(c3@m141) + " " + him(__jjj) + ".")
+							} else {
+								txt -1, lang(name(__jjj) + "はミンチにされた。", name(__jjj) + " " + is(__jjj) + " minced.")
+							}
+						}
+						if (p@m141 == 3) {
+							if (__jjj >= 16 & cRole(__jjj) != 10001 & cRole(__jjj) != 10018 & eqfaction(__jjj, "petshop") == 0 & gdata(809) == 2) {
+								txtcontinue
+								txt -1, lang("殺した。", "kill" + _s(c3@m141) + " " + him(__jjj) + ".")
+							} else {
+								txt -1, lang(name(__jjj) + "は殺された。", name(__jjj) + " " + is(__jjj) + " slain.")
+							}
+						}
+					}
+				}
+			}
+			ndeathcause = lang(cdatan(0, cc) + "に殺された。", "was killed by " + cdatan(0, cc))
+		} elseif (__lll == (-11)) {
+			txt -1, lang(name(__jjj) + "は見えざる手に葬られた。", name(__jjj) + " " + is(__jjj) + " assassinated by the unseen hand.")
+			if (__jjj == 0) {
+				ndeathcause = lang("見えざる手に葬られた。", "got assassinated by the unseen hand")
+			}
+		}
+		if (__lll == (-1)) {
+			txt -1, lang(name(__jjj) + "は罠にかかって死んだ。", name(__jjj) + " " + is(__jjj) + " caught in a trap and die" + _s(__jjj) + ".")
+			if (__jjj == 0) {
+				ndeathcause = lang("罠にかかって死んだ。", "got caught in a trap and died")
+			}
+		}
+		if (__lll == (-2)) {
+			txt -1, lang(name(__jjj) + "はマナの反動で死んだ。", name(__jjj) + " die" + _s(__jjj) + " from over-casting.")
+			if (__jjj == 0) {
+				ndeathcause = lang("マナの反動で消滅した。", "was completely wiped by magic reaction")
+			}
+		}
+		if (__lll == (-3)) {
+			txt -1, lang(name(__jjj) + "は餓死した。", name(__jjj) + " " + is(__jjj) + " starved to death.")
+			if (__jjj == 0) {
+				ndeathcause = lang("飢え死にした。", "was starved to death")
+			}
+		}
+		if (__lll == (-4)) {
+			txt -1, lang(name(__jjj) + "は毒に蝕まれ死んだ。", name(__jjj) + " " + is(__jjj) + " killed with poison.")
+			if (__jjj == 0) {
+				ndeathcause = lang("毒にもがき苦しみながら死んだ。", "miserably died from poison")
+			}
+		}
+		if (__lll == (-13)) {
+			txt -1, lang(name(__jjj) + "は出血多量で死んだ。", name(__jjj) + " die" + _s(__jjj) + " from loss of blood")
+			if (__jjj == 0) {
+				ndeathcause = lang("血を流しすぎて死んだ。", "died from loss of blood")
+			}
+		}
+		if (__lll == (-5)) {
+			txt -1, lang(name(__jjj) + "は呪いの力で死んだ。", name(__jjj) + " die" + _s(__jjj) + " from curse.")
+			if (__jjj == 0) {
+				if (godcheck(0) == "fuuri") {
+					txt -1, lang("「これでそなたは我のものじゃ♪1」", cnvtalk("Now you are mine♪1"))
+				}
+				ndeathcause = lang("呪い殺された。", "died from curse")
+			}
+		}
+		if (__lll == (-7)) {
+			txt -1, lang(name(__jjj) + "は階段から転げ落ちて死んだ。", name(__jjj) + " tumbled" + _s(__jjj) + " from stairs and die" + _s(__jjj) + ".")
+			if (__jjj == 0) {
+				ndeathcause = lang("階段から転げ落ちて亡くなった。", "tumbled from stairs and died")
+			}
+		}
+		if (__lll == (-8)) {
+			txt -1, lang(name(__jjj) + "は聴衆に殺された。", name(__jjj) + " " + is(__jjj) + " killed by an audience.")
+			if (__jjj == 0) {
+				ndeathcause = lang("演奏中に激怒した聴衆に殺された。", "was killed by an audience")
+			}
+		}
+		if (__lll == (-9)) {
+			txt -1, lang(name(__jjj) + "は焼け死んだ。", name(__jjj) + " " + is(__jjj) + " burnt and turned into ash.")
+			if (__jjj == 0) {
+				ndeathcause = lang("焼けて消滅した。", "was burnt and turned into ash")
+			}
+		}
+		if (__lll == (-12)) {
+			txt -1, lang(name(__jjj) + "は食中毒で死んだ。", name(__jjj) + " " + is(__jjj) + " killed by food poisoning.")
+			if (__jjj == 0) {
+				ndeathcause = lang("食中毒で倒れた。", "got killed by food poisoning")
+			}
+		}
+		if (__lll == (-14)) {
+			txt -1, lang(name(__jjj) + "はエーテルに侵食され死んだ。", name(__jjj) + " die" + _s(__jjj) + " of the Ether disease.")
+			if (__jjj == 0) {
+				ndeathcause = lang("エーテルの病に倒れた。", "died of the Ether disease")
+			}
+		}
+		if (__lll == (-15)) {
+			txt -1, lang(name(__jjj) + "は溶けて液体になった。", name(__jjj) + " melt" + _s(__jjj) + " down.")
+			if (__jjj == 0) {
+				ndeathcause = lang("溶けて液体になった。", "melted down")
+			}
+		}
+		if (__lll == (-16)) {
+			txt -1, lang(name(__jjj) + "はバラバラになった。", name(__jjj) + " shatter" + _s(__jjj) + ".")
+			if (__jjj == 0) {
+				ndeathcause = lang("自殺した。", "committed suicide")
+			}
+		}
+		if (__lll == (-17)) {
+			txt -1, lang(name(__jjj) + "は核爆発に巻き込まれて塵となった。", name(__jjj) + " " + is(__jjj) + " turned into atoms.")
+			if (__jjj == 0) {
+				ndeathcause = lang("核爆発に巻き込まれて死んだ。", "was killed by an atomic bomb")
+			}
+		}
+		if (__lll == (-18)) {
+			txt -1, lang(name(__jjj) + "はアイアンメイデンの中で串刺しになって果てた。", name(__jjj) + " step" + _s(__jjj) + " in an iron maiden and die" + _s(__jjj) + ".")
+			if (__jjj == 0) {
+				ndeathcause = lang("アイアンメイデンにはさまれて死んだ。", "stepped in an iron maiden and died")
+			}
+		}
+		if (__lll == (-19)) {
+			txt -1, lang(name(__jjj) + "はギロチンで首をちょんぎられて死んだ。", name(__jjj) + " " + is(__jjj) + " guillotined and die" + _s(__jjj) + ".")
+			if (__jjj == 0) {
+				ndeathcause = lang("ギロチンで首を落とされて死んだ。", "was guillotined")
+			}
+		}
+		if (__lll == (-20)) {
+			txt -1, lang(name(__jjj) + "は首を吊った。", name(__jjj) + " hang" + _s(__jjj) + " " + his(__jjj) + "self.")
+			if (__jjj == 0) {
+				ndeathcause = lang("首を吊った。", "commited suicide by hanging")
+			}
+		}
+		if (__lll == (-21)) {
+			txt -1, lang(name(__jjj) + "はもちを喉に詰まらせて死んだ。", name(__jjj) + " choke" + _s(__jjj) + " on mochi and die.")
+			if (__jjj == 0) {
+				ndeathcause = lang("もちを喉に詰まらせて死んだ。", "ate mochi and died")
+			}
+		}
+		if (__lll == (-6)) {
+			inv_getheader 0
+			p@m141 = -1, 0
+			repeat invrange, invhead
+				if (iNumber(cnt) == 0) {
+					continue
+				}
+				if (iWeight(cnt) > p@m141(1)) {
+					p@m141 = cnt, iWeight(cnt)
+				}
+			loop
+			if (p@m141 == (-1)) {
+				rtvaln = lang("荷物", "backpack")
+			} else {
+				rtvaln = itemname(p@m141)
+			}
+			txt -1, lang(name(__jjj) + "は" + rtvaln + "の重さに耐え切れず死んだ。", name(__jjj) + " " + is(__jjj) + " squashed by " + rtvaln + ".")
+			if (__jjj == 0) {
+				ndeathcause = lang(rtvaln + "の重さに耐え切れず潰れた。", "was squashed by " + rtvaln)
+			}
+		}
+		if (__lll == (-9) | ele@m141 == 50) {
+			addmef cX(__jjj), cY(__jjj), 5, 24, rnd(10) + 5, 100, __lll
+		}
+		if (ele@m141 == 56) {
+			if (__lll >= 0) {
+				if (lint_damage_hp > 0) {
+					p@se = int(limitf(double(lint_damage_hp) * (200 + __nnn) / 1000 + 5, 1, 50000))
+					p@se = limit(rndex(p@se), 1, cMaxHp(__lll) / 10 + rnd(5))
+					healhp cc, p@se
+				}
+			}
+		}
+		if (gMount != __jjj & ocdata(107, __jjj) == 0 | __jjj == 0) {
+			cell_removechara cX(__jjj), cY(__jjj)
+		}
+		if (cRole(__jjj) == 0 | cRole(__jjj) == 10000 | cRole(__jjj) == 20001) {
+			cState(__jjj) = 0
+		} elseif (cRole(__jjj) == 13) {
+			advdie gdata, cdata, ocdata, __jjj
+		} else {
+			cState(__jjj) = 2
+			cTimeToRevive(__jjj) = getgametime() + 48
+		}
+		if (__jjj != 0) {
+			if (petcheck(__jjj)) {
+				if (trophycheck(13) == 2) {
+					modimp __jjj, -3
+				} else {
+					modimp __jjj, -10
+				}
+				cState(__jjj) = 6
+				cCurrentMap(__jjj) = 0
+				if (cbit(963, __jjj) == 1) {
+					evadd 15, cId(__jjj)
+					cState(__jjj) = 0
+				}
+				if (cbit(971, __jjj) == 1 | cRole(__jjj) == 20001) {
+					cState(__jjj) = 0
+				}
+			}
+		}
+		if (__jjj == 0) {
+			cell_draw
+		}
+		if (efid == sId_maelstromOfTheAbyss) {
+			ele@m141 = 51
+		}
+		if (cbit(983, __jjj)) {
+			if (synccheck(__jjj, -1)) {
+				x = cX(__jjj)
+				y = cY(__jjj)
+				snd 45, 0, 1
+				animeblood __jjj, 1, ele@m141
+			}
+			spillfrag cX(__jjj), cY(__jjj), 3
+		} else {
+			snd 8 + rnd(2), 0, 1
+			animeblood __jjj, 0, ele@m141
+			spillblood cX(__jjj), cY(__jjj), 4
+		}
+		if (__jjj == 0) {
+			gDeathCount++
+		}
+		if (__jjj == gdata(94)) {
+			gdata(94) = 0
+		}
+		if (cdata(27, __jjj) == 34 & __lll == (-17)) {
+			ctalk 0, 1222, 0, __jjj
+		}
+		if (__lll >= 0) {
+			if ( cdata(27, __jjj) == 34 | cdata(27, __jjj) == 213) {
+				if ( cdata(27, __jjj) == 213 ) {
+					ctalk __lll, 1223, __lll, __jjj
+				} else {
+					ctalk __lll, 1221, __lll, __jjj
+				}
+				if (stat == 0) {
+					txtef 9
+					ctalk __lll, 103, __lll, __jjj
+				}
+			} else {
+				txtef 9
+				ctalk __lll, 103, __lll, __jjj
+			}
+			exp@m141 = limit(cLevel(__jjj), 1, 200) * limit(cLevel(__jjj) + 1, 1, 200) * limit(cLevel(__jjj) + 2, 1, 200) / 20 + 8
+			if (cLevel(__jjj) > cLevel(__lll)) {
+				exp@m141 /= 4
+			}
+			if (cbit(23, __jjj) | cbit(27, __jjj)) {
+				exp@m141 /= 20
+			}
+			cExperience(__lll) += exp@m141
+			if (__lll == 0) {
+				gSleepExperience += exp@m141
+			}
+			cHate(__lll) = 0
+			repeat 16
+				unlockon cnt, __jjj
+			loop
+			repeat 16
+				unwatchon cnt, __jjj
+			loop
+			if (pcattacker == __jjj) {
+				pcattacker = 0
+			}
+			if (petcheck(__lll)) {
+				if (cbit(23, __jjj) | cbit(27, __jjj)) {
+				} else {
+					modpiety 1, __lll
+					if (godcheck(__lll) != godcheck(__jjj)) {
+						skillexp2 181, __lll, 10 + (sdata(181, __jjj) >= sdata(181, __lll)) * 10
+					}
+				}
+			}
+		}
+		if (ogdata(499) == 2 & ogdata(515) == 0) {
+			if (eqfaction(__jjj, "overwish")) {
+				repeat 188, 57
+					if (__jjj == cnt) {
+						continue
+					}
+					if (cState(cnt) == 1 & eqfaction(cnt, "overwish")) {
+						break
+					}
+					nc_intb_001 = cnt
+					repeat 16
+						if (ocdata(192 + cnt * 3, nc_intb_001) == 0 ) {
+									break
+						}
+						delbuff nc_intb_001, cnt
+						continue cnt
+					loop
+					if (cnt == 244) {
+							txtef 2
+							txt_select -1, lang("クエストを達成した！", "OK!"), "", "", "", "", "", "", "", ""
+							snd 51
+							txt_select -1, lang("何かが足元に転がってきた。", "Something is put on the ground."), "", "", "", "", "", "", "", ""
+							txtef 2
+							txt -1, lang("新しい称号を獲得した！", "Earned a new title!")
+							flt
+							itemcreate -1, 799, cX(0), cY(0), 0
+							flt
+							itemcreate -1, 290, cX(0), cY(0), 0
+							inv(4, ci) = 6
+							inv(8, ci) = 3
+							inv(9, ci) = 1
+							inv(17, ci) = 0
+							flt
+							if (finditemid("artifacts fusion license")) {
+								inititemid = stat
+								itemcreate -1, 743, cX(0), cY(0), 10 // カルネアデスの板
+							}
+							ogdata(515) = 1
+					}
+				loop
+			}
+		}
+		f = 0
+		if (ogdata(505) == 0) {
+			if (int(lint_damage_hp) >= 20000000) {
+				f = 1
+				ogdata(505) = 1
+			}
+		}
+		if (int(lint_damage_hp) > ncgdata(60) & __lll == 0) {
+			ncgdata(60) = int(lint_damage_hp)
+			yarikomi = 1
+			gosub *label_N311
+		}
+		if (f == 1) {
+			snd 44
+			txtef 2
+			txt -1, lang("新しい称号を獲得した！", "Earned a new title!")
+		}
+		if (__jjj != 0) {
+			if (__jjj >= 16 & cRole(__jjj) != 10001 & cRole(__jjj) != 10018 & eqfaction(__jjj, "petshop") == 0 & ocbit(15, __jjj) != 1) {
+				if (gCurrentMap != 35) {
+					if (gCurrentMap != 42 & gCurrentMap != 210) {
+						if (cbit(960, __jjj) == 0) {
+							if (cRole(__jjj) != 13 | ocdata(100, __jjj) == 20000) {
+								if (cRole(__jjj) != 10001 & cRole(__jjj) != 10018 & eqfaction(__jjj, "petshop") == 0) {
+									if (oabit(3, gCurrentMap) == 0 & oabit(6, gCurrentMap) == 0) {
+										if (cId(__jjj) == 2) {
+											evadd 1
+										}
+										if (cId(__jjj) == 141) {
+											txtef 2
+											txt -1, lang("愚者の魔石を手に入れた！", "You obtain the fool's magic stone!")
+											snd 51
+											gdata(250 + 3) = 1
+										}
+										if (cId(__jjj) == 143) {
+											txtef 2
+											txt -1, lang("覇者の魔石を手に入れた！", "You obtain the king's magic stone!")
+											snd 51
+											gdata(250 + 5) = 1
+										}
+										if (cId(__jjj) == 144) {
+											txtef 2
+											txt -1, lang("賢者の魔石を手に入れた！", "You obtain the sage's magic stone!")
+											snd 51
+											gdata(250 + 4) = 1
+										}
+										if (cId(__jjj) == 388) {
+											if (ncgdata(154) < 11) {
+												ncgdata(154) = 11
+												snd 44
+												txtef 2
+												txt -1, lang("ジャーナルが更新された。", "Your journal has been updated.")
+											}
+										}
+										if (cId(__jjj) == 242) {
+											if (gdata(250 + 208) < 1000) {
+												gdata(250 + 208) = 2
+												snd 44
+												txtef 2
+												txt -1, lang("ジャーナルが更新された。", "Your journal has been updated.")
+											}
+										}
+										if (cId(__jjj) == 257) {
+											if (gdata(250 + 212) < 1000) {
+												gdata(250 + 212) = 1000
+												snd 44
+												txtef 2
+												txt -1, lang("ジャーナルが更新された。", "Your journal has been updated.")
+												txt -1, lang("クエストを達成した！", "You have completed the quest!")
+												snd 51
+											}
+										}
+										if (cId(__jjj) == 300) {
+											if (gdata(250 + 222) < 2) {
+												gdata(250 + 222) = 2
+												snd 44
+												txtef 2
+												txt -1, lang("ジャーナルが更新された。", "Your journal has been updated.")
+											}
+										}
+									}
+									// NC追加ボス撃破
+									if (cId(__jjj) == 50) {
+										if (eqfaction(__jjj, "st_ruralboss")) {
+											newtitle 90
+										}
+									}
+									if (cId(__jjj) == 278) {
+										if (eqfaction(__jjj, "st_ruinboss")) {
+											newtitle 91
+										}
+									}
+									if (cId(__jjj) == 122) {
+										if (eqfaction(__jjj, "nc_iceboss")) {
+											evadd 200, cX(__jjj), cY(__jjj)
+											newtitle 92
+										}
+									}
+									if (cId(__jjj) == 24) {
+										if (eqfaction(__jjj, "st_caveboss")) {
+											newtitle 93
+										}
+									}
+									if (cId(__jjj) == 393) {
+										if (eqfaction(__jjj, "nc_isekiboss")) {
+											snd 44
+											txtef 2
+											txt -1, lang("実験場の秘宝を手に入れた！", "You obtain the laboratory treasure!")
+											txtef 2
+											txt -1, lang("ジャーナルが更新された。", "Your journal has been updated.")
+											ncgdata(158) = 3
+											newtitle 94
+										}
+									}
+									if (cId(__jjj) == 250) {
+										if (eqfaction(__jjj, "st_feaboss")) {
+											newtitle 95
+										}
+									}
+									if (cId(__jjj) == 343) {
+										if (userdatan(0, cCnpcId(__jjj)) == "Serria of the Sea") {
+											newtitle 105
+										}
+										if (userdatan(0, cCnpcId(__jjj)) == "Dybony of cattle farming") {
+											newtitle 106
+										}
+									}
+									// ここまで
+									if (cId(__jjj) == 318 & ocbit(7, __jjj) == 0) {
+										evadd 27, cX(__jjj), cY(__jjj)
+									}
+									if (cId(__jjj) == 319) {
+										if (petcheck(__jjj) == 0 & ocbit(7, __jjj) == 0) {
+											gKillCountOfLittleSister++
+											txtef 3
+											txt -1, lang("リトルシスター殺害" + gKillCountOfLittleSister + "回、救出" + gSaveCountOfLittleSister + "回。", "You have saved little sister " + gSaveCountOfLittleSister + " times and killed " + gKillCountOfLittleSister + " times.")
+											if (ogdata(509) == 0) {
+												if (gKillCountOfLittleSister >= 1000) {
+													f = 1
+													ogdata(509) = 1
+												}
+											}
+											if (f == 1) {
+												snd 44
+												txtef 2
+												txt -1, lang("新しい称号を獲得した！", "Earned a new title!")
+											}
+										}
+									}
+									if (gCurrentDungeonLevel == areaLastFloor(gCurrentMap) | gCurrentMap == 42 | gCurrentMap == 210) {
+										if (areaHasBeenConquered(gCurrentMap) == __jjj) {
+											evadd 5
+										}
+									}
+									if (cId(__jjj) == 331 & ocbit(7, __jjj) == 0) {
+										if (rnd(4) == 0) {
+											evadd 28, cX(__jjj), cY(__jjj)
+										}
+									}
+									if (ogdata(24) == 2) {
+										if (__lll == 0) {
+											if (findfaction(__jjj, "pet", "0") == 0) {
+												ogdata(60)++
+											}
+										} elseif (__lll >= 16) {
+											if (cRole(__lll) == 20004) {
+												ogdata(60) += 10000
+											}
+										}
+									}
+									check_quest
+								}
+							}
+						}
+					} elseif (areaHasBeenConquered(gCurrentMap) == __jjj) {
+						evadd 5
+					}
+				}
+				if (__lll >= 0) {
+					if (cId(__lll) == 21) {
+						if (ocdata(49, __lll) == 0) {
+							s@m141 = refchara(cId(__jjj), 8, 1)
+							if (instr(s@m141, 0, "/undead/") == (-1)) {
+								evadd 102, cLevel(__jjj), __lll * 1000 * 1000 + cX(__jjj) * 1000 + cY(__jjj)
+							}
+						}
+					}
+				}
+			}
+		}
+		if (__lll >= 0) {
+			txtef 9
+			ctalk __jjj, 102, __lll, __jjj
+		}
+		if (__jjj != 0) {
+			if (npcmemory(0, cId(__jjj)) < 2100000000) {
+				modnpcmemory 0, __jjj, 1
+			}
+			gosub *label_1177
+			if (petcheck(__jjj)) {
+				if (gettrait(0, 97)) {
+					refreshspeed 0
+				}
+				txt -1, lang("あなたは悲しくなった。", "You feel sad for a moment.")
+				throwsstpevent "PetDead", __jjj, "", 0
+			} elseif (__lll == 0 & ocdata(100, __jjj) == 20000) {
+				modimp __jjj, 25
+				if (cRelationship(__jjj) <= (-3)) {
+					cRelationship(__jjj) = 0
+					cOriginalRelationship(__jjj) = 0
+					cHate(__jjj) = 0
+				}
+			} elseif (gCurrentMap != 35) {
+				if (oabit(6, gCurrentMap) == 0) {
+					if (cId(__jjj) == 302) {
+						fameadd = calcfame(0, limitmax(cLevel(__jjj) * 100, 10000))
+						txtef 2
+						txt -1, lang("" + fameadd + "の名声値を手に入れた。", "You gain " + fameadd + " fame.")
+						incfame 0, fameadd
+					}
+				}
+				if (cId(__jjj) == 25 | cId(__jjj) == 26 | cId(__jjj) == 27 | cId(__jjj) == 32) {
+					if (npcmemory(0, cId(__jjj)) == 1) {
+						ogdata(428)++
+					}
+				} elseif (cId(__jjj) == 343) {
+					if (cCnpcId(__jjj) != usernpcmax) {
+						if (userdata(12, cCnpcId(__jjj)) == 2) {
+							if (getcnpcmemory(0, cCnpcId(__jjj)) == 1) {
+								ogdata(428)++
+							}
+						}
+						if (userdatan(0, cCnpcId(__jjj)) == "Champion Putit") {
+							if (__lll >= 0) {
+								addfaction __lll, "champ"
+							}
+						}
+					}
+				}
+			}
+		}
+		if (__jjj < 16) {
+			if (__lll >= 0) {
+				repeat 16
+					if (__jjj == cnt) {
+						continue
+					}
+					if (cState(cnt) != 1) {
+						continue
+					}
+					ctalk cnt, 425, __lll, __jjj
+					if (stat == 0) {
+						ctalk cnt, 426, __lll, __jjj
+					}
+				loop
+			}
+		}
+		if (__jjj >= 57 & cState(__jjj) == 0) {
+			addcrowd gCrowdDensity, -1
+		}
+		p@m141 = -1
+		if (gMount != 0) {
+			if (__jjj == gMount) {
+				p@m141 = 0
+			}
+		}
+		if (ocdata(107, __jjj) != 0) {
+			p@m141 = ocdata(107, __jjj)
+		}
+		if (p@m141 != (-1)) {
+			txt -1, lang(name(p@m141) + "は" + name(__jjj) + "の死体から降りた。", name(p@m141) + " get off the corpse of " + name(__jjj) + ".")
+			ride_end p@m141
+		}
+		if (ocdata(106, __jjj) != 0) {
+			ride_end __jjj
+		}
+		check_kill __lll, __jjj
+		catitem = 0
+		rollanatomy = 0
+		if (rnd(60) == 0) {
+			rollanatomy = 1
+		}
+		if (__lll >= 0) {
+			if (cId(__lll) == 260 | findbuff(__lll, 89) != (-1)) {
+				if (ocdata(49, __lll) == 0) {
+					catitem = __lll
+				}
+			}
+			if (int(sqrt(sdata(161, __lll))) > rnd(150)) {
+				rollanatomy = 1
+			}
+			if (ogdata(491) == 2) {
+				if (gettrait(0, 194) == 0 | (cbit(23, __jjj) == 0 & cbit(27, __jjj) == 0)) {
+					if (int(sqrt(sdata(161, __lll))) > rnd(200)) {
+						p = 0
+						flt calcobjlv(cLevel(__jjj)), calcfixlv(2)
+						flttypemajor = 62000
+						flttypeminor = 0
+						itemcreate -1, 0, cX(__jjj), cY(__jjj), 0
+						remain_make ci, __jjj
+					}
+				}
+			}
+			if (gettrait(0, 194) == 0 | (cbit(23, __jjj) == 0 & cbit(27, __jjj) == 0)) {
+				skillexp2 161, __lll, 10 + rollanatomy * 4
+			}
+		}
+		rc = __jjj
+		gosub *label_0772
+		if (gCurrentMap == 40 | gCurrentMap == 49) {
+			if (rnd(5) == 0) {
+				snd 69
+			}
+		}
+		if (cbit(19, __jjj) == 1) {
+			txt -1, lang("死の宣告は無効になった。", "The death word breaks.")
+			repeat 245
+				if (cState(cnt) != 1) {
+					continue
+				}
+				p@m141 = cnt
+				repeat 8 + 8
+					if (ocdata(192 + cnt * 3, p@m141) == 0) {
+						break
+					}
+					if (ocdata(192 + cnt * 3, p@m141) == 16) {
+						delbuff p@m141, cnt
+						continue cnt
+					}
+				loop
+			loop
+		}
+		if (__lll == 0) {
+			if (gCatchesGodSignal) {
+				if (rnd(20) == 0) {
+					txtgod godcheck(), 9
+				}
+			}
+		}
+		gosub *label_0580
+		if (cQuality(__jjj) == 6) {
+			if (__jjj > 56) {
+				if (__lll < 56 & __lll >= 0) {
+					if (cRole(__jjj) != 10001 & cRole(__jjj) != 10018 & eqfaction(__jjj, "petshop") == 0) {
+						if (eqfaction(__jjj, "wakeup")) {
+							if (get_freeally() != 0) {
+								txtef 2
+								ctalk __jjj, 1158, __jjj, 0
+								if (stat == 0) {
+									txt -1, lang("なんと　" + cdatan(0, __jjj) + "が　おきあがり　なかまに　なりたそうに　こちらをみている！　なかまにしてあげますか？", "" + cdatan(0, __jjj) + " stood up and offered to join you! Would you like to join " + cdatan(0, __jjj) + "?")
+								}
+								promptmax = 0
+								val = promptx, 240, 120, 1
+								promptl(0, promptmax) = lang("はい", "Yes"), "a", "" + promptmax
+								promptmax++
+								promptl(0, promptmax) = lang("いいえ", "No"), "b", "" + promptmax
+								promptmax++
+								val = promptx, 240, 160, 1
+								gosub *label_1353
+								snd 20
+								if (rtval == 0) {
+									ctalk __jjj, 1159, __jjj, 0
+									rc = __jjj
+									gosub *label_0738
+									cxinit = cX(0)
+									cyinit = cY(0)
+									place_chara rc, cxinit, cyinit
+									cCurrentMap(rc) = 0
+									gosub *label_1530
+									gosub *chara_refresh
+								} else {
+									ctalk __jjj, 1160, __jjj, 0
+									if (stat == 0) {
+										txt -1, lang("" + cdatan(0, __jjj) + "は　さびしそうに　さっていった", "" + cdatan(0, __jjj) + " vanish" + _s(__jjj, 1) + ".")
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if (__lll >= 0) {
+			if (cId(__lll) == 343) {
+				if (userdatan(1, cCnpcId(__lll)) == "luck cat" | userdatan(1, cCnpcId(__lll)) == "招き猫") {
+					if (rnd(3) == 0) {
+						if (cbit(23, __jjj) == 0 & cbit(27, __jjj) == 0) {
+							nc_intb_001 = rnd(100)
+							txtef 9
+							txt -1, lang(name(__lll) + "の首輪の鈴から何かが落ちた。", "Something fell out of the bell on " + name(__lll) + " collar.")
+							if (nc_intb_001 == 0) {
+								flt
+								itemcreate -1, 622, cX(__lll), cY(__lll), 0
+							} else {
+								if (nc_intb_001 < 11) {
+									flt
+									itemcreate -1, 55, cX(__lll), cY(__lll), rnd(3) + 1
+								} else {
+									flt
+									itemcreate -1, 54, cX(__lll), cY(__lll), rndex(limit((sdata(19, 0) / 10 * 100) + (sdata(19, __lll) / 5 * 100), 100, 20000))
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return 0
+	}
+	if (__lll == 0) {
+		f = 0
+		if (ogdata(505) == 0) {
+			if (int(lint_damage_hp) >= 20000000) {
+				f = 1
+				ogdata(505) = 1
+			}
+		}
+		if (int(lint_damage_hp) > ncgdata(60)) {
+			ncgdata(60) = int(lint_damage_hp)
+			yarikomi = 1
+			gosub *label_N311
+		}
+		if (f == 1) {
+			snd 44
+			txtef 2
+			txt -1, lang("新しい称号を獲得した！", "Earned a new title!")
+		}
+	}
+
+	gosub *label_0580
+	return 1
+*label_0580
+	if (cbit(985, __jjj)) {
+		if (synccheck(__jjj, -1)) {
+			if (cfg_dmgtxttype == 0) {
+				txt -1, "(" + int(lint_damage_hp) + ")" + lang(" ", "")
+			}
+			if (rnd(20) == 0) {
+				if (__lll >= 0) {
+					ctalk __jjj, 985, __lll, __jjj
+					if (stat == 0) {
+						txt __jjj, lang("「くっ！」", cnvtalk("Kill me already!")), lang("「まだまだ！」", cnvtalk("No..not yet...!")), lang("「もう限界…」", cnvtalk("I can't take it anymore...")), lang("「うぐぐ」", cnvtalk("Argh!")), lang("「あう」", cnvtalk("Uhhh")), lang("「ああんっ」", cnvtalk("Ugggg"))
+					}
+				}
+			}
+		}
+	}
+	gdata(809) = 0
+	txt3rd = 0
+	return
+
+
+
+#deffunc dmgmp int __ooo, int __ppp
+	if (dbg_godmode) {
+		if (__ooo == 0) {
+			return 1
+		}
+	}
+	cMp(__ooo) -= __ppp
+	if (cMp(__ooo) < (-999999)) {
+		cMp(__ooo) = -999999
+	}
+	if (cMp(__ooo) < 0) {
+		r1 = __ooo
+		gosub *label_0670
+		d@m142 = -cMp(__ooo) * 400 / (100 + sdata(164, __ooo) * 10)
+		if (gettrait(__ooo, 156) == 1) {
+			d@m142 = d@m142 / 2
+		}
+		if (__ooo != 0) {
+			d@m142 = d@m142 / 5
+			if (d@m142 < 10) {
+				return 1
+			}
+		}
+		txt -1, lang("マナの反動が" + name(__ooo) + "の精神を蝕んだ！", "Magic reaction hurts " + name(__ooo) + "!")
+		dmghp __ooo, d@m142, -2
+	}
+	return 1
+
+
+
+#deffunc dmgsp int __qqq, int __rrr
+	if (__qqq != 0) {
+		return
+	}
+	if (cSp(__qqq) >= (-100)) {
+		if (dbg_freesp == 0) {
+			cSp(__qqq) -= __rrr
+		}
+	}
+	return 1
+
+
+
+#deffunc healsan int __sss, int __ttt
+	cInsanity(__sss) -= __ttt
+	if (cInsanity(__sss) < 0) {
+		cInsanity(__sss) = 0
+	}
+	return
+
+
+
+#deffunc dmgsan int __uuu, int __vvv
+	if (cQuality(__uuu) >= 4) {
+		return 0
+	}
+	r@m143 = sdata(54, __uuu) / 50
+	if (r@m143 <= 0) {
+		r@m143 = 1
+	}
+	if (r@m143 > 10) {
+		return 0
+	}
+	dmg@m143 = __vvv / r@m143
+	if (petcheck(__uuu)) {
+		if (gettrait(0, 166)) {
+			dmg@m143 = dmg@m143 - rnd(4)
+		}
+	}
+	if (dmg@m143 > 0) {
+		cInsanity(__uuu) = limit(cInsanity(__uuu) + dmg@m143, 0, 2000000000)
+	} else {
+		dmg@m143 = 0
+	}
+	if (rnd(10) == 0 | rnd(dmg@m143 + 1) > 5 | rnd(cInsanity(__uuu) + 1) > 50) {
+		dmgcon __uuu, 11, 100
+	}
+	if (godcheck(__uuu) == "danalin") {
+		r1 = __uuu
+		gosub *chara_refresh
+	}
+	return 1

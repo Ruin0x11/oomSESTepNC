@@ -1,0 +1,693 @@
+
+// 現在1位か
+#defcfunc horse_getrank local __vvv
+  __vvv = 1
+  repeat 6
+    if (horsestat(cnt, 0) == cc) {
+      continue
+    }
+    if (cX(cc) < cX(horsestat(cnt, 0))) {
+      __vvv = 0
+      break
+    }
+  loop
+return __vvv
+
+// まだそのスキルが発動してないか
+#defcfunc horse_notappskill int __rrr, int __uuu, local __vvv
+  __vvv = 1
+  repeat 3
+    if (horsestat(__rrr, cnt + 1) != 0 & horsestat(__rrr, cnt + 1) \ 10000 == __uuu) {
+      __vvv = 0
+      break
+    }
+  loop
+return __vvv
+
+// 発動判定
+// __rrr : 発動率ボーナス
+#defcfunc horse_skillapp int __rrr, local __vvv
+  // 基礎確率
+  __vvv = rnd(limitmax(sdata(19, cc) / 50, 30) + limitmax(sdata(12, cc) / 20, 60) + 1) - 50 + __rrr
+  __vvv = limitmin(__vvv, 10)
+	if (rnd(100) < __vvv) {
+    return 1
+  }
+return 0
+
+// 馬フィートの取得
+#defcfunc horse_getskill int __uuu, int __vvv
+	s@m3 = getfactionvalue(__uuu, "horskill" + __vvv)
+	if (s@m3 != "") {
+		p@m3 = int(s@m3)
+	} else {
+		p@m3 = 0
+	}
+return p@m3
+
+// 抜けるか判定
+#defcfunc horse_without int __rrr, local __vvv, local __yyy
+  __vvv = 0
+	if (rnd(3) == 0) {
+    return 1
+  }
+  repeat 6
+    if (cc == horsestat(cnt, 0)) {
+      __yyy = cnt
+      break
+    }
+  loop
+  repeat 3
+    if (horsestat(__yyy, cnt + 1) \ 10000 == 2) {
+      if (rnd(5) < horse_getskill(cc, 2)) {
+        __vvv = 1
+        break
+      }
+    }
+  loop
+  if (__vvv) {
+    return 1
+  }
+return 0
+
+// 鉄壁もちか
+#defcfunc horse_ironclad int __rrr, local __vvv, local __yyy
+  repeat 6
+    if (__rrr == horsestat(cnt, 0)) {
+      __yyy = cnt
+      break
+    }
+  loop
+  repeat 3
+    if (horsestat(__yyy, cnt + 1) \ 10000 == 25) {
+      if (rnd(3) < horse_getskill(__rrr, 25)) {
+        __vvv = 1
+        break
+      }
+    }
+  loop
+  if (__vvv) {
+    return 1
+  }
+return 0
+
+// コース判定
+#defcfunc horse_length
+  // ロングコースなら
+	if (nc_horse_001) {
+    return 146
+  }
+return 76
+
+// 速度倍率
+#defcfunc horse_spcons int __rrr, local __zzz, local __xxx, local __yyy, local __vvv
+  __zzz = 1.0
+  repeat 6
+    if (__rrr == horsestat(cnt, 0)) {
+      __yyy = cnt
+      break
+    }
+  loop
+  if (gWeather == 0) {
+    if (horse_getskill(horsestat(__yyy, 0), 10) > 0) {
+      __zzz += 0.08 * (horse_getskill(horsestat(__yyy, 0), 10) / 10000)
+    }
+  }
+  if (gWeather >= 3) {
+    if (horse_getskill(horsestat(__yyy, 0), 11) > 0) {
+      __zzz += 0.08 * (horse_getskill(horsestat(__yyy, 0), 11) / 10000)
+    }
+  }
+  repeat 3
+    __xxx = horsestat(__yyy, cnt + 1)
+    if (horsestat(__yyy, cnt + 1) \ 10000 == 0) {
+      __zzz += 0.1 * (horsestat(__yyy, cnt + 1) / 10000)
+      continue
+    }
+    if (horsestat(__yyy, cnt + 1) \ 10000 == 5) {
+      __zzz += 0.3 * (horsestat(__yyy, cnt + 1) / 10000)
+      continue
+    }
+    if (horsestat(__yyy, cnt + 1) \ 10000 == 21) {
+      __zzz += 1.5 * (horsestat(__yyy, cnt + 1) / 10000)
+      continue
+    }
+    if (horsestat(__yyy, cnt + 1) \ 10000 == 23) {
+      __zzz += 1.0 * (horsestat(__yyy, cnt + 1) / 10000)
+      continue
+    }
+    if (horsestat(__yyy, cnt + 1) \ 10000 == 24) {
+      __zzz += 0.5 * (horsestat(__yyy, cnt + 1) / 10000)
+      continue
+    }
+    if (horsestat(__yyy, cnt + 1) \ 10000 == 26) {
+      __zzz += 0.75 * (horsestat(__yyy, cnt + 1) / 10000)
+      continue
+    }
+  loop
+  repeat 6
+    if (__rrr == horsestat(cnt, 0)) {
+      continue
+    }
+    __vvv = cnt
+    repeat 3
+      if (horsestat(__vvv, cnt + 1) \ 10000 == 8) {
+        __zzz -= 0.2 * (horsestat(__vvv, cnt + 1) / 10000) * (1.0 - horse_getskill(horsestat(__yyy, 0), 9) * 0.1)
+        continue
+      }
+      if (horsestat(__vvv, cnt + 1) \ 10000 == 24) {
+        __zzz -= 0.1 * (horsestat(__vvv, cnt + 1) / 10000) * (1.0 - horse_getskill(horsestat(__yyy, 0), 9) * 0.1)
+        continue
+      }
+      if (horsestat(__vvv, cnt + 1) \ 10000 == 26) {
+        __zzz -= 0.15 * (horsestat(__vvv, cnt + 1) / 10000) * (1.0 - horse_getskill(horsestat(__yyy, 0), 9) * 0.1)
+        continue
+      }
+    loop
+  loop
+  if (__zzz < 0.1) {
+    return 0.1
+  }
+return __zzz
+
+// スタミナ消費率
+#defcfunc horse_stcons local __zzz, local __xxx, local __yyy, local __vvv
+  __zzz = 1.0
+  repeat 6
+    if (cc == horsestat(cnt, 0)) {
+      __yyy = cnt
+      break
+    }
+  loop
+  repeat 3
+    __xxx = horsestat(__yyy, cnt + 1)
+    if (__xxx \ 10000 == 1) {
+      __zzz -= 0.1 * (__xxx / 10000)
+      continue
+    }
+    if (__xxx \ 10000 == 3) {
+      __zzz -= 0.2 * (__xxx / 10000)
+      continue
+    }
+    if (__xxx \ 10000 == 4) {
+      __zzz -= 0.2 * (__xxx / 10000)
+      continue
+    }
+    if (__xxx \ 10000 == 21) {
+      __zzz += 0.5 * (__xxx / 10000)
+      continue
+    }
+    if (__xxx \ 10000 == 23) {
+      __zzz += 0.2 * (__xxx / 10000)
+      continue
+    }
+    if (__xxx \ 10000 == 24) {
+      __zzz -= 0.2 * (__xxx / 10000)
+      continue
+    }
+  loop
+  repeat 6
+    if (cc == horsestat(cnt, 0)) {
+      continue
+    }
+    __vvv = cnt
+    repeat 3
+      if (horsestat(__vvv, cnt + 1) \ 10000 == 7) {
+        __zzz += 0.5 * (horsestat(__vvv, cnt + 1) / 10000)
+        continue
+      }
+      if (horsestat(__vvv, cnt + 1) \ 10000 == 24) {
+        __zzz += 0.2 * (horsestat(__vvv, cnt + 1) / 10000)
+        continue
+      }
+    loop
+  loop
+  if (__zzz < 0.1) {
+    return 0.1
+  }
+return __zzz
+
+// 馬レース
+*label_N850
+  // 馬以外は無視
+  if (filtercheck(cc, "horse")) {
+    if (cX(cc) < horse_length()) {
+      if (cSp(cc) < cMaxSp(cc) * -2) {
+        if (rnd(5) == 0) {
+          cTurnCost(cc) = 0
+          return
+        }
+      }
+      gosub *label_N851
+      gosub *label_N853
+      cSp(cc) -= ((sdata(18, cc) / 50) / 10 * (rnd(15) + 1) + 1) * horse_stcons()
+      if (rnd(70) == 0) {
+        if (cSp(cc) > 0) {
+          txtef 3
+  				txt -1, lang(cdatan(0, cc) + "は掛かってしまった。", cdatan(0, cc) + " was exhausted.")
+          cSp(cc) -= cMaxSp(cc) / 6
+        }
+      }
+      cSp(cc) += rnd(3) + 1 + rnd(limitmax(sdata(cc, 11) / 15, cMaxSp(cc) / 60) + 1)
+      refreshspeed cc
+    }
+    if (cX(cc) >= horse_length()) {
+      gosub *label_N852
+    }
+  } else {
+    if (rnd(30) == 0) {
+      txt cc, lang("「いいぞ！」", cnvtalk("Come on!")), lang("「突っ切れー！」", cnvtalk("Cut through!")), lang("「うぉぉぉぉ！」", cnvtalk("Wooooo!")), lang("「行けぇ！」", cnvtalk("Go go!"))
+    }
+  }
+return
+
+// 1マス進む
+*label_N851
+  f = 0
+  // 下、もしくは上あるいは前に敵がいるなら抜こうとする
+  repeat 245
+      if (cState(cnt) != 1) {
+        continue
+      }
+      if (cc == cnt) {
+        continue
+      }
+      if (cX(cnt) < horse_length()) {
+        if (horse_without(cc)) {
+          if (cX(cnt) == cX(cc) + 1) {
+            if (cY(cnt) == cY(cc)) {
+              f = 1
+              nc_intb_002 = cnt
+              // 対抗ロール
+              if (rnd(sdata(12, cc)) >= rnd(sdata(cnt, 12) * (cSp(cnt) / cMaxSp(cnt)) + (sdata(cnt, 12) / 5) + 1) & horse_ironclad(cnt) == 0) {
+                // 抜かせた場合
+                cNextX(cc) = cX(cnt)
+                cNextY(cc) = cY(cnt)
+                cell_swap cc, cnt
+                gosub *label_0623
+                gosub *label_1367
+                break
+              }
+            }
+          }
+        }
+        if (horse_without(cc)) {
+          if (cX(cnt) == cX(cc) + 1) {
+            if (cY(cnt) == cY(cc) + 1) {
+              f = 1
+              nc_intb_002 = cnt
+              // 対抗ロール
+              if (rnd(sdata(12, cc)) >= rnd(sdata(cnt, 12) * (cSp(cnt) / cMaxSp(cnt)) + (sdata(cnt, 12) / 5) + 1) & horse_ironclad(cnt) == 0) {
+                // 抜かせた場合
+                cNextX(cc) = cX(cnt)
+                cNextY(cc) = cY(cnt)
+                cell_swap cc, cnt
+                gosub *label_0623
+                gosub *label_1367
+                break
+              }
+            }
+          }
+        }
+        if (horse_without(cc)) {
+          if (cX(cnt) == cX(cc) + 1) {
+            if (cY(cnt) == cY(cc) - 1) {
+              f = 1
+              nc_intb_002 = cnt
+              // 対抗ロール
+              if (rnd(sdata(12, cc)) >= rnd(sdata(cnt, 12) * (cSp(cnt) / cMaxSp(cnt)) + (sdata(cnt, 12) / 5) + 1) & horse_ironclad(cnt) == 0) {
+                // 抜かせた場合
+                cNextX(cc) = cX(cnt)
+                cNextY(cc) = cY(cnt)
+                cell_swap cc, cnt
+                gosub *label_0623
+                gosub *label_1367
+                break
+              }
+            }
+          }
+        }
+      }
+  loop
+  if (f & rnd(3) == 0) {
+    return
+  }
+  f = 0
+  // 抜ける相手が居ないなら直進
+  cell_check cX(cc) + 1, cY(cc)
+  if (cellaccess == 1) {
+    repeat 245
+        if (cState(cnt) != 1) {
+          continue
+        }
+        if (cc == cnt) {
+          continue
+        }
+        if (cX(cnt) == cX(cc) + 1) {
+          if (cY(cnt) == cY(cc)) {
+            f = 1
+            break
+          }
+        }
+    loop
+    if (f) {
+      return
+    }
+    f = 1
+    cNextX(cc) += 1
+    cNextY(cc) = cY(cc)
+    redraw 0
+    screenupdate = -1
+    gosub *label_0623
+    gosub *label_1367
+  }
+  if (f == 0) {
+    cSp(cc) -= ((sdata(18, cc) / 50) / 10 * (rnd(15) + 1) + 1) * horse_stcons()
+  }
+  if (f & cY(cc) >= 12) {
+    return
+  }
+  f = 0
+  nc_intb_001 = 1
+  cell_check cX(cc), cY(cc) + nc_intb_001
+  if (cellaccess == 1 & 4 < cY(cc) + nc_intb_001) {
+    repeat 245
+        if (cState(cnt) != 1) {
+          continue
+        }
+        if (cc == cnt) {
+          continue
+        }
+        if (cX(cnt) == cX(cc)) {
+          if (cY(cnt) == cY(cc) + nc_intb_001) {
+            f = 2
+            break
+          }
+        }
+    loop
+    if (f < 2) {
+      cNextX(cc) = cX(cc)
+      cNextY(cc) = cY(cc) + nc_intb_001
+      redraw 0
+      screenupdate = -1
+      gosub *label_0623
+      gosub *label_1367
+      f = 1
+    }
+  }
+  if (f == 1) {
+    return
+  }
+  nc_intb_001 = (-1)
+  cell_check cX(cc), cY(cc) + nc_intb_001
+  if (cellaccess == 1 & 4 < cY(cc) + nc_intb_001) {
+    repeat 245
+        if (cState(cnt) != 1) {
+          continue
+        }
+        if (cc == cnt) {
+          continue
+        }
+        if (cX(cnt) == cX(cc)) {
+          if (cY(cnt) == cY(cc) + nc_intb_001) {
+            f = 1
+            break
+          }
+        }
+    loop
+    if (f) {
+      return
+    }
+    cNextX(cc) = cX(cc)
+    cNextY(cc) = cY(cc) + nc_intb_001
+    redraw 0
+    screenupdate = -1
+    gosub *label_0623
+    gosub *label_1367
+    f = 1
+  }
+return
+
+// 勝ちフラグ
+*label_N852
+  if (petarenawin == 0) {
+    if (cc < 16) {
+      petarenawin = 1
+    } else {
+      petarenawin = 2
+    }
+  }
+  repeat 6
+    if (horseracewin(cnt) == cc) {
+      break
+    }
+    if (horseracewin(cnt) != 0) {
+      continue
+    }
+    horseracewin(cnt) = cc
+    break
+  loop
+return
+
+// スキル発動、解除
+*label_N853
+  repeat 6
+    if (cc == horsestat(cnt, 0)) {
+      nc_intb_002 = cnt
+      break
+    }
+  loop
+  // 解除
+  repeat 3
+    if (horsestat(nc_intb_002, cnt + 1) == 0) {
+      continue
+    }
+    nc_intb_001 = horsestat(nc_intb_002, cnt + 1)
+    if (nc_intb_001 \ 10000 == 0) {
+      if (rnd(10) == 0) {
+        horsestat(nc_intb_002, cnt + 1) = 0
+      }
+    }
+    if (nc_intb_001 \ 10000 == 1) {
+      if (rnd(7) == 0) {
+        horsestat(nc_intb_002, cnt + 1) = 0
+      }
+    }
+    if (nc_intb_001 \ 10000 == 2) {
+      if (rnd(7) == 0) {
+        horsestat(nc_intb_002, cnt + 1) = 0
+      }
+    }
+    if (nc_intb_001 \ 10000 == 3) {
+      if (rnd(10) == 0 | cX(cc) >= horse_length() / 2) {
+        horsestat(nc_intb_002, cnt + 1) = 0
+      }
+    }
+    if (nc_intb_001 \ 10000 == 4) {
+      if (rnd(10) == 0 | cX(cc) < horse_length() / 2) {
+        horsestat(nc_intb_002, cnt + 1) = 0
+      }
+    }
+    if (nc_intb_001 \ 10000 == 5) {
+      if (rnd(10) == 0) {
+        horsestat(nc_intb_002, cnt + 1) = 0
+      }
+    }
+    if (nc_intb_001 \ 10000 == 7) {
+      if (rnd(10) == 0) {
+        horsestat(nc_intb_002, cnt + 1) = 0
+      }
+    }
+    if (nc_intb_001 \ 10000 == 8) {
+      if (rnd(10) == 0) {
+        horsestat(nc_intb_002, cnt + 1) = 0
+      }
+    }
+    if (nc_intb_001 \ 10000 == 21) {
+      if (cX(cc) >= horse_length() / 3) {
+        if (cSp(cc) > cMaxSp(cc) / 100 * (nc_intb_001 / 10000 * 15)) {
+          cSp(cc) = cMaxSp(cc) / 100 * (nc_intb_001 / 10000 * 15)
+        }
+        horsestat(nc_intb_002, cnt + 1) = 0
+      }
+    }
+    if (nc_intb_001 \ 10000 == 25) {
+      if (rnd(15) == 0) {
+        horsestat(nc_intb_002, cnt + 1) = 0
+      }
+    }
+  loop
+  // 発動
+  repeat 3
+    if (horsestat(nc_intb_002, cnt + 1) != 0) {
+      continue
+    }
+    if (horse_getskill(cc, 0)) {
+      if (horse_skillapp(20) & horse_notappskill(nc_intb_002, 0)) {
+        animeid = 5
+				gosub *label_0630
+        txtef 2
+				txt -1, lang(cdatan(0, cc) + "は加速した！", cdatan(0, cc) + " has accelerated!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 0) * 10000 + 0
+        continue
+      }
+    }
+    if (horse_getskill(cc, 1)) {
+      if (horse_skillapp(10) & horse_notappskill(nc_intb_002, 1)) {
+        animeid = 5
+				gosub *label_0630
+        txtef 2
+				txt -1, lang(cdatan(0, cc) + "はスタミナを節約した！", cdatan(0, cc) + " saved stamina!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 1) * 10000 + 1
+        continue
+      }
+    }
+    if (horse_getskill(cc, 2)) {
+      if (horse_skillapp(10) & horse_notappskill(nc_intb_002, 2)) {
+        animeid = 5
+				gosub *label_0630
+        txtef 2
+				txt -1, lang(cdatan(0, cc) + "は立ち回りがうまくなった！", cdatan(0, cc) + " is standing up better now!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 2) * 10000 + 2
+        continue
+      }
+    }
+    if (horse_getskill(cc, 3)) {
+      if (horse_skillapp(25) & cX(cc) < horse_length() / 2 & horse_notappskill(nc_intb_002, 3)) {
+        animeid = 5
+				gosub *label_0630
+        txtef 2
+				txt -1, lang(cdatan(0, cc) + "はスタミナを節約した！", cdatan(0, cc) + " saved stamina!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 3) * 10000 + 3
+        continue
+      }
+    }
+    if (horse_getskill(cc, 4)) {
+      if (horse_skillapp(25) & cX(cc) >= horse_length() / 2 & horse_notappskill(nc_intb_002, 4)) {
+        animeid = 5
+				gosub *label_0630
+        txtef 2
+				txt -1, lang(cdatan(0, cc) + "はスタミナを節約した！", cdatan(0, cc) + " saved stamina!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 4) * 10000 + 4
+        continue
+      }
+    }
+    if (horse_getskill(cc, 5)) {
+      if (horse_skillapp(35) & cX(cc) >= horse_length() / 2 & horse_notappskill(nc_intb_002, 5)) {
+        animeid = 5
+				gosub *label_0630
+        txtef 2
+				txt -1, lang(cdatan(0, cc) + "は本気を出し始めた！", cdatan(0, cc) + " is getting serious!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 5) * 10000 + 5
+        continue
+      }
+    }
+    if (horse_getskill(cc, 6)) {
+      if (horse_skillapp(-5) & cSp(cc) < cMaxSp(cc) / 2) {
+        animeid = 5
+				gosub *label_0630
+        txtef 2
+				txt -1, lang(cdatan(0, cc) + "はスタミナを回復した！", cdatan(0, cc) + " has regained her stamina!")
+        cSp(cc) += cMaxSp(cc) / 100 * (horse_getskill(cc, 6) * 3)
+        continue
+      }
+    }
+    if (horse_getskill(cc, 7)) {
+      if (horse_skillapp(10) & horse_notappskill(nc_intb_002, 7)) {
+        animeid = 5
+				gosub *label_0630
+        txtef 2
+				txt -1, lang(cdatan(0, cc) + "は敵を惑わした！", cdatan(0, cc) + " has misled the enemy!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 7) * 10000 + 7
+        continue
+      }
+    }
+    if (horse_getskill(cc, 8)) {
+      if (horse_skillapp(10) & horse_notappskill(nc_intb_002, 8)) {
+        animeid = 5
+				gosub *label_0630
+        txtef 2
+				txt -1, lang(cdatan(0, cc) + "は敵を惑わした！", cdatan(0, cc) + " has misled the enemy!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 8) * 10000 + 8
+        continue
+      }
+    }
+    if (horse_getskill(cc, 21)) {
+      if (horse_skillapp(70) & cX(cc) < 10 & horse_notappskill(nc_intb_002, 21)) {
+        animeid = 5
+				gosub *label_0630
+        txtef 4
+				txt -1, lang(cdatan(0, cc) + "は竜頭蛇尾の力を発揮した！", cdatan(0, cc) + " has demonstrated the power of the dragon's head!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 21) * 10000 + 21
+        continue
+      }
+    }
+    if (horse_getskill(cc, 22)) {
+      if (horse_skillapp(20)) {
+        repeat 6
+          if (cc == horsestat(cnt, 0)) {
+            continue
+          }
+          if (cX(cc) == cX(horsestat(cnt, 0))) {
+            cell_check cX(cc) + 1, cY(horsestat(cnt, 0))
+            if (cellaccess == 1) {
+              f = 0
+              cNextX(cc) = cX(cc) + 1
+              cNextY(cc) = cY(horsestat(cnt, 0))
+              redraw 0
+              gosub *label_0623
+              gosub *label_1367
+              txtef 4
+      				txt -1, lang(cdatan(0, cc) + "は華麗なスライドで敵の前を塞いだ！", cdatan(0, cc) + " blocked the enemy's front with a brilliant slide!")
+              snd 72
+              break
+            }
+          }
+        loop
+        continue
+      }
+    }
+    if (horse_getskill(cc, 23)) {
+      if (horse_skillapp(45) & cX(cc) >= horse_length() / 2 & horse_notappskill(nc_intb_002, 23) & horse_getrank()) {
+        animeid = 5
+				gosub *label_0630
+        txtef 4
+				txt -1, lang(cdatan(0, cc) + "は逃げ切りの構えを見せた！", cdatan(0, cc) + " has looks ready to run!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 23) * 10000 + 23
+        continue
+      }
+    }
+    if (horse_getskill(cc, 24)) {
+      if (horse_skillapp(45) & cX(cc) >= horse_length() / 2 & horse_notappskill(nc_intb_002, 24) & horse_getrank() == 0) {
+        animeid = 5
+				gosub *label_0630
+        txtef 4
+				txt -1, lang(cdatan(0, cc) + "は追い抜きの意地を見せた！", cdatan(0, cc) + " showed his will to overtake!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 24) * 10000 + 24
+        continue
+      }
+    }
+    if (horse_getskill(cc, 25)) {
+      if (horse_skillapp(15) & horse_notappskill(nc_intb_002, 25)) {
+        animeid = 5
+				gosub *label_0630
+        txtef 4
+				txt -1, lang(cdatan(0, cc) + "は鉄壁の構えを張った！", cdatan(0, cc) + " has set up an ironclad stance!")
+        horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 25) * 10000 + 25
+        continue
+      }
+    }
+    if (horse_getskill(cc, 26)) {
+      if (gWeather == 1) {
+        if (horse_skillapp(25) & cX(cc) >= horse_length() / 2 & horse_notappskill(nc_intb_002, 26)) {
+          animeid = 5
+  				gosub *label_0630
+          txtef 4
+  				txt -1, lang(cdatan(0, cc) + "はエーテルの風に乗った！", cdatan(0, cc) + " has on the ether wind!")
+          horsestat(nc_intb_002, cnt + 1) = horse_getskill(cc, 26) * 10000 + 26
+          continue
+        }
+      }
+    }
+  loop
+return

@@ -1,0 +1,4145 @@
+#deffunc net_read int __ppp
+	chatnew = ""
+	netbuf = ""
+	if (cfg_net == 0) {
+		return 0
+	}
+	if (__ppp == 5) {
+		url@m147 = "http://" + cfg_hostname + "/eln/text.txt"
+		conurl@m147 = cfg_hostname
+	}
+	if (__ppp == 0) {
+		url@m147 = chatreadurl
+		conurl@m147 = cgiurl2
+	}
+	if (__ppp == 1) {
+		url@m147 = "http://" + cfg_hostname + "/eln/vote.txt"
+		conurl@m147 = cfg_hostname
+	}
+	if (__ppp == 2) {
+		url@m147 = "/rfish/userfile/cliplog.txt"
+		conurl@m147 = "homepage3.nifty.com"
+	}
+	if (__ppp == 3) {
+		url@m147 = "/rfish/file/welcome.txt"
+		conurl@m147 = "homepage3.nifty.com"
+	}
+	if (__ppp == 4) {
+		url@m147 = "http://homepage3.nifty.com/rfish/file/server.txt"
+		conurl@m147 = "homepage3.nifty.com"
+	}
+	sockopen 0, conurl@m147, 80
+	if (stat) {
+		sockclose
+		return 0
+	}
+	sockput "GET " + url@m147 + " HTTP/1.0\nHost:???\nUser-Agent: HSP ver3.0\n\n"
+	if (stat) {
+		sockclose
+		return 0
+	}
+	a@m147 = ""
+	sz@m147 = 0
+	t@m147 = 0
+*label_0597
+	await 0
+	t@m147++
+	if (t@m147 > 10000) {
+		getkey c@m147, 27
+		if (c@m147) {
+			txt -1, "[Chat Skipped]"
+			sockclose
+			return 0
+		}
+	}
+	sockget a@m147, 64
+	if (stat) {
+		sockclose
+		return 0
+	}
+	b@m147 = peek(a@m147, 0)
+	if (b@m147 == 0) {
+		goto *label_0598
+	}
+	netbuf += a@m147
+	sz@m147 += 64
+	if (sz@m147 > 30000) {
+		goto *label_0598
+	}
+	goto *label_0597
+*label_0598
+	sockclose
+	if (__ppp == 1 | __ppp == 4) {
+		header@m147 = instr(netbuf, 0, "\n\n") + 4
+	} else {
+		header@m147 = instr(netbuf, 0, "<!--START-->") + 13
+	}
+	repeat
+		if (__ppp == 4) {
+			netbuf = strmid(netbuf, header@m147, 2000)
+			break
+		}
+		if (__ppp == 5) {
+			tail@m147 = instr(netbuf, header@m147, "%")
+			if (tail@m147 == (-1)) {
+				break
+			}
+			listn(0, listmax) = strmid(netbuf, header@m147, tail@m147)
+			header@m147 += tail@m147 + 1
+			listmax++
+		}
+		if (__ppp == 1) {
+			tail@m147 = instr(netbuf, header@m147, "<>")
+			if (tail@m147 == (-1)) {
+				break
+			}
+			list(0, listmax) = int(strmid(netbuf, header@m147, tail@m147))
+			header@m147 += tail@m147 + 2
+			tail@m147 = instr(netbuf, header@m147, "<>")
+			listn(0, listmax) = "" + strmid(netbuf, header@m147, tail@m147)
+			header@m147 += tail@m147 + 2
+			tail@m147 = instr(netbuf, header@m147, "<>")
+			list(1, listmax) = int(strmid(netbuf, header@m147, tail@m147))
+			header@m147 += tail@m147 + 2
+			listn(1, listmax) = "" + list(1, listmax)
+			tail@m147 = instr(netbuf, header@m147, "<>")
+			header@m147 += tail@m147 + 2
+			tail@m147 = instr(netbuf, header@m147, "<>")
+			header@m147 += tail@m147 + 3
+			listmax++
+		}
+		if (__ppp == 0) {
+			tail@m147 = instr(netbuf, header@m147, "%")
+			if (tail@m147 == (-1)) {
+				break
+			}
+			chat_count@m147 = int(strmid(netbuf, header@m147, tail@m147))
+			header@m147 += tail@m147 + 1
+			if (cnt == 0) {
+				if (chat_count@m147 > count_latest@m147) {
+					count_latest@m147 = chat_count@m147
+				}
+			}
+			if (cnt == 1) {
+				if (lastchat == 0) {
+					break
+				}
+			}
+			if (chat_count@m147 <= lastchat) {
+				break
+			}
+			tail@m147 = instr(netbuf, header@m147, "%")
+			chat_date@m147 = strmid(netbuf, header@m147, tail@m147)
+			header@m147 += tail@m147 + 1
+			tail@m147 = instr(netbuf, header@m147, "%")
+			chat_msg@m147 = strmid(netbuf, header@m147, tail@m147)
+			header@m147 += tail@m147 + 1
+			tail@m147 = instr(netbuf, header@m147, "%")
+			chat_ip@m147 = strmid(netbuf, header@m147, tail@m147)
+			header@m147 += tail@m147 + 2
+			if (checkngwords(chat_msg@m147) != 1) {
+				chatnew += "" + chat_msg@m147 + "\n"
+			}
+		}
+		if (__ppp == 3) {
+			tail@m147 = instr(netbuf, header@m147, "%")
+			if (tail@m147 == (-1)) {
+				break
+			}
+			tail@m147 = instr(netbuf, header@m147, "%")
+			s = strmid(netbuf, header@m147, tail@m147)
+			header@m147 += tail@m147 + 1
+			tail@m147 = instr(netbuf, header@m147, "%")
+			s(1) = strmid(netbuf, header@m147, tail@m147)
+			header@m147 += tail@m147 + 1
+			break
+		}
+	loop
+	if (__ppp == 0) {
+		lastchat = count_latest@m147
+	}
+	return 1
+
+
+
+#deffunc net_dllist str __qqq, int __rrr
+	netinit
+	if (cfg_showroomserver == 0) {
+		neturl "http://homepage3.nifty.com/rfish/userfile/"
+	} else {
+		neturl "http://" + cfg_hostname + "/eln/userfile/"
+	}
+	file@m147 = exedir + "user\\net.tmp"
+	exist file@m147
+	if (strsize != (-1)) {
+		delete file@m147
+	}
+	netdlname file@m147
+	netload "cliplog.txt"
+	exist file@m147
+	if (strsize == (-1)) {
+		return 0
+	}
+	notesel netbuf
+	noteload file@m147
+	exist file@m147
+	size@m147 = strsize
+	p@m147 = 0
+	repeat 10000
+		if (instr(netbuf, p@m147, "<") == (-1) | p@m147 + 1 >= size@m147) {
+			break
+		}
+		f@m147 = 0
+		repeat 14
+			nxt@m147 = instr(netbuf, p@m147, "<")
+			if (nxt@m147 == (-1)) {
+				break
+			}
+			s@m147 = strmid(netbuf, p@m147, nxt@m147)
+			p@m147 += nxt@m147 + 2
+			if (cnt == 0) {
+				list(0, listmax) = listmax, int(s@m147)
+			}
+			if (cnt == 2) {
+				listn(0, listmax) = "" + s@m147, "net"
+			}
+			if (cnt == 3) {
+				list(2, listmax) = int(s@m147)
+				if (int(s@m147) != 100001) {
+					if (__rrr == 0) {
+						f@m147 = 1
+					}
+				}
+			}
+			if (cnt == 5) {
+				listn(0, listmax) += " " + s@m147
+			}
+			if (cnt == 9) {
+				if (s@m147 != __qqq) {
+					f@m147 = 1
+				}
+			}
+		loop
+		if (f@m147 == 0) {
+			listmax++
+		}
+		p@m147++
+	loop
+	return 1
+
+
+
+#deffunc net_dl str __sss, str __ttt
+	exist exedir + "user\\" + __ttt
+	if (strsize != (-1)) {
+		delete exedir + "user\\" + __ttt
+	}
+	if (cfg_showroomserver == 0) {
+		neturl "http://homepage3.nifty.com/rfish/userfile/"
+	} else {
+		neturl "http://" + cfg_hostname + "/eln/userfile/"
+	}
+	netdlname exedir + "user\\" + __ttt
+	netload __sss
+	exist exedir + "user\\" + __ttt
+	if (strsize == (-1)) {
+		return 0
+	}
+	return 1
+*label_0601
+	sdim cgiurl2
+	sdim cgiurl3
+	sdim serverlist, 200
+	notesel serverlist
+	if (cfg_serverlist == 0) {
+		cfg_netwish = 0
+	} else {
+		noteload exedir + "server.txt"
+		netbuf = serverlist
+	}
+	p = instr(netbuf, 0, "%")
+	cgiurl2 = strmid(netbuf, 0, p)
+	cgiurl3 = strmid(netbuf, p + 1, instr(netbuf, p + 1, "%"))
+	if (jp) {
+		chatreadurl = "http://www." + cgiurl2 + "/log.txt"
+		chatsendurl = "http://www." + cgiurl2 + "/cgi-bin/wtalk/wtalk2.cgi?mode=regist"
+		votesendurl = "http://www." + cgiurl3 + "/cgi-bin/vote/votec.cgi?no=1&mode=wri"
+		votereadurl = "http://www." + cgiurl3 + "/vote.txt"
+	} else {
+		chatreadurl = "http://www." + cgiurl2 + "/logen.txt"
+		chatsendurl = "http://www." + cgiurl2 + "/cgi-bin/wtalken/wtalk2.cgi?mode=regist"
+		votesendurl = "http://www." + cgiurl3 + "/cgi-bin/vote/votec.cgi?no=0&mode=wri"
+		votereadurl = "http://www." + cgiurl3 + "/voteen.txt"
+	}
+	textreadurl = "http://www." + cgiurl3 + "/text.txt"
+	return
+*label_0602
+	if (chatdeny == 1) {
+		if (chatturn > 20) {
+			chatdeny = 0
+		} else {
+			txt -1, lang("もう少し待った方がいい気がする。", "You think you should wait a little more.")
+			return
+		}
+	}
+	if (jp) {
+		imeset 1
+	}
+	val = 80, windowh - inf_verh - 70, 38, 1, 0
+	inputlog = ""
+	gosub *label_1349
+	imeset 0
+	if (inputlog == "") {
+		return
+	}
+	if (jp) {
+		inputlog = "「" + inputlog + "」"
+	} else {
+		inputlog = "\"" + inputlog + "\""
+	}
+	txt -1, inputlog
+	net_send "chat" + cdatan(1, 0) + lang("", " ") + cdatan(0, 0) + lang("", " says, ") + inputlog
+	if (cfg_NC_logapply == 1) {
+		s = "[" + cdatan(1, 0) + " " + cdatan(0, 0) + "]" + lang("", " says, ") + inputlog
+		gosub *label_NNet
+	}
+	chatturn = 0
+	chatdeny = 1
+	return
+*label_0603
+	gsel 4
+	repeat 8
+		pos cnt \ 4 * 180, cnt / 4 * 300
+		picload_ exedir + "\\graphic\\g" + (cnt + 1) + ".bmp", 1
+	loop
+	gsel 0
+	listmax = 0
+	page = 0
+	pagesize = 16
+	cs = 0
+	cc = 0
+	cs_bk = -1
+	repeat 6
+		listn(0, cnt) = "Could not connect to the server."
+	loop
+	listmax = 0
+	net_read 5
+	txt -1, lang(listn(0, 1), listn(0, 2))
+	listmax = 0
+	list(0, listmax) = -999, 0
+	listn(0, listmax) = lang("あなたの異名を登録する", "Submit your alias.")
+	listmax++
+	net_read 1
+	if (gNextVotingTime > getgametime()) {
+		comctrl = 0
+		txt -1, lang("あなたの投票権はまだ復活していない(" + cnvdate(gNextVotingTime, 1) + "まで)", "You can't vote until " + cnvdate(gNextVotingTime, 1) + ".")
+		repeat listmax
+			if (cnt == 0) {
+				continue
+			}
+			list(1, cnt) = 1000000 - list(1, cnt)
+		loop
+		gosub *label_1278
+	} else {
+		comctrl = 1
+		txt -1, lang("どの候補に投票する？", "Which one do you want to vote?")
+		repeat listmax
+			if (cnt == 0) {
+				continue
+			}
+			list(1, cnt) = rnd(10000)
+		loop
+		gosub *label_1278
+		if (listmax > pagesize) {
+			listmax = pagesize
+		}
+	}
+	windowshadow = 1
+*label_0604
+	redraw 0
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if (page < 0) {
+		page = pagemax
+	} else {
+		if (page > pagemax) {
+			page = 0
+		}
+	}
+*label_0605
+	redraw 0
+	s = lang("投票箱", "Voting Box"), lang("決定 [投票する項目を選択]  ", "Enter [Vote] ") + strhint2 + strhint3
+	display_window (windoww - 640) / 2 + inf_screenx, winposy(448), 640, 448
+	x = ww / 5 * 3
+	y = wh - 80
+	gmode 4, 180, 300, 50
+	pos wx + ww / 3 * 2, wy + wh / 2
+	grotate 4, cmbg / 4 \ 4 * 180, cmbg / 4 / 4 \ 2 * 300, 0, x, y
+	gmode 2
+	s = lang("投票項目", "Choice"), "", lang("備考", "Vote")
+	display_topic s, wx + 28, wy + 36
+	display_topic s(2), wx + 440, wy + 36
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if (p >= listmax) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+		if (cnt \ 2 == 0) {
+			pos wx + 70, wy + 66 + cnt * 19
+			gfini 540, 18
+			gfdec2 12, 14, 16
+		}
+		display_key wx + 58, wy + 66 + cnt * 19 - 2, cnt
+	loop
+	gmode 2
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	cs_listbk
+	repeat pagesize
+		p = pagesize * page + cnt
+		if (p >= listmax) {
+			break
+		}
+		i = list(0, p)
+		s = "" + listn(0, p), "" + listn(1, p)
+		if (p != 0) {
+			pos wx + 90, wy + 66 + cnt * 19 + 2
+			if (comctrl == 0) {
+				mes lang("第" + p + "位", cnvrank(p))
+			} else {
+				mes lang("候補", "")
+			}
+		}
+		cs_list s, wx + 138, wy + 66 + cnt * 19 - 1, 19
+		if (i != (-999)) {
+			pos wx + 462, wy + 66 + cnt * 19 + 2
+			mes s(1)
+		}
+	loop
+	if (keyrange != 0) {
+		cs_bk = cs
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if (key == key_select(cnt)) {
+			p = list(0, pagesize * page + cnt)
+			cs = cnt
+			break
+		}
+	loop
+	if (p != (-1)) {
+		if (p == (-999)) {
+			net_send "" + cdatan(1, 0) + lang("", " ") + cdatan(0, 0), 1
+			promptl(0, 0) = lang("オッケー", "Ok"), "y", "0"
+			promptmax = 1
+			val = promptx, prompty, 200, 1
+			gosub *label_1353
+			goto *label_0603
+		}
+		if (gNextVotingTime > getgametime()) {
+			snd 27
+			txt -1, lang("まだ投票権が復活していない。", "You need to wait before submitting a new vote.")
+			goto *label_0604
+		}
+		gNextVotingTime = getgametime() + 24 * 7
+		txt -1, lang("「" + listn(0, cs + pagesize * page) + "は素敵！」", cnvtalk("I like " + listn(0, cs + pagesize * page) + "!"))
+		txt -1, lang("投票した。", "You vote.")
+		net_send "" + p, 2
+		modrank 6, 100, 5
+		promptl(0, 0) = lang("オッケー", "Ok"), "y", "0"
+		promptmax = 1
+		val = promptx, prompty, 200, 1
+		gosub *label_1353
+		goto *label_0603
+	}
+	if (key == key_pageup) {
+		if (pagemax != 0) {
+			snd 1
+			page++
+			goto *label_0604
+		}
+	}
+	if (key == key_pagedown) {
+		if (pagemax != 0) {
+			snd 1
+			page--
+			goto *label_0604
+		}
+	}
+	if (key == key_cancel) {
+		return -1
+	}
+	goto *label_0605
+*label_0607
+	snd 102
+	gsel 7
+	picload_ exedir + "graphic\\uploader.bmp"
+	gsel 0
+	redraw 0
+	pos 0, 0
+	gfini 485, 245
+	gfdec 80, 80, 80
+	pos 0, 0
+	gcopy 7, 0, 0, 480, 240
+	font "", 12, 0
+	color 0, 0, 0
+	pos 140, 25
+	mes lang("Escキーで閉じます。", "Select a file and press the upload button.\nPress the Esc key to return.")
+	pos 120, 180
+	mes lang("参照ボタンを押して、elona/userフォルダの中のファイルを選択し\nアップロードしてください。", "Select a file and press the upload button.")
+	sdim url, 512
+	url = "http://" + cfg_hostname + "/eln/?mode=simple&v=omake&pas=" + userpassword + "&sb="
+	uploadcount = 0
+	pos 0, 65
+	axobj ie, "Shell.Explorer.2", 480, 100
+	obj_ie = stat
+	comevent ie_event, ie, "{34A715A0-6587-11D0-924A-0020AFC7AC4D}", *label_0610
+	ieopen = 1
+*label_0608
+	p = 0
+	ie->"Navigate" , , url
+*label_0609
+	await 20
+	redraw 1
+	getkey a, 27
+	if (a) {
+		if (ginfo(2) == 0) {
+			clrobj obj_ie
+			obj_ie = 0
+			delcom ie_event
+			delcom ie
+			ieopen = 0
+			return
+		}
+	}
+	if (uploadcount == 0) {
+		if (p > 300) {
+			if (iewarning == 0) {
+				iewarning = 1
+				txt -1, lang("ブラウザ等を閉じるか、ゲームを再起動してみたらいいかもしれない…とあなたは感じた。", "Slow loading? Try exiting your internet browser or restart the game.")
+				goto *label_0608
+			}
+		}
+	}
+	p++
+	goto *label_0609
+*label_0610
+	dispid = comevdisp(ie_event)
+	if (dispid == 252) {
+		gosub *label_0612
+	}
+	return
+*label_0612
+	pdoc = ie("Document")
+	delcom pdoc
+	snd 20
+	uploadcount++
+	if (uploadcount == 2) {
+		gTimeWhenUplodingBecomesAvailable = getgametime() + 24 * 30
+		snd 44
+		gosub *label_1339
+		txtef 5
+		txt -1, lang(" *保存* ", "*saving*")
+	}
+	return
+*label_0613
+	snd 102
+	oomSEST_log "browser"
+	gsel 7
+	picload_ exedir + "graphic\\browser.bmp"
+	gsel 0
+	redraw 0
+	pos 0, 0
+	gfini 545, 445
+	gfdec 80, 80, 80
+	pos 0, 0
+	gcopy 7, 0, 0, 540, 440
+	font "", 12, 0
+	color 0, 0, 0
+	pos 140, 25
+	mes lang("Escキーで閉じます。", "Press the Esc key to return.")
+	sdim url, 512
+	if (cfg_showroomserver == 0) {
+		url = "http://hpcgi3.nifty.com/rfish/vote/votec.cgi?no=" + usermapid + "&uname=" + cdatan(1, 0) + cdatan(0, 0)
+	} else {
+		url = "http://" + cfg_hostname + "/eln/?mode=vote2&no=" + usermapid + "&uname=" + cdatan(1, 0) + cdatan(0, 0)
+	}
+	uploadcount = 0
+	pos 0, 65
+	axobj ie, "Shell.Explorer.2", 540, 365
+	obj_ie = stat
+	comevent ie_event, ie, "{34A715A0-6587-11D0-924A-0020AFC7AC4D}", *label_0616
+	ieopen = 1
+*label_0614
+	p = 0
+	ie->"Navigate" , , url
+*label_0615
+	await 20
+	redraw 1
+	getkey a, 27
+	if (a) {
+		if (ginfo(2) == 0) {
+			clrobj obj_ie
+			obj_ie = 0
+			delcom ie_event
+			delcom ie
+			ieopen = 0
+			keywait = 1
+			return
+		}
+	}
+	if (uploadcount == 0) {
+		if (p > 300) {
+			if (iewarning == 0) {
+				iewarning = 1
+				txt -1, lang("ブラウザ等を閉じるか、ゲームを再起動してみたらいいかもしれない…とあなたは感じた。", "Slow loading? Try exiting your internet browser or restart the game.")
+				goto *label_0614
+			}
+		}
+	}
+	p++
+	goto *label_0615
+*label_0616
+	dispid = comevdisp(ie_event)
+	if (dispid == 252) {
+		uploadcount++
+		snd 20
+	}
+	return
+*label_0618
+	selcur = 0
+	inf_clockarrowx = inf_clockx + 62
+	inf_clockarrowy = inf_clocky + 48
+	inf_barh = 16
+	inf_msgh = 72
+	inf_verh = inf_barh + inf_msgh
+	inf_msgline = 4
+	inf_raderx = 1
+	inf_raderw = 136
+	inf_screenw = windoww / inf_tiles + (windoww \ inf_tiles != 0)
+	inf_screenh = (windowh - inf_verh) / inf_tiles
+	if ((windowh - inf_verh) \ inf_tiles != 0) {
+		inf_screenh++
+	}
+	if (inf_vertype == 0) {
+		inf_ver = 0
+		inf_bary = 0
+		inf_msgy = inf_ver + inf_barh
+		inf_screeny = inf_verh
+		inf_clocky = windowh - inf_clockh
+		inf_radery = 1
+	} else {
+		inf_screeny = 0
+		if ((windowh - inf_verh) \ inf_tiles != 0) {
+			inf_screeny = 0 - inf_tiles + (windowh - inf_verh) \ inf_tiles
+		}
+		inf_ver = windowh - inf_verh
+		inf_bary = windowh - inf_barh
+		inf_msgy = inf_ver
+		inf_clocky = 0
+		inf_radery = windowh - 86
+	}
+	scposy = inf_screenh / 2 - 1
+	inf_hpx = (windoww - 84) / 2 - 100
+	inf_hpy = inf_ver - 12
+	inf_mpx = (windoww - 84) / 2 + 40
+	inf_mpy = inf_ver - 12
+	inf_msgx = inf_raderw
+	inf_msgspace = 15
+	inf_maxmsglen = (windoww - inf_msgx - 28) / inf_mesfont * 2 - 1
+	inf_maxlog = (inf_msgy - 100) / inf_msgspace + 3
+	inf_very = windowh - inf_verh
+	screenmsgy = inf_screeny + inf_tiles * 2
+	prompty = (windowh - inf_verh - 30) / 2 - 4
+	promptx = (windoww - 10) / 2 + 3
+	return
+*label_0619
+	gmode 0
+	pos 0, 0
+	if (txtadvscreenupdate == 1) {
+		gcopy 4, 0, 0, windoww, windowh - inf_verh
+	} else {
+		gcopy 4, 0, 0, windoww, 100
+	}
+	gmode 2
+	repeat 4
+		font lang(cfg_font1, cfg_font2), 13 - en * 2, 0
+		color 250, 250, 250
+		if (cnt == 0) {
+			sx = 265
+			sy = 8
+			pos sx - 30, 5
+			gcopy 3, 192, 360, 24, 16
+			pos sx + strlen(atxinfon(0)) * 13 / 2 + 14, 5
+			gcopy 3, 216, 360, 24, 16
+		} else {
+			sx = 220
+			sy = 10 + cnt * 14
+		}
+		pos sx, sy
+		mes atxinfon(cnt)
+	loop
+	txtadvscreenupdate = 1
+	return
+*label_0620
+	redraw 0
+	gmode 2
+	gosub *label_0623
+	return
+*label_0621
+	redraw 0
+	gmode 2
+	ap = windoww / 192
+	repeat ap + 1
+		if (cnt == ap) {
+			sx = windoww \ 192
+		} else {
+			sx = 192
+		}
+		pos cnt * 192, inf_bary
+		gcopy 3, 0, 464 - inf_barh, sx, inf_barh
+		pos cnt * 192, inf_msgy
+		gcopy 3, 496, 528, sx, inf_msgh
+	loop
+	pos 0, inf_msgy
+	gcopy 3, 120, 504, inf_msgx, inf_verh
+	pos inf_raderw + 6, inf_bary
+	gcopy 3, 208, 376, 16, 16
+	repeat 10
+		sx = 0
+		if (cnt == 8) {
+			sx = 8
+		}
+		if (cnt == 9) {
+			sx = 14
+		}
+		pos inf_raderw + cnt * 47 + 148 + sx, inf_bary + 1
+		gcopy 3, cnt * 16, 376, 16, 16
+	loop
+	font lang(cfg_font1, cfg_font2), 12 + sizefix - en * 2, 0
+	color 0, 0, 0
+	pos inf_raderw + 24, inf_bary + 3 + vfix - en
+	if (strlen(mdatan(0)) > 16 - (maplevel() != "") * 4) {
+		mes cnven(strmid(mdatan(0), 0, 16 - (maplevel() != "") * 4))
+	} else {
+		mes cnven(mdatan(0))
+	}
+	pos inf_raderw + 114, inf_bary + 3 + vfix - en
+	mes maplevel()
+*label_0622
+	repeat mapHeight
+		sy = cnt
+		repeat mapWidth
+			sx = cnt
+			if (map(sx, sy, 2) == map(sx, sy, 0)) {
+				gosub *label_0645
+			}
+		loop
+	loop
+*label_0623
+	screendrawhack = 1
+	gmode 2
+	redraw 0
+	if (mode == 9) {
+		gosub *label_0619
+	} else {
+		sxfix = 0
+		syfix = 0
+		gosub *label_0632
+		gosub *label_0633
+		gosub *label_0637
+	}
+	screendrawhack = 10
+	gosub *label_0625
+	if (autoturn == 1) {
+		gosub *label_0627
+	} else {
+		firstautoturn = 1
+		racount = 0
+	}
+	if (screenupdate != (-1)) {
+		redraw 1
+	}
+	screenupdate = 0
+	screendrawhack = 0
+	return
+*label_0624
+	gmode 2
+	redraw 0
+	gosub *label_0637
+	gosub *label_0625
+	redraw 1
+	screenupdate = 0
+	return
+*label_0625
+	font lang(cfg_font1, cfg_font2), 12 - en * 2, 1
+	pos inf_hpx, inf_hpy
+	gcopy 3, 312, 504, 104, 15
+	pos inf_mpx, inf_mpy
+	gcopy 3, 312, 504, 104, 15
+
+	if (cfg_NC_praypoint) {
+		pos inf_hpx - 120, inf_hpy
+		gcopy 3, 312, 504, 104, 15
+		// Praypoint bar
+		if (cPrayingPoint(0) > 0) {
+			ap = limit(int(1.0 * limitmax(cPrayingPoint(0), 1000) * 84 / 1000), 0, 1000)
+			pos inf_hpx + 16 - 120, inf_hpy + 5
+			gcopy 3, 412 - ap, 520, ap, 6
+			ap = limit(int(1.0 * limit(cPrayingPoint(0) - 1000, 0, 1000) * 84 / 1000), 0, 1000)
+			pos inf_hpx + 16 - 120, inf_hpy + 5
+			gcopy 3, 532 - ap, 520, ap, 6
+		}
+	}
+
+	// Hp bar
+	if (cHp(0) > 0) {
+		ap = limit(int(1.0 * cHp(0) * 84 / cMaxHp(0)), 0, 100)
+		pos inf_hpx + 16, inf_hpy + 5
+		gcopy 3, 412 - ap, 520, ap, 6
+	}
+
+	// Mp bar
+	if (cMp(0) > 0) {
+		ap = limit(int(1.0 * cMp(0) * 84 / cMaxMp(0)), 0, 100)
+		pos inf_mpx + 16, inf_mpy + 5
+		gcopy 3, 532 - ap, 520, ap, 6
+	}
+
+	if (gMount != 0) {
+		if (cState(gMount) == 1) {
+			if (cfg_NC_praypoint) {
+				pos inf_hpx - 120, inf_hpy - 30
+				gcopy 3, 312, 504, 104, 15
+				ap = limit(int(1.0 * cHp(gMount) * 84 / cMaxHp(gMount)), 0, 100)
+				pos inf_hpx - 120 + 16, inf_hpy - 25
+				gcopy 3, 412 - ap, 520, ap, 6
+			} else {
+				pos inf_hpx - 120, inf_hpy
+				gcopy 3, 312, 504, 104, 15
+				ap = limit(int(1.0 * cHp(gMount) * 84 / cMaxHp(gMount)), 0, 100)
+				pos inf_hpx - 120 + 16, inf_hpy + 5
+				gcopy 3, 412 - ap, 520, ap, 6
+			}
+		}
+	}
+	sx = inf_hpx + 16
+	sy = inf_hpy - 8
+	if (cfg_NC_praypoint) {
+		color 0, 0, 0
+		pos sx + 4 - 120, sy
+		bmes "" + cPrayingPoint(0) + "/2000", 255, 255, 255
+	}
+	color 0, 0, 0
+	pos sx + 4, sy
+	if (cMaxHp(0) > 100000000 & cfg_NC_stateshorten) {
+		bmes "" + cHp(0) / 1000000 + "M(" + cMaxHp(0) / 1000000 + "M)", 255, 255, 255
+	} elseif (cMaxHp(0) > 1000000 & cfg_NC_stateshorten) {
+		bmes "" + cHp(0) / 1000 + "K(" + cMaxHp(0) / 1000 + "K)", 255, 255, 255
+	} else {
+		bmes "" + cHp(0) + "(" + cMaxHp(0) + ")", 255, 255, 255
+	}
+	sx = inf_mpx + 16
+	sy = inf_mpy - 8
+	color 0, 0, 0
+	pos sx + 4, sy
+	if (cMaxMp(0) > 100000000 & cfg_NC_stateshorten) {
+		bmes "" + cMp(0) / 1000000 + "M(" + cMaxMp(0) / 1000000 + "M)", 255, 255, 255
+	} elseif (cMaxMp(0) > 1000000 & cfg_NC_stateshorten) {
+		bmes "" + cMp(0) / 1000 + "K(" + cMaxMp(0) / 1000 + "K)", 255, 255, 255
+	} else {
+		bmes "" + cMp(0) + "(" + cMaxMp(0) + ")", 255, 255, 255
+	}
+	font lang(cfg_font1, cfg_font2), 13 - en * 2, 0
+	color 0, 0, 0
+	sy = inf_bary + 2 + vfix
+	repeat 10
+		dup roopbuf, sdata(10 + cnt, 0)
+		sx = inf_raderw + cnt * 47 + 166
+		if (cnt < 8) {
+			if (cdata(240 + cnt, 0) < 0) {
+				color 200, 0, 0
+			} else {
+				color 0, 0, 0
+			}
+			pos sx, sy
+			gcopy 3, 0, 440, 28, 16
+			if (roopbuf >= 10000000 & cfg_NC_stateshorten) {
+				mes "" + (roopbuf / 1000000) + "M"
+			} elseif (roopbuf >= 10000 & cfg_NC_stateshorten) {
+				mes "" + (roopbuf / 1000) + "K"
+			} else {
+				mes "" + roopbuf
+			}
+		} else {
+			if (cnt == 8) {
+				pos sx + 8, sy
+				gcopy 3, 0, 440, 34, 16
+				if (gspdorg > gspd) {
+					color 200, 0, 0
+				} else {
+					if (gspdorg < gspd) {
+						color 0, 120, 0
+					} else {
+						color 0, 0, 0
+					}
+				}
+				if (gspd >= 10000000 & cfg_NC_stateshorten) {
+					mes "" + gspd / 1000000 + "M"
+				} elseif (gspd >= 10000 & cfg_NC_stateshorten) {
+					mes "" + gspd / 1000 + "K"
+				} else {
+					mes "" + gspd
+				}
+			} else {
+				color 0, 0, 0
+				pos sx + 14, sy
+				gcopy 3, 0, 440, 64, 16
+				if (cDv(0) >= 10000000 & cfg_NC_stateshorten) {
+					dvs = "" + cDv(0) / 1000000 + "M"
+				} elseif (cDv(0) >= 10000 & cfg_NC_stateshorten) {
+					dvs = "" + cDv(0) / 1000 + "K"
+				} else {
+					dvs = cDv(0)
+				}
+				if (cPv(0) >= 10000000 & cfg_NC_stateshorten) {
+					pvs = "" + cPv(0) / 1000000 + "M"
+				} elseif (cPv(0) >= 10000 & cfg_NC_stateshorten) {
+					pvs = "" + cPv(0) / 1000 + "K"
+				} else {
+					pvs = cPv(0)
+				}
+				mes "" + dvs + "/" + pvs
+			}
+		}
+	loop
+	font lang(cfg_font1, cfg_font2), 13 - en * 2, 0
+	sy = inf_ver - 16
+	sx = windoww - 260
+	pos sx, sy
+	gcopy 3, 0, 392, 24, 24
+	lint_buff = longint(INT_MAX) * longint(ncgdata(50)) + longint(cGold(0))
+	color 0
+	pos sx + 28, sy + 2
+	intg = ""
+	if (ncgdata(50) > 0) {
+		if (ncgdata(50) > 1000000) {
+			intg = "(" + thousandsep(str(ncgdata(50) / 1000000)) + "MI)"
+		} elseif (ncgdata(50) > 10000) {
+			intg = "(" + thousandsep(str(ncgdata(50) / 1000)) + "KI)"
+		} else {
+			intg = "(" + thousandsep(str(ncgdata(50))) + "I)"
+		}
+	}
+	if (lint_buff >= 10000000000000000) {
+		lint_buff = lint_buff / longint("1000000000")
+		if (lint_buff > 9999) {
+			bmes thousandsep(str(9999)) + "G+gp" + intg, 255, 255, 255
+		} else {
+			bmes thousandsep(str(lint_buff)) + "Ggp" + intg, 255, 255, 255
+		}
+	} elseif (lint_buff >= 10000000000000) {
+		lint_buff = lint_buff / longint("1000000")
+		bmes thousandsep(str(lint_buff)) + "Mgp" + intg, 255, 255, 255
+	} elseif (ncgdata(50) > 0) {
+		lint_buff = lint_buff / longint("1000")
+		bmes thousandsep(str(lint_buff)) + "Kgp" + intg, 255, 255, 255
+	} else {
+		bmes thousandsep(str(lint_buff)) + " gp" + intg, 255, 255, 255
+	}
+	/*
+	if (ncgdata(50) > 0) {
+		if (ncgdata(50) > 1000000) {
+			intg = "" + thousandsep(str(ncgdata(50) / 1000000)) + "MI+"
+		} elseif (ncgdata(50) > 10000) {
+			intg = "" + thousandsep(str(ncgdata(50) / 1000)) + "KI+"
+		} else {
+			intg = "" + thousandsep(str(ncgdata(50))) + "I+"
+		}
+	}
+	color 0
+	pos sx + 28, sy + 2
+	if (ncgdata(50) >= 1000) {
+		bmes intg + thousandsep(str(cGold(0) / 1000000)) + "Mgp", 255, 255, 255
+	} elseif (ncgdata(50) > 0) {
+		bmes intg + thousandsep(str(cGold(0) / 1000)) + "Kgp", 255, 255, 255
+	} else {
+		bmes intg + thousandsep(str(cGold(0))) + " gp", 255, 255, 255
+	}
+	*/
+	sx = windoww - 120
+	pos sx, sy
+	gcopy 3, 24, 392, 24, 24
+	color 0
+	pos sx + 28, sy + 2
+	bmes thousandsep(str(cPlatinumCoin(0))) + " pp", 255, 255, 255
+	if (cfg_NC_itemcount != 0) {
+		nc_intb_300 = 0
+		inv_getheader 0
+		repeat invrange, invhead
+			if (nc_intb_300 == 5) {
+				break
+			}
+			if (iNumber(cnt) == 0) {
+				continue
+			}
+			dup roopbuf, iCount(cnt)
+			dup roopbuf1, iNumber(cnt)
+			if (ibit(22, cnt)) {
+				nc_intb_300++
+				color 0, 0, 0
+				sx = windoww - 340
+				pos sx + 28, inf_ver - 22 - (nc_intb_300 * 14)
+				s = itemname(cnt, 1, 0, 1)
+				s = strmid(s, 0, 16)
+				bmes s, 255, 255, 255
+				color 0, 0, 0
+				pos sx + 140, inf_ver - 22 - (nc_intb_300 * 14)
+				if (cfg_NC_itemcount == 2 & roopbuf > 0) {
+					if (roopbuf == 1) {
+						pos sx + 140, inf_ver - 22 - (nc_intb_300 * 14)
+						bmes " :" + roopbuf1 + " / " + roopbuf, 255, 150, 150
+					} else {
+						pos sx + 140, inf_ver - 22 - (nc_intb_300 * 14)
+						bmes " :" + roopbuf1 + " / " + roopbuf, 255, 255, 255
+					}
+				} else {
+					bmes " :" + roopbuf1, 255, 255, 255
+				}
+			}
+		loop
+	}
+	color 0, 0, 0
+	pos 4, inf_ver - 16
+	gcopy 3, 48, 392, 24, 24
+	pos 32, inf_ver - 14
+	nc_intb_exp = (cRequiredExperience(0) - cExperience(0))
+	if (nc_intb_exp > 100000000 & cfg_NC_stateshorten) {
+		bmes "Lv" + cLevel(0) + "/" + nc_intb_exp / 1000000 + "M", 255, 255, 255
+	} elseif (nc_intb_exp > 1000000 & cfg_NC_stateshorten) {
+		bmes "Lv" + cLevel(0) + "/" + nc_intb_exp / 1000 + "K", 255, 255, 255
+	} else {
+		bmes "Lv" + cLevel(0) + "/" + nc_intb_exp, 255, 255, 255
+	}
+	posy@st = 30
+	if (cfg_showstamina) {
+		color 0, 0, 0
+		pos 10, inf_ver - posy@st
+		posy@st += 12
+		bmes "ST:" + cSp(0) + "/" + cMaxSp(0), 255, 255, 255
+	}
+	if (cfg_ST_displayHammerLevel > 0) {
+		if (cfg_ST_displayHammerLevel == 1 | cfg_ST_displayHammerLevel == 2) {
+			if (hammerNoPlus@st > 0) {
+				if (equalsitem(hammerNoPlus@st - 1, "blacksmith hammer") == 0 | iNumber(hammerNoPlus@st - 1) == 0) {
+					hammerNoPlus@st = 0
+				}
+			}
+			if (hammerNoPlus@st == 0) {
+				if (customitemfind(0, "blacksmith hammer") >= 0) {
+					hammerNoPlus@st = stat + 1
+				}
+			}
+			if (hammerNoPlus@st > 0) {
+				color 0, 0, 0
+				pos 10, inf_ver - posy@st
+				posy@st += 12
+				bmes "HLv:" + iParam1(hammerNoPlus@st - 1) + "/" + limitmax(int(100.0 * iParam2(hammerNoPlus@st - 1) / calcexpalive(iParam1(hammerNoPlus@st - 1))), 100) + "%", 255, 255, 255
+			}
+		}
+		if (cfg_ST_displayHammerLevel >= 2) {
+			if (length(spsIntervals) == 0) {
+				dim spsIntervals, 100
+			}
+			skinSum = 0
+			repeat length(spsIntervals)
+				skinSum += spsIntervals(cnt)
+			loop
+			if (skinSum != 0) {
+				color 0, 0, 0
+				pos 10, inf_ver - posy@st
+				posy@st += 12
+				bmes "SPS:" + strf("%.03f", 100000.0 / double(skinSum)), 255, 255, 255
+			}
+		}
+	}
+	if (cfg_ST_displayLivingweaponLevel) {
+		if (livingweaponNoPlus@st > 0) {
+			if (ibit(10, (livingweaponNoPlus@st - 1)) == 0 | iNumber(livingweaponNoPlus@st - 1) == 0 | iBodyPart(livingweaponNoPlus@st - 1) == 0) {
+				livingweaponNoPlus@st = 0
+			}
+		}
+		if (livingweaponNoPlus@st == 0) {
+			if (bititemfind(0, 10, 1) >= 0) {
+				livingweaponNoPlus@st = stat + 1
+			}
+		}
+		if (livingweaponNoPlus@st > 0) {
+			color 0, 0, 0
+			pos 10, inf_ver - posy@st
+			posy@st += 12
+			bmes "WLv:" + iParam1(livingweaponNoPlus@st - 1) + "/" + limitmax(int(100.0 * iParam2(livingweaponNoPlus@st - 1) / calcexpalive(iParam1(livingweaponNoPlus@st - 1))), 100) + "%", 255, 255, 255
+		}
+	}
+	if (cX(0) < 6) {
+		if (mode != 9) {
+			if (mapType != 1) {
+				if (cContinuousActionId(0) == 0) {
+					gmode 4, , , 150
+				}
+			}
+		}
+	}
+	sx = 8
+	sy = inf_ver - 84
+	if (cNutrition(0) >= 12000) {
+		color 0, 0, 0
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _hunger(12)
+		sy -= 20
+	} else {
+		if (cNutrition(0) >= 1000) {
+			if (cNutrition(0) <= 4000) {
+				color 200, 0, 0
+			} else {
+				color 0, 0, 0
+			}
+			if (_hunger(cNutrition(0) / 1000) != "") {
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _hunger(cNutrition(0) / 1000)
+				sy -= 20
+			}
+		} else {
+			color 250, 0, 0
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _hunger(0)
+			sy -= 20
+		}
+	}
+	if (cSick(0) != 0) {
+		color 80, 120, 0
+		if (cSick(0) >= 30) {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _consick(1)
+			sy -= 20
+		} else {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _consick
+			sy -= 20
+		}
+	}
+	if (cPoisoned(0) != 0) {
+		color 0, 150, 0
+		if (cPoisoned(0) >= 30) {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _conpoison(1)
+			sy -= 20
+		} else {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _conpoison
+			sy -= 20
+		}
+	}
+	if (cSleep(0) != 0) {
+		color 0, 50, 50
+		if (cSleep(0) >= 30) {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _consleep(1)
+			sy -= 20
+		} else {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _consleep
+			sy -= 20
+		}
+	}
+	if (cBlind(0) != 0) {
+		color 100, 100, 0
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _conblind
+		sy -= 20
+	}
+	if (cParalyzed(0) != 0) {
+		color 0, 100, 100
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _conparalyze
+		sy -= 20
+	}
+	if (cStoned(0) != 0) {
+		color 0, 100, 100
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _storned
+		sy -= 20
+	}
+	if (cChoked(0) != 0) {
+		color 0, 100, 100
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _conmochi
+		sy -= 20
+	}
+	if (cConfused(0) != 0) {
+		color 100, 0, 100
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _conconfuse
+		sy -= 20
+	}
+	if (cFear(0) != 0) {
+		color 100, 0, 100
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _confear
+		sy -= 20
+	}
+	if (cDimmed(0) != 0) {
+		color 0, 100, 100
+		if (cDimmed(0) >= 60) {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _condim(2)
+			sy -= 20
+		} else {
+			if (cDimmed(0) >= 30) {
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _condim(1)
+				sy -= 20
+			} else {
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _condim
+				sy -= 20
+			}
+		}
+	}
+	if (cFurious(0) != 0) {
+		color 150, 0, 0
+		if (cFurious(0) >= 30) {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _conangry(1)
+			sy -= 20
+		} else {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _conangry
+			sy -= 20
+		}
+	}
+	if (cBleeding(0) != 0) {
+		color 150, 0, 0
+		if (cBleeding(0) >= 20) {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _conbleed(2)
+			sy -= 20
+		} else {
+			if (cBleeding(0) >= 10) {
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _conbleed(1)
+				sy -= 20
+			} else {
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _conbleed
+				sy -= 20
+			}
+		}
+	}
+	if (cInsane(0) != 0) {
+		color 150, 100, 0
+		if (cInsane(0) >= 50) {
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _coninsane(2)
+			sy -= 20
+		} else {
+			if (cInsane(0) >= 25) {
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _coninsane(1)
+				sy -= 20
+			} else {
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _coninsane
+				sy -= 20
+			}
+		}
+	}
+	if (cDrunk(0) != 0) {
+		color 100, 0, 100
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _condrunk
+		sy -= 20
+	}
+	if (cWet(0) != 0) {
+		color 0, 0, 160
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _conwet
+		sy -= 20
+	}
+	if (cGravity(0) != 0) {
+		color 0, 80, 80
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _congravity
+		sy -= 20
+	}
+	if (cAphrodisiac(0) != 0) {
+		color 210, 140, 230
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _aphrodisiac
+		sy -= 20
+	}
+	if (gContinuousActiveHours >= 15) {
+		if (gContinuousActiveHours >= 50) {
+			color 255, 0, 0
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _sleep(2)
+			sy -= 20
+		} else {
+			if (gContinuousActiveHours >= 30) {
+				color 100, 100, 0
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _sleep(1)
+				sy -= 20
+			} else {
+				color 0, 0, 0
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _sleep
+				sy -= 20
+			}
+		}
+	}
+	if (ocdata(140, 0) >= 2000) {
+		if (ocdata(140, 0) < 4000) {
+			color 0, 0, 0
+		} else {
+			if (ocdata(140, 0) < 6000) {
+				color 100, 100, 0
+			} else {
+				color 200, 0, 0
+			}
+		}
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _stress
+		sy -= 20
+	}
+	if (cSp(0) < 50) {
+		if (cSp(0) < 0) {
+			color 120, 120, 0
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _confatigue(2)
+			sy -= 20
+		} else {
+			if (cSp(0) < 25) {
+				color 80, 80, 0
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _confatigue(1)
+				sy -= 20
+			} else {
+				color 60, 60, 0
+				pos sx, sy
+				gcopy 3, 0, 416, 50 + en * 30, 15
+				pos sx + 6, sy + 1
+				mes _confatigue
+				sy -= 20
+			}
+		}
+	} else {
+		if (cSp(0) > cMaxSp(0) * 3 / 4) {
+			color 0, 0, 0
+			pos sx, sy
+			gcopy 3, 0, 416, 50 + en * 30, 15
+			pos sx + 6, sy + 1
+			mes _confatigue(3)
+			sy -= 20
+		}
+	}
+	if (cInventoryWeightType(0) != 0) {
+		color 0, cInventoryWeightType(0) * 40, cInventoryWeightType(0) * 40
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes _burden(cInventoryWeightType(0))
+		sy -= 20
+	}
+	if (autodig_f != 0) {
+		color 0, 0, 0
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes lang("採掘", "Autodig")
+		sy -= 20
+	}
+	if (gWizard) {
+		color 0
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes "" + cSp(0) + "/" + cMaxSp(0)
+		sy -= 20
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes "" + gSleepExperience
+		sy -= 20
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes "" + cPietyPoint(0) + "/" + cPrayingPoint(0)
+		sy -= 20
+		pos sx, sy
+		gcopy 3, 0, 416, 50 + en * 30, 15
+		pos sx + 6, sy + 1
+		mes "" + ocdata(140, 0)
+		sy -= 20
+	}
+	color 0
+	pos inf_clockx, inf_clocky
+	gcopy 3, 448, 408, inf_clockw, inf_clockh
+	pos inf_clockx + 78, inf_clocky + 8
+	gcopy 3, 448, 376, 128, 24
+	gmode 4, , , 180
+	sx = windoww - 40
+	sy = inf_ver - 40
+	repeat 8 + 8
+		dup roopbuf, ocdata(192 + cnt * 3, 0)
+		if (roopbuf == 0) {
+			break
+		}
+		pos sx, sy
+		gcopy 5, roopbuf \ 50 * 32, buffy(roopbuf), 32, 32
+		color 0, 0, 0
+		pos sx + 3, sy + 19
+		mes ocdata(192 + cnt * 3 + 2, 0)
+		color 255, 255, 255
+		pos sx + 2, sy + 18
+		mes ocdata(192 + cnt * 3 + 2, 0)
+		sy -= 32
+	loop
+	color 0
+	pos inf_clockarrowx, inf_clockarrowy
+	gmode 2, 48, 48
+	grotate 3, 0, 288, 0.0174532925199433 * (gHour * 30), 48, 48
+	pos inf_clockw - 3, inf_clocky + 17 + vfix
+	mes "" + gYear + "/" + gMonth + "/" + gDay
+	pos inf_clockw + 6, inf_clocky + 35
+	oom_time_weather = _time(gHour / 4) + " " + _weather(gWeather)
+	if (Seasonal_Check(0, 0)) {
+		oom_time_weather += " " + lang("*妹の日*", "*Younger Sister Day*")
+	}
+	if (Seasonal_Check(1, 0)) {
+		oom_time_weather += " " + lang("*ベイベーの日*", "*Baby Day*")
+	}
+	if (Seasonal_Check(2, 0)) {
+		oom_time_weather += " " + lang("*クリスマスイブ*", "*Christmas Eve*")
+	}
+	if (Seasonal_Check(3, 0)) {
+		oom_time_weather += " " + lang("*クリスマス*", "*Christmas*")
+	}
+	if (Seasonal_Check(4, 0)) {
+		oom_time_weather += " " + lang("*バレンタインデー*", "*Valentine's Day*")
+	}
+	if (Seasonal_Check(5, 0)) {
+		oom_time_weather += " " + lang("*アフターバレンタインデー*", "*After Valentine's Day*")
+	}
+	/*
+	if (Seasonal_Check(6, 0)) {
+		oom_time_weather += " " + lang("*七草の節句*", "*Seven herbs Festival*")
+	}
+	if (Seasonal_Check(7, 0)) {
+		oom_time_weather += " " + lang("*桃の節句*", "*Doll's Festival*")
+	}
+	if (Seasonal_Check(8, 0)) {
+		oom_time_weather += " " + lang("*納税強化週間*", "*Tax Week*")
+	}
+	if (Seasonal_Check(9, 0)) {
+		oom_time_weather += " " + lang("*愚者の日*", "*Fools' Day*")
+	}
+	if (Seasonal_Check(10, 0)) {
+		oom_time_weather += " " + lang("*ドラゴンころしの日*", "*Dragon Slayer's Day*")
+	}
+	if (Seasonal_Check(11, 0)) {
+		oom_time_weather += " " + lang("*黄金週間*", "*Golden Week*")
+	}
+	if (Seasonal_Check(12, 0)) {
+		oom_time_weather += " " + lang("*菖蒲の節句*", "*Midsummer Festival*")
+	}
+	if (Seasonal_Check(13, 0)) {
+		oom_time_weather += " " + lang("*夏至祭*", "*Iris Festival*")
+	}
+	if (Seasonal_Check(14, 0)) {
+		oom_time_weather += " " + lang("*笹の節句*", "*Weaver's Festival*")
+	}
+	if (Seasonal_Check(15, 0)) {
+		oom_time_weather += " " + lang("*銀狼節*", "*Silver Wolf Days*")
+	}
+	if (Seasonal_Check(16, 0)) {
+		oom_time_weather += " " + lang("*納涼祭*", "*Lantern Festival*")
+	}
+	if (Seasonal_Check(17, 0)) {
+		oom_time_weather += " " + lang("*防衛者の日*", "*Defenders' Day*")
+	}
+	if (Seasonal_Check(18, 0)) {
+		oom_time_weather += " " + lang("*ハロウィンイブ*", "*Halloween Eve*")
+	}
+	if (Seasonal_Check(19, 0)) {
+		oom_time_weather += " " + lang("*ハロウィン*", "*Halloween*")
+	}
+	*/
+	bmes oom_time_weather, 255, 255, 255
+	hack_quest = 1
+	if (gLeftMinutesOfExecutingQuest > 0) {
+		color 0
+		pos inf_clockw + 6, inf_clocky + 35 + 16
+		bmes lang("クエスト[残り" + gLeftMinutesOfExecutingQuest + "分]", "" + gLeftMinutesOfExecutingQuest + " minutes left."), 255, 255, 255
+		if (qdata(3, gExecutingImmediateQuest) == 1009) {
+			color 0
+			pos inf_clockw + 6, inf_clocky + 35 + 16 + 16
+			bmes "" + qdata(13, gExecutingImmediateQuest) + "P/" + qdata(12, gExecutingImmediateQuest) + "P", 255, 255, 255
+		} else {
+			if (qdata(3, gExecutingImmediateQuest) == 1006) {
+				color 0
+				pos inf_clockw + 6, inf_clocky + 35 + 16 + 16
+				bmes "" + cnvweight(qdata(13, gExecutingImmediateQuest)) + "/" + cnvweight(qdata(12, gExecutingImmediateQuest)) + "s", 255, 255, 255
+			} else {
+				if (qdata(3, gExecutingImmediateQuest) == 1020) {
+					color 0
+					pos inf_clockw + 6, inf_clocky + 35 + 16 + 16
+					bmes "" + qdata(13, gExecutingImmediateQuest) + "P/" + qdata(12, gExecutingImmediateQuest) + "P", 255, 255, 255
+				} else {
+					if (qdata(3, gExecutingImmediateQuest) == 1021) {
+						color 0
+						pos inf_clockw + 6, inf_clocky + 35 + 16 + 16
+						bmes lang("羊の残り:", "Remain:") + qdata(12, gExecutingImmediateQuest) + lang("匹", " Sheep"), 255, 255, 255
+					}
+				}
+			}
+		}
+	}
+	if (gWizard) {
+		pos windoww - 16, 0
+		mes d3getfps()
+	}
+	hack_quest = 0
+	if (hide_popup@00m < 2) {
+		hack_dmgmonitor = 1
+		if (cfg_dmgmonitor != 0) {
+			if (hide_popup@00m == 0 & cBlind(0) == 0) {
+				mondmgtime = timeGetTime()
+				font lang(cfg_font1, cfg_font2), 2 + cfg_dmgfont - en * 2, 0
+				repeat length2(mondmg)
+					mondmgcnt2 = (mondmgcnt + cnt) \ length2(mondmg)
+					mondmgcnt3 = cnt + 1
+					if (gCurrentMap != 40) {
+						if (fov_los(cX(0), cY(0), cX(mondmg(8, mondmgcnt2)), cY(mondmg(8, mondmgcnt2))) == 0) {
+							continue
+						}
+						if (dist(cX(0), cY(0), cX(mondmg(8, mondmgcnt2)), cY(mondmg(8, mondmgcnt2))) > cVisionDistance(0) / 2) {
+							continue
+						}
+					}
+					if (mondmg(0, mondmgcnt2) + cfg_dmgspeed * 150 > mondmgtime) {
+						mondmgpos = 0
+						repeat length2(mondmg) - mondmgcnt3
+							mondmgcnt4 = (mondmgcnt2 + cnt) \ length2(mondmg)
+							if (mondmg(0, mondmgcnt4) + cfg_dmgspeed * 300 > mondmgtime) {
+								if (cX(mondmg(8, mondmgcnt2)) == cX(mondmg(8, mondmgcnt4)) & cY(mondmg(8, mondmgcnt2)) == cY(mondmg(8, mondmgcnt4))) {
+									mondmgpos++
+								}
+							}
+						loop
+
+						if (instr(mondmgn(mondmgcnt2), , ",") == (-1)) {
+							if (str(int(mondmgn(mondmgcnt2))) == mondmgn(mondmgcnt2)) {
+								mondmgn(mondmgcnt2) = oomsest_insertSeparater(mondmgn(mondmgcnt2))
+							}
+						}
+						mondmgdx = (cX(mondmg(8, mondmgcnt2)) - scx) * inf_tiles + inf_screenx - strlen(mondmgn(mondmgcnt2)) * (2 + cfg_dmgfont + 1) / 2 / 2 + inf_tiles / 2
+						mondmgdy = (cY(mondmg(8, mondmgcnt2)) - scy) * inf_tiles + inf_screeny - mondmgpos * (2 + cfg_dmgfont + 3) - (mondmgtime - mondmg(0, mondmgcnt2)) / (cfg_dmgspeed * 5 + 1)
+						mondmgdx += sxfix@m85 * (scrollp >= 3 + cfg_improvescroll * 2)
+						mondmgdy += syfix@m85 * (scrollp >= 3 + cfg_improvescroll * 2)
+						if (mondmgdy < 0 | mondmgdy + (2 + cfg_dmgfont + 3) > inf_ver | mondmgdy < 0 | mondmgdy + strlen(mondmgn(mondmgcnt2)) * (2 + cfg_dmgfont + 1) > windoww) {
+							continue
+						}
+						pos mondmgdx, mondmgdy
+						color mondmg(5, mondmgcnt2), mondmg(6, mondmgcnt2), mondmg(7, mondmgcnt2)
+						bmes mondmgn(mondmgcnt2), mondmg(2, mondmgcnt2), mondmg(3, mondmgcnt2), mondmg(4, mondmgcnt2)
+						color 0, 0, 0
+					}
+				loop
+				font lang(cfg_font1, cfg_font2), 13 - en * 2, 0
+			}
+		}
+		hack_dmgmonitor = 0
+		hack_txtpopup = 1
+		if (setting@00m == 1) {
+			txtpopuppos = 0
+			txtpopupdx = (cX(tc) - scx) * inf_tiles + inf_screenx + inf_tiles / 2
+			txtpopupdy = (cY(tc) - scy) * inf_tiles + inf_screeny
+			txtpopupdx += sxfix@m85 * (scrollp >= 3 + cfg_improvescroll * 2) - tmpsize@00m(0) / 2 + ocdata(165, tc)
+			txtpopupdy += syfix@m85 * (scrollp >= 3 + cfg_improvescroll * 2) - tmpsize@00m(1) - 48 * (chipc(3, cImage(tc) \ 1000) == 96) + ocdata(166, tc)
+			if (txtpopupdx < 0) {
+				txtpopupdx = 0
+				if (cX(tc) - scx < 2) {
+					ap2 = 1
+				} else {
+					ap2 = 0
+				}
+			}
+			if (txtpopupdx + tmpsize@00m(0) > windoww) {
+				txtpopupdx = windoww - tmpsize@00m(0)
+				if (cX(tc) - scx < inf_screenw - 2) {
+					ap2 = 0
+				} else {
+					ap2 = 2
+				}
+			}
+			color 255, 0, 255
+			gmode 4, , , 255
+			pos txtpopupdx, txtpopupdy
+			gcopy 220, 0, 0, tmpsize@00m(0), tmpsize@00m(1)
+			color 0, 0, 0
+		} else {
+			if (hide_popup@00m == 0 & cBlind(0) == 0) {
+				txtpopuptime = timeGetTime()
+				repeat length2(txtpopup)
+					ap = 0
+					ap2 = 0
+					ap3 = 0
+					txtpopupcnt2 = (txtpopupcnt + cnt) \ length2(txtpopup)
+					txtpopupcnt3 = cnt + 1
+					if (gCurrentMap != 40) {
+						if (fov_los(cX(0), cY(0), cX(txtpopup(1, txtpopupcnt2)), cY(txtpopup(1, txtpopupcnt2))) == 0) {
+							continue
+						}
+						if (dist(cX(0), cY(0), cX(txtpopup(1, txtpopupcnt2)), cY(txtpopup(1, txtpopupcnt2))) > cVisionDistance(0) / 2) {
+							continue
+						}
+					}
+					oom_speed = cfg_txtpopspeed * 150
+					if (cfg_txtpopupdead == 1) {
+						if (cState(txtpopup(1, txtpopupcnt2)) != 1) {
+							oom_speed /= 4
+						}
+					}
+					if (txtpopup(0, txtpopupcnt2) + oom_speed > txtpopuptime) {
+						txtpopuppos = 0
+						repeat length2(txtpopup) - txtpopupcnt3
+							txtpopupcnt4 = (txtpopupcnt2 + cnt + 1) \ length2(txtpopup)
+							if (txtpopup(0, txtpopupcnt4) + cfg_txtpopspeed * 300 > txtpopuptime) {
+								if (cX(txtpopup(1, txtpopupcnt2)) == cX(txtpopup(1, txtpopupcnt4)) & cY(txtpopup(1, txtpopupcnt2)) == cY(txtpopup(1, txtpopupcnt4))) {
+									txtpopuppos += txtpopup(3, txtpopupcnt4) - 15
+								}
+								if (txtpopup(1, txtpopupcnt2) == txtpopup(1, txtpopupcnt4)) {
+									ap3 = 1
+								}
+							}
+							ap = 1
+						loop
+						if (cfg_txtpop == 1 | ocdata(164, txtpopup(1, txtpopupcnt2)) == 1 & ap3 == 1) {
+							continue
+						}
+						txtpopupdx = (cX(txtpopup(1, txtpopupcnt2)) - scx) * inf_tiles + inf_screenx + inf_tiles / 2
+						txtpopupdx += sxfix@m85 * (scrollp >= 3 + cfg_improvescroll * 2) - txtpopup(2, txtpopupcnt2) / 2
+						txtpopupdx += ocdata(165, txtpopup(1, txtpopupcnt2))
+						txtpopupdy = (cY(txtpopup(1, txtpopupcnt2)) - scy) * inf_tiles + inf_screeny - txtpopuppos
+						txtpopupdy += syfix@m85 * (scrollp >= 3 + cfg_improvescroll * 2) - txtpopup(3, txtpopupcnt2) - txtpopup(5, txtpopupcnt2)
+						txtpopupdy += ocdata(166, txtpopup(1, txtpopupcnt2))
+						if (txtpopupdy + txtpopup(3, txtpopupcnt2) > windowh - inf_barh - inf_msgh) {
+							continue
+						}
+						if (txtpopupdy < 0) {
+							continue
+						}
+						if (txtpopupdx < 0) {
+							txtpopupdx = 0
+							if (cX(txtpopup(1, txtpopupcnt2)) - scx < 2) {
+								ap2 = 1
+							} else {
+								ap2 = 0
+							}
+						}
+						if (txtpopupdx + txtpopup(2, txtpopupcnt2) > windoww) {
+							txtpopupdx = windoww - txtpopup(2, txtpopupcnt2)
+							if (cX(txtpopup(1, txtpopupcnt2)) - scx < inf_screenw - 2) {
+								ap2 = 0
+							} else {
+								ap2 = 2
+							}
+						}
+						color 255, 0, 255
+						gmode 4, , , cfg_txtpoptransparent - cfg_txtpoptransparent / 3 * (ap == 1)
+						pos txtpopupdx, txtpopupdy
+						gcopy 200 + txtpopupcnt2, txtpopup(2, txtpopupcnt2) * ap2, 0, txtpopup(2, txtpopupcnt2), txtpopup(3, txtpopupcnt2)
+						color 0, 0, 0
+					}
+				loop
+			}
+		}
+		hack_txtpopup = 0
+		hack_strack = 1
+		if (viewinfo == 1) {
+			ap3 = 0
+			if (cfg_strackex != 0) {
+				if (cfg_strackex == 1) {
+					repeat 20
+						dup roopbuf, gdatac(750 + cnt)
+						ap = roopbuf \ 10000
+						if (ap == 0) {
+							continue
+						}
+						ap2 = roopbuf / 10000
+						if (cState(ap2) == 0 | ap2 > 15) {
+							if (ap2 != 0) {
+								roopbuf = 0
+							}
+							continue
+						}
+						_strackdata = ""
+						if (ap2 != 0) {
+							pos 16, inf_clocky + 100 + ap3 * 16
+							bmes2 "" + strmid(skillname(ap), 0, 6), 4
+							skilltmps = "" + sdata(600 + ap, ap2) / 1000
+							pos 66, inf_clocky + 100 + ap3 * 16
+							_strackdata += strf("%4d", sorgEx(ap, ap2)) + "." + strmid(skilltmps, -1, 3)
+							if (cfg_strackgrow == 1) {
+								_strackdata += "(" + strf("%3d", sgrowth(ap, ap2)) + "%)"
+							}
+							_strackdata += "[" + strmid(cdatan(0, ap2), 0, 6) + "]"
+							bmes2 _strackdata, 4
+						} else {
+							if (ap >= 400 & ap < 600) {
+								if (ap >= 550 & ap < 600) {
+									if (userspelldata(0, ap - 550) < 0) {
+										gdatac(750 + cnt) = 0
+									}
+									if (cfg_strackstock == 1) {
+										if (userspelldata(11, ap - 550) <= 0) {
+											gdatac(750 + cnt) = 0
+											continue
+										}
+									}
+									pos 16, inf_clocky + 100 + ap3 * 16
+									bmes2 "" + strmid(skillname(ap), 0, 6), 3
+									skilltmps = "" + userspelldata(12, ap - 550) \ 1000000 / 1000
+									pos 66, inf_clocky + 100 + ap3 * 16
+									_strackdata += strf("%4d", 1.0 * userspelldata(12, ap - 550) / 1000000) + "." + strf("%03d", strmid(skilltmps, -1, 3))
+									if (cfg_strackgrow == 1) {
+										_strackdata += "(" + strf("%3d", userspelldata(12, ap - 550) \ 1000) + "%)"
+									}
+									if (cfg_strackstock != 0) {
+										_strackdata += "[" + userspelldata(11, ap - 550) + "]"
+									}
+									bmes2 _strackdata, 3
+								} else {
+									if (cfg_strackstock == 1) {
+										if (spell(ap - 400) <= 0) {
+											gdatac(750 + cnt) = 0
+											continue
+										}
+									}
+									pos 16, inf_clocky + 100 + ap3 * 16
+									bmes2 "" + strmid(skillname(ap), 0, 6), 2
+									skilltmps = "" + sdata(600 + ap, ap2) / 1000
+									pos 66, inf_clocky + 100 + ap3 * 16
+									_strackdata += strf("%4d", sorgEx(ap, ap2)) + "." + strmid(skilltmps, -1, 3)
+									if (cfg_strackgrow == 1) {
+										_strackdata += "(" + strf("%3d", sgrowth(ap, ap2)) + "%)"
+									}
+									if (cfg_strackstock != 0) {
+										_strackdata += "[" + spell(ap - 400) + "]"
+									}
+									bmes2 _strackdata, 2
+								}
+							} else {
+								pos 16, inf_clocky + 100 + ap3 * 16
+								bmes2 "" + strmid(skillname(ap), 0, 6), 1
+								skilltmps = "" + sdata(600 + ap, ap2) / 1000
+								pos 66, inf_clocky + 100 + ap3 * 16
+								_strackdata += strf("%4d", sorgEx(ap, ap2)) + "." + strmid(skilltmps, -1, 3)
+								if (cfg_strackgrow == 1) {
+									_strackdata += "(" + strf("%3d", sgrowth(ap, ap2)) + "%)"
+								}
+								bmes2 _strackdata, 1
+							}
+						}
+						ap3++
+					loop
+				} else {
+					_strackdata = "", "", "", ""
+					dim _strackcnt, 2
+					_mesy = 0
+					repeat 20
+						dup roopbuf, gdatac(750 + cnt)
+						ap = roopbuf \ 10000
+						if (ap == 0) {
+							continue
+						}
+						ap2 = roopbuf / 10000
+						if (cState(ap2) == 0 | ap2 > 15) {
+							if (ap2 != 0) {
+								roopbuf = 0
+							}
+							continue
+						}
+						_strackdata = ""
+						if (ap2 != 0) {
+							_strackdata = strmid(skillname(ap), 0, 6)
+							repeat
+								if (strlen(_strackdata) < 8) {
+									_strackdata += lang("　", "  ")
+								} else {
+									break
+								}
+							loop
+							skilltmps = "" + sdata(600 + ap, ap2) / 1000
+							_strackdata += strf("%4d", sorgEx(ap, ap2)) + "." + strmid(skilltmps, -1, 3)
+							if (cfg_strackgrow == 1) {
+								_strackdata += "(" + strf("%3d", sgrowth(ap, ap2)) + "%)"
+							}
+							_strackdata += "[" + strmid(cdatan(0, ap2), 0, 6) + "]"
+							_strackdata(1) += _strackdata + "\n"
+						} else {
+							if (ap >= 400 & ap < 600) {
+								if (ap >= 550 & ap < 600) {
+									if (userspelldata(0, ap - 550) < 0) {
+										gdatac(750 + cnt) = 0
+									}
+									if (cfg_strackstock == 1) {
+										if (userspelldata(11, ap - 550) <= 0) {
+											gdatac(750 + cnt) = 0
+											continue
+										}
+									}
+									_strackdata = strmid(skillname(ap), 0, 6)
+									repeat
+										if (strlen(_strackdata) < 8) {
+											_strackdata += " "
+										} else {
+											break
+										}
+									loop
+									skilltmps = "" + userspelldata(12, ap - 550) \ 1000000 / 1000
+									_strackdata += strf("%4d", 1.0 * userspelldata(12, ap - 550) / 1000000) + "." + strf("%03d", strmid(skilltmps, -1, 3))
+									if (cfg_strackgrow == 1) {
+										_strackdata += "(" + strf("%3d", userspelldata(12, ap - 550) \ 1000) + "%)"
+									}
+									if (cfg_strackstock != 0) {
+										_strackdata += "[" + userspelldata(11, ap - 550) + "]"
+									}
+									_strackdata(2) += _strackdata + "\n"
+								} else {
+									if (cfg_strackstock == 1) {
+										if (spell(ap - 400) <= 0) {
+											gdatac(750 + cnt) = 0
+											continue
+										}
+									}
+									_strackdata = strmid(skillname(ap), 0, 6)
+									repeat
+										if (strlen(_strackdata) < 8) {
+											_strackdata += lang("　", "  ")
+										} else {
+											break
+										}
+									loop
+									skilltmps = "" + sdata(600 + ap, ap2) / 1000
+									_strackdata += strf("%4d", sorgEx(ap, ap2)) + "." + strmid(skilltmps, -1, 3)
+									if (cfg_strackgrow == 1) {
+										_strackdata += "(" + strf("%3d", sgrowth(ap, ap2)) + "%)"
+									}
+									if (cfg_strackstock != 0) {
+										_strackdata += "[" + spell(ap - 400) + "]"
+									}
+									_strackdata(2) += _strackdata + "\n"
+								}
+								_strackcnt(1)++
+							} else {
+								_strackdata = strmid(skillname(ap), 0, 6)
+								repeat
+									if (strlen(_strackdata) < 8) {
+										_strackdata += "　"
+									} else {
+										break
+									}
+								loop
+								skilltmps = "" + sdata(600 + ap, ap2) / 1000
+								_strackdata += strf("%4d", sorgEx(ap, ap2)) + "." + strmid(skilltmps, -1, 3)
+								if (cfg_strackgrow == 1) {
+									_strackdata += "(" + strf("%3d", sgrowth(ap, ap2)) + "%)"
+								}
+								_strackdata(3) += _strackdata + "\n"
+								_strackcnt(0)++
+							}
+						}
+						ap3++
+					loop
+					if (_strackdata(3) != "") {
+						pos 16, inf_clocky + 100
+						bmes2 _strackdata(3), 1
+						_mesy += ginfo(15) * _strackcnt(0)
+					}
+					if (_strackdata(2) != "") {
+						pos 16, inf_clocky + 100 + _mesy
+						bmes2 _strackdata(2), 2
+						_mesy += ginfo(15) * _strackcnt(1)
+					}
+					if (_strackdata(1) != "") {
+						pos 16, inf_clocky + 100 + _mesy
+						bmes2 _strackdata(1), 4
+					}
+				}
+			} else {
+				repeat 3
+					dup roopbuf, gdata(750 + cnt)
+					ap = roopbuf \ 10000
+					if (ap == 0) {
+						continue
+					}
+					ap2 = roopbuf / 10000
+					if (cState(ap2) != 1) {
+						if (ap2 != 0) {
+							roopbuf = 0
+						}
+						continue
+					}
+					pos 16, inf_clocky + 155 - ap3 * 16
+					color 0, 0, 0
+					bmes "" + strmid(skillname(ap), 0, 6), 255, 255, 255
+					skilltmps = "" + sdata(600 + ap, ap2) / 1000
+					pos 66, inf_clocky + 155 - ap3 * 16
+					color 0, 0, 0
+					bmes "" + sorgEx(ap, ap2) + "." + strmid(skilltmps, -1, 3), 255, 255, 255
+					ap3++
+				loop
+			}
+		}
+		hack_strack = 0
+		if (cfg_hpgauge) {
+			cnt2 = 0
+			repeat 15, 1
+				dup roopbuf, cState(cnt)
+				if (roopbuf == 1 | roopbuf == 6 & cbit(966, cnt)) {
+					dup roopbuf2, cMaxHp(cnt)
+					dup roopbuf3, cHp(cnt)
+					s = cdatan(0, cnt)
+					pos 16 + (windoww - strlen(s) * 7 - 16) * (cfg_hpgauge == 2), inf_clocky + 200 - 180 * (cfg_hpgauge == 2) + cnt2 * 32
+					color 0, 0, 0
+					bmes s, 255, 35 + 220 * (roopbuf == 1), 35 + 220 * (roopbuf == 1)
+					if (roopbuf == 1) {
+						gaugelength = limit(int(1.0 * roopbuf3 * 30 / roopbuf2), 1, 30)
+						pos 16 + (windoww - 108) * (cfg_hpgauge == 2), inf_clocky + 217 - 180 * (cfg_hpgauge == 2) + cnt2 * 32
+						gzoom gaugelength * 3, 9, 3, 480 - gaugelength, 517, gaugelength, 3
+						if (cfg_mma_pethpmonitor) {
+							if (roopbuf2 > 100000000 & cfg_NC_stateshorten) {
+								s = "" + roopbuf3 / 1000000 + "/" + roopbuf2 / 1000000
+							} elseif (roopbuf2 > 1000000 & cfg_NC_stateshorten) {
+								s = "" + roopbuf3 / 1000 + "/" + roopbuf2 / 1000
+							} else {
+								s = "" + roopbuf3 + "/" + roopbuf2
+							}
+							pos 16 + (windoww - strlen(s) * 7 - 16) * (cfg_hpgauge == 2), inf_clocky + 200 - 180 * (cfg_hpgauge == 2) + cnt2 * 32 + 16
+							if (roopbuf3 > roopbuf2 / 2) {
+								color 0, 0, 0
+								bmes s, 255, 255, 255
+							} elseif (roopbuf3 > roopbuf2 / 10) {
+								color 192, 192, 0
+								bmes s, 255, 255, 192
+							} else {
+								color 192, 0, 0
+								bmes s, 255, 192, 192
+							}
+							color 0, 0, 0
+						}
+					}
+					cnt2++
+				}
+			loop
+		}
+	}
+	return
+*label_0626
+	gsel 9
+	pos 0, 0
+	if (cContinuousActionId(0) == 5) {
+		picload_ exedir + "\\graphic\\anime1.bmp"
+	}
+	if (cContinuousActionId(0) == 7) {
+		if (rowactre) {
+			picload_ exedir + "\\graphic\\anime2.bmp"
+		}
+	}
+	if (cContinuousActionId(0) == 8) {
+		picload_ exedir + "\\graphic\\anime3.bmp"
+	}
+	if (cContinuousActionId(0) == 9) {
+		picload_ exedir + "\\graphic\\anime4.bmp"
+	}
+	gsel 0
+	return
+*label_0627
+	if (racount == 0) {
+		gosub *label_0626
+	}
+	if (msgtemp != "" | (cContinuousActionId(0) == 7 & rowactre == 0 & fishanime == 0)) {
+		gosub *label_0637
+		msgtemp = ""
+	}
+	gosub *label_0625
+	if (cContinuousActionId(0) == 7) {
+		if (rowactre == 0) {
+			gosub *label_0651
+		}
+	}
+	sx = windoww - 156
+	sy = inf_ver - 30
+	w = 148
+	h = 25
+	window2 sx, sy, w, h, 0, 5
+	font lang(cfg_font1, cfg_font2), 13 - en * 2, 1
+	pos sx + 43, sy + 6
+	color 0, 0, 0
+	bmes "AUTO TURN", 235, 235, 235
+	pos sx + 18, sy + 12
+	gmode 2, 24, 24
+	grotate 3, 72, 392, 0.0174532925199433 * (gMinute / 4 \ 2 * 90)
+	if (cContinuousActionId(0) == 9 | cContinuousActionId(0) == 5 | cContinuousActionId(0) == 8 | (cContinuousActionId(0) == 7 & rowactre != 0)) {
+		window2 sx, sy - 104, 148, 101, 0, 5
+		if (racount \ 15 == 0) {
+			repeat 10
+				redraw 0
+				gmode 0
+				pos sx + 2, sy - 102
+				if (cContinuousActionId(0) == 5) {
+					if (cnt == 2) {
+						snd 52
+					}
+					gcopy 9, cnt / 2 \ 5 * 144, 0, 144, 96
+				}
+				if (cContinuousActionId(0) == 7) {
+					if (racount == 0) {
+						if (cnt == 0) {
+							snd 57
+						}
+					}
+					gcopy 9, cnt / 3 \ 3 * 144, 0, 144, 96
+				}
+				if (cContinuousActionId(0) == 8) {
+					if (cnt == 4) {
+						snd 55
+					}
+					gcopy 9, cnt / 2 \ 3 * 144, 0, 144, 96
+				}
+				if (cContinuousActionId(0) == 9) {
+					if (cnt == 2) {
+						snd 54
+					}
+					gcopy 9, cnt / 2 \ 4 * 144, 0, 144, 96
+				}
+				if (oomSEST_noAnimation != 1) {
+					await 15 + cContinuousActionId(0) * 5
+				}
+				redraw 1
+			loop
+		} else {
+			gcopy 9, 0, 0, 144, 96
+		}
+		racount++
+		redraw 1
+	}
+	if (firstautoturn == 1) {
+		redraw 1
+		firstautoturn = 0
+	}
+	gmode 2
+	return
+*label_0628
+	return
+*label_0629
+	gmode 0
+	font lang(cfg_font1, cfg_font2), 16 - en * 2, 0
+	color 245, 245, 245
+	msgx = 20
+	msgy = 30
+	sx = 760
+	sx = strlen(s) * 8 + 45
+	if (sx > 760) {
+		sx = 760
+	}
+	ap = sx / 128 + 1
+	repeat ap
+		if (cnt == sx / 128) {
+			ap = sx \ 128
+		} else {
+			ap = 128
+		}
+		pos cnt * 128 + msgx, msgy
+		gcopy 3, 672, 477, ap, 3
+		pos cnt * 128 + msgx, msgy + 2
+		gcopy 3, 672, 480, ap, 22
+		pos cnt * 128 + msgx, msgy + 22
+		gcopy 3, 672, 477, ap, 2
+	loop
+	pos msgx + 18, msgy + 4
+	mes s
+	gmode 2
+	return
+*label_0630
+	if (mode == 9) {
+		return
+	}
+	if (oomSEST_noAnimation) {
+		return
+	}
+	if (cfg_NC_workshortening == 2) {
+		if (areaId(gCurrentMap) == 30) {
+			return
+		}
+	}
+	if (animeid != 21) {
+		gosub *label_0623
+	}
+	redraw 0
+	gmode 2, inf_tiles, inf_tiles
+	anicol = 0
+	anisound = 0
+	if (animeid < 4) {
+		anicol = eleinfo(ele, 0)
+		anisound = eleinfo(ele, 1)
+	}
+	_switch_val = animeid
+	if (_switch_val == 8 | _switch_sw) {
+		_switch_sw = 0
+		if (synccheck(cc, -1) == 0) {
+			goto *label_0631
+		}
+		gsel 1
+		color 0
+		boxf 0, 960, chipi(2, 10), chipi(3, 10) + 960
+		pos 0, 960
+		gcopy 1, chipi(0, 10), chipi(1, 10), chipi(2, 10), chipi(3, 10)
+		gfini chipi(2, 10), chipi(3, 10)
+		gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+		gsel selcur
+		anidx = (cX(cc) - scx) * inf_tiles + inf_screenx
+		anidy = (cY(cc) - scy) * inf_tiles + inf_screeny
+		gsel 4
+		gmode 0
+		pos 0, 0
+		gcopy 0, anidx - inf_tiles / 2, anidy - inf_tiles / 2, inf_tiles * 2, inf_tiles * 2
+		gmode 2
+		gsel 0
+		snd 66
+		repeat 12
+			redraw 0
+			pos anidx - inf_tiles / 2, anidy - inf_tiles / 2
+			gcopy 4, 0, 0, inf_tiles * 2, inf_tiles * 2
+			pos anidx + inf_tiles / 2, anidy + 16
+			grotate 1, 0, 960, 5 * cnt, cnt + 40, cnt + 40
+			redraw 1
+			await cfg_animewait
+		loop
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 6 | _switch_sw) {
+		_switch_sw = 0
+		_switch_sw++
+	}
+	if (_switch_val == 5 | _switch_sw) {
+		_switch_sw = 0
+		_switch_sw++
+	}
+	if (_switch_val == 7 | _switch_sw) {
+		_switch_sw = 0
+		_switch_sw++
+	}
+	if (_switch_val == 11 | _switch_sw) {
+		_switch_sw = 0
+		if (synccheck(tc, -1) == 0) {
+			goto *label_0631
+		}
+		if (animeid == 6) {
+			gsel 1
+			color 0
+			boxf 0, 960, chipi(2, 8), chipi(3, 8) + 960
+			pos 0, 960
+			gcopy 1, chipi(0, 8), chipi(1, 8), chipi(2, 8), chipi(3, 8)
+			gfini chipi(2, 8), chipi(3, 8)
+			gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+			gsel selcur
+			snd 38
+		}
+		if (animeid == 5 | animeid == 11) {
+			gsel 1
+			color 0
+			boxf 0, 960, chipi(2, 7), chipi(3, 7) + 960
+			pos 0, 960
+			gcopy 1, chipi(0, 7), chipi(1, 7), chipi(2, 7), chipi(3, 7)
+			gfini chipi(2, 7), chipi(3, 7)
+			gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+			gsel selcur
+			snd 33
+		}
+		if (animeid == 7) {
+			gsel 1
+			color 0
+			boxf 0, 960, chipi(2, 9), chipi(3, 9) + 960
+			pos 0, 960
+			gcopy 1, chipi(0, 9), chipi(1, 9), chipi(2, 9), chipi(3, 9)
+			gfini chipi(2, 9), chipi(3, 9)
+			gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+			gsel selcur
+		}
+		ax = (cX(tc) - scx) * inf_tiles + inf_screenx
+		ay = (cY(tc) - scy) * inf_tiles + inf_screeny
+		gsel 4
+		gmode 0
+		pos 0, 0
+		gcopy 0, ax - inf_tiles / 2, ay - inf_tiles / 2, inf_tiles * 2, inf_tiles * 2
+		gmode 2
+		gsel 0
+		repeat 15
+			ax2(cnt) = rnd(inf_tiles)
+			ay2(cnt) = rnd(inf_tiles) - 8
+			ap(cnt) = (rnd(4) + 1) * (-1)
+			if (animeid == 6) {
+				ap(cnt) *= -1
+			}
+		loop
+		repeat 10
+			if (animeid == 11) {
+				await 5
+			} else {
+				await cfg_animewait
+			}
+			acnt2 = cnt * 2
+			redraw 0
+			pos ax - inf_tiles / 2, ay - inf_tiles / 2
+			gcopy 4, 0, 0, inf_tiles * 2, inf_tiles * 2
+			repeat 15
+				pos ax + ax2(cnt), ay + ay2(cnt) + acnt2 / ap(cnt)
+				grotate 1, 0, 960, acnt2 * ap(cnt), inf_tiles - acnt2 * 2, inf_tiles - acnt2 * 2
+			loop
+			redraw 1
+		loop
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 3 | _switch_sw) {
+		_switch_sw = 0
+		gsel 1
+		color 0
+		boxf 0, 960, chipi(2, 5), chipi(3, 5) + 960
+		pos 0, 960
+		gcopy 1, chipi(0, 5), chipi(1, 5), chipi(2, 5), chipi(3, 5)
+		gfini chipi(2, 5), chipi(3, 5)
+		gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+		gsel selcur
+		snd 35
+		gsel 7
+		picload_ exedir + "graphic\\anime7.bmp"
+		pos 0, 0
+		gfini 480, 48
+		gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+		gsel 4
+		pos 0, 0
+		gmode 0
+		gcopy 0, 0, 0, windoww, windowh
+		gsel 0
+		repeat 6
+			cnt2 = cnt
+			redraw 0
+			pos 0, 0
+			gmode 0
+			gcopy 4, 0, 0, windoww, windowh
+			repeat maxbreath
+				anidx = breathlist(0, cnt)
+				anidy = breathlist(1, cnt)
+				if (fov_los(cX(cc), cY(cc), anidx, anidy) == 0) {
+					continue
+				}
+				if ((anidx - scx) * inf_tiles + inf_screenx + inf_tiles / 2 < windoww) {
+					if ((anidy - scy) * inf_tiles + inf_screeny + 16 < inf_screenh * inf_tiles + inf_screeny - inf_tiles / 2) {
+						pos (anidx - scx) * inf_tiles + inf_screenx + inf_tiles / 2, (anidy - scy) * inf_tiles + inf_screeny + 16
+						gmode 2, inf_tiles, inf_tiles
+						grotate 7, cnt2 * 48, 0, atan(tlocx - cX(cc), cY(cc) - tlocy), inf_tiles, inf_tiles
+					}
+				}
+			loop
+			await cfg_animewait
+			redraw 1
+		loop
+		if (anisound) {
+			snd anisound, 0, 1
+		}
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 17 | _switch_sw) {
+		_switch_sw = 0
+		_switch_sw++
+	}
+	if (_switch_val == 2 | _switch_sw) {
+		_switch_sw = 0
+		snd 34
+		gsel 7
+		picload_ exedir + "graphic\\anime5.bmp"
+		pos 0, 96
+		gfini 480, 48
+		gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+		aniw = 360
+		anih = 360
+		anidx = (anix - scx) * inf_tiles + inf_screenx + 24
+		anidy = (aniy - scy) * inf_tiles + inf_screeny + 24
+		gsel 4
+		gmode 0
+		pos 0, 0
+		gcopy 0, 0, 0, windoww, windowh
+		gmode 2
+		gsel 0
+		color 0, 0, 0
+		repeat 10
+			anip = cnt
+			repeat aniref * 2 + 1
+				anidy = aniy - aniref + cnt
+				sy = anidy - scy
+				if (sy < 0 | sy >= inf_screenh) {
+					continue
+				}
+				repeat aniref * 2 + 1
+					anidx = anix - aniref + cnt
+					sx = anidx - scx
+					if (sx < 0 | sx >= inf_screenw) {
+						continue
+					}
+					anip(1) = dist(anix, aniy, anidx, anidy)
+					if (anip(1) > aniref) {
+						continue
+					}
+					anip(1) = 48 - (anip - 4) * (anip - 4) * 2
+					if (animeid == 2) {
+						if (fov_los(anix, aniy, anidx, anidy) == 0) {
+							continue
+						}
+					}
+					if (sx * inf_tiles + inf_screenx < windoww) {
+						if (sy * inf_tiles + inf_screeny < inf_screenh * inf_tiles + inf_screeny - inf_tiles / 2) {
+							pos sx * inf_tiles + inf_screenx, sy * inf_tiles + inf_screeny
+							gmode 2, 48, 48
+							gcopy 7, anip * 48, 96, 48, 48
+						}
+					}
+				loop
+			loop
+			anidx = (anix - scx) * inf_tiles + inf_screenx + 24
+			anidy = (aniy - scy) * inf_tiles + inf_screeny + 24
+			if (anidx < windoww) {
+				if (anidy < inf_screenh * inf_tiles + inf_screeny - inf_tiles / 2) {
+					pos anidx, anidy
+					gmode 4, 96, 96, 250 - cnt * cnt * 2
+					grotate 7, cnt * 96, 0, 0, 96, 96
+				}
+			}
+			redraw 1
+			redraw 0
+			gmode 0
+			pos 0, 0
+			gcopy 4, 0, 0, windoww, windowh
+			await cfg_animewait
+		loop
+		if (anisound) {
+			snd anisound, 0, 1
+		}
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 0 | _switch_sw) {
+		_switch_sw = 0
+		gsel 1
+		color 0
+		boxf 0, 960, chipi(2, 3), chipi(3, 3) + 960
+		pos 0, 960
+		gcopy 1, chipi(0, 3), chipi(1, 3), chipi(2, 3), chipi(3, 3)
+		gfini chipi(2, 3), chipi(3, 3)
+		gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+		gsel selcur
+		snd 37
+		anidx = cX(cc)
+		anidy = cY(cc)
+		gsel 7
+		picload_ exedir + "graphic\\anime6.bmp"
+		pos 0, 0
+		gfini 480, 48
+		gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+		gsel 4
+		gmode 0
+		pos 0, 0
+		gcopy 0, 0, 0, windoww, windowh
+		gsel 0
+		ap(20) = -1
+		repeat 20
+			if (ap(20) == (-1)) {
+				route_info anidx, anidy, cnt
+				if (stat == (-1)) {
+					ap(cnt) = -1
+					continue
+				} else {
+					if (stat == 0) {
+						ap(cnt) = -2
+						ap(20) = 4
+						continue
+					}
+				}
+				if (dist(anidx, anidy, cX(cc), cY(cc)) > sdataref(3, efid) \ 1000 + 1) {
+					ap(cnt) = -2
+					ap(20) = 4
+					continue
+				}
+				ax(cnt) = (anidx - scx) * inf_tiles + inf_screenx + inf_tiles / 2
+				ay(cnt) = (anidy - scy) * inf_tiles + inf_screeny + 8
+				ap(cnt) = 0
+			} else {
+				ap(20)--
+				if (ap(20) == 0) {
+					break
+				}
+			}
+			redraw 0
+			pos 0, 0
+			gmode 0
+			gcopy 4, 0, 0, windoww, windowh
+			cnt2 = cnt
+			repeat cnt2 + 1
+				if (ap(cnt) == (-1)) {
+					continue
+				}
+				if (ap(cnt) == (-2)) {
+					break
+				}
+				if (ap(cnt) < 5) {
+					if (ax(cnt) < windoww) {
+						if (ay(cnt) < inf_screenh * inf_tiles + inf_screeny - inf_tiles / 2) {
+							pos ax(cnt), ay(cnt)
+							gmode 2, inf_tiles, inf_tiles
+							grotate 7, ap(cnt) * 48, 0, atan(tlocx - cX(cc), cY(cc) - tlocy), 48, 48
+						}
+					}
+				}
+				ap(cnt)++
+			loop
+			await cfg_animewait + 15
+			redraw 1
+		loop
+		if (anisound) {
+			snd anisound, 0, 1
+		}
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 15 | _switch_sw) {
+		_switch_sw = 0
+		if (cfg_useffhp) {
+			if (synccheck(cc, -1) == 0) {
+				goto *label_0631
+			}
+			if (aniref(2) != (-1)) {
+				preparepicitemex aniref(2)
+			} else {
+				preparepicitem_func aniref, aniref(1)
+			}
+		} else {
+			gsel 1
+			color 0
+			boxf 0, 960, chipi(2, aniref), chipi(3, aniref) + 960
+			if (aniref == 528) {
+				gmode 2
+				pos 0, 960
+				gcopy 1, 0, 768, inf_tiles, inf_tiles
+				pos 0, 1008
+				gzoom 22, 20, 5, chipc(0, aniref(1)) + 8, chipc(1, aniref(1)) + 4 + (chipc(3, aniref(1)) > inf_tiles) * 8, chipc(2, aniref(1)) - 16, chipc(3, aniref(1)) - 8 - (chipc(3, aniref(1)) > inf_tiles) * 10, 1
+				pos 6, 974
+				gcopy 1, 0, 1008, 22, 20
+				gsel selcur
+			} else {
+				if (aniref == 531) {
+					pos 8, 1058 - chipc(3, aniref(1))
+					gcopy 5, chipc(0, aniref(1)) + 8, chipc(1, aniref(1)) + 2, chipc(2, aniref(1)) - 16, chipc(3, aniref(1)) - 8
+					gmode 4, , , 150
+					color 0, 0, 0
+					pos 0, 960 + (chipc(3, aniref(1)) == inf_tiles) * 48
+					gcopy 1, 144, 768 + (chipc(3, aniref(1)) > inf_tiles) * 48, inf_tiles, chipc(3, aniref(1)) + (chipc(3, aniref(1)) > inf_tiles) * 48
+					gmode 2
+					gsel selcur
+				} else {
+					if (aniref == 529) {
+						pos 0, 1056 - chipc(3, aniref(1))
+						gcopy 5, chipc(0, aniref(1)), chipc(1, aniref(1)), chipc(2, aniref(1)), chipc(3, aniref(1))
+						gmode 2
+						gsel selcur
+					} else {
+						pos 0, 960
+						gcopy 1, chipi(0, aniref), chipi(1, aniref), chipi(2, aniref), chipi(3, aniref)
+						gfini chipi(2, aniref), chipi(3, aniref)
+						gfdec2 c_col(0, aniref(1)), c_col(1, aniref(1)), c_col(2, aniref(1))
+						gsel selcur
+					}
+				}
+			}
+		}
+		ax = (cX(cc) - scx) * inf_tiles
+		ay = (cY(cc) - scy) * inf_tiles
+		ap = dist(cX(cc), cY(cc), anix, aniy) / 2 + 1
+		repeat ap
+			ax -= (cX(cc) - anix) * inf_tiles / ap
+			ay -= (cY(cc) - aniy) * inf_tiles / ap
+			gsel 4
+			gmode 0
+			pos 0, 0
+			gcopy 0, ax, ay - inf_tiles / 2, inf_tiles, inf_tiles
+			gmode 2
+			gsel 0
+			gmode 2, inf_tiles, inf_tiles
+			if (ax + inf_tiles / 2 < windoww) {
+				if (ay < inf_screenh * inf_tiles + inf_screeny - inf_tiles / 2) {
+					pos ax + inf_tiles / 2, ay
+					grotate 1, 0, 960, atan(anix - cX(cc), cY(cc) - aniy), inf_tiles, inf_tiles
+				}
+			}
+			redraw 1
+			redraw 0
+			gmode 0
+			pos ax, ay - inf_tiles / 2
+			gcopy 4, 0, 0, inf_tiles, inf_tiles
+			gmode 2
+			await cfg_animewait
+		loop
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 111 | _switch_sw) {
+		_switch_sw = 0
+		_switch_sw++
+	}
+	if (_switch_val == 110 | _switch_sw) {
+		_switch_sw = 0
+		_switch_sw++
+	}
+	if (_switch_val == 108 | _switch_sw) {
+		_switch_sw = 0
+		_switch_sw++
+	}
+	if (_switch_val == 109 | _switch_sw) {
+		_switch_sw = 0
+		_switch_sw++
+	}
+	if (_switch_val == 1 | _switch_sw) {
+		_switch_sw = 0
+		_switch_sw++
+	}
+	if (_switch_val == 18 | _switch_sw) {
+		_switch_sw = 0
+		if (synccheck(cc, -1) == 0) {
+			goto *label_0631
+		}
+		gsel 1
+		color 0
+		boxf 0, 960, chipi(2, 6), chipi(3, 6) + 960
+		pos 0, 960
+		gcopy 1, chipi(0, 6), chipi(1, 6), chipi(2, 6), chipi(3, 6)
+		gfini chipi(2, 6), chipi(3, 6)
+		gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+		gsel selcur
+		if (animeid == 18) {
+			gsel 1
+			color 0
+			boxf 0, 960, chipi(2, 23), chipi(3, 23) + 960
+			pos 0, 960
+			gcopy 1, chipi(0, 23), chipi(1, 23), chipi(2, 23), chipi(3, 23)
+			gfini chipi(2, 23), chipi(3, 23)
+			gfdec2 c_col(0, 0), c_col(1, 0), c_col(2, 0)
+			gsel selcur
+			snd 29
+		}
+		if (animeid == 108) {
+			gsel 1
+			color 0
+			boxf 0, 960, chipi(2, 1), chipi(3, 1) + 960
+			pos 0, 960
+			gcopy 1, chipi(0, 1), chipi(1, 1), chipi(2, 1), chipi(3, 1)
+			gfini chipi(2, 1), chipi(3, 1)
+			gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+			gsel selcur
+			if (itemsnd(aniref) == 0) {
+				snd 29
+			}
+		}
+		if (animeid == 109) {
+			gsel 1
+			color 0
+			boxf 0, 960, chipi(2, 1), chipi(3, 1) + 960
+			pos 0, 960
+			gcopy 1, chipi(0, 1), chipi(1, 1), chipi(2, 1), chipi(3, 1)
+			gfini chipi(2, 1), chipi(3, 1)
+			gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+			gsel selcur
+			if (itemsnd(aniref) == 0) {
+				snd 29
+			}
+		}
+		if (animeid == 110) {
+			ap = refitem(iId(aniref), 9, aniref)
+			if (ap == 24021) {
+				gsel 1
+				color 0
+				boxf 0, 960, chipi(2, 13), chipi(3, 13) + 960
+				pos 0, 960
+				gcopy 1, chipi(0, 13), chipi(1, 13), chipi(2, 13), chipi(3, 13)
+				gfini chipi(2, 13), chipi(3, 13)
+				gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+				gsel selcur
+				if (itemsnd(aniref) == 0) {
+					snd 42
+				}
+			}
+			if (ap == 24020) {
+				gsel 1
+				color 0
+				boxf 0, 960, chipi(2, 2), chipi(3, 2) + 960
+				pos 0, 960
+				gcopy 1, chipi(0, 2), chipi(1, 2), chipi(2, 2), chipi(3, 2)
+				gfini chipi(2, 2), chipi(3, 2)
+				gfdec2 c_col(0, anicol), c_col(1, anicol), c_col(2, anicol)
+				gsel selcur
+				if (itemsnd(aniref) == 0) {
+					snd 30
+				}
+			}
+		}
+		if (animeid == 111) {
+			if (cfg_useffhp) {
+				preparepicitemex aniref
+				snd 31
+			} else {
+				gsel 1
+				color 0
+				boxf 0, 960, chipi(2, iImage(aniref) \ 1000), chipi(3, iImage(aniref) \ 1000) + 960
+				if (iImage(aniref) \ 1000 == 528) {
+					gmode 2
+					pos 0, 960
+					gcopy 1, 0, 768, inf_tiles, inf_tiles
+					pos 0, 1008
+					gzoom 22, 20, 5, chipc(0, iImage(aniref) / 1000) + 8, chipc(1, iImage(aniref) / 1000) + 4 + (chipc(3, iImage(aniref) / 1000) > inf_tiles) * 8, chipc(2, iImage(aniref) / 1000) - 16, chipc(3, iImage(aniref) / 1000) - 8 - (chipc(3, iImage(aniref) / 1000) > inf_tiles) * 10, 1
+					pos 6, 974
+					gcopy 1, 0, 1008, 22, 20
+					gsel selcur
+				} else {
+					if (iImage(aniref) \ 1000 == 531) {
+						pos 8, 1058 - chipc(3, iImage(aniref) / 1000)
+						gcopy 5, chipc(0, iImage(aniref) / 1000) + 8, chipc(1, iImage(aniref) / 1000) + 2, chipc(2, iImage(aniref) / 1000) - 16, chipc(3, iImage(aniref) / 1000) - 8
+						gmode 4, , , 150
+						color 0, 0, 0
+						pos 0, 960 + (chipc(3, iImage(aniref) / 1000) == inf_tiles) * 48
+						gcopy 1, 144, 768 + (chipc(3, iImage(aniref) / 1000) > inf_tiles) * 48, inf_tiles, chipc(3, iImage(aniref) / 1000) + (chipc(3, iImage(aniref) / 1000) > inf_tiles) * 48
+						gmode 2
+						gsel selcur
+					} else {
+						if (iImage(aniref) \ 1000 == 529) {
+							pos 0, 1056 - chipc(3, iImage(aniref) / 1000)
+							gcopy 5, chipc(0, iImage(aniref) / 1000), chipc(1, iImage(aniref) / 1000), chipc(2, iImage(aniref) / 1000), chipc(3, iImage(aniref) / 1000)
+							gmode 2
+							gsel selcur
+						} else {
+							pos 0, 960
+							gcopy 1, chipi(0, iImage(aniref) \ 1000), chipi(1, iImage(aniref) \ 1000), chipi(2, iImage(aniref) \ 1000), chipi(3, iImage(aniref) \ 1000)
+							gfini chipi(2, iImage(aniref) \ 1000), chipi(3, iImage(aniref) \ 1000)
+							gfdec2 c_col(0, iImage(aniref) / 1000), c_col(1, iImage(aniref) / 1000), c_col(2, iImage(aniref) / 1000)
+							gsel selcur
+							snd 31
+						}
+					}
+				}
+			}
+		}
+		if (animeid == 1) {
+			snd 36
+		}
+		ax = (cX(cc) - scx) * inf_tiles
+		ay = (cY(cc) - scy) * inf_tiles + inf_screeny + 8
+		ap = dist(cX(cc), cY(cc), cX(tc), cY(tc)) / 2 + 1
+		repeat ap
+			ax -= (cX(cc) - cX(tc)) * inf_tiles / ap
+			ay -= (cY(cc) - cY(tc)) * inf_tiles / ap
+			gsel 4
+			gmode 0
+			pos 0, 0
+			gcopy 0, ax, ay - inf_tiles / 2, inf_tiles, inf_tiles
+			gmode 2
+			gsel 0
+			gmode 2, inf_tiles, inf_tiles
+			pos ax + inf_tiles / 2, ay
+			grotate 1, 0, 960, atan(cX(tc) - cX(cc), cY(cc) - cY(tc)), inf_tiles, inf_tiles
+			redraw 1
+			redraw 0
+			gmode 0
+			pos ax, ay - inf_tiles / 2
+			gcopy 4, 0, 0, inf_tiles, inf_tiles
+			gmode 2
+			await cfg_animewait
+		loop
+		if (anisound) {
+			snd anisound, 0, 1
+		}
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 9 | _switch_sw) {
+		_switch_sw = 0
+		snd 2
+		gsel 1
+		color 0
+		boxf 0, 960, chipi(2, 17), chipi(3, 17) + 960
+		pos 0, 960
+		gcopy 1, chipi(0, 17), chipi(1, 17), chipi(2, 17), chipi(3, 17)
+		gfini chipi(2, 17), chipi(3, 17)
+		gfdec2 c_col(0, 0), c_col(1, 0), c_col(2, 0)
+		gsel selcur
+		anidx = (cX(tc) - scx) * inf_tiles + inf_screenx
+		anidy = (cY(tc) - scy) * inf_tiles + inf_screeny
+		gsel 4
+		gmode 0
+		pos 0, 0
+		gcopy 0, anidx - 16, anidy - 16, 64, 64
+		gmode 2
+		gsel 0
+		repeat 4
+			redraw 0
+			pos anidx - 16, anidy - 16
+			gcopy 4, 0, 0, 64, 64
+			pos anidx + 16, anidy + 16
+			grotate 1, 0, 960, 0.5 * cnt - 0.8, cnt * 8 + 18, cnt * 8 + 18
+			redraw 1
+			await cfg_animewait
+		loop
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 12 | _switch_sw) {
+		_switch_sw = 0
+		ap = 0
+		if (attackskill == 108) {
+			ap = 2
+		}
+		if (attackskill == 109) {
+			ap = 2
+		}
+		if (attackskill == 110) {
+			ap = 2
+		}
+		if (attackskill == 111) {
+			ap = 2
+		}
+		if (attackskill == 100) {
+			ap = 1
+		}
+		if (attackskill == 104) {
+			ap = 1
+		}
+		if (attackskill == 105) {
+			ap = 0
+		}
+		if (attackskill == 101) {
+			ap = 1
+		}
+		if (attackskill == 103) {
+			ap = 0
+		}
+		if (attackskill == 102) {
+			ap = 1
+		}
+		if (attackskill == 107) {
+			ap = 1
+		}
+		aniref = aniref / 4 + 1
+		if (aniref > 20) {
+			aniref = 20
+		}
+		if (cbit(983, tc)) {
+			anix(1) = 1104
+		} else {
+			anix(1) = 720
+		}
+		if (ap == 0) {
+			gsel 1
+			color 0
+			boxf 0, 960, chipi(2, 17), chipi(3, 17) + 960
+			pos 0, 960
+			gcopy 1, chipi(0, 17), chipi(1, 17), chipi(2, 17), chipi(3, 17)
+			gfini chipi(2, 17), chipi(3, 17)
+			gfdec2 c_col(0, 0), c_col(1, 0), c_col(2, 0)
+			gsel selcur
+		}
+		repeat aniref
+			sx(cnt) = rnd(24) - 12
+			sy(cnt) = rnd(8)
+		loop
+		anidx = (cX(tc) - scx) * inf_tiles + inf_screenx
+		anix = anidx + rnd(12) - rnd(12)
+		anidy = (cY(tc) - scy) * inf_tiles + inf_screeny
+		aniy = anidy - 16 + rnd(12) - rnd(12)
+		gsel 4
+		gmode 0
+		pos 0, 0
+		gcopy 0, anidx - 24, anidy - 48, 96, 144
+		if (critical) {
+			gsel 7
+			picload_ exedir + "graphic\\anime28.bmp"
+		}
+		gmode 2
+		gsel 0
+		repeat 4 + (critical != 0)
+			redraw 0
+			gmode 2
+			cnt2 = cnt * 2
+			gmode 2, inf_tiles, inf_tiles
+			if (critical) {
+				pos anidx - 24, anidy - 32
+				gcopy 7, cnt * 96, 0, 96, 96
+			}
+			repeat aniref
+				pos anidx + 24 + sx(cnt) + (sx(cnt) < 4) * ((1 + (cnt \ 2 == 0)) * (-1)) * cnt2 + (sx(cnt) > (-4)) * (1 + (cnt \ 2 == 0)) * cnt2, anidy + sy(cnt) + cnt2 * cnt2 / 3
+				grotate 1, anix(1), 0, 0.4 * cnt, 6, 6
+			loop
+			if (ap == 0) {
+				pos anidx + sx + 24, anidy + sy + 10
+				grotate 1, 0, 960, 0.5 * cnt - 0.8, cnt * 10 + aniref, cnt * 10 + aniref
+			}
+			if (ap == 1) {
+				pos anidx, anidy
+				gcopy 3, 1008 + cnt * 48, 432, 48, 48
+			}
+			if (ap == 2) {
+				pos anidx, anidy
+				gcopy 3, 816 + cnt * 48, 432, 48, 48
+			}
+			redraw 1
+			redraw 0
+			gmode 0
+			pos anidx - 24, anidy - 48
+			gcopy 4, 0, 0, 96, 144
+			gmode 2
+			await cfg_animewait
+		loop
+		if (synccheck(cc, -1)) {
+			if (cc == 0 | (cfg_npcattackanime == 1 & petcheck(cc)) | cfg_npcattackanime == 2) {
+				if (critical) {
+					snd 3
+				} else {
+					if (attackskill == 106 | attackrange == 1) {
+						snd 2
+					} else {
+						if (itemsnd(cw) == 0) {
+							snd 2
+						}
+					}
+				}
+			}
+		}
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 20 | _switch_sw) {
+		_switch_sw = 0
+		snd 107
+		if (synccheck(anic, -1) == 0) {
+			goto *label_0631
+		}
+		gsel 7
+		picload_ exedir + "graphic\\anime13.bmp"
+		gsel 4
+		gmode 0
+		pos 0, 0
+		gcopy 0, 0, 0, windoww, windowh
+		gsel 0
+		anidx = (cX(anic) - scx) * inf_tiles + inf_screenx - 24
+		anidy = (cY(anic) - scy) * inf_tiles + inf_screeny - 60
+		repeat 10
+			redraw 0
+			pos 0, 0
+			gmode 0
+			gcopy 4, 0, 0, windoww, windowh
+			cnt2 = cnt
+			gmode 2
+			repeat anidy / 96 + 2
+				pos anidx, anidy - cnt * 96
+				gcopy 7, cnt2 / 2 * 96, (cnt == 0) * 96, 96, 96
+			loop
+			await cfg_animewait + 25
+			redraw 1
+		loop
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 19 | _switch_sw) {
+		_switch_sw = 0
+		gsel 7
+		picload_ exedir + "graphic\\anime12.bmp"
+		gsel 4
+		pos 0, 0
+		gmode 0
+		gcopy 0, 0, 0, windoww, windowh
+		gsel 0
+		am = 0
+		repeat 245
+			if (cState(cnt) != 1) {
+				continue
+			}
+			if (animode == 0) {
+				if (cnt == cc) {
+					continue
+				}
+			}
+			if (animode >= 100) {
+				if (cnt != animode - 100) {
+					continue
+				}
+			}
+			ax(am) = (cX(cnt) - scx) * inf_tiles + inf_screenx - 24
+			if (am != 0) {
+				ax(am) += 4 - rnd(8)
+			}
+			ay(am) = (cY(cnt) - scy) * inf_tiles + inf_screeny + 32
+			if (ay(am) < 0 | ay(am) > inf_screenh * inf_tiles + inf_screeny) {
+				continue
+			}
+			if (ax(am) < (-20) | ax(am) > windoww + 20) {
+				continue
+			}
+			ap(am) = 20 + (am != 0) * rnd(5)
+			am++
+		loop
+		repeat
+			redraw 0
+			pos 0, 0
+			gmode 0
+			gcopy 4, 0, 0, windoww, windowh
+			af = 0
+			repeat am
+				if (ap(cnt) <= 0) {
+					continue
+				}
+				af = 1
+				cnt2 = cnt
+				anidy = ay(cnt) * limit(20 - ap(cnt), 0, 6) / 6 - 96
+				gmode 2, 96, 96
+				pos ax(cnt), anidy
+				gcopy 7, limit(8 - ap(cnt), 0, 8) * 96 + 96 * (ap(cnt) < 15), 0, 96, 96
+				if (ap(cnt) <= 14) {
+					if (ap(cnt) >= 6) {
+						pos ax(cnt), anidy + 16
+						gcopy 7, (14 - ap(cnt)) / 2 * 96, 96, 96, 96
+					}
+				}
+				anidx = limit(anidy / 55 + 1, 0, 7 - limit((11 - ap(cnt)) * 2, 0, 7))
+				repeat anidx, 1
+					pos ax(cnt2), anidy - cnt * 55
+					gcopy 7, 96 * (ap(cnt2) < 15), 0, 96, 55
+					if (cnt == anidx) {
+						pos ax(cnt2), anidy - cnt * 55 - 40
+						gcopy 7, 288, 0, 96, 40
+					}
+				loop
+				if (ap(cnt) >= 20) {
+					ap(cnt) -= rnd(2)
+				} else {
+					ap(cnt)--
+				}
+			loop
+			if (cnt \ 2 == 0) {
+				if (cnt < 30) {
+					if (cnt / 3 < am) {
+						if (animode == 0) {
+							snd 37
+						}
+						if (animode >= 100) {
+							snd 33
+						}
+					}
+				}
+			}
+			if (af == 0) {
+				break
+			}
+			await cfg_animewait + 25
+			redraw 1
+		loop
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 22 | _switch_sw) {
+		_switch_sw = 0
+		gsel 7
+		picload_ exedir + "graphic\\anime17.bmp"
+		gsel 4
+		pos 0, 0
+		gmode 0
+		gcopy 0, 0, 0, windoww, windowh
+		gsel 0
+		am = 0
+		repeat 75
+			ax(am) = 240 + rnd(windoww)
+			ay(am) = -96
+			ap(am) = rnd(8)
+			am++
+		loop
+		repeat
+			redraw 0
+			if (cnt < 4) {
+				pos 0, 0
+			} else {
+				pos 5 - rnd(10), 5 - rnd(10)
+			}
+			gmode 0
+			gcopy 4, 0, 0, windoww, windowh
+			af = 0
+			repeat am
+				if (ap(cnt) >= 16) {
+					continue
+				}
+				af = 1
+				anidy = ay(cnt) * limit(20 - ap(cnt), 0, 6) / 6 - 96
+				gmode 2, 96, 96
+				if (ap(cnt) < 9) {
+					ax(cnt) -= 16 + cnt \ (windoww / 30)
+					ay(cnt) += 24 + cnt \ (windowh / 10)
+				}
+				if (ap(cnt) >= 10) {
+					pos ax(cnt) - 48, ay(cnt)
+					gcopy 7, (ap(cnt) - 10) * 192, 96, 192, 96
+				}
+				if (ap(cnt) < 16) {
+					pos ax(cnt), ay(cnt)
+					gcopy 7, limit(ap(cnt) - 8, 0, 8) * 96, 0, 96, 96
+				}
+				ap(cnt)++
+			loop
+			if (cnt \ 2 == 0) {
+				if (cnt < 8) {
+					if (cnt / 3 < am) {
+						snd 108
+					}
+				}
+			}
+			if (af == 0) {
+				break
+			}
+			await cfg_animewait + 40
+			redraw 1
+		loop
+		await cfg_animewait
+		redraw 0
+		pos 0, 0
+		gmode 0
+		gcopy 4, 0, 0, windoww, windowh
+		gmode 2
+		redraw 1
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 21 | _switch_sw) {
+		_switch_sw = 0
+		gsel 7
+		picload_ exedir + "graphic\\anime16.bmp"
+		gsel 4
+		pos 0, 0
+		gmode 0
+		gcopy 0, 0, 0, windoww, windowh
+		gsel 0
+		am = 0
+		repeat 100
+			ax(am) = rnd(windoww)
+			ay(am) = rnd(inf_screenh * inf_tiles) - 96 - 24
+			ap(am) = 0 - rnd(3)
+			am++
+		loop
+		repeat
+			redraw 0
+			pos 5 - rnd(10), 5 - rnd(10)
+			gmode 0
+			gcopy 4, 0, 0, windoww, windowh
+			af = 0
+			repeat am
+				if (ap(cnt) >= 10) {
+					continue
+				}
+				af = 1
+				cnt2 = cnt
+				anidy = ay(cnt) * limit(20 - ap(cnt), 0, 6) / 6 - 96
+				gmode 2, 96, 96
+				if (ap(cnt) < 10) {
+					pos ax(cnt), ay(cnt)
+					gcopy 7, ap(cnt) * 96, 96, 96, 96
+					pos ax(cnt), ay(cnt) - 96
+					gcopy 7, ap(cnt) * 96, 0, 96, 96
+				}
+				if (ap(cnt) < 0) {
+					ap(cnt) += rnd(2)
+				} else {
+					ap(cnt)++
+				}
+			loop
+			if (cnt \ 2 == 0) {
+				if (cnt < 8) {
+					if (cnt / 3 < am) {
+						snd 108
+					}
+				}
+			}
+			if (af == 0) {
+				break
+			}
+			await cfg_animewait + 40
+			redraw 1
+		loop
+		await cfg_animewait
+		redraw 0
+		pos 0, 0
+		gmode 0
+		gcopy 4, 0, 0, windoww, windowh
+		gmode 2
+		redraw 1
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 14 | _switch_sw) {
+		_switch_sw = 0
+		sx = x
+		sy = y
+		_switch_sw++
+	}
+	if (_switch_val == 16 | _switch_sw) {
+		_switch_sw = 0
+		aniref = 4
+		ax = (sx - scx) * inf_tiles + inf_screenx
+		ay = (sy - scy) * inf_tiles + inf_screeny
+		if (animeid == 14) {
+			gsel 1
+			color 0
+			boxf 0, 960, chipi(2, 17), chipi(3, 17) + 960
+			pos 0, 960
+			gcopy 1, chipi(0, 17), chipi(1, 17), chipi(2, 17), chipi(3, 17)
+			gfini chipi(2, 17), chipi(3, 17)
+			gfdec2 c_col(0, 0), c_col(1, 0), c_col(2, 0)
+			gsel selcur
+		}
+		repeat aniref
+			sx(cnt) = rnd(24) - 12
+			sy(cnt) = rnd(8)
+		loop
+		gsel 4
+		gmode 0
+		pos 0, 0
+		gcopy 0, ax - 16, ay - 16, 64, 64
+		gmode 2
+		gsel 0
+		repeat 5
+			redraw 0
+			gmode 2
+			cnt2 = cnt * 2
+			gmode 2, inf_tiles, inf_tiles
+			repeat aniref
+				pos ax + 24 + sx(cnt) + (sx(cnt) < 4) * ((1 + (cnt \ 2 == 0)) * (-1)) * cnt2 + (sx(cnt) > (-4)) * (1 + (cnt \ 2 == 0)) * cnt2, ay + sy(cnt) + cnt2 * cnt2 / 3
+				grotate 1, 864, 0, 0.4 * cnt, 24, 24
+			loop
+			pos ax + sx + 24, ay + sy + 10
+			grotate 1, 0, 960, 0.5 * cnt - 0.8, cnt * 10 + aniref * 3, cnt * 10 + aniref * 3
+			redraw 1
+			redraw 0
+			gmode 0
+			pos ax - 16, ay - 16
+			gcopy 4, 0, 0, 64, 64
+			gmode 2
+			await cfg_animewait
+		loop
+		goto *label_0631
+	}
+	if (_switch_val == 23 | _switch_sw) {
+		_switch_sw = 0
+		gsel 7
+		picload_ exedir + "user\\graphic\\anime29.bmp"
+		gsel 4
+		pos 0, 0
+		gmode 0
+		gcopy 0, 0, 0, windoww, windowh
+		gsel 0
+		am = 0
+		repeat 50
+			ax(am) = rnd(windoww)
+			ay(am) = rnd(inf_screenh * inf_tiles) - 96 - 24
+			ap(am) = 0
+			am++
+		loop
+		repeat
+			redraw 0
+			pos 5 - rnd(10), 5 - rnd(10)
+			gmode 0
+			gcopy 4, 0, 0, windoww, windowh
+			af = 0
+			repeat am
+				if (ap(cnt) >= 8) {
+					continue
+				}
+				af = 1
+				cnt2 = cnt
+				anidy = ay(cnt) * limit(20 - ap(cnt), 0, 6) / 6 - 120
+				gmode 2, 120, 120
+				if (ap(cnt) < 8) {
+					pos ax(cnt), ay(cnt)
+					gcopy 7, ap(cnt) * 120, 120, 120, 120
+					pos ax(cnt), ay(cnt) - 120
+					gcopy 7, ap(cnt) * 120, 0, 120, 120
+				}
+				ap(cnt)++
+			loop
+			if (cnt \ 2 == 0) {
+				if (cnt < 6) {
+					if (cnt / 3 < am) {
+						snd 108
+					}
+				}
+			}
+			if (af == 0) {
+				break
+			}
+			await cfg_animewait + 40
+			redraw 1
+		loop
+		await cfg_animewait
+		redraw 0
+		pos 0, 0
+		gmode 0
+		gcopy 4, 0, 0, windoww, windowh
+		gmode 2
+		redraw 1
+		goto *label_0631
+		_switch_sw++
+	}
+	if (_switch_val == 24 | _switch_sw) {
+		_switch_sw = 0
+		aniref = aniref / 4 + 1
+		if (aniref > 20) {
+			aniref = 20
+		}
+		if (cbit(983, tc)) {
+			anix(1) = 1104
+		} else {
+			anix(1) = 720
+		}
+		repeat aniref
+			sx(cnt) = rnd(24) - 12
+			sy(cnt) = rnd(8)
+		loop
+		anidx = (cX(tc) - scx) * inf_tiles + inf_screenx
+		anix = anidx + rnd(12) - rnd(12)
+		anidy = (cY(tc) - scy) * inf_tiles + inf_screeny
+		aniy = anidy - 16 + rnd(12) - rnd(12)
+		gsel 4
+		gmode 0
+		pos 0, 0
+		gcopy 0, anidx - 24, anidy - 48, 96, 144
+		gsel 7
+		picload_ exedir + "user\\graphic\\anime30.bmp"
+		gmode 2
+		gsel 0
+		repeat 5
+			redraw 0
+			gmode 2
+			cnt2 = cnt * 2
+			gmode 2, inf_tiles, inf_tiles
+			if (critical) {
+				pos anidx - 24, anidy - 32
+				gcopy 7, cnt * 96, 0, 96, 96
+			}
+			repeat aniref
+				pos anidx + 24 + sx(cnt) + (sx(cnt) < 4) * ((1 + (cnt \ 2 == 0)) * (-1)) * cnt2 + (sx(cnt) > (-4)) * (1 + (cnt \ 2 == 0)) * cnt2, anidy + sy(cnt) + cnt2 * cnt2 / 3
+				grotate 1, anix(1), 0, 0.4 * cnt, 6, 6
+			loop
+			pos anidx, anidy
+			gcopy 3, 1008 + cnt * 48, 432, 48, 48
+			redraw 1
+			redraw 0
+			gmode 0
+			pos anidx - 24, anidy - 48
+			gcopy 4, 0, 0, 96, 144
+			gmode 2
+			await cfg_animewait
+		loop
+		goto *label_0631
+		_switch_sw++
+	}
+*label_0631
+	gmode 2
+	anicol = 0
+	return
+*label_0632
+	if (scposval == 0) {
+		if (scroll) {
+			sx = cNextX(0) - scx, cNextX(0)
+			sy = cNextY(0) - scy, cNextY(0)
+		} else {
+			sx = cX(0) - scx, cX(0)
+			sy = cY(0) - scy, cY(0)
+		}
+	} else {
+		sx = tlocx - scx, tlocx
+		sy = tlocy - scy, tlocy
+	}
+	if (gCurrentMap == 40 | gCurrentMap == 49) {
+		sx = cX(camera) - scx, cX(camera)
+		sy = cY(camera) - scy, cY(camera)
+	}
+	if (cfg_alwayscenter) {
+		scx = sx + scx - inf_screenw / 2
+		scy = sy + scy - inf_screenh / 2
+	} else {
+		if (sy < scposy) {
+			scy = sy(1) - scposy
+		}
+		if (sx < 6) {
+			scx = sx(1) - 6
+		}
+		if (sx > inf_screenw - 7) {
+			scx = sx(1) - (inf_screenw - 7)
+		}
+		if (sy > inf_screenh - scposy - 1) {
+			scy = sy(1) - (inf_screenh - scposy - 1)
+		}
+	}
+	if (scx + inf_screenw >= mapWidth) {
+		scx = mapWidth - inf_screenw
+	}
+	if (scy + inf_screenh >= mapHeight) {
+		scy = mapHeight - inf_screenh
+	}
+	if (scy < 0) {
+		scy = 0
+	}
+	if (scx < 0) {
+		scx = 0
+	}
+	return
+*label_0633
+	memset slight, 0, (inf_screenw + 4) * (inf_screenh + 4) * 4
+	msync++
+	sy(2) = cY(0) - 17 / 2, cY(0) + 17 / 2, 17 / 2 - cY(0)
+	sx(3) = cX(0) - 17 / 2
+	if (cfg_scroll) {
+		repw = inf_screenw + 2, scx - 1
+		reph = inf_screenh + 2, scy - 1
+	} else {
+		repw = inf_screenw, scx
+		reph = inf_screenh, scy
+	}
+	if (oabit(15, gCurrentMap) | oabit(18, gCurrentMap) | (gCurrentMap == 210 & ncgdata(308))) {
+		olistmax = 0
+		inv_find 583, 0
+		if (stat != (-1)) {
+			olist(olistmax) = cX(0) * 100 + cY(0)
+			olistmax++
+		}
+		inv_getheader -1
+		repeat invrange, invhead
+			if (iNumber(cnt) == 0) {
+				continue
+			}
+			if (iId(cnt) == 583) {
+				olist(olistmax) = iX(cnt) * 100 + iY(cnt)
+				olistmax++
+			}
+		loop
+	}
+	ly = 1 + (cfg_scroll == 0)
+	repeat reph, reph(1)
+		sy = cnt
+		lx = 1 + (cfg_scroll == 0)
+		if (sy < 0 | sy >= mapHeight) {
+			repeat repw, repw(1)
+				slight(lx + 1, ly) += 1
+				slight(lx - 1, ly) += 8
+				slight(lx, ly - 1) += 2
+				slight(lx, ly + 1) += 4
+				slight(lx + 1, ly + 1) += 16
+				slight(lx - 1, ly - 1) += 32
+				slight(lx + 1, ly - 1) += 64
+				slight(lx - 1, ly + 1) += 128
+				lx++
+			loop
+			ly++
+			continue
+		}
+		repeat repw, repw(1)
+			sx = cnt
+			if (sx < 0 | sx >= mapWidth) {
+				slight(lx + 1, ly) += 1
+				slight(lx - 1, ly) += 8
+				slight(lx, ly - 1) += 2
+				slight(lx, ly + 1) += 4
+				slight(lx + 1, ly + 1) += 16
+				slight(lx - 1, ly - 1) += 32
+				slight(lx + 1, ly - 1) += 64
+				slight(lx - 1, ly + 1) += 128
+				lx++
+				continue
+			}
+			if (gCurrentMap == 40 | gCurrentMap == 49) {
+				goto *label_0634
+			}
+			if (cBlind(0) != 0) {
+				if (ogdata(471) != 2) {
+					if (sx != cX(0) | sy != cY(0)) {
+						goto *label_0635
+					}
+				} else {
+					if (sx > cX(0) + 2 | sx < cX(0) - 2 | sy > cY(0) + 2 | sy < cY(0) - 2) {
+						goto *label_0635
+					}
+				}
+			}
+			if (oabit(15, gCurrentMap) | oabit(18, gCurrentMap) | (gCurrentMap == 210 & ncgdata(308))) {
+				if (sx != cX(0) | sy != cY(0)) {
+					f = 1
+					repeat olistmax
+						if (abs(olist(cnt) / 100 - sx) <= 3 & abs(olist(cnt) \ 100 - sy) <= 3) {
+							f = 0
+							break
+						}
+					loop
+					if (f) {
+						goto *label_0635
+					}
+				}
+			}
+			if (sy > sy(2)) {
+				if (sy < sy(3)) {
+					sx(2) = fovlist(0, sy + sy(4)) + sx(3)
+					if (sx >= sx(2)) {
+						if (sx < fovlist(1, sy + sy(4)) + sx(3)) {
+							if (fov_los(cX(0), cY(0), sx, sy)) {
+*label_0634
+								mapsync(sx, sy) = msync
+								if (map(sx, sy, 1) != 0) {
+									cVisionFlag(map(sx, sy, 1) - 1) = msync
+								}
+								if (map(sx, sy, 2) != map(sx, sy, 0)) {
+									map(sx, sy, 2) = map(sx, sy, 0)
+									gosub *label_0645
+								}
+								map(sx, sy, 5) = map(sx, sy, 4)
+								lx++
+								continue
+							}
+						}
+					}
+				}
+			}
+*label_0635
+			slight(lx, ly) += 1000
+			slight(lx + 1, ly) += 1
+			slight(lx - 1, ly) += 8
+			slight(lx, ly - 1) += 2
+			slight(lx, ly + 1) += 4
+			slight(lx + 1, ly + 1) += 16
+			slight(lx - 1, ly - 1) += 32
+			slight(lx + 1, ly - 1) += 64
+			slight(lx - 1, ly + 1) += 128
+			lx++
+		loop
+		ly++
+	loop
+	return
+*label_0636
+	memset slight, 0, (inf_screenw + 4) * (inf_screenh + 4) * 4
+	msync++
+	sy(2) = tlocinity - val / 2, tlocinity + val / 2, val / 2 - tlocinity
+	sx(3) = tlocinitx - val / 2 - 2
+	if (cfg_scroll) {
+		repw = inf_screenw + 2, scx - 1
+		reph = inf_screenh + 2, scy - 1
+	} else {
+		repw = inf_screenw, scx
+		reph = inf_screenh, scy
+	}
+	ly = 1 + (cfg_scroll == 0)
+	repeat reph, reph(1)
+		sy = cnt
+		lx = 1 + (cfg_scroll == 0)
+		if (sy < 0 | sy >= mapHeight) {
+			repeat repw, repw(1)
+				slight(lx + 1, ly) += 1
+				slight(lx - 1, ly) += 8
+				slight(lx, ly - 1) += 2
+				slight(lx, ly + 1) += 4
+				slight(lx + 1, ly + 1) += 16
+				slight(lx - 1, ly - 1) += 32
+				slight(lx + 1, ly - 1) += 64
+				slight(lx - 1, ly + 1) += 128
+				lx++
+			loop
+			ly++
+			continue
+		}
+		repeat repw, repw(1)
+			sx = cnt
+			if (sx < 0 | sx >= mapWidth) {
+				slight(lx + 1, ly) += 1
+				slight(lx - 1, ly) += 8
+				slight(lx, ly - 1) += 2
+				slight(lx, ly + 1) += 4
+				slight(lx + 1, ly + 1) += 16
+				slight(lx - 1, ly - 1) += 32
+				slight(lx + 1, ly - 1) += 64
+				slight(lx - 1, ly + 1) += 128
+				lx++
+				continue
+			}
+			if (dist(sx, sy, tlocinitx, tlocinity) < val) {
+				mapsync(sx, sy) = msync
+				if (map(sx, sy, 1) != 0) {
+					cVisionFlag(map(sx, sy, 1) - 1) = msync
+				}
+				if (map(sx, sy, 2) != map(sx, sy, 0)) {
+					map(sx, sy, 2) = map(sx, sy, 0)
+				}
+				map(sx, sy, 5) = map(sx, sy, 4)
+				lx++
+				continue
+			}
+			slight(lx, ly) += 1000
+			slight(lx + 1, ly) += 1
+			slight(lx - 1, ly) += 8
+			slight(lx, ly - 1) += 2
+			slight(lx, ly + 1) += 4
+			slight(lx + 1, ly + 1) += 16
+			slight(lx - 1, ly - 1) += 32
+			slight(lx + 1, ly - 1) += 64
+			slight(lx - 1, ly + 1) += 128
+			lx++
+		loop
+		ly++
+	loop
+	return
+*label_0637
+	screendrawhack = 2
+	cell_draw
+	screendrawhack = 3
+	if (gCurrentMap == 40 | gCurrentMap == 49) {
+		repeat 245
+			if (cState(cnt) != 1) {
+				continue
+			}
+			ap = 0
+			if (cRelationship(cnt) == 10) {
+				ap = 1, 1, 25
+			}
+			if (cRelationship(cnt) == (-3)) {
+				ap = 25, 1, 1
+			}
+			if (cnt == 0) {
+				ap = 0
+			}
+			if (ap != 0) {
+				sx = (cX(cnt) - scx) * inf_tiles + inf_screenx
+				sy = (cY(cnt) - scy) * inf_tiles + inf_screeny
+				if (sx >= 0) {
+					if (sy >= 0) {
+						if (sx - inf_screenx < (inf_screenw - 1) * inf_tiles) {
+							if (sy < (inf_screenh - 1) * inf_tiles) {
+								pos sx, sy * (sy > 0)
+								gfini inf_tiles, inf_tiles + (sy < 0) * inf_screeny
+								gfinc ap, ap(1), ap(2)
+								if (cnt == camera) {
+									gmode 4, , , 120
+									color 0, 0, 0
+									pos sx + 36, sy + 32
+									gcopy 3, 240, 410, 24, 16
+									gmode 2
+								}
+							}
+						}
+					}
+				}
+			}
+		loop
+	}
+	screendrawhack = 4
+	if (existfile_minimap) {
+		repeat mapWidth
+			oom_x = cnt
+			repeat mapHeight
+				oom_y = cnt
+				if (mapbit(0, oom_x, oom_y) == 0) {
+					continue
+				}
+				if (map(oom_x, oom_y, 2) == map(oom_x, oom_y, 0)) {
+					if (map(oom_x, oom_y, 6) != 0) {
+						sy = 84 * oom_y / mapHeight
+						if (sy < 2) {
+							sy = 2
+						} else {
+							if (sy > 84 - 8) {
+								sy = 84 - 8
+							}
+						}
+						sx = 120 * oom_x / mapWidth
+						if (sx < 2) {
+							sx = 2
+						} else {
+							if (sx > 120 - 8) {
+								sx = 120 - 8
+							}
+						}
+						pos inf_raderx + sx, inf_radery + sy
+						_switch_val = map(oom_x, oom_y, 6) / 1000 \ 100
+						if (_switch_val == 10 | _switch_sw) {
+							_switch_sw = 0
+							_switch_sw++
+						}
+						if (_switch_val == 11 | _switch_sw) {
+							_switch_sw = 0
+							gcopy 97, 0, 0, 6, 6
+							goto *label_0638
+							_switch_sw++
+						}
+						if (_switch_val == 20 | _switch_sw) {
+							_switch_sw = 0
+							_switch_sw++
+						}
+						if (_switch_val == 21 | _switch_sw) {
+							_switch_sw = 0
+							gcopy 97, 18, 0, 6, 6
+							goto *label_0638
+							_switch_sw++
+						}
+						if (_switch_val == 24 | _switch_sw) {
+							_switch_sw = 0
+							_switch_sw++
+						}
+						if (_switch_val == 25 | _switch_sw) {
+							_switch_sw = 0
+							_switch_sw++
+						}
+						if (_switch_val == 26 | _switch_sw) {
+							_switch_sw = 0
+							_switch_sw++
+						}
+						if (_switch_val == 27 | _switch_sw) {
+							_switch_sw = 0
+							_switch_sw++
+						}
+						if (_switch_val == 28 | _switch_sw) {
+							_switch_sw = 0
+							gcopy 97, 12, 0, 6, 6
+							goto *label_0638
+							_switch_sw++
+						}
+						if (_switch_val == 14 | _switch_sw) {
+							_switch_sw = 0
+							_switch_sw++
+						}
+						if (_switch_val == 32 | _switch_sw) {
+							_switch_sw = 0
+							gcopy 97, 6, 0, 6, 6
+							goto *label_0638
+						}
+						goto *label_0638
+					}
+				}
+*label_0638
+			loop
+		loop
+	}
+	sy = 84 * cY(0) / mapHeight
+	if (sy < 2) {
+		sy = 2
+	} else {
+		if (sy > 84 - 8) {
+			sy = 84 - 8
+		}
+	}
+	sx = 120 * cX(0) / mapWidth
+	if (sx < 2) {
+		sx = 2
+	} else {
+		if (sx > 120 - 8) {
+			sx = 120 - 8
+		}
+	}
+	if (raderx != (-1)) {
+		pos inf_raderx + raderx, inf_radery + radery
+		gcopy 3, 688 + raderx, 528 + radery, 6, 6
+	}
+	raderx = sx
+	radery = sy
+	pos inf_raderx + sx, inf_radery + sy
+	gcopy 3, 15, 338, 6, 6
+	losmode = 0
+	screendrawhack = 5
+	if (cfg_env) {
+		if (gWeather == 3) {
+			gosub *label_0639
+		}
+		if (gWeather == 4) {
+			gosub *label_0640
+		}
+		if (gWeather == 2) {
+			gosub *label_0641
+		}
+		if (gWeather == 1) {
+			gosub *label_0642
+		}
+	}
+	return
+*label_0639
+	if (mapIndoorOrOutdoor != 2) {
+		return
+	}
+	repeat maxrain * (1 + (mapType == 1))
+		s_p = rnd(100)
+		color 170 - s_p, 200 - s_p, 250 - s_p
+		if (gLeftTurnsOfTimestop != 0) {
+			color 150, 150, 150
+		}
+		line rainx(cnt) - 40, rainy(cnt) - cnt \ 3 - 1, rainx(cnt) - 39 + cnt \ 2, rainy(cnt)
+		if (gLeftTurnsOfTimestop != 0) {
+			continue
+		}
+		if (rainx(cnt) == 0) {
+			rainx(cnt) = rnd(windoww) + 40
+		} else {
+			rainx(cnt) += 2
+		}
+		if (rainy(cnt) == 0) {
+			rainy(cnt) = rnd(windowh - inf_verh) - 6
+		} else {
+			rainy(cnt) += 16 + cnt \ 8
+			if (rainy(cnt) > windowh - inf_verh - 6) {
+				rainy(cnt) = 0
+				rainx(cnt) = 0
+			}
+		}
+	loop
+	weatherbk = gWeather
+	return
+*label_0640
+	if (mapIndoorOrOutdoor != 2) {
+		return
+	}
+	repeat maxrain * (1 + (mapType == 1))
+		s_p = rnd(100)
+		color 170 - s_p, 200 - s_p, 250 - s_p
+		if (gLeftTurnsOfTimestop != 0) {
+			color 150, 150, 150
+		}
+		line rainx(cnt) - 40, rainy(cnt) - cnt \ 5 - 4, rainx(cnt) - 39 + cnt \ 2, rainy(cnt)
+		if (gLeftTurnsOfTimestop != 0) {
+			continue
+		}
+		if (rainx(cnt) == 0) {
+			rainx(cnt) = rnd(windoww) + 40
+		} else {
+			rainx(cnt) += 1
+		}
+		if (rainy(cnt) == 0) {
+			rainy(cnt) = rnd(windowh - inf_verh) - 6
+		} else {
+			rainy(cnt) += 24 + cnt \ 8
+			if (rainy(cnt) > windowh - inf_verh - 10) {
+				rainy(cnt) = 0
+				rainx(cnt) = 0
+			}
+		}
+	loop
+	weatherbk = gWeather
+	return
+*label_0641
+	if (mapIndoorOrOutdoor != 2) {
+		return
+	}
+	color 0, 0, 0
+	repeat maxrain * 2
+		if (cnt \ 30 == 0) {
+			gmode 4, 8, 8, 100 + cnt \ 150
+		}
+		if (gLeftTurnsOfTimestop == 0) {
+			if (rainy(cnt) == 0 | weatherbk != gWeather) {
+				rainy(cnt) = rnd(windowh / 2) * (-1)
+				rainx(cnt) = rnd(windoww)
+			} else {
+				rainx(cnt) += rnd(3) - 1
+				rainy(cnt) += rnd(2) + cnt \ 5
+				if (rainy(cnt) > windowh - inf_verh - 10 | rnd(500) == 0) {
+					rainy(cnt) = 0
+					rainx(cnt) = 0
+				}
+			}
+		}
+		pos rainx(cnt), rainy(cnt)
+		gcopy 3, rainx(cnt) \ 2 * 8, 600 + cnt \ 6 * 8
+	loop
+	weatherbk = gWeather
+	gmode 2
+	return
+*label_0642
+	if (mapIndoorOrOutdoor != 2) {
+		return
+	}
+	color 0, 0, 0
+	repeat maxrain
+		if (cnt \ 20 == 0) {
+			gmode 4, 8, 8, 100 + cnt \ 150
+		}
+		if (rainy(cnt) <= 0 | weatherbk != gWeather) {
+			if (gLeftTurnsOfTimestop != 0) {
+				continue
+			}
+			rainy(cnt) = windowh - inf_verh - 8 - rnd(100)
+			rainx(cnt) = rnd(windoww)
+		} else {
+			pos rainx(cnt), rainy(cnt)
+			gcopy 3, 16 + rainx(cnt) \ 2 * 8, 600 + cnt \ 6 * 8
+			if (gLeftTurnsOfTimestop != 0) {
+				continue
+			}
+			rainx(cnt) += rnd(3) - 1
+			rainy(cnt) -= rnd(2) + cnt \ 5
+		}
+	loop
+	weatherbk = gWeather
+	gmode 2
+	return
+*label_0643
+	if (abs(cNextX(0) - cX(0)) > 1) {
+		return
+	}
+	if (abs(cNextY(0) - cY(0)) > 1) {
+		return
+	}
+	scrollp = cfg_walkwait
+	if (mapType == 1) {
+		scrollp = 6
+		keybd_wait = 1000
+		if (chipm(0, map(cX(0), cY(0), 0)) == 4) {
+			scrollp = 9
+		}
+	} else {
+		if (keybd_wait > cfg_startrun) {
+			scrollp = 3
+			if (cfg_runscroll == 0) {
+				return
+			}
+			if (keybd_wait >= 100000) {
+				scrollp = 1
+			}
+		}
+	}
+	scxbk2 = scx
+	scybk2 = scy
+	scroll = 1
+	gosub *label_0632
+	scroll = 0
+	scxbk = scx
+	scybk = scy
+	scx = scxbk2
+	scy = scybk2
+	scrollanime = 1
+	if (cfg_improvescroll) {
+		if (keybd_wait < 100000) {
+			scrollp = scrollp * 3 / 2 + 1
+		}
+	}
+	repeat scrollp - 1, 1
+		if (cnt \ 2 == 1) {
+			if (gLeftTurnsOfTimestop == 0) {
+				scrturn++
+			}
+		}
+		redraw 0
+		sxfix = (cNextX(0) - cX(0)) * cnt * inf_tiles / scrollp * (-1)
+		syfix = (cNextY(0) - cY(0)) * cnt * inf_tiles / scrollp * (-1)
+		gsel 4
+		pos 0, 0
+		gmode 0
+		gcopy 0, 0, windowh - inf_verh, windoww, inf_tiles
+		gsel 0
+		gmode 2
+		gosub *label_0637
+		gmode 0
+		pos 0, windowh - inf_verh
+		gcopy 4, 0, 0, windoww, inf_tiles
+		gmode 2
+		gosub *label_0625
+		gmode 2
+		redraw 1
+		await 40 / (cfg_improvescroll * 3 + 1)
+	loop
+	scrollanime = 0
+	return
+*label_0644
+	gsel 3
+	gmode 0
+	repeat mapHeight
+		sy = cnt
+		repeat mapWidth
+			sx = cnt
+			sy(1) = 84 * sy / mapHeight
+			sx(1) = 120 * sx / mapWidth
+			pos 688 + sx(1), 528 + sy(1)
+			gcopy 2, map(sx, sy, 0) \ 33 * inf_tiles + sx \ 16, map(sx, sy, 0) / 33 * inf_tiles + sy \ 12, raderw, raderh
+			pos 688 + sx(1), 528 + sy(1)
+			gfini raderw, raderh
+			if (chipm(7, map(sx, sy, 0)) & 4) {
+				gfdec2 100, 100, 100
+			}
+		loop
+	loop
+	pos 688, 528
+	gfini 130, 90
+	gfinc 10, 10, 10
+	gsel 0
+	return
+*label_0645
+	sy(1) = 84 * sy / mapHeight
+	sx(1) = 120 * sx / mapWidth
+	pos inf_raderx + sx(1), inf_radery + sy(1)
+	gcopy 3, 688 + sx(1), 528 + sy(1), raderw, raderh
+	return
+*label_0646
+	gsel 4
+	gmode 0
+	pos 0, 0
+	gcopy 0, 0, 0, windoww, windowh
+	gsel 0
+	gmode 0
+	repeat 50
+		await 20
+		redraw 0
+		pos 0, 0
+		gfini windoww, windowh
+		gfdec2 5, 5, 5
+		redraw 1
+	loop
+	color 500, 500, 500
+	repeat 30
+		gmode 4, 0, 0, 10 + cnt * 5
+		await 20
+		redraw 0
+		pos 0, 0
+		gcopy 4, 0, 0, windoww, windowh
+		redraw 1
+	loop
+	redraw 0
+	gmode 2
+	return
+*label_0647
+	repeat 50
+		await 20
+		redraw 0
+		pos 0, 0
+		gfini windoww, windowh
+		gfdec2 5, 5, 5
+		redraw 1
+	loop
+	redraw 0
+	return
+*label_0648
+	repeat 30
+		gmode 4, 0, 0, 10 + cnt * 5
+		await 20
+		redraw 0
+		pos 0, 0
+		gcopy 4, 0, 0, windoww, windowh
+		redraw 1
+	loop
+	redraw 0
+	gmode 2
+	return
+*label_0649
+	redraw 0
+	color 0, 0, 0
+	boxf
+	evx = 12
+	evy = 14
+	evscry = 40
+	evtiles = 48
+	evscrh = windowh / evtiles - 1
+	evscrw = windoww / evtiles + 2
+	gosub *label_0650
+	redraw 1
+	return
+*label_0650
+	repeat evscrh
+		y = cnt
+		dy = cnt + evy
+		if (dy >= mapHeight) {
+			dy = mapHeight
+		}
+		repeat evscrw
+			x = cnt
+			dx = cnt + evx
+			if (dx >= mapWidth) {
+				dx = mapWidth
+			}
+			pos x * evtiles, y * evtiles
+			gmode 0, inf_tiles, inf_tiles
+			ap = map(dx, dy, 0)
+			grotate 2, ap \ 33 * inf_tiles, ap / 33 * inf_tiles, 0, evtiles, evtiles
+		loop
+	loop
+	return
+*label_0651
+	fishdir = 0, 1, 3, 2
+	fishdir = fishdir(cDirection(0))
+	randomize cTurn(0) / 3
+	gmode 2
+	if (fishanime == 4) {
+		sx = (fishx - scx) * inf_tiles + inf_screenx
+		sy = (fishy - scy) * inf_tiles + inf_screeny
+		if (fishanime(1) > 15) {
+			sx += (cX(0) - fishx) * 8 * (fishanime(1) - 15)
+			sy += (cY(0) - fishy) * 8 * (fishanime(1) - 15) + fishanime(1)
+			pos sx, sy - 44
+			gcopy 9, 144 + fishanime(1) / 2 \ 2 * 48, 0, 48, 48
+		} else {
+			pos sx, sy - fishanime(1) * 3 + 14
+			gcopy 9, 144 + fishanime(1) \ 2 * 48, 0, 48, limit(fishanime(1) * 5, 1, 48)
+		}
+		return
+	}
+	sx = (cX(0) - scx) * inf_tiles + inf_screenx + 20
+	if (fishdir == 1) {
+		sx -= 48
+	}
+	if (fishdir == 3) {
+		sx += 48
+	}
+	sy = (cY(0) - scy) * inf_tiles + inf_screeny + 20
+	if (fishdir == 0) {
+		sy += 48
+	}
+	if (fishdir == 2) {
+		sy -= 48
+	}
+	ap = rnd(2)
+	if (fishanime == 1) {
+		ap = fishanime(1)
+	} else {
+		if (fishanime >= 2) {
+			ap = 10
+		}
+	}
+	pos sx, sy - 5 + ap
+	gcopy 9, 116, 18, 14, 10 - ap
+	sx = (cX(0) - scx) * inf_tiles + inf_screenx
+	sy = (cY(0) - scy) * inf_tiles + inf_screeny
+	gmode 2, 48, 48
+	if (fishdir == 0) {
+		sx2 = inf_tiles / 2 + rnd(3) - 1
+		sy2 = inf_tiles / 2 + 12
+		gmode 2, 48, 48
+		pos sx + sx2 + 1, sy + sy2 + 40
+		grotate 9, 48, 0, 0, 48, 48
+	}
+	if (fishdir == 1) {
+		sx2 = inf_tiles / 2 - 26
+		sy2 = inf_tiles / 2 - 12 + rnd(3) - 3
+		pos sx + sx2 - 16, sy + sy2 + 25
+		grotate 9, 48, 0, 0, 48, 48
+	}
+	if (fishdir == 2) {
+		sx2 = inf_tiles / 2 + rnd(3) + 1
+		sy2 = inf_tiles / 2 - 46
+	}
+	if (fishdir == 3) {
+		sx2 = inf_tiles / 2 + 26
+		sy2 = inf_tiles / 2 - 12 + rnd(3) - 3
+		pos sx + sx2 + 14, sy + sy2 + 25
+		grotate 9, 48, 0, 0, 48, 48
+	}
+	if (fishdir == 2) {
+		gmode 2, 48, 24
+		pos sx + sx2, sy + sy2
+		grotate 9, 0, 24, 0.5 * fishdir * 3.14, 48, 24
+	} else {
+		gmode 2, 48, 48
+		pos sx + sx2, sy + sy2
+		grotate 9, 0, 0, 0.5 * fishdir * 3.14, 48, 48
+	}
+	randomize
+	return

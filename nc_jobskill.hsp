@@ -1,0 +1,298 @@
+
+// NCの職業スキルを装備
+#deffunc nc_setjobskill
+	repeat 22, 1
+    if (eqfaction(0, "nc_trait," + cnt)) {
+      ospact(sId_powersong - 662 + cnt) = 1
+    } else {
+      // 魅了の場合、ドゥーレインのフィート取得時に削除処理スキップ
+      if (cnt == sId_pleasant - sId_powersong + 1) {
+        if (gettrait(0, 250) > 0) {
+          continue
+        }
+      }
+      ospact(sId_powersong - 662 + cnt) = 0
+    }
+  loop
+	return
+
+// NCの職業フィート消去
+#deffunc nc_resettrait int __uuu
+	repeat 200
+    rmfaction __uuu, "nc_trait," + cnt
+  loop
+	return
+
+#defcfunc nc_gettrait int __uuu, int __vvv
+	return eqfaction(__uuu, "nc_trait," + __vvv)
+
+#defcfunc nc_getskillname int __uuu
+  if (__uuu == 100) {
+    return lang("会心強化", "Critical Plus")
+  }
+  if (__uuu == 101) {
+    return lang("即死奇襲", "Surprise Attack")
+  }
+  if (__uuu == 102) {
+    return lang("防具強化", "Armor Piercing")
+  }
+  if (__uuu == 103) {
+    return lang("正確射撃", "Accurate Firing")
+  }
+  if (__uuu == 104) {
+    return lang("射撃強化", "Firearm Enhancement")
+  }
+  if (__uuu == 105) {
+    return lang("治癒魔法強化", "Enhanced Heal Magic")
+  }
+  if (__uuu == 106) {
+    return lang("強化魔法強化", "Enhanced Buff Magic")
+  }
+  if (__uuu == 107) {
+    return lang("弱化魔法強化", "Enhanced Debuff Magic")
+  }
+  if (__uuu == 108) {
+    return lang("才能", "Talent")
+  }
+  if (__uuu == 109) {
+    return lang("元素の矢", "Elements Arrow")
+  }
+  if (__uuu == 110) {
+    return lang("妨害の矢", "Obstruction Arrow")
+  }
+  if (__uuu == 111) {
+    return lang("ボルト魔法強化", "Enhanced bolt")
+  }
+  if (__uuu == 112) {
+    return lang("マナ消費軽減", "Reduced Mana Consumption")
+  }
+  if (__uuu == 113) {
+    return lang("ギャンブラー", "Gambler")
+  }
+  if (__uuu == 114) {
+    return lang("充填正確化", "Filling Accuracy")
+  }
+  if (__uuu == 115) {
+    return lang("自信過剰", "Confidence")
+  }
+  if (__uuu == 116) {
+    return lang("背水", "Pinch hitter")
+  }
+  if (__uuu == 117) {
+    return lang("召喚強化", "Summon Enhance")
+  }
+  if (__uuu == 118) {
+    return lang("収穫強化", "Harvest Enhance")
+  }
+	return ""
+
+#defcfunc nc_getskilldesc int __uuu
+  if (__uuu == 100) {
+    return lang("あなたは会心の一撃でより大きな損傷を与える", "You inflict more damage with Critical.")
+  }
+  if (__uuu == 101) {
+    return lang("あなたは眠っている相手に致命的な一撃を与えることができる", "You can deal a deadly blow to a sleeping enemy.")
+  }
+  if (__uuu == 102) {
+    return lang("あなたは防具を上手く扱える[装備部位1つにつきPV+5 DV+5]", "You can handle armor well.[PV and DV +5 per equipment part]")
+  }
+  if (__uuu == 103) {
+    return lang("あなたの射撃は正確だ[距離による命中率減少を無効化]", "Disables distance-based hit reduction for shooting.")
+  }
+  if (__uuu == 104) {
+    return lang("あなたの射撃は衰えない[距離による威力減少を無効化]", "Disables the reduction of shooting power with distance.")
+  }
+  if (__uuu == 105) {
+    return lang("あなたは治癒魔法の扱いを熟知している[自己治癒魔法を強化し範囲化]", "Enhance and range self-healing magic.")
+  }
+  if (__uuu == 106) {
+    return lang("あなたは強化魔法の扱いを熟知している[自己強化魔法を強化し範囲化]", "Enhance and range self-enhancing magic.")
+  }
+  if (__uuu == 107) {
+    return lang("あなたは弱化魔法の扱いを熟知している[弱化魔法の効果を強化]", "Enhances the effectiveness of debuff magic.")
+  }
+  if (__uuu == 108) {
+    return lang("あなたは多分野の才能を持つ[ストック消費量軽減 潜在能力の上昇量増加]", "Reduced stock consumption, Increased latent ability increase.")
+  }
+  if (__uuu == 109) {
+    return lang("あなたは炎と氷と雷の矢を扱える[睡眠時にストック獲得]", "Learn new magic when you sleep.")
+  }
+  if (__uuu == 110) {
+    return lang("あなたは幻惑と毒と音の矢を扱える[睡眠時にストック獲得]", "Learn new magic when you sleep.")
+  }
+  if (__uuu == 111) {
+    return lang("あなたはボルト魔法の扱いを熟知している[ボルト魔法の巻き込み無効化]", "Prevent bolt magic from getting involved.")
+  }
+  if (__uuu == 112) {
+    return lang("あなたはマナの消費を節約できる[詠唱時のマナ消費を25%の確率で無効化]", "25% chance to nullify mana consumption when chanting.")
+  }
+  if (__uuu == 113) {
+    return lang("あなたは賭け事で経験を積むことができる[イカサマの成功率が上昇]", "Increased success rate of cheating in casinos.")
+  }
+  if (__uuu == 114) {
+    return lang("あなたは充填をうまく行うことができる[魔道具の破裂を回避する]", "Avoid rupture of magic tools when filling.")
+  }
+  if (__uuu == 115) {
+    return lang("あなたは自信過剰だ[HPが90%以上の時、速度と与えるダメージ増加]", "Increases speed and damage dealt when HP is above 90%.")
+  }
+  if (__uuu == 116) {
+    return lang("あなたは死の淵でも諦めない[HPが30%以下の時、速度と与えるダメージ増加]", "Increases speed and damage when HP is below 30%.")
+  }
+  if (__uuu == 117) {
+    return lang("あなたが召喚したモンスターは強化される", "Monsters summoned by you will be enhanced.")
+  }
+  if (__uuu == 118) {
+    return lang("あなたはより多くの作物を収穫することができる", "You will be able to harvest more crops.")
+  }
+	return ""
+
+// 職業スキル選択
+*label_N040
+	listmax = 0
+	page = 0
+	pagesize = 15
+	cs = 0
+	tc = 0
+	cs_bk = -1
+	page_load
+	curmenu = 2
+  drawmenu
+	ww = 700
+	wh = 400
+	wx = (windoww - ww) / 2 + inf_screenx
+	wy = winposy(wh)
+	windowanime wx, wy, ww, wh, 10, 4
+	redraw 0
+	gsel 3
+	pos 960, 96
+	picload_ exedir + "graphic\\deco_feat.bmp", 1
+	gsel 0
+	windowshadow = 1
+	*label_N042
+	listmax = 0
+  list(0, listmax) = 0, (-999)
+  listn(0, listmax) = lang("これ以上取得しない", "No more acquisitions")
+  listn(1, listmax) = lang("", "")
+  listmax++
+  if (nc_intb_001 == 0 | nc_intb_001 == 56) {
+    repeat 22
+      list(0, listmax) = cnt + 1, cnt + 1
+  		listn(0, listmax) = skillname(911 + cnt)
+      listn(1, listmax) = skillDesc(911 + cnt)
+      listmax++
+  	loop
+  }
+  repeat 100
+    if (nc_getskillname(100 + cnt) == "") {
+      continue
+    }
+    list(0, listmax) = cnt + 100, cnt + 100
+		listn(0, listmax) = nc_getskillname(100 + cnt)
+    listn(1, listmax) = nc_getskilldesc(100 + cnt)
+    listmax++
+	loop
+	gosub *label_1276
+	redraw 0
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if (page < 0) {
+		page = pagemax
+	} else {
+		if (page > pagemax) {
+			page = 0
+		}
+	}
+	*label_N043
+	redraw 0
+	s = lang("職業技能", "Job feat"), lang("決定 [技能取得切り替え]", "Enter [Gain Skill Switch]")
+	i = 0
+	display_window (windoww - 730) / 2 + inf_screenx, winposy(430, i) + i * 15, 730, 430, 55, 40
+  s = lang("残り " + nc_intb_002 + "個の技能を取得できる", "You can acquire " + nc_intb_002 + " feats")
+  display_note s, 50
+	if (jp) {
+		s = "名称", "効果"
+	} else {
+		s = "Name", "Conditions"
+	}
+	display_topic s, wx + 46, wy + 36
+  display_topic s(1), wx + 230, wy + 36
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if (p >= listmax) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+		if (cnt \ 2 == 0) {
+			pos wx + 57, wy + 66 + cnt * 19
+			gfini 640, 18
+			gfdec2 12, 14, 16
+		}
+		display_key wx + 50, wy + 66 + cnt * 19 - 2, cnt
+	loop
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	cs_listbk
+	repeat pagesize
+		p = pagesize * page + cnt
+		if (p >= listmax) {
+			break
+		}
+		if (nc_gettrait(nc_intb_001, list(1, p))) {
+			cs_list listn(0, p), wx + 78, wy + 66 + cnt * 19 - 1, 19, 0, 6, 0
+		} else {
+			cs_list listn(0, p), wx + 78, wy + 66 + cnt * 19 - 1, 19, 0, 5, 0
+		}
+		pos wx + 230, wy + 66 + cnt * 19 + 2
+    mes listn(1, p)
+	loop
+	if (keyrange != 0) {
+		cs_bk = cs
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if (key == key_select(cnt)) {
+			p = pagesize * page + cnt
+			break
+		}
+	loop
+  if (p != (-1)) {
+    if (list(1, p) == (-999)) {
+      return 1
+    }
+    snd 19
+    if (nc_gettrait(nc_intb_001, list(1, p))) {
+      rmfaction nc_intb_001, "nc_trait," + list(1, p)
+      nc_intb_002 += 1
+    } else {
+      addfaction nc_intb_001, "nc_trait," + list(1, p)
+      nc_intb_002 -= 1
+    }
+    if (nc_intb_002 <= 0) {
+      return 1
+    }
+  }
+	if (key == key_pageup) {
+		if (pagemax != 0) {
+			snd 1
+			page++
+			goto *label_N042
+		}
+	}
+	if (key == key_pagedown) {
+		if (pagemax != 0) {
+			snd 1
+			page--
+			goto *label_N042
+		}
+	}
+	if (key == key_cancel) {
+    if (charamake@se) {
+      return 0
+    }
+	}
+	goto *label_N043

@@ -1,0 +1,203 @@
+#deffunc sql_q_ str __hhh, array __iii
+*label_0047
+	if (pdb@sqle == 0) {
+		dialog "DB not opened.", , "SQL ERR"
+		end
+		end
+	}
+	if (__hhh == sqls@sqle) {
+		sqlite3_reset pstm@sqle
+	} else {
+		gosub *label_0050
+		sqls@sqle = __hhh
+		pascii_to_vutf varptr(sqls@sqle), atmp@sqle
+		sqlite3_prepare_v2 pdb@sqle, atmp@sqle, strlen(atmp@sqle), pstm@sqle, 0
+		if (stat) {
+			errsql@sqle = "SQL : " + sqls@sqle
+			goto *label_0051
+		}
+	}
+	recs@sqle = 0
+	if (pstm@sqle) {
+		repeat binds@sqle
+			if (bind_t@sqle(cnt) == 3) {
+				pascii_to_vutf bind_p@sqle(cnt), atmp@sqle(cnt)
+				sqlite3_bind_text pstm@sqle, cnt + 1, varptr(atmp@sqle(cnt)), strlen(atmp@sqle(cnt))
+			} elseif (bind_t@sqle(cnt) == 1) {
+				sqlite3_bind_int pstm@sqle, cnt + 1, bind_p@sqle(cnt)
+			} elseif (bind_t@sqle(cnt) == 2) {
+				sqlite3_bind_double pstm@sqle, cnt + 1, bind_f@sqle(cnt)
+			} elseif (bind_t@sqle(cnt) == 4) {
+				sqlite3_bind_blob pstm@sqle, cnt + 1, bind_p@sqle(cnt), bind_n@sqle(cnt)
+			}
+		loop
+		sqlite3_step pstm@sqle
+		a@sqle = stat
+		if (a@sqle == 5) {
+			goto *label_0048
+		}
+		sqlite3_column_count pstm@sqle
+		cols@sqle = stat
+		if (cols@sqle > 0) {
+			sdim __iii, 32, cols@sqle, 1
+			if (a@sqle == 100) {
+				repeat
+					repeat cols@sqle
+						sqlite3_column_type pstm@sqle, cnt
+						type@sqle = stat
+						if (type@sqle <= 3) {
+							sqlite3_column_text pstm@sqle, cnt
+							putf_to_vascii stat, __iii(cnt, recs@sqle)
+							n@sqle = strlen(__iii(cnt, recs@sqle))
+							lpoke __iii(cnt, recs@sqle), n@sqle + 4, type@sqle
+							lpoke __iii(cnt, recs@sqle), n@sqle + 12
+						} else {
+							if (type@sqle == 4) {
+								sqlite3_column_bytes pstm@sqle, cnt
+								n@sqle = stat
+								memexpand __iii(cnt, recs@sqle), n@sqle + 16
+								sqlite3_column_blob pstm@sqle, cnt
+								RtlMoveMemory varptr(__iii(cnt, recs@sqle)) + 16, stat, n@sqle
+							} else {
+								__iii(cnt, recs@sqle) = ""
+								n@sqle = 0
+							}
+							lpoke __iii(cnt, recs@sqle), 4, type@sqle
+							lpoke __iii(cnt, recs@sqle), 12, n@sqle
+						}
+					loop
+					recs@sqle++
+					sqlite3_step pstm@sqle
+					if (stat != 100) {
+						break
+					}
+				loop
+			}
+			repeat cols@sqle
+				sqlite3_column_name pstm@sqle, cnt
+				putf_to_vascii stat, __iii(cnt, recs@sqle)
+			loop
+			lpoke __iii, strlen(__iii) + 8
+		}
+	}
+	binds@sqle = 0
+	return recs@sqle
+*label_0048
+	busy_count@sqle++
+	if (busy_count@sqle \ 10 == 0) {
+		sql_close
+		if (busy_count@sqle \ 30 == 0) {
+			dialog "Database query timed out.\n\nRetry?", 2, "SQL ERR"
+			if (stat == 7) {
+				end
+				end
+			}
+		}
+		sqls@sqle = dirinfo(0)
+		chdir open_dir@sqle
+		pascii_to_vutf varptr(open_fn@sqle), atmp@sqle
+		sqlite3_open atmp@sqle, pdb@sqle
+		chdir sqls@sqle
+		sqlite3_busy_timeout pdb@sqle, 60000
+	}
+	Sleep 500
+	goto *label_0047
+
+
+
+#deffunc sql_open str __jjj
+	if (varptr(GetLongPathNameA) == 0) {
+		dialog "This program requires Windows 98/2000 or later.", , "SQL ERR"
+		end
+		end
+	}
+	if (varptr(sqlite3_prepare_v2) == 0) {
+		dialog "sqlite3.dll not found.", , "SQL ERR"
+		end
+		end
+	}
+	sdim wtmp@sqle, 65536
+	sdim atmp@sqle, 32, 256
+	dimtype bind_f@sqle, 3, 1, 0, 0, 0
+	open_dir@sqle = dirinfo(0)
+	open_fn@sqle = __jjj
+	sql_close
+	pascii_to_vutf varptr(open_fn@sqle), atmp@sqle
+	sqlite3_open atmp@sqle, pdb@sqle
+	if (stat) {
+		errsql@sqle = "FILE : " + open_fn@sqle
+		goto *label_0051
+	}
+	sqlite3_busy_timeout pdb@sqle, 60000
+	return
+*label_0050
+	if (pstm@sqle) {
+		sqlite3_finalize pstm@sqle
+		pstm@sqle = 0
+	}
+	return
+*label_0051
+	sqlite3_errmsg pdb@sqle
+	putf_to_vascii stat, atmp@sqle
+	dialog "ERR : " + atmp@sqle + "\n\n" + strmid(errsql@sqle, 0, 999), , "SQL ERR"
+	sqlite3_close pdb@sqle
+	end
+
+
+
+#defcfunc sql_colid_ str __kkk, array __lll
+	i@sqle = -1
+	recs@sqle = length2(__lll) - 1
+	if (recs@sqle >= 0) {
+		repeat length(__lll)
+			if (__kkk == __lll(cnt, recs@sqle)) {
+				i@sqle = cnt
+				break
+			}
+		loop
+	}
+	if (i@sqle < 0) {
+		dialog "column [" + __kkk + "] does not exist.", , "SQL ERR"
+		end
+		end
+	}
+	n@sqle = lpeek(__lll, strlen(__lll) + 8)
+	if (n@sqle >= recs@sqle) {
+		dialog "record-counter overflow.", , "SQL ERR"
+		end
+		end
+	}
+	return i@sqle
+
+
+
+#deffunc pascii_to_vutf int __zzz, var __aaa
+	MultiByteToWideChar 0, 0, __zzz, -1, 0, 0
+	memexpand wtmp@sqle, stat * 4
+	MultiByteToWideChar 0, 0, __zzz, -1, varptr(wtmp@sqle), stat
+	WideCharToMultiByte 65001, 0, varptr(wtmp@sqle), -1, 0, 0, 0, 0
+	memexpand __aaa, stat + 16
+	WideCharToMultiByte 65001, 0, varptr(wtmp@sqle), -1, varptr(__aaa), stat, 0, 0
+	return
+
+
+
+#deffunc putf_to_vascii int __bbb, var __ccc
+	MultiByteToWideChar 65001, 0, __bbb, -1, 0, 0
+	memexpand wtmp@sqle, stat * 4
+	MultiByteToWideChar 65001, 0, __bbb, -1, varptr(wtmp@sqle), stat
+	WideCharToMultiByte 0, 0, varptr(wtmp@sqle), -1, 0, 0, 0, 0
+	memexpand __ccc, stat + 16
+	WideCharToMultiByte 0, 0, varptr(wtmp@sqle), -1, varptr(__ccc), stat, 0, 0
+	return
+
+
+
+#deffunc sql_close onexit
+	if (pdb@sqle) {
+		gosub *label_0050
+		sqlite3_close pdb@sqle
+		pdb@sqle = 0
+		sqls@sqle = 0
+	}
+	return

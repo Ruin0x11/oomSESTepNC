@@ -1,0 +1,969 @@
+*label_2425
+	maxnpcid = 401
+	dim cbitorg, 30, maxnpcid
+	dim cobjlvorg, maxnpcid
+	filter_creature(2) = ""
+	filter_creature(3) = ""
+	filter_creature(4) = "/man/"
+	filter_creature(5) = "/man/"
+	filter_creature(6) = "/man/"
+	filter_creature(7) = "/man/"
+	filter_creature(8) = "/man/"
+	filter_creature(9) = "/man/"
+	filter_creature(10) = "/man/"
+	filter_creature(11) = "/man/"
+	filter_creature(12) = "/man/"
+	filter_creature(13) = "/man/"
+	filter_creature(14) = "/man/"
+	filter_creature(15) = "/man/"
+	filter_creature(16) = "/man/"
+	filter_creature(17) = "/man/"
+	filter_creature(18) = "/man/"
+	filter_creature(19) = "/man/god/"
+	filter_creature(20) = "/man/"
+	filter_creature(21) = "/man/god/"
+	filter_creature(22) = "/man/"
+	filter_creature(23) = "/man/"
+	filter_creature(24) = "/dragon/"
+	filter_creature(25) = "/man/"
+	filter_creature(26) = "/man/"
+	filter_creature(27) = "/man/"
+	HMMBITON cbitorg(1, 351), 0
+	filter_creature(28) = "/man/"
+	filter_creature(29) = "/arcana/"
+	filter_creature(30) = "/man/"
+	filter_creature(31) = "/man/"
+	filter_creature(32) = "/man/"
+	filter_creature(33) = "/man/"
+	filter_creature(34) = "/man/"
+	filter_creature(35) = "/undead/god/"
+	filter_creature(36) = "/arcana/"
+	filter_creature(37) = "/man/"
+	filter_creature(38) = ""
+	filter_creature(39) = "/god/"
+	filter_creature(40) = "/god/"
+	filter_creature(41) = "/god/"
+	HMMBITON cbitorg(0, 336), 28
+	HMMBITON cbitorg(0, 336), 26
+	filter_creature(42) = "/god/"
+	HMMBITON cbitorg(0, 338), 28
+	filter_creature(43) = "/god/"
+	filter_creature(44) = "/god/"
+	filter_creature(45) = ""
+	filter_creature(46) = "/slime/amorphs/putit/"
+	HMMBITON cbitorg(0, 3), 22
+	filter_creature(47) = "/fire/slime/amorphs/putit/"
+	HMMBITON cbitorg(0, 4), 22
+	filter_creature(48) = "/slime/amorphs/"
+	filter_creature(49) = "/slime/amorphs/"
+	filter_creature(50) = "/slime/amorphs/"
+	HMMBITON cbitorg(0, 286), 23
+	filter_creature(51) = "/slime/amorphs/"
+	HMMBITON cbitorg(0, 285), 23
+	filter_creature(52) = ""
+	HMMBITON cbitorg(0, 287), 23
+	filter_creature(53) = "/arcana/"
+	HMMBITON cbitorg(0, 327), 27
+	HMMBITON cbitorg(0, 327), 26
+	filter_creature(54) = "/wild/"
+	filter_creature(55) = "/wild/"
+	filter_creature(56) = "/man/"
+	filter_creature(57) = "/man/"
+	filter_creature(58) = "/man/"
+	HMMBITON cbitorg(0, 9), 17
+	filter_creature(59) = "/man/"
+	filter_creature(60) = "/man/"
+	filter_creature(61) = "/man/"
+	filter_creature(62) = "/man/"
+	filter_creature(63) = "/man/"
+	filter_creature(64) = "/man/god/"
+	HMMBITON cbitorg(1, 349), 0
+	filter_creature(65) = "/man/"
+	HMMBITON cbitorg(1, 348), 0
+	filter_creature(66) = "/man/"
+	HMMBITON cbitorg(1, 347), 0
+	filter_creature(67) = "/man/"
+	filter_creature(68) = "/man/"
+	filter_creature(69) = "/man/"
+	filter_creature(70) = "/man/"
+	filter_creature(71) = "/man/"
+	filter_creature(72) = "/man/"
+	filter_creature(73) = "/man/"
+	filter_creature(74) = "/man/"
+	filter_creature(75) = "/man/"
+	filter_creature(76) = "/man/"
+	filter_creature(77) = "/man/sf/"
+	filter_creature(78) = "/wild/"
+	filter_creature(79) = "/wild/"
+	HMMBITON cbitorg(0, 11), 5
+	filter_creature(80) = "/man/"
+	filter_creature(81) = "/demi/"
+	filter_creature(82) = "/yeek/demi/"
+	filter_creature(83) = "/yeek/demi/"
+	filter_creature(84) = "/yeek/demi/"
+	filter_creature(85) = "/yeek/demi/"
+	filter_creature(86) = "/yeek/demi/"
+	HMMBITON cbitorg(0, 237), 18
+	filter_creature(87) = ""
+	HMMBITON cbitorg(0, 244), 18
+	filter_creature(88) = "/arcana/"
+	HMMBITON cbitorg(0, 245), 18
+	filter_creature(89) = ""
+	HMMBITON cbitorg(0, 321), 18
+	filter_creature(90) = "/yeek/demi/"
+	filter_creature(91) = "/man/"
+	filter_creature(92) = "/wild/"
+	filter_creature(93) = "/plantoid/"
+	filter_creature(94) = "/plantoid/"
+	filter_creature(95) = "/plantoid/"
+	filter_creature(96) = "/man/"
+	filter_creature(97) = "/man/"
+	filter_creature(98) = "/man/"
+	filter_creature(99) = "/man/"
+	filter_creature(100) = "/man/"
+	filter_creature(101) = "/man/"
+	filter_creature(102) = "/man/"
+	filter_creature(103) = "/man/"
+	filter_creature(104) = "/man/"
+	filter_creature(105) = "/orc/"
+	filter_creature(106) = "/dragon/"
+	HMMBITON cbitorg(1, 281), 0
+	filter_creature(107) = "/mino/"
+	filter_creature(108) = "/mino/"
+	filter_creature(109) = "/mino/"
+	HMMBITON cbitorg(1, 298), 0
+	filter_creature(110) = "/mino/"
+	filter_creature(111) = "/mino/"
+	filter_creature(112) = "/demi/"
+	filter_creature(113) = "/man/"
+	filter_creature(114) = "/man/"
+	filter_creature(115) = "/god/"
+	filter_creature(116) = "/god/"
+	filter_creature(117) = "/god/"
+	filter_creature(118) = "/man/"
+	filter_creature(119) = "/man/"
+	filter_creature(120) = "/plantoid/"
+	filter_creature(121) = "/wild/"
+	filter_creature(122) = "/orc/"
+	filter_creature(123) = "/orc/"
+	HMMBITON cbitorg(1, 25), 0
+	filter_creature(124) = "/undead/"
+	filter_creature(125) = "/wild/"
+	HMMBITON cbitorg(0, 42), 5
+	filter_creature(126) = "/wild/"
+	HMMBITON cbitorg(0, 43), 5
+	filter_creature(127) = "/wild/fire/dragon/"
+	HMMBITON cbitorg(0, 44), 5
+	filter_creature(128) = "/fire/plantoid/"
+	filter_creature(129) = "/plantoid/"
+	filter_creature(130) = "/undead/"
+	filter_creature(131) = "/undead/"
+	filter_creature(132) = "/undead/"
+	filter_creature(133) = "/undead/"
+	HMMBITON cbitorg(0, 307), 19
+	filter_creature(134) = "/undead/"
+	HMMBITON cbitorg(0, 308), 19
+	filter_creature(135) = "/wild/"
+	HMMBITON cbitorg(0, 50), 22
+	filter_creature(136) = "/wild/fire/"
+	HMMBITON cbitorg(0, 51), 22
+	filter_creature(137) = "/wild/"
+	HMMBITON cbitorg(0, 52), 22
+	filter_creature(138) = "/wild/"
+	HMMBITON cbitorg(0, 53), 22
+	filter_creature(139) = "/wild/"
+	HMMBITON cbitorg(0, 54), 22
+	filter_creature(140) = "/wild/"
+	HMMBITON cbitorg(0, 55), 22
+	filter_creature(141) = "/wild/"
+	HMMBITON cbitorg(0, 56), 22
+	filter_creature(142) = "/wild/"
+	HMMBITON cbitorg(0, 57), 22
+	filter_creature(143) = "/wild/"
+	HMMBITON cbitorg(0, 58), 22
+	filter_creature(144) = "/wild/"
+	HMMBITON cbitorg(0, 59), 22
+	filter_creature(145) = "/wild/"
+	HMMBITON cbitorg(0, 60), 22
+	filter_creature(146) = "/wild/"
+	filter_creature(147) = "/wild/"
+	filter_creature(148) = "/undead/"
+	HMMBITON cbitorg(0, 63), 5
+	filter_creature(149) = "/undead/"
+	HMMBITON cbitorg(0, 64), 5
+	filter_creature(150) = "/wild/"
+	HMMBITON cbitorg(0, 312), 5
+	filter_creature(151) = "/wild/"
+	HMMBITON cbitorg(0, 313), 5
+	filter_creature(152) = "/element/"
+	HMMBITON cbitorg(0, 65), 5
+	HMMBITON cbitorg(0, 65), 10
+	filter_creature(153) = "/element/"
+	HMMBITON cbitorg(0, 66), 5
+	HMMBITON cbitorg(0, 66), 10
+	filter_creature(154) = "/amorphs/"
+	HMMBITON cbitorg(0, 67), 5
+	HMMBITON cbitorg(0, 67), 10
+	filter_creature(155) = "/amorphs/"
+	HMMBITON cbitorg(0, 315), 5
+	HMMBITON cbitorg(0, 315), 10
+	filter_creature(156) = "/amorphs/"
+	HMMBITON cbitorg(0, 316), 5
+	HMMBITON cbitorg(0, 316), 10
+	filter_creature(157) = "/amorphs/"
+	HMMBITON cbitorg(0, 314), 5
+	HMMBITON cbitorg(0, 314), 10
+	filter_creature(158) = "/dragon/"
+	HMMBITON cbitorg(0, 68), 5
+	filter_creature(159) = ""
+	filter_creature(160) = "/wild/"
+	HMMBITON cbitorg(0, 81), 5
+	filter_creature(161) = "/fire/wild/"
+	HMMBITON cbitorg(0, 82), 5
+	filter_creature(162) = "/demi/"
+	HMMBITON cbitorg(1, 83), 0
+	filter_creature(163) = "/demi/"
+	HMMBITON cbitorg(1, 84), 0
+	filter_creature(164) = "/fire/demon/"
+	HMMBITON cbitorg(0, 85), 5
+	filter_creature(165) = "/god/demon/"
+	HMMBITON cbitorg(0, 86), 5
+	filter_creature(166) = "/demon/"
+	HMMBITON cbitorg(0, 87), 5
+	filter_creature(167) = "/undead/amorphs/"
+	filter_creature(168) = "/undead/amorphs/"
+	filter_creature(169) = "/undead/amorphs/"
+	filter_creature(170) = "/undead/"
+	HMMBITON cbitorg(0, 91), 5
+	filter_creature(171) = "/undead/"
+	HMMBITON cbitorg(0, 92), 5
+	filter_creature(172) = "/plantoid/"
+	filter_creature(173) = "/plantoid/"
+	filter_creature(174) = "/wild/"
+	filter_creature(175) = "/wild/"
+	filter_creature(176) = "/fire/dragon/"
+	filter_creature(177) = "/dragon/"
+	filter_creature(178) = "/undead/"
+	filter_creature(179) = "/undead/"
+	filter_creature(180) = "/undead/"
+	filter_creature(181) = "/undead/"
+	HMMBITON cbitorg(0, 257), 19
+	filter_creature(182) = "/undead/"
+	filter_creature(183) = "/goblin/"
+	filter_creature(184) = "/goblin/"
+	filter_creature(185) = "/goblin/"
+	filter_creature(186) = "/goblin/"
+	filter_creature(187) = "/undead/fire/"
+	HMMBITON cbitorg(0, 106), 10
+	filter_creature(188) = "/undead/"
+	HMMBITON cbitorg(0, 107), 10
+	filter_creature(189) = "/wild/"
+	filter_creature(190) = "/wild/"
+	HMMBITON cbitorg(1, 109), 0
+	filter_creature(191) = "/wild/"
+	filter_creature(192) = "/undead/arcana/"
+	HMMBITON cbitorg(0, 110), 10
+	filter_creature(193) = "/undead/arcana/"
+	HMMBITON cbitorg(0, 111), 10
+	filter_creature(194) = "/undead/arcana/"
+	HMMBITON cbitorg(0, 112), 10
+	filter_creature(195) = "/arcana/"
+	HMMBITON cbitorg(0, 113), 10
+	filter_creature(196) = "/god/"
+	filter_creature(197) = "/god/"
+	filter_creature(198) = "/god/"
+	filter_creature(199) = "/god/"
+	HMMBITON cbitorg(0, 117), 5
+	filter_creature(200) = "/undead/"
+	HMMBITON cbitorg(0, 118), 5
+	HMMBITON cbitorg(0, 118), 10
+	filter_creature(201) = "/dragon/"
+	filter_creature(202) = "/demi/"
+	filter_creature(203) = "/dragon/"
+	filter_creature(204) = "/fire/dragon/"
+	filter_creature(205) = "/dragon/"
+	filter_creature(206) = "/dragon/"
+	filter_creature(207) = "/undead/dragon/"
+	filter_creature(208) = "/dragon/"
+	filter_creature(209) = "/fire/demon/"
+	filter_creature(210) = "/wild/"
+	filter_creature(211) = "/wild/"
+	filter_creature(212) = "/wild/"
+	filter_creature(213) = "/wild/"
+	filter_creature(214) = "/wild/"
+	filter_creature(215) = "/wild/"
+	filter_creature(216) = "/undead/"
+	filter_creature(217) = "/arcana/golem/"
+	HMMBITON cbitorg(0, 132), 10
+	filter_creature(218) = "/fire/arcana/golem/"
+	HMMBITON cbitorg(0, 133), 10
+	filter_creature(219) = "/fire/arcana/golem/"
+	HMMBITON cbitorg(0, 134), 10
+	filter_creature(220) = "/arcana/golem/"
+	HMMBITON cbitorg(0, 135), 10
+	filter_creature(221) = "/arcana/golem/"
+	HMMBITON cbitorg(0, 136), 10
+	filter_creature(222) = "/arcana/golem/"
+	HMMBITON cbitorg(0, 137), 10
+	filter_creature(223) = "/arcana/golem/"
+	HMMBITON cbitorg(0, 138), 10
+	filter_creature(224) = "/fire/"
+	filter_creature(225) = "/fire/"
+	filter_creature(226) = "/fire/goblin/"
+	filter_creature(227) = "/undead/"
+	HMMBITON cbitorg(0, 150), 10
+	filter_creature(228) = "/undead/"
+	HMMBITON cbitorg(0, 151), 10
+	filter_creature(229) = "/man/"
+	HMMBITON cbitorg(0, 152), 10
+	filter_creature(230) = "/pawn/arcana/"
+	filter_creature(231) = "/pawn/arcana/"
+	filter_creature(232) = "/pawn/arcana/"
+	filter_creature(233) = "/pawn/arcana/"
+	filter_creature(234) = "/arcana/"
+	filter_creature(235) = "/arcana/"
+	filter_creature(236) = "/man/shopguard/"
+	filter_creature(237) = "/man/shopguard/"
+	filter_creature(238) = "/man/shopguard/"
+	filter_creature(239) = "/man/rogue/"
+	filter_creature(240) = "/man/rogue/"
+	filter_creature(241) = "/man/rogue/"
+	filter_creature(242) = "/man/rogue/"
+	filter_creature(243) = "/man/gear/"
+	filter_creature(244) = "/man/gear/"
+	filter_creature(245) = "/man/"
+	filter_creature(246) = "/gear/"
+	filter_creature(247) = "/man/"
+	filter_creature(248) = "/man/"
+	filter_creature(249) = "/man/"
+	filter_creature(250) = "/wild/cat/"
+	HMMBITON cbitorg(0, 164), 22
+	filter_creature(251) = "/wild/cat/"
+	filter_creature(252) = "/wild/cat/"
+	filter_creature(253) = "/wild/cat/"
+	HMMBITON cbitorg(0, 229), 22
+	filter_creature(254) = "/wild/cat/"
+	filter_creature(255) = "/wild/cat/"
+	filter_creature(256) = "/wild/"
+	HMMBITON cbitorg(0, 165), 22
+	filter_creature(257) = "/wild/"
+	HMMBITON cbitorg(0, 225), 22
+	filter_creature(258) = "/man/"
+	filter_creature(259) = "/man/"
+	filter_creature(260) = "/man/"
+	HMMBITON cbitorg(0, 166), 22
+	filter_creature(261) = "/wild/"
+	filter_creature(262) = "/wild/"
+	filter_creature(263) = "/man/"
+	filter_creature(264) = "/god/"
+	filter_creature(265) = "/man/"
+	HMMBITON cbitorg(0, 176), 22
+	filter_creature(266) = "/man/"
+	HMMBITON cbitorg(0, 249), 22
+	filter_creature(267) = "/man/"
+	filter_creature(268) = "/man/"
+	HMMBITON cbitorg(0, 211), 22
+	filter_creature(269) = "/god/"
+	filter_creature(270) = "/undead/god/"
+	filter_creature(271) = "/man/"
+	filter_creature(272) = "/man/"
+	filter_creature(273) = "/man/"
+	filter_creature(274) = ""
+	HMMBITON cbitorg(0, 180), 22
+	filter_creature(275) = "/god/"
+	filter_creature(276) = "/man/"
+	HMMBITON cbitorg(0, 182), 22
+	filter_creature(277) = "/man/"
+	filter_creature(278) = "/man/"
+	filter_creature(279) = "/man/"
+	filter_creature(280) = "/man/"
+	filter_creature(281) = "/arcana/"
+	HMMBITON cbitorg(0, 186), 10
+	filter_creature(282) = "/arcana/"
+	HMMBITON cbitorg(0, 187), 10
+	filter_creature(283) = "/arcana/"
+	HMMBITON cbitorg(0, 188), 10
+	filter_creature(284) = "/arcana/"
+	HMMBITON cbitorg(0, 345), 10
+	HMMBITON cbitorg(0, 345), 22
+	filter_creature(285) = "/arcana/"
+	HMMBITON cbitorg(0, 346), 10
+	HMMBITON cbitorg(0, 346), 22
+	filter_creature(286) = "/arcana/"
+	HMMBITON cbitorg(0, 341), 10
+	HMMBITON cbitorg(0, 341), 31
+	filter_creature(287) = "/arcana/"
+	HMMBITON cbitorg(0, 258), 10
+	filter_creature(288) = "/undead/amorphs/"
+	HMMBITON cbitorg(0, 189), 5
+	HMMBITON cbitorg(0, 189), 10
+	filter_creature(289) = "/undead/amorphs/"
+	HMMBITON cbitorg(0, 190), 5
+	HMMBITON cbitorg(0, 190), 10
+	filter_creature(290) = "/undead/ether/amorphs/"
+	HMMBITON cbitorg(0, 191), 5
+	HMMBITON cbitorg(0, 191), 10
+	filter_creature(291) = "/wild/"
+	filter_creature(292) = "/wild/ether/"
+	filter_creature(293) = "/wild/"
+	filter_creature(294) = "/undead/plantoid/"
+	filter_creature(295) = "/undead/plantoid/"
+	HMMBITON cbitorg(0, 201), 6
+	filter_creature(296) = "/undead/plantoid/"
+	HMMBITON cbitorg(0, 197), 6
+	filter_creature(297) = "/undead/plantoid/"
+	HMMBITON cbitorg(0, 198), 6
+	filter_creature(298) = "/undead/"
+	HMMBITON cbitorg(0, 199), 6
+	HMMBITON cbitorg(0, 199), 10
+	filter_creature(299) = "/undead/"
+	HMMBITON cbitorg(0, 200), 6
+	HMMBITON cbitorg(0, 200), 10
+	filter_creature(300) = "/demon/"
+	filter_creature(301) = "/man/"
+	filter_creature(302) = "/man/"
+	filter_creature(303) = "/god/"
+	filter_creature(304) = ""
+	filter_creature(305) = "/man/"
+	filter_creature(306) = "/man/"
+	filter_creature(307) = "/man/"
+	filter_creature(308) = "/man/"
+	filter_creature(309) = "/man/"
+	filter_creature(310) = "/man/"
+	filter_creature(311) = "/man/"
+	filter_creature(312) = "/man/"
+	filter_creature(313) = "/man/"
+	filter_creature(314) = "/man/"
+	filter_creature(315) = "/man/"
+	HMMBITON cbitorg(1, 301), 0
+	filter_creature(316) = "/man/thief/"
+	HMMBITON cbitorg(0, 214), 17
+	filter_creature(317) = "/man/thief/"
+	HMMBITON cbitorg(0, 215), 17
+	filter_creature(318) = "/man/thief/"
+	HMMBITON cbitorg(0, 217), 17
+	filter_creature(319) = "/god/"
+	HMMBITON cbitorg(0, 216), 10
+	filter_creature(320) = "/god/"
+	HMMBITON cbitorg(0, 218), 10
+	filter_creature(321) = "/orc/"
+	filter_creature(322) = "/god/"
+	HMMBITON cbitorg(0, 220), 10
+	filter_creature(323) = "/element/"
+	HMMBITON cbitorg(0, 250), 5
+	HMMBITON cbitorg(0, 250), 17
+	filter_creature(324) = "/god/"
+	HMMBITON cbitorg(0, 260), 5
+	filter_creature(325) = "/god/"
+	HMMBITON cbitorg(0, 261), 5
+	filter_creature(326) = "/god/"
+	HMMBITON cbitorg(0, 262), 5
+	filter_creature(327) = "/god/"
+	HMMBITON cbitorg(0, 263), 5
+	HMMBITON cbitorg(0, 263), 22
+	filter_creature(328) = "/god/"
+	HMMBITON cbitorg(0, 264), 5
+	HMMBITON cbitorg(0, 264), 20
+	filter_creature(329) = "/god/"
+	HMMBITON cbitorg(0, 265), 5
+	filter_creature(330) = "/god/"
+	HMMBITON cbitorg(0, 266), 5
+	HMMBITON cbitorg(0, 266), 21
+	filter_creature(331) = "/wild/horse/"
+	HMMBITON cbitorg(0, 267), 22
+	filter_creature(332) = "/wild/horse/"
+	HMMBITON cbitorg(0, 276), 22
+	filter_creature(333) = "/wild/horse/"
+	HMMBITON cbitorg(0, 275), 22
+	filter_creature(334) = "/wild/horse/"
+	HMMBITON cbitorg(0, 268), 22
+	filter_creature(335) = "/wild/horse/"
+	HMMBITON cbitorg(0, 277), 22
+	filter_creature(336) = "/amorphs/"
+	filter_creature(337) = "/man/"
+	filter_creature(338) = "/man/"
+	filter_creature(339) = "/man/"
+	HMMBITON cbitorg(0, 288), 5
+	HMMBITON cbitorg(0, 288), 20
+	filter_creature(340) = "/man/"
+	HMMBITON cbitorg(0, 290), 5
+	HMMBITON cbitorg(0, 290), 20
+	filter_creature(341) = "/man/"
+	filter_creature(342) = "/man/"
+	filter_creature(343) = "/man/"
+	filter_creature(344) = "/man/"
+	filter_creature(345) = "/demon/"
+	filter_creature(346) = ""
+	HMMBITON cbitorg(0, 318), 10
+	filter_creature(347) = ""
+	filter_creature(348) = "/man/"
+	filter_creature(349) = "/man/"
+	filter_creature(350) = "/undead/"
+	HMMBITON cbitorg(0, 323), 5
+	filter_creature(351) = ""
+	HMMBITON cbitorg(0, 324), 25
+	HMMBITON cbitorg(0, 324), 26
+	filter_creature(352) = ""
+	HMMBITON cbitorg(0, 325), 25
+	HMMBITON cbitorg(0, 325), 26
+	filter_creature(353) = ""
+	HMMBITON cbitorg(0, 328), 25
+	HMMBITON cbitorg(0, 328), 28
+	HMMBITON cbitorg(0, 328), 26
+	HMMBITON cbitorg(0, 328), 5
+	filter_creature(354) = ""
+	HMMBITON cbitorg(0, 329), 25
+	HMMBITON cbitorg(0, 329), 28
+	HMMBITON cbitorg(0, 329), 26
+	HMMBITON cbitorg(0, 329), 5
+	filter_creature(355) = "/dragon/"
+	filter_creature(356) = "/god/"
+	filter_creature(357) = "/god/"
+	HMMBITON cbitorg(0, 367), 26
+	filter_creature(358) = "/god/"
+	filter_creature(359) = "/element/ncdungeon/"
+	HMMBITON cbitorg(0, 369), 5
+	HMMBITON cbitorg(0, 369), 17
+	filter_creature(360) = "/wild/ncdungeon/"
+	filter_creature(361) = "/wild/Fire/Morphy/ncdungeon/"
+	filter_creature(362) = "/wild/Morphy/ncdungeon/"
+	HMMBITON cbitorg(0, 372), 20
+	filter_creature(363) = "/wild/Morphy/ncdungeon/"
+	HMMBITON cbitorg(0, 373), 20
+	filter_creature(364) = "/wild/Morphy/ncdungeon/"
+	HMMBITON cbitorg(0, 374), 20
+	filter_creature(365) = "/wild/Morphy/ncdungeon/"
+	HMMBITON cbitorg(0, 375), 20
+	filter_creature(366) = "/wild/Morphy/ncdungeon/"
+	HMMBITON cbitorg(0, 376), 20
+	filter_creature(367) = "/wild/Morphy/ncdungeon/"
+	filter_creature(368) = "/wild/Morphy/ncdungeon/"
+	filter_creature(369) = "/wild/Morphy/ncdungeon/"
+	HMMBITON cbitorg(0, 379), 20
+	filter_creature(370) = "/wild/Morphy/ncdungeon/"
+	HMMBITON cbitorg(0, 380), 20
+	filter_creature(371) = "/man/Morphy/"
+	HMMBITON cbitorg(0, 381), 20
+	filter_creature(372) = "/slime/amorphs/acidresist/ncdungeon/"
+	filter_creature(373) = "/ncdungeon/"
+	filter_creature(374) = "/ncdungeon/"
+	filter_creature(384) = "/ncdungeon/"
+	filter_creature(385) = "/ncdungeon/regist,hex/"
+	filter_creature(386) = "/ncdungeon/element/"
+	filter_creature(387) = "/ncdungeon/element/"
+	filter_creature(388) = "/ncdungeon/element/regist,hex/invalid,40/"
+	filter_creature(389) = "/ncdungeon/element/"
+	filter_creature(390) = "/ncdungeon/element/invalid,10/wakeup/"
+	fltgoblin = 1
+	fltorc = 2
+	fltslime = 3
+	fltelea = 4
+	fltkobolt = 5
+	fltspider = 6
+	fltyeek = 7
+	fltmercenary = 8
+	fltzombie = 9
+	fltdog = 10
+	fltbear = 11
+	fltkamikaze = 12
+	fltmummy = 13
+	flthoundfire = 14
+	flthoundice = 15
+	flthoundlightning = 16
+	flthounddarkness = 17
+	flthoundmind = 18
+	flthoundnerve = 19
+	flthoundpoison = 20
+	flthoundsound = 21
+	flthoundnether = 22
+	flthoundchaos = 23
+	cobjlvorg(2) = 1
+	cobjlvorg(3) = 0
+	cobjlvorg(4) = 35
+	cobjlvorg(5) = 22
+	cobjlvorg(6) = 20
+	cobjlvorg(7) = 20
+	cobjlvorg(8) = 40
+	cobjlvorg(9) = 20
+	cobjlvorg(10) = 50
+	cobjlvorg(11) = 20
+	cobjlvorg(12) = 40
+	cobjlvorg(13) = 69
+	cobjlvorg(14) = 40
+	cobjlvorg(15) = 40
+	cobjlvorg(16) = 10
+	cobjlvorg(17) = 55
+	cobjlvorg(18) = 1
+	cobjlvorg(19) = 20
+	cobjlvorg(20) = 6
+	cobjlvorg(21) = 42
+	cobjlvorg(22) = 78
+	cobjlvorg(23) = 50
+	cobjlvorg(24) = 25
+	cobjlvorg(25) = 20
+	cobjlvorg(26) = 20
+	cobjlvorg(27) = 130
+	cobjlvorg(28) = 1
+	cobjlvorg(29) = 20
+	cobjlvorg(30) = 20
+	cobjlvorg(31) = 20
+	cobjlvorg(32) = 10
+	cobjlvorg(33) = 10
+	cobjlvorg(34) = 10
+	cobjlvorg(35) = 28
+	cobjlvorg(36) = 25
+	cobjlvorg(37) = 24
+	cobjlvorg(38) = 16
+	cobjlvorg(39) = 350
+	cobjlvorg(40) = 350
+	cobjlvorg(41) = 1200
+	cobjlvorg(42) = 350
+	cobjlvorg(43) = 350
+	cobjlvorg(44) = 350
+	cobjlvorg(45) = 1200
+	cobjlvorg(46) = 1
+	cobjlvorg(47) = 4
+	cobjlvorg(48) = 10
+	cobjlvorg(49) = 16
+	cobjlvorg(50) = 9
+	cobjlvorg(51) = 22
+	cobjlvorg(52) = 20
+	cobjlvorg(53) = 52
+	cobjlvorg(54) = 1
+	cobjlvorg(55) = 1
+	cobjlvorg(56) = 3
+	cobjlvorg(57) = 4
+	cobjlvorg(58) = 2
+	cobjlvorg(59) = 5
+	cobjlvorg(60) = 32
+	cobjlvorg(61) = 5
+	cobjlvorg(62) = 16
+	cobjlvorg(63) = 5
+	cobjlvorg(64) = 12
+	cobjlvorg(65) = 35
+	cobjlvorg(66) = 5
+	cobjlvorg(67) = 8
+	cobjlvorg(68) = 8
+	cobjlvorg(69) = 3
+	cobjlvorg(70) = 6
+	cobjlvorg(71) = 10
+	cobjlvorg(72) = 26
+	cobjlvorg(73) = 26
+	cobjlvorg(74) = 26
+	cobjlvorg(75) = 1
+	cobjlvorg(76) = 1
+	cobjlvorg(77) = 1
+	cobjlvorg(78) = 1
+	cobjlvorg(79) = 2
+	cobjlvorg(80) = 3
+	cobjlvorg(81) = 3
+	cobjlvorg(82) = 2
+	cobjlvorg(83) = 6
+	cobjlvorg(84) = 4
+	cobjlvorg(85) = 9
+	cobjlvorg(86) = 6
+	cobjlvorg(87) = 18
+	cobjlvorg(88) = 25
+	cobjlvorg(89) = 10
+	cobjlvorg(90) = 14
+	cobjlvorg(91) = 5
+	cobjlvorg(92) = 4
+	cobjlvorg(93) = 4
+	cobjlvorg(94) = 8
+	cobjlvorg(95) = 21
+	cobjlvorg(96) = 5
+	cobjlvorg(97) = 5
+	cobjlvorg(98) = 5
+	cobjlvorg(99) = 5
+	cobjlvorg(100) = 20
+	cobjlvorg(101) = 5
+	cobjlvorg(102) = 5
+	cobjlvorg(103) = 25
+	cobjlvorg(104) = 35
+	cobjlvorg(105) = 5
+	cobjlvorg(106) = 7
+	cobjlvorg(107) = 18
+	cobjlvorg(108) = 22
+	cobjlvorg(109) = 23
+	cobjlvorg(110) = 25
+	cobjlvorg(111) = 31
+	cobjlvorg(112) = 14
+	cobjlvorg(113) = 5
+	cobjlvorg(114) = 5
+	cobjlvorg(115) = 12
+	cobjlvorg(116) = 26
+	cobjlvorg(117) = 37
+	cobjlvorg(118) = 5
+	cobjlvorg(119) = 5
+	cobjlvorg(120) = 5
+	cobjlvorg(121) = 5
+	cobjlvorg(122) = 10
+	cobjlvorg(123) = 25
+	cobjlvorg(124) = 8
+	cobjlvorg(125) = 1
+	cobjlvorg(126) = 10
+	cobjlvorg(127) = 30
+	cobjlvorg(128) = 15
+	cobjlvorg(129) = 15
+	cobjlvorg(130) = 20
+	cobjlvorg(131) = 30
+	cobjlvorg(132) = 45
+	cobjlvorg(133) = 18
+	cobjlvorg(134) = 35
+	cobjlvorg(135) = 5
+	cobjlvorg(136) = 10
+	cobjlvorg(137) = 10
+	cobjlvorg(138) = 12
+	cobjlvorg(139) = 12
+	cobjlvorg(140) = 18
+	cobjlvorg(141) = 18
+	cobjlvorg(142) = 15
+	cobjlvorg(143) = 22
+	cobjlvorg(144) = 25
+	cobjlvorg(145) = 30
+	cobjlvorg(146) = 4
+	cobjlvorg(147) = 10
+	cobjlvorg(148) = 7
+	cobjlvorg(149) = 3
+	cobjlvorg(150) = 8
+	cobjlvorg(151) = 19
+	cobjlvorg(152) = 12
+	cobjlvorg(153) = 30
+	cobjlvorg(154) = 2
+	cobjlvorg(155) = 14
+	cobjlvorg(156) = 7
+	cobjlvorg(157) = 29
+	cobjlvorg(158) = 20
+	cobjlvorg(159) = 15
+	cobjlvorg(160) = 5
+	cobjlvorg(161) = 10
+	cobjlvorg(162) = 22
+	cobjlvorg(163) = 40
+	cobjlvorg(164) = 7
+	cobjlvorg(165) = 16
+	cobjlvorg(166) = 27
+	cobjlvorg(167) = 4
+	cobjlvorg(168) = 11
+	cobjlvorg(169) = 15
+	cobjlvorg(170) = 5
+	cobjlvorg(171) = 13
+	cobjlvorg(172) = 8
+	cobjlvorg(173) = 19
+	cobjlvorg(174) = 10
+	cobjlvorg(175) = 18
+	cobjlvorg(176) = 16
+	cobjlvorg(177) = 16
+	cobjlvorg(178) = 7
+	cobjlvorg(179) = 14
+	cobjlvorg(180) = 22
+	cobjlvorg(181) = 28
+	cobjlvorg(182) = 19
+	cobjlvorg(183) = 2
+	cobjlvorg(184) = 6
+	cobjlvorg(185) = 8
+	cobjlvorg(186) = 10
+	cobjlvorg(187) = 12
+	cobjlvorg(188) = 12
+	cobjlvorg(189) = 4
+	cobjlvorg(190) = 10
+	cobjlvorg(191) = 28
+	cobjlvorg(192) = 15
+	cobjlvorg(193) = 25
+	cobjlvorg(194) = 35
+	cobjlvorg(195) = 45
+	cobjlvorg(196) = 22
+	cobjlvorg(197) = 33
+	cobjlvorg(198) = 44
+	cobjlvorg(199) = 8
+	cobjlvorg(200) = 9
+	cobjlvorg(201) = 30
+	cobjlvorg(202) = 13
+	cobjlvorg(203) = 32
+	cobjlvorg(204) = 40
+	cobjlvorg(205) = 40
+	cobjlvorg(206) = 40
+	cobjlvorg(207) = 45
+	cobjlvorg(208) = 50
+	cobjlvorg(209) = 23
+	cobjlvorg(210) = 4
+	cobjlvorg(211) = 24
+	cobjlvorg(212) = 3
+	cobjlvorg(213) = 11
+	cobjlvorg(214) = 21
+	cobjlvorg(215) = 15
+	cobjlvorg(216) = 28
+	cobjlvorg(217) = 13
+	cobjlvorg(218) = 19
+	cobjlvorg(219) = 25
+	cobjlvorg(220) = 30
+	cobjlvorg(221) = 35
+	cobjlvorg(222) = 40
+	cobjlvorg(223) = 50
+	cobjlvorg(224) = 16
+	cobjlvorg(225) = 18
+	cobjlvorg(226) = 20
+	cobjlvorg(227) = 12
+	cobjlvorg(228) = 20
+	cobjlvorg(229) = 20
+	cobjlvorg(230) = 12
+	cobjlvorg(231) = 16
+	cobjlvorg(232) = 18
+	cobjlvorg(233) = 18
+	cobjlvorg(234) = 22
+	cobjlvorg(235) = 22
+	cobjlvorg(236) = 20
+	cobjlvorg(237) = 20
+	cobjlvorg(238) = 20
+	cobjlvorg(239) = 12
+	cobjlvorg(240) = 10
+	cobjlvorg(241) = 10
+	cobjlvorg(242) = 10
+	cobjlvorg(243) = 5
+	cobjlvorg(244) = 22
+	cobjlvorg(245) = 45
+	cobjlvorg(246) = 17
+	cobjlvorg(247) = 7
+	cobjlvorg(248) = 15
+	cobjlvorg(249) = 9
+	cobjlvorg(250) = 4
+	cobjlvorg(251) = 3
+	cobjlvorg(252) = 9
+	cobjlvorg(253) = 18
+	cobjlvorg(254) = 25
+	cobjlvorg(255) = 20
+	cobjlvorg(256) = 4
+	cobjlvorg(257) = 1
+	cobjlvorg(258) = 4
+	cobjlvorg(259) = 5
+	cobjlvorg(260) = 4
+	cobjlvorg(261) = 1
+	cobjlvorg(262) = 1
+	cobjlvorg(263) = 1
+	cobjlvorg(264) = 80
+	cobjlvorg(265) = 1
+	cobjlvorg(266) = 50
+	cobjlvorg(267) = 1
+	cobjlvorg(268) = 1
+	cobjlvorg(269) = 80
+	cobjlvorg(270) = 80
+	cobjlvorg(271) = 35
+	cobjlvorg(272) = 45
+	cobjlvorg(273) = 45
+	cobjlvorg(274) = 1
+	cobjlvorg(275) = 10
+	cobjlvorg(276) = 8
+	cobjlvorg(277) = 15
+	cobjlvorg(278) = 9
+	cobjlvorg(279) = 20
+	cobjlvorg(280) = 10
+	cobjlvorg(281) = 5
+	cobjlvorg(282) = 13
+	cobjlvorg(283) = 30
+	cobjlvorg(284) = 22
+	cobjlvorg(285) = 8
+	cobjlvorg(286) = 15
+	cobjlvorg(287) = 25
+	cobjlvorg(288) = 8
+	cobjlvorg(289) = 19
+	cobjlvorg(290) = 14
+	cobjlvorg(291) = 5
+	cobjlvorg(292) = 15
+	cobjlvorg(293) = 1
+	cobjlvorg(294) = 7
+	cobjlvorg(295) = 5
+	cobjlvorg(296) = 18
+	cobjlvorg(297) = 30
+	cobjlvorg(298) = 12
+	cobjlvorg(299) = 26
+	cobjlvorg(300) = 80
+	cobjlvorg(301) = 10
+	cobjlvorg(302) = 1
+	cobjlvorg(303) = 30
+	cobjlvorg(304) = 1
+	cobjlvorg(305) = 1
+	cobjlvorg(306) = 10
+	cobjlvorg(307) = 15
+	cobjlvorg(308) = 10
+	cobjlvorg(309) = 7
+	cobjlvorg(310) = 15
+	cobjlvorg(311) = 4
+	cobjlvorg(312) = 45
+	cobjlvorg(313) = 25
+	cobjlvorg(314) = 20
+	cobjlvorg(315) = 38
+	cobjlvorg(316) = 2
+	cobjlvorg(317) = 5
+	cobjlvorg(318) = 35
+	cobjlvorg(319) = 50
+	cobjlvorg(320) = 45
+	cobjlvorg(321) = 38
+	cobjlvorg(322) = 65
+	cobjlvorg(323) = 13
+	cobjlvorg(324) = 8
+	cobjlvorg(325) = 8
+	cobjlvorg(326) = 8
+	cobjlvorg(327) = 8
+	cobjlvorg(328) = 8
+	cobjlvorg(329) = 8
+	cobjlvorg(330) = 8
+	cobjlvorg(331) = 1
+	cobjlvorg(332) = 4
+	cobjlvorg(333) = 10
+	cobjlvorg(334) = 15
+	cobjlvorg(335) = 20
+	cobjlvorg(336) = 6
+	cobjlvorg(337) = 15
+	cobjlvorg(338) = 10
+	cobjlvorg(339) = 55
+	cobjlvorg(340) = 38
+	cobjlvorg(341) = 55
+	cobjlvorg(342) = 38
+	cobjlvorg(343) = 55
+	cobjlvorg(344) = 38
+	cobjlvorg(345) = 28
+	cobjlvorg(346) = 30
+	cobjlvorg(347) = 1
+	cobjlvorg(348) = 15
+	cobjlvorg(349) = 7
+	cobjlvorg(350) = 12
+	cobjlvorg(351) = 10
+	cobjlvorg(352) = 17
+	cobjlvorg(353) = 3
+	cobjlvorg(354) = 1
+	cobjlvorg(355) = 19
+	cobjlvorg(356) = 350
+	cobjlvorg(357) = 400
+	cobjlvorg(358) = 5
+	cobjlvorg(359) = 55
+  cobjlvorg(360) = 60
+	cobjlvorg(361) = 62
+	cobjlvorg(362) = 64
+	cobjlvorg(363) = 66
+	cobjlvorg(364) = 68
+	cobjlvorg(365) = 70
+	cobjlvorg(366) = 72
+	cobjlvorg(367) = 74
+	cobjlvorg(368) = 76
+	cobjlvorg(369) = 78
+	cobjlvorg(370) = 80
+	cobjlvorg(371) = 100
+	cobjlvorg(372) = 55
+	cobjlvorg(373) = 57
+	cobjlvorg(374) = 59
+	cobjlvorg(375) = 58
+	cobjlvorg(376) = 15
+	cobjlvorg(377) = 25
+	cobjlvorg(378) = 35
+	cobjlvorg(379) = 15
+	cobjlvorg(380) = 20
+	cobjlvorg(381) = 32
+	cobjlvorg(382) = 10
+	cobjlvorg(383) = 70
+	cobjlvorg(384) = 65
+	cobjlvorg(385) = 85
+	cobjlvorg(386) = 64
+	cobjlvorg(387) = 68
+	cobjlvorg(388) = 72
+	cobjlvorg(389) = 76
+	cobjlvorg(390) = 2
+	return

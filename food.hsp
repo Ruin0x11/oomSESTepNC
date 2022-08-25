@@ -1,0 +1,1282 @@
+#deffunc food_meltBySalt int __cc
+	if (synccheck(__cc, -1)) {
+		txtef 3
+		txt -1, lang("塩だ！" + name(__cc) + "は溶けはじめた！", "It's salt! " + name(__cc) + " start" + _s(__cc) + " to melt.")
+	}
+	if (cHp(__cc) > 10) {
+		dmghp __cc, cHp(__cc) - rnd(10), -15
+	} else {
+		dmghp __cc, rnd(20000), -15
+	}
+	return
+
+
+
+#defcfunc foodname int __foodType, str __ingredient, int __rank, int __charaId, int __cnpcId
+	s@m33 = __ingredient
+	if (__foodType == 1) {
+		if (__charaId == 0) {
+			n@m33 = lang("動物", "beast")
+		} elseif (__charaId == 343) {
+			if (__cnpcId != usernpcmax) {
+				n@m33 = userdatan(1, __cnpcId)
+			} else {
+				n@m33 = lang("残りカス", "garbage")
+			}
+		} else {
+			n@m33 = refchara(__charaId, 2, 1)
+		}
+		if (__rank == 1) {
+			return lang("グロテスクな" + n@m33 + "の肉", "grotesque " + n@m33 + " meat")
+		}
+		if (__rank == 2) {
+			return lang("焼け焦げた" + n@m33 + "の肉", "charred " + n@m33 + " meat")
+		}
+		if (__rank == 3) {
+			return lang("" + n@m33 + "のこんがり肉", "roast " + n@m33)
+		}
+		if (__rank == 4) {
+			return lang("" + n@m33 + "肉のオードブル", "deep fried " + n@m33)
+		}
+		if (__rank == 5) {
+			return lang("" + n@m33 + "のピリ辛炒め", "skewer grilled " + n@m33)
+		}
+		if (__rank == 6) {
+			return lang("" + n@m33 + "コロッケ", n@m33 + " croquette")
+		}
+		if (__rank == 7) {
+			return lang("" + n@m33 + "のハンバーグ", n@m33 + " hamburger")
+		}
+		if (__rank == 8) {
+			return lang("" + n@m33 + "肉の大葉焼き", n@m33 + " cutlet")
+		}
+		if (__rank == 9) {
+			return lang("" + n@m33 + "ステーキ", n@m33 + " steak")
+		}
+		return s@m33
+	}
+	if (__foodType == 2) {
+		if (s@m33 == "") {
+			s@m33 = lang("野菜", "vegetable")
+		}
+		if (__rank == 1) {
+			return lang("生ごみ同然の" + s@m33, "kitchen refuse " + s@m33)
+		}
+		if (__rank == 2) {
+			return lang("悪臭を放つ" + s@m33, "smelly " + s@m33)
+		}
+		if (__rank == 3) {
+			return lang("" + s@m33 + "のサラダ", s@m33 + " salad")
+		}
+		if (__rank == 4) {
+			return lang("" + s@m33 + "の炒め物", "fried " + s@m33)
+		}
+		if (__rank == 5) {
+			return lang("" + s@m33 + "風味の肉じゃが", s@m33 + " roll")
+		}
+		if (__rank == 6) {
+			return lang("" + s@m33 + "の天ぷら", s@m33 + " tempura")
+		}
+		if (__rank == 7) {
+			return lang("" + s@m33 + "の煮込み", s@m33 + " gratin")
+		}
+		if (__rank == 8) {
+			return lang("" + s@m33 + "シチュー", "meat and " + s@m33 + " stew")
+		}
+		if (__rank == 9) {
+			return lang("" + s@m33 + "風カレー", s@m33 + " curry")
+		}
+		return s@m33
+	}
+	if (__foodType == 3) {
+		if (s@m33 == "") {
+			s@m33 = lang("果物", "fruit")
+		}
+		if (__rank == 1) {
+			return lang("食べてはならない" + s@m33, "dangerous " + s@m33)
+		}
+		if (__rank == 2) {
+			return lang("べっちょりした" + s@m33, "doubtful " + s@m33)
+		}
+		if (__rank == 3) {
+			return lang("" + s@m33 + "のフルーツサラダ", s@m33 + " jelly salad")
+		}
+		if (__rank == 4) {
+			return lang("" + s@m33 + "のプリン", s@m33 + " pudding")
+		}
+		if (__rank == 5) {
+			return lang("" + s@m33 + "シャーベット", s@m33 + " sherbet")
+		}
+		if (__rank == 6) {
+			return lang("" + s@m33 + "シェイク", s@m33 + " ice cream")
+		}
+		if (__rank == 7) {
+			return lang("" + s@m33 + "クレープ", s@m33 + " crepe")
+		}
+		if (__rank == 8) {
+			return lang("" + s@m33 + "フルーツケーキ", s@m33 + " fruit cake")
+		}
+		if (__rank == 9) {
+			return lang("" + s@m33 + "パフェ", s@m33 + " grand parfait")
+		}
+		return s@m33
+	}
+	if (__foodType == 4) {
+		if (s@m33 == "") {
+			s@m33 = lang("お菓子", "candy")
+		}
+		if (__rank == 1) {
+			return lang("原型を留めない" + s@m33, "collapsed " + s@m33)
+		}
+		if (__rank == 2) {
+			return lang("まずそうな" + s@m33, "nasty " + s@m33)
+		}
+		if (__rank == 3) {
+			return lang("" + s@m33 + "クッキー", s@m33 + " cookie")
+		}
+		if (__rank == 4) {
+			return lang("" + s@m33 + "のゼリー", s@m33 + " jelly")
+		}
+		if (__rank == 5) {
+			return lang("" + s@m33 + "パイ", s@m33 + " pie")
+		}
+		if (__rank == 6) {
+			return lang("" + s@m33 + "まんじゅう", s@m33 + " bun")
+		}
+		if (__rank == 7) {
+			return lang("" + s@m33 + "風味のシュークリーム", s@m33 + " cream puff")
+		}
+		if (__rank == 8) {
+			return lang("" + s@m33 + "のケーキ", s@m33 + " cake")
+		}
+		if (__rank == 9) {
+			return lang("" + s@m33 + "風ザッハトルテ", s@m33 + " sachertorte")
+		}
+		return s@m33
+	}
+	if (__foodType == 5) {
+		n@m33 = lang("麺", "noodle")
+		if (__rank == 1) {
+			return lang("禁断の" + n@m33, "risky " + n@m33)
+		}
+		if (__rank == 2) {
+			return lang("のびてふにゃった" + n@m33, "exhausted " + n@m33)
+		}
+		if (__rank == 3) {
+			return lang("サラダパスタ", "salad pasta")
+		}
+		if (__rank == 4) {
+			return lang("うどん", "udon")
+		}
+		if (__rank == 5) {
+			return lang("冷やし蕎麦", "soba")
+		}
+		if (__rank == 6) {
+			return lang("ペペロンチーノ", "peperoncino")
+		}
+		if (__rank == 7) {
+			return lang("カルボナーラ", "carbonara")
+		}
+		if (__rank == 8) {
+			return lang("ラーメン", "ramen")
+		}
+		if (__rank == 9) {
+			return lang("ミートスパゲティ", "meat spaghetti")
+		}
+		return s@m33
+	}
+	if (__foodType == 6) {
+		if (s@m33 == "") {
+			s@m33 = lang("魚", "fish")
+		}
+		if (__rank == 1) {
+			return lang("" + s@m33 + "の残骸", "leftover " + s@m33)
+		}
+		if (__rank == 2) {
+			return lang("骨だけ残った" + s@m33, "bony " + s@m33)
+		}
+		if (__rank == 3) {
+			return lang("" + s@m33 + "のフライ", "fried " + s@m33)
+		}
+		if (__rank == 4) {
+			return lang("" + s@m33 + "の煮込み", "stewed " + s@m33)
+		}
+		if (__rank == 5) {
+			return lang("" + s@m33 + "スープ", s@m33 + " soup")
+		}
+		if (__rank == 6) {
+			return lang("" + s@m33 + "の天ぷら", s@m33 + " tempura")
+		}
+		if (__rank == 7) {
+			return lang("" + s@m33 + "ソーセージ", s@m33 + " sausage")
+		}
+		if (__rank == 8) {
+			return lang("" + s@m33 + "の刺身", s@m33 + " sashimi")
+		}
+		if (__rank == 9) {
+			return lang("" + s@m33 + "の活け作り", s@m33 + " sushi")
+		}
+		return s@m33
+	}
+	if (__foodType == 7) {
+		n@m33 = lang("パン", "bread")
+		if (__rank == 1) {
+			return lang("恐怖の" + n@m33, "fearsome " + n@m33)
+		}
+		if (__rank == 2) {
+			return lang("ガチガチの" + n@m33, "hard " + n@m33)
+		}
+		if (__rank == 3) {
+			return lang("くるみパン", "walnut bread")
+		}
+		if (__rank == 4) {
+			return lang("アップルパイ", "apple pie")
+		}
+		if (__rank == 5) {
+			return lang("サンドイッチ", "sandwich")
+		}
+		if (__rank == 6) {
+			return lang("クロワッサン", "croissant")
+		}
+		if (__rank == 7) {
+			return lang("コロッケパン", "croquette sandwich")
+		}
+		if (__rank == 8) {
+			return lang("カレーパン", "chocolate babka")
+		}
+		if (__rank == 9) {
+			return lang("メロンパン", "melon flavored bread")
+		}
+		return s@m33
+	}
+	if (__foodType == 8) {
+		if (s@m33 != "") {
+			n@m33 = s@m33
+		} elseif (__charaId == 0) {
+			n@m33 = lang("鳥", "animal")
+		} elseif (__charaId == 343) {
+			if (__cnpcId != usernpcmax) {
+				n@m33 = userdatan(1, __cnpcId)
+			} else {
+				n@m33 = lang("残りカス", "garbage")
+			}
+		} else {
+			n@m33 = refchara(__charaId, 2, 1)
+		}
+		if (__rank == 1) {
+			return lang("グロテスクな" + n@m33 + "の卵", "grotesque " + n@m33 + " egg")
+		}
+		if (__rank == 2) {
+			return lang("焦げた" + n@m33 + "の卵", "overcooked " + n@m33 + " egg")
+		}
+		if (__rank == 3) {
+			return lang(n@m33 + "の卵の目玉焼き", "fried " + n@m33 + " egg")
+		}
+		if (__rank == 4) {
+			return lang(n@m33 + "風味のキッシュ", n@m33 + " egg toast")
+		}
+		if (__rank == 5) {
+			return lang("半熟" + n@m33, "soft boiled " + n@m33 + " egg")
+		}
+		if (__rank == 6) {
+			return lang(n@m33 + "の卵入りスープ", "soup with " + n@m33 + " egg")
+		}
+		if (__rank == 7) {
+			return lang("熟成" + n@m33 + "チーズ", "mature " + n@m33 + " cheese")
+		}
+		if (__rank == 8) {
+			return lang(n@m33 + "のレアチーズケーキ", n@m33 + " cheese cake")
+		}
+		if (__rank == 9) {
+			return lang(n@m33 + "風オムライス", n@m33 + " omelet")
+		}
+		return s@m33
+	}
+	if (__foodType == 9) {
+		if (s@m33 != "") {
+			n@m33 = s@m33
+		} elseif (__charaId == 0) {
+			n@m33 = ""
+		} elseif (__charaId == 343) {
+			if (__cnpcId != usernpcmax) {
+				n@m33 = userdatan(1, __cnpcId)
+			} else {
+				n@m33 = lang("残りカス", "garbage")
+			}
+		} else {
+			n@m33 = refchara(__charaId, 2, 1)
+		}
+		if (__rank == 1) {
+			if (n@m33 == "") {
+				return lang("ドロドロした乳", "thick milk")
+			} else {
+				return lang("ドロドロした" + n@m33 + "の乳", "think " + n@m33 + " milk")
+			}
+		}
+		if (__rank == 2) {
+			if (n@m33 == "") {
+				return lang("固まりかけの乳", "curdled milk")
+			} else {
+				return lang("固まりかけの" + n@m33 + "の乳", "curdled " + n@m33 + " milk")
+			}
+		}
+		if (__rank == 3) {
+			return lang(n@m33 + "ヨーグルト", n@m33 + " yogurt")
+		}
+		if (__rank == 4) {
+			return lang(n@m33 + "パンケーキ", n@m33 + " pancake")
+		}
+		if (__rank == 5) {
+			return lang(n@m33 + "ポタージュ", n@m33 + " potage")
+		}
+		if (__rank == 6) {
+			return lang(n@m33 + "ソフトクリーム", n@m33 + " soft serve")
+		}
+		if (__rank == 7) {
+			return lang(n@m33 + "パンナコッタ", n@m33 + " panna cotta")
+		}
+		if (__rank == 8) {
+			return lang(n@m33 + "クリームチーズ", n@m33 + " cream cheese")
+		}
+		if (__rank == 9) {
+			return lang(n@m33 + "グラタン", n@m33 + " gratin")
+		}
+		return s@m33
+	}
+　if (__foodType == 10) {
+		if (s@m33 == "") {
+			s@m33 = lang("ハーブ", "herb")
+		}
+		if (__rank == 1) {
+			return lang("バラバラになった" + s@m33, "shredded " + s@m33)
+		}
+		if (__rank == 2) {
+			return lang("失敗した" + s@m33 + "ティー", "failed " + s@m33 + " tea")
+		}
+		if (__rank == 3) {
+			return lang("雑味のある" + s@m33 + "ティー", "odd tasting " + s@m33 + " tea")
+		}
+		if (__rank == 4) {
+			return lang("少し苦い" + s@m33 + "ティー", "slightly bitter " + s@m33 + " tea")
+		}
+		if (__rank == 5) {
+			return lang(s@m33 + "ティー", s@m33 + " tea")
+		}
+		if (__rank == 6) {
+			return lang("上質な" + s@m33 + "ティー", "good quality " + s@m33 + " tea")
+		}
+		if (__rank == 7) {
+			return lang("良質な" + s@m33 + "ティー", "superior quality " + s@m33 + " tea")
+		}
+		if (__rank == 8) {
+			return lang("貴族が嗜む" + s@m33 + "ティー", "noble's favorite " + s@m33 + " tea")
+		}
+		if (__rank == 9) {
+			return lang("世界最高の" + s@m33 + "ティー", "the greatest " + s@m33 + " tea in the world")
+		}
+		return s@m33
+	}
+return s@m33
+
+
+
+#define ctype ST_FOOD_EXPERIENCE(%1, %2) \
+	if (fdmax < 10) { \
+		fdlist(0, fdmax) = (%1), (%2) : \
+		fdmax++ \
+	}
+
+
+
+*food_applyEatingEffect
+	tc = cc
+	dim fdlist, 2, 10
+	fdmax = 0
+	foodId = iId(ci)
+	nutrition = 2500
+	if (refitem(foodId, 10, ci) == 1) {
+		nutrition += 2500
+	}
+	i = iParam1(ci) / 1000
+	if (trophycheck(5) == 2) {
+		if (i == 1) { // Meats
+			ST_FOOD_EXPERIENCE(10, 45)
+			ST_FOOD_EXPERIENCE(11, 60)
+			ST_FOOD_EXPERIENCE(17, 15)
+			nutrition = 3500
+		}
+		if (i == 2) { // Vegetables
+			ST_FOOD_EXPERIENCE(15, 75)
+			ST_FOOD_EXPERIENCE(14, 75)
+			nutrition = 2000
+		}
+		if (i == 3) { // Fruits
+			ST_FOOD_EXPERIENCE(16, 75 + (75 / 10 * iEnhancement(ci)))
+			ST_FOOD_EXPERIENCE(17, 30 + (30 / 10 * iEnhancement(ci)))
+			ST_FOOD_EXPERIENCE(13, 45 + (45 / 10 * iEnhancement(ci)))
+			nutrition = 1500
+		}
+		if (i == 4) { // Api nuts
+			ST_FOOD_EXPERIENCE(16, 60 + (60 / 10 * iEnhancement(ci)))
+			ST_FOOD_EXPERIENCE(12, 45 + (45 / 10 * iEnhancement(ci)))
+			ST_FOOD_EXPERIENCE(14, 45 + (45 / 10 * iEnhancement(ci)))
+			nutrition = 1500
+		}
+		if (i == 5) { // Noodles
+			ST_FOOD_EXPERIENCE(11, 90)
+			ST_FOOD_EXPERIENCE(12, 60)
+			nutrition = 3500
+		}
+		if (i == 6) { // Fish
+			ST_FOOD_EXPERIENCE(14, 60)
+			ST_FOOD_EXPERIENCE(12, 60)
+			ST_FOOD_EXPERIENCE(13, 30)
+			nutrition = 3000
+		}
+		if (i == 7) { // Bread
+			ST_FOOD_EXPERIENCE(10, 40)
+			ST_FOOD_EXPERIENCE(12, 40)
+			ST_FOOD_EXPERIENCE(14, 40)
+			ST_FOOD_EXPERIENCE(11, 40)
+			nutrition = 2800
+		}
+		if (i == 8) { // Eggs
+			ST_FOOD_EXPERIENCE(17, 30)
+			ST_FOOD_EXPERIENCE(13, 30)
+			ST_FOOD_EXPERIENCE(15, 30)
+			nutrition = 2000
+		}
+		if (i == 9) { // Milk
+			ST_FOOD_EXPERIENCE(11, 30)
+			ST_FOOD_EXPERIENCE(12, 30)
+			ST_FOOD_EXPERIENCE(17, 75)
+			nutrition = 2000
+		}
+	} else {
+		if (i == 1) { // Meats
+			ST_FOOD_EXPERIENCE(10, 30)
+			ST_FOOD_EXPERIENCE(11, 40)
+			ST_FOOD_EXPERIENCE(17, 10)
+			nutrition = 3500
+		}
+		if (i == 2) { // Vegetables
+			ST_FOOD_EXPERIENCE(15, 50)
+			ST_FOOD_EXPERIENCE(14, 50)
+			nutrition = 2000
+		}
+		if (i == 3) { // Fruits
+			ST_FOOD_EXPERIENCE(16, 50 + (50 / 10 * iEnhancement(ci)))
+			ST_FOOD_EXPERIENCE(17, 20 + (20 / 10 * iEnhancement(ci)))
+			ST_FOOD_EXPERIENCE(13, 30 + (30 / 10 * iEnhancement(ci)))
+			nutrition = 1500
+		}
+		if (i == 4) { // Api nuts
+			ST_FOOD_EXPERIENCE(16, 40 + (40 / 10 * iEnhancement(ci)))
+			ST_FOOD_EXPERIENCE(12, 30 + (30 / 10 * iEnhancement(ci)))
+			ST_FOOD_EXPERIENCE(14, 30 + (30 / 10 * iEnhancement(ci)))
+			nutrition = 1500
+		}
+		if (i == 5) { // Noodles
+			ST_FOOD_EXPERIENCE(11, 60)
+			ST_FOOD_EXPERIENCE(12, 40)
+			nutrition = 3500
+		}
+		if (i == 6) { // Fish
+			ST_FOOD_EXPERIENCE(14, 40)
+			ST_FOOD_EXPERIENCE(12, 40)
+			ST_FOOD_EXPERIENCE(13, 20)
+			nutrition = 3000
+		}
+		if (i == 7) { // Bread
+			ST_FOOD_EXPERIENCE(10, 25)
+			ST_FOOD_EXPERIENCE(12, 25)
+			ST_FOOD_EXPERIENCE(14, 25)
+			ST_FOOD_EXPERIENCE(11, 25)
+			nutrition = 2800
+		}
+		if (i == 8) { // Eggs
+			ST_FOOD_EXPERIENCE(17, 20)
+			ST_FOOD_EXPERIENCE(13, 20)
+			ST_FOOD_EXPERIENCE(15, 20)
+			nutrition = 2000
+		}
+		if (i == 9) { // Milk
+			ST_FOOD_EXPERIENCE(11, 20)
+			ST_FOOD_EXPERIENCE(12, 20)
+			ST_FOOD_EXPERIENCE(17, 50)
+			nutrition = 2000
+		}
+	}
+	if (refitem(foodId, 5, ci) == 57000 | foodId == iId_milk) {
+		nutrition = nutrition * (100 + iParam2(ci) * 15) / 100
+	}
+	repeat fdmax
+		if (fdlist(1, cnt) > 0) {
+			if (iParam2(ci) < 3) {
+				fdlist(1, cnt) = fdlist(1, cnt) / 2
+			} else {
+				fdlist(1, cnt) = fdlist(1, cnt) * (50 + iParam2(ci) * 20) / 100
+			}
+		} else {
+			if (iParam2(ci) < 3) {
+				fdlist(1, cnt) = fdlist(1, cnt) * ((3 - iParam2(ci)) * 100 + 100) / 100
+			} else {
+				fdlist(1, cnt) = fdlist(1, cnt) * 100 / (iParam2(ci) * 50)
+			}
+		}
+	loop
+	p = iParam1(ci) / 1000
+	repeat 1
+		if (cc == 0) {
+			if (gettrait(0, 41)) {
+				if (foodId == 204) {
+					s = refchara(iSubname(ci), 8, 1)
+					if (instr(s, 0, "/man/") != (-1)) {
+						txt -1, lang("ウマイ！", "Delicious!")
+					}
+				}
+			}
+		}
+		if (iMaterial(ci) == 35) {
+			if (iParam3(ci) < 0) {
+				ctalk cc, 408, cc, cc
+				if (stat == 0) {
+					if (cc == 0) {
+						txt -1, lang("うげっ！腐ったものを食べてしまった…うわ…", "Ugh! Rotten food!")
+					} else {
+						txt -1, lang(name(cc) + "は渋い顔をした。", name(cc) + " looks glum.")
+					}
+				}
+				break
+			}
+		}
+		if (foodId == 204) {
+			ctalk cc, 954, cc, cc
+			if (stat) {
+				break
+			}
+		}
+		if (foodId == 571) {
+			ctalk cc, 953, cc, cc
+			if (stat) {
+				break
+			}
+		}
+		if (foodId == 573) {
+			ctalk cc, 952, cc, cc
+			if (stat) {
+				break
+			}
+		}
+		if (foodId == 618) {
+			ctalk cc, 951, cc, cc
+			if (stat) {
+				break
+			}
+		}
+		if (foodId == iId_milk) {
+			ctalk cc, 1029, cc, cc
+			if (stat) {
+				break
+			}
+		}
+		ctalk cc, 957, cc, cc
+		if (stat) {
+			break
+		}
+		ctalk cc, 958, cc, cc
+		if (stat) {
+			break
+		}
+		if (iParam2(ci) == 0) {
+			if (p == 1) {
+				ctalk cc, 409, cc, cc
+				if (stat == 0 & cc == 0) {
+					txt -1, lang("生肉だ…", "Ugh...Raw meat...")
+				}
+				break
+			}
+			if (p == 7) {
+				ctalk cc, 410, cc, cc
+				if (stat == 0 & cc == 0) {
+					txt -1, lang("粉の味がする…", "It tastes like...powder...")
+				}
+				break
+			}
+			if (p == 5) {
+				ctalk cc, 411, cc, cc
+				if (stat == 0 & cc == 0) {
+					txt -1, lang("生で食べるものじゃないな…", "Er...this needs to be cooked.")
+				}
+				break
+			}
+			if (p == 10) {
+				ctalk cc, 416, cc, cc
+				if (stat == 0 & cc == 0) {
+					txt -1, lang("美味しい！", "Delicious!"), lang("これはいける！", "Gee what a good taste!"), lang("いい味だ！", "It tasted pretty good!")
+				}
+				break
+			} else {
+				ctalk cc, 412, cc, cc
+				if (stat == 0 & cc == 0) {
+					txt -1, lang("まずいわけではないが…", "It doesn't taste awful but..."), lang("平凡な味だ。", "Very boring food.")
+				}
+			}
+			break
+		}
+		if (iParam2(ci) < 3) {
+			ctalk cc, 413, cc, cc
+			if (stat == 0 & cc == 0) {
+				txt -1, lang("うぅ…腹を壊しそうだ。", "Boy, it gives your stomach trouble!"), lang("まずい！", "Ugh! Yuk!"), lang("ひどい味だ！", "Awful taste!!")
+			}
+			break
+		}
+		if (iParam2(ci) < 5) {
+			ctalk cc, 414, cc, cc
+			if (stat == 0 & cc == 0) {
+				txt -1, lang("まあまあの味だ。", "Uh-uh, the taste is so so."), lang("悪くない味だ。", "The taste is not bad.")
+			}
+			break
+		}
+		if (iParam2(ci) < 7) {
+			ctalk cc, 415, cc, cc
+			if (stat == 0 & cc == 0) {
+				txt -1, lang("かなりいける。", "It tasted good."), lang("それなりに美味しかった。", "Decent meal.")
+			}
+			break
+		}
+		if (iParam2(ci) < 9) {
+			ctalk cc, 416, cc, cc
+			if (stat == 0 & cc == 0) {
+				txt -1, lang("美味しい！", "Delicious!"), lang("これはいける！", "Gee what a good taste!"), lang("いい味だ！", "It tasted pretty good!")
+			}
+			break
+		}
+		ctalk cc, 417, cc, cc
+		if (stat == 0 & cc == 0) {
+			txt -1, lang("最高に美味しい！", "Wow! Terrific food!"), lang("まさに絶品だ！", "Yummy! Absolutely yummy!"), lang("天にも昇る味だ！", "It tasted like seventh heaven!")
+		}
+	loop
+	nc_intb_001 = 0
+	if (foodId == 797) {
+		fdmax = 0
+		ST_FOOD_EXPERIENCE(10, 50)
+		ST_FOOD_EXPERIENCE(11, 50)
+		ST_FOOD_EXPERIENCE(17, 50)
+		ST_FOOD_EXPERIENCE(16, 50)
+		ST_FOOD_EXPERIENCE(12, 50)
+		ST_FOOD_EXPERIENCE(13, 50)
+		ST_FOOD_EXPERIENCE(14, 50)
+		ST_FOOD_EXPERIENCE(15, 50)
+		nutrition = 1000
+		if (cc == 0) {
+			txtef 2
+			txt -1, lang("食べても食べてもなくならない！", "This herb invigorates you.")
+		}
+	}
+	if (foodId == 425) {
+		fdmax = 0
+		ST_FOOD_EXPERIENCE(10, 900 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(11, 900 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(17, 900 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(16, 900 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(12, 900 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(13, 900 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(14, 900 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(15, 900 + (iEnhancement(ci) * 10))
+		nutrition = 2500
+		if (cc == 0) {
+			txtef 2
+			txt -1, lang("このハーブは活力の源だ。", "This herb invigorates you.")
+		}
+		nc_intb_001 = 1
+	}
+	if (foodId == 422) {
+		fdmax = 0
+		ST_FOOD_EXPERIENCE(10, 2700 + (iEnhancement(ci) * 100))
+		ST_FOOD_EXPERIENCE(11, 2100 + (iEnhancement(ci) * 100))
+		ST_FOOD_EXPERIENCE(17, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(16, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(12, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(13, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(14, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(15, 30 + (iEnhancement(ci) * 10))
+		nutrition = 500
+		modgrowth2 cc, 10, 2
+		modgrowth2 cc, 11, 2
+		if (cc == 0) {
+			txtef 2
+			txt -1, lang("新たな力が湧きあがってくる。", "You feel might coming through your body.")
+		}
+		nc_intb_001 = 1
+	}
+	if (foodId == 423) {
+		fdmax = 0
+		ST_FOOD_EXPERIENCE(10, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(11, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(17, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(16, 2400 + (iEnhancement(ci) * 100))
+		ST_FOOD_EXPERIENCE(12, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(13, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(14, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(15, 2400 + (iEnhancement(ci) * 100))
+		nutrition = 500
+		modgrowth2 cc, 16, 2
+		modgrowth2 cc, 15, 2
+		if (cc == 0) {
+			txtef 2
+			txt -1, lang("魔力の向上を感じる。", "You feel magical power springs up inside you.")
+		}
+		nc_intb_001 = 1
+	}
+	if (foodId == 424) {
+		fdmax = 0
+		ST_FOOD_EXPERIENCE(10, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(11, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(17, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(16, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(12, 2250 + (iEnhancement(ci) * 100))
+		ST_FOOD_EXPERIENCE(13, 2400 + (iEnhancement(ci) * 100))
+		ST_FOOD_EXPERIENCE(14, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(15, 30 + (iEnhancement(ci) * 10))
+		modgrowth2 cc, 12, 2
+		modgrowth2 cc, 13, 2
+		nutrition = 500
+		if (cc == 0) {
+			txtef 2
+			txt -1, lang("感覚が研ぎ澄まされるようだ。", "You feel as your sense is sharpened.")
+		}
+		nc_intb_001 = 1
+	}
+	if (foodId == 426) {
+		fdmax = 0
+		ST_FOOD_EXPERIENCE(10, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(11, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(17, 2550 + (iEnhancement(ci) * 100))
+		ST_FOOD_EXPERIENCE(16, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(12, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(13, 30 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(14, 2100 + (iEnhancement(ci) * 100))
+		ST_FOOD_EXPERIENCE(15, 30 + (iEnhancement(ci) * 10))
+		nutrition = 500
+		modgrowth2 cc, 17, 2
+		modgrowth2 cc, 14, 2
+		if (cc == 0) {
+			txtef 2
+			txt -1, lang("ホルモンが活発化した。", "Your hormones are activated.")
+		}
+		nc_intb_001 = 1
+	}
+	if (foodId == 427) {
+		fdmax = 0
+		ST_FOOD_EXPERIENCE(10, 300 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(11, 300 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(17, 300 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(16, 300 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(12, 300 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(13, 300 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(14, 300 + (iEnhancement(ci) * 10))
+		ST_FOOD_EXPERIENCE(15, 300 + (iEnhancement(ci) * 10))
+		nutrition = 20000
+		nc_intb_001 = 1
+	}
+	if (nc_intb_001) {
+		if (iParam2(ci) > 0) {
+			repeat fdmax
+				if (iParam2(ci) < 3) {
+					fdlist(1, cnt) = fdlist(1, cnt) / 2
+				} else {
+					fdlist(1, cnt) = fdlist(1, cnt) * (50 + iParam2(ci) * 20) / 100
+				}
+			loop
+		}
+	}
+	if (foodId == 738) {
+		nutrition = 750
+	}
+	if (cc == 0) {
+		if (iMaterial(ci) == 35) {
+			if (iParam3(ci) < 0) {
+				gosub *label_0784
+			}
+		}
+	}
+	if (foodId == 204) {
+		s = refchara(iSubname(ci), 8, 1)
+		if (cc == 0) {
+			if (instr(s, 0, "/man/") != (-1)) {
+				if (gettrait(0, 41)) {
+					txt -1, lang("これはあなたの大好きな人肉だ！", "It's your favorite human flesh!")
+				} else {
+					if (ogdata(492) == 2) {
+						txt -1, lang("これは人肉だ…が、あなたは特に気にならなかった。", "This is human flesh... however, you don't particularly mind the taste.")
+					} else {
+						txt -1, lang("これは人肉だ…うぇぇ！", "Eeeek! It's human flesh!")
+						dmgsan cc, 15
+						dmgcon cc, 11, 150
+					}
+					if (gettrait(0, 41) == 0) {
+						if (rnd(5) == 0) {
+							tid = 41
+							traitmode = 0
+							r1 = 0
+							gosub *label_0097
+							txtef 2
+							txt -1, traitrefn(0)
+							settrait 0, 41, 1
+						}
+					}
+				}
+				ogdata(433)++
+				gosub *label_1177
+			} else {
+				if (gettrait(0, 41)) {
+					txt -1, lang("人肉の方が好みだが…", "You would've rather eaten human flesh.")
+					nutrition = nutrition * 2 / 3
+				}
+			}
+		}
+	}
+	if (foodId == 573 & iCount(ci) > 0) {
+		if (cbit(978, cc) == 0) {
+			txtef 5
+			if (iCount(ci) == 330) {
+				txt -1, lang(name(cc) + "は寄生された。", name(cc) + " get" + _s(cc) + " pregnant.")
+			} else {
+				txt -1, lang(name(cc) + "は妊娠した。", name(cc) + " get" + _s(cc) + " pregnant.")
+			}
+			txtef 9
+			ctalk cc, 973, cc, 0
+			animeload 8, cc
+			cbitmod 978, cc, 1
+			ocdata(52, cc) = iCount(ci)
+			if (iCount(ci) == 343) {
+				ocdata(53, cc) = iDv(ci) + 1
+			}
+		}
+		if (rnd(2)) {
+			dbmode = 12
+			dbid = iCount(ci)
+			cibkref = ci
+			gosub *label_2067
+		}
+	}
+	if (foodId == 204 | (foodId == 571 | foodId == 573 & rnd(3) == 0)) {
+		dbmode = 12
+		dbid = iSubname(ci)
+		cibkref = ci
+		gosub *label_2067
+	}
+	if (iMaterial(ci) != 35) {
+		i = refitem(foodId, 5, ci)
+		if (i < 50000 | i == 60000) {
+			if (i == 10000) {
+				if (cStopsContinuousAction(cc) == 0) {
+					gosub *label_0817
+					cStopsContinuousAction(cc) = 0
+				} else {
+					gosub *label_0817
+				}
+			}
+			if (mtref(0, iMaterial(ci)) != mtref(0, 35)) {
+				nutrition = nutrition * mtref(0, iMaterial(ci)) / mtref(0, 35)
+			}
+			if (mtref(5, iMaterial(ci)) >= mtref(5, 10)) {
+				gosub *label_0787
+			}
+			if (iMaterial(ci) == 8) {
+				gosub *label_0808
+			} elseif (iMaterial(ci) == 14) {
+				gosub *label_0802
+			}
+		}
+	}
+	repeat fdmax
+		i = calcfixexp(cc, ci)
+		if (i > 0) {
+			skillexp2 fdlist(0, cnt), cc, fdlist(1, cnt) * i / 100
+		}
+	loop
+	if (iCurseState(ci) >= 1) {
+		nutrition = nutrition * 150 / 100
+	}
+	if (iCurseState(ci) <= (-1)) {
+		nutrition = nutrition * 50 / 100
+	}
+	if (nutrition >= 3000) {
+		if (rnd(10) == 0 | cNutrition(cc) >= 12000) {
+			modweight cc, rnd(3) + 1, cNutrition(cc) >= 12000
+		}
+	}
+	if (iCurseState(ci) == 1) {
+		if (ibit(8, ci)) {
+			i = calcfixexp(cc, ci)
+			if (i > 0) {
+				god_applyBlessedFoodEffect cc, ci, i
+			}
+		}
+	}
+	cNutrition(cc) += nutrition
+	if (cId(cc) == 261) {
+		if (nutrition >= 2000) {
+			cibk = ci
+			flt calcobjlv(cLevel(cc))
+			flttypeminor = 58500
+			itemcreate -1, 0, cX(cc), cY(cc), 0
+			ctalk cc, 1389, cc, cc
+			if (stat == 0) {
+				txtef 9
+				txt cc, lang("「げふぅ」", "「Ugh-Ughu」")
+			}
+			txtef 9
+			txt cc, lang(name(cc) + "は" + itemname(ci, 1) + "を吐き出した。", name(cc) + " spews up " + itemname(ci, 1) + ".")
+			ci = cibk
+		}
+	}
+	if (cId(cc) == 343) {
+		if (userdatan(1, cCnpcId(cc)) == "pelican" | userdatan(1, cCnpcId(cc)) == "ペリカン") {
+			if (nutrition >= 2000) {
+				if (rnd(5) == 0) {
+					cibk = ci
+					flt
+					flttypemajor = 92000
+					if (mapType != 1 & mapType != 5 & mapType != 3 & mapType != 4 & mapType != 6 & mapType != 2) {
+						itemcreate -1, 0, -1, -1, 0
+						ctalk cc, 1389, cc, cc
+						if (stat == 0) {
+							txtef 9
+							txt cc, lang("「クェー」", "「Quuuu」")
+						}
+						txtef 9
+						txt cc, lang(name(cc) + "は" + itemname(ci, 1) + "をどこからともなく持ってきた。" + itemname(ci, 1) + "は給料箱に送られた。", name(cc) + " brought the " + itemname(ci, 1) + ". " + itemname(ci, 1) + "Was sent to the salary box.")
+					} else {
+						itemcreate -1, 0, cX(cc), cY(cc), rnd(3) + 1
+						ctalk cc, 1389, cc, cc
+						if (stat == 0) {
+							txtef 9
+							txt cc, lang("「クェー」", "「Quuuu」")
+						}
+						txtef 9
+						txt cc, lang(name(cc) + "は" + itemname(ci, 1) + "をどこからともなく持ってきた。", name(cc) + " brought the " + itemname(ci, 1) + ".")
+					}
+					ci = cibk
+				}
+			}
+		}
+	}
+	if (foodId == 204) {
+		if (iSubname(ci) == 319) {
+			txtef 2
+			txt -1, lang(name(cc) + "は進化した。", name(cc) + " evolve" + _s(cc) + ".")
+			skillmod 2, cc, 1000
+			skillmod 3, cc, 1000
+			repeat 400 - 100, 100
+				if (sdataref(0, cnt) == 0 | sorg(cnt, cc) == 0) {
+					continue
+				}
+				modgrowth2 cc, cnt, rnd(10) + 1
+			loop
+		}
+	}
+	if (foodId == 755) {
+		txt -1, lang("これは縁起がいい！", "The food is a charm!")
+		skillmod 19, cc, 2000
+	}
+	if (foodId == 702) {
+		skillmod 19, cc, 1000
+	}
+	if (foodId == 639) {
+		skillmod 19, cc, 1000 * 20
+	}
+	if (foodId == 655) {
+		skillmod 2, cc, 1000 * 3
+	}
+	if (foodId == 662) {
+		skillmod 3, cc, 1000 * 3
+	}
+	if (foodId == 738) {
+		if (cc == 0 | petcheck(cc)) {
+			txt -1, lang(name(cc) + "はクッキーの中のおみくじを読んだ。", name(cc) + " read" + _s(cc) + " the paper fortune.")
+			valn = "%COOKIE2"
+			gosub *label_0224
+			if (iCurseState(ci) >= 1 | (iCurseState(ci) == 0 & rnd(2))) {
+				if (rnd(5)) {
+					valn = "%COOKIE1"
+				} else {
+					valn = "%O_COOKIE1"
+				}
+				gosub *label_0224
+			}
+			txtef 5
+			txt -1, "" + buff
+		}
+	}
+	if (foodId == 667) {
+		txt -1, lang(name(cc) + "の心はすこし癒された。", name(cc) + your(cc) + " heart is warmed.")
+		if (godcheck(cc) != "danalin") {
+			healsan cc, 30
+		}
+	}
+	if (foodId == 499) {
+		txt -1, lang(name(cc) + "は幸せの粉を摂取した。", name(cc) + " ingested happy powder.")
+		dmgcon cc, 7, 1000
+		addbuff cc, 19, 300, 1000
+	}
+	if (foodId == iId_salt) {
+		if (cdatan(2, cc) == "snail") {
+			food_meltBySalt cc
+		}
+	}
+	if (ibit(14, ci) == 1) {
+		if (synccheck(cc, -1)) {
+			txt -1, lang("これは毒されている！" + name(cc) + "はもがき苦しみのたうちまわった！", "It's poisoned! " + name(cc) + " writhe" + _s(cc) + " in agony!")
+			ctalk cc, 1249, cc, cc
+			if (stat == 0) {
+				txt cc, lang("「ギャァァ…！」", cnvtalk("Gyaaaaa...!")), lang("「ブッ！」", cnvtalk("Ugh!"))
+			}
+		}
+		dmghp cc, rnd(250) + 250, -4
+		if (cState(cc) != 1) {
+			if (cc != 0) {
+				if (cRelationship(cc) >= 0) {
+					modkarma 0, -1
+				}
+			}
+			return
+		}
+	}
+	if (ibit(6, ci) == 1) {
+		cEmotionIcon(cc) = 17 + 100 * 3
+		if (cc == 0) {
+			txtef 9
+			ctalk cc, 407, cc, cc
+			if (stat == 0) {
+				txtef 9
+				txt -1, lang("あなたは興奮した！", "You are excited!")
+			}
+		} else {
+			txtef 9
+			ctalk cc, 407, cc, cc
+			if (stat == 0) {
+				txtef 9
+				txt cc, name(cc) + lang("「なんだか…変な気分なの…」", " gasps, " + cnvtalk("I f-feel...strange...")), name(cc) + lang("「あれ…なにこの感じは…」", "gasps " + cnvtalk("Uh..uh..What is this feeling..."))
+			}
+			modkarma 0, -10
+		}
+		modimp cc, 30
+		f = 0
+		lovemiracle cc
+		dmgcon cc, 7, 500
+		dmgcon cc, 13, 500
+		if (godcheck(0) == "dorein") {
+			modimp cc, 30
+			f = 0
+			lovemiracle cc
+			dmgcon cc, 7, 500
+			dmgcon cc, 13, 500
+		}
+		cEmotionIcon(cc) = 17 + 100 * 3
+	}
+	repeat 15
+		if (iEnchantmentId(ci, cnt) == 0) {
+			break
+		}
+		enc = iEnchantmentId(ci, cnt)
+		if (enc == 36) {
+			p = rnd(iEnchantmentPower(ci, cnt) / 50 + 1) + 1
+			healsp cc, p
+			continue
+		}
+		if (enc == 38) {
+			p = rnd(iEnchantmentPower(ci, cnt) / 25 + 1) + 1
+			healmp cc, p / 5
+			continue
+		}
+		if (enc == 37) {
+			if (cId(cc) == 176 | cId(cc) == 249 | foodId == 667) {
+				evadd 101, cc
+			} else {
+				evadd 18, cc
+			}
+			continue
+		}
+		if (enc == 40) {
+			if (gLeftTurnsOfTimestop == 0) {
+				txtef 9
+				txt -1, lang(name(cc) + "は時を止めた。", name(cc) + " stop" + _s(cc) + " time.")
+				stopthetimebegin iEnchantmentPower(ci, cnt) / 100 + 1 + 1
+				continue
+			}
+		}
+		enc2 = enc / 10000
+		if (enc2 != 0) {
+			enc = enc \ 10000
+			if (enc2 == 1 | enc2 == 3) {
+				skillexp2 enc, cc, (iEnchantmentPower(ci, cnt) / 50 + 1) * 100 * (1 + (cc != 0) * 2)
+				if (synccheck(cc, -1)) {
+					if (iEnchantmentPower(ci, cnt) / 50 + 1 >= 0) {
+						txt -1, lang(name(cc) + "の" + skillname(enc) + "は発達した。", his(cc) + " " + skillname(enc) + " develops.")
+					} else {
+						txt -1, lang(name(cc) + "の" + skillname(enc) + "は衰えた。", his(cc) + " " + skillname(enc) + " deteriorates.")
+					}
+				}
+				continue
+			}
+			if (enc2 == 2) {
+				p = iEnchantmentPower(ci, cnt)
+				repeat abs(p / 100) + 1
+					if (p >= 0) {
+						if (rnd(10) == 0) {
+							resistmod cc, enc, 50
+						}
+					} else {
+						if (rnd(10) == 0) {
+							resistmod cc, enc, -50
+						}
+					}
+				loop
+				continue
+			}
+			if (enc2 == 6) {
+				if (enc != 19) {
+					addbuff cc, 20 + (enc - 10), (iEnchantmentPower(ci, cnt) / 50 + 1) * 5 * (1 + (cc != 0)), 2000
+					continue
+				}
+			}
+			if (enc2 == 7) {
+				if (enc != 61) {
+					calcbuff -1, enc - 21, (iEnchantmentPower(ci, cnt) / 10 + 1) * 5
+					addbuff cc, enc - 21, (iEnchantmentPower(ci, cnt) / 10 + 1) * 5, dur
+					continue
+				}
+			}
+		}
+	loop
+	if (foodId == 340) {
+		s = refchara(iSubname(ci), 8, 1)
+		if (instr(s, 0, "/slime/") != (-1)) {
+			resetfaction cc
+			if (eqfaction(0, "golem")) {
+				rmfaction 0, "golem"
+			}
+			if (eqfaction(cc, "slime") == 0) {
+				addfaction cc, "slime"
+				txtef 2
+				txt -1, lang("" + name(cc) + "の体は軟質化した！", "Your body turns gelatinous!")
+			}
+		}
+		if (instr(s, 0, "/dragon/") != (-1)) {
+			if (eqfaction(cc, "dragon") == 0) {
+				resetfaction cc
+				addfaction cc, "dragon"
+				txtef 2
+				txt -1, lang("" + name(cc) + "は竜の魂を得た！", "You absorb the dragon's soul!")
+				ospact(782 - 661) = 1
+			}
+		}
+		if (instr(s, 0, "/golem/") != (-1)) {
+			if (eqfaction(0, "slime")) {
+				rmfaction 0, "slime"
+			}
+			if (eqfaction(cc, "golem") == 0) {
+				resetfaction cc
+				addfaction cc, "golem"
+				r1 = cc
+				gosub *chara_refresh
+				txtef 2
+				txt -1, lang("" + name(cc) + "の体は硬質化した！", "Your skin hardens!")
+			}
+		}
+	}
+	if (refitem(foodId, 5, ci) == 60000) {
+		if (foodId == iId_gouldsPiano | foodId == iId_stradivarius | foodId == iId_grandPiano | foodId == iId_uprightPiano | foodId == iId_panFlute | foodId == iId_lute | foodId == iId_harmonica | foodId == iId_harp) {
+			if (rnd(5) == 0 | foodId == iId_gouldsPiano | foodId == iId_stradivarius) {
+				getMutationTrait cc, 30, 1
+			}
+		}
+		if (foodId == iId_junk) {
+			if (rnd(5) == 0) {
+				getMutationTrait cc, 31, -1
+			}
+		}
+		if (foodId == iId_computer | foodId == iId_machine) {
+			if (rnd(5) == 0) {
+				getMutationTrait cc, 31, 1
+			}
+		}
+		if (foodId == iId_greenPlant) {
+			if (rnd(5) == 0) {
+				getMutationTrait cc, 37, 1
+			}
+		}
+		if (foodId == iId_smallFoliagePlant | foodId == iId_largeFoliagePlant | foodId == iId_bigFoliagePlant | foodId == iId_giantFoliagePlant) {
+			if (rnd(5) == 0) {
+				getMutationTrait cc, 27, 1
+			}
+		}
+		if (foodId == iId_redTreasureMachine) {
+			if (rnd(50) == 0) {
+				matgetmain 40
+			}
+		}
+		if (foodId == iId_blueTreasureMachine) {
+			if (rnd(100) == 0) {
+				matgetmain 41
+			}
+		}
+		if (foodId == iId_bookshelf | foodId == iId_craftBookShelf | foodId == iId_oldBookshelf | foodId == iId_largeBookshelf | foodId == iId_pentagram | foodId == iId_lotOfBooks) {
+			addbuff cc, 12, 100, 20
+		}
+		if (foodId == iId_lotOfAlcohols) {
+			dmgcon cc, 8, 100
+		}
+		if (foodId == iId_happyBed | foodId == iId_daruma) {
+			if (rnd(5) == 0 | foodId == iId_happyBed) {
+				txt -1, lang("ワアーォ、" + name(cc) + "は幸運になった気がする！", "Wow, " + name(cc) + " get" + _s(cc) + " lucky!")
+				skillexp2 19, cc, 100
+			}
+		}
+		if (foodId == iId_statueOfCat) {
+			txt -1, lang("猫の像を食べるなんて！！", "How can you eat a statue of cat!!")
+			modkarma 0, -5
+		}
+		if (foodId == iId_ancientTomb | foodId == iId_collapsedGrave | foodId == iId_crumbledGrave | foodId == iId_graveOfOrnamentedWithFlowers | foodId == iId_brandNewGrave | foodId == iId_oldGrave) {
+			if (rnd(5)) {
+				efid = 1114
+				efp = 200
+				gosub *label_1398
+			} else {
+				addbuff cc, 18, 1500, 10
+			}
+		}
+		if (foodId == iId_boringBed | foodId == iId_bunkBed | foodId == iId_luxuryBed | foodId == iId_giantBed | foodId == iId_plainBed | foodId == iId_softBed | foodId == iId_cleanBed | foodId == iId_cheapBed | foodId == iId_comfortableBed | foodId == iId_kingsBed | foodId == iId_doubleBed) {
+			txt -1, lang("今日は眠れないな。", "I can't sleep tonight.")
+		}
+	}
+	eatstatus iCurseState(cieat), cc
+	return
+
+
+
+#deffunc getMutationTrait int __cc, int __tid, int __delta
+	traitmode = 0
+	tid = __tid
+	gosub *label_0097
+	if (__delta == 1) {
+		if (gettrait(__tid, __cc) < traitref(2)) {
+			addtrait __cc, __tid, 1
+			txtef 2
+			txt -1, traitrefn(0)
+		}
+	} else {
+		if (traitref(1) < gettrait(__tid, __cc)) {
+			addtrait __cc, __tid, -1
+			txtef 3
+			txt -1, traitrefn(1)
+		}
+	}
+	return
+
+
+
+#undef ST_FOOD_EXPERIENCE

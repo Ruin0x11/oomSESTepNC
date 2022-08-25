@@ -1,0 +1,2003 @@
+#deffunc ctalk int __ppp, int __qqq, int __rrr, int __sss, int __ttt
+	oom_bktc = tc
+	tc = __ppp
+	dim oom_popup, 2
+	oom_regexp_f = 0
+	oom_regexp = ""
+	ctalk2 __ppp, __qqq, __rrr, __sss, __ttt
+	p(71) = stat
+	if (__ppp == 0) {
+		exist exedir + "user\\talk\\ctalkweapon_" + aliveweaponname() + ".txt"
+		if (strsize != (-1)) {
+			f@m116 = 5
+			gosub *label_0059
+		}
+	}
+	tc = oom_bktc
+	return p(71)
+
+
+
+#deffunc ctalk2 int __uuu, int __vvv, int __www, int __xxx, int __yyy
+	if (isstorned(__uuu)) {
+		return 0
+	}
+	if (petcheck(__uuu) & gdatac(10) == 1) {
+		if (__vvv <= 1000 & __vvv != 106) {
+			tcol@txtfunc = 255, 255, 255
+			noteunsel
+			return 1
+		}
+	}
+	if (__www < 0 | __xxx < 0) {
+		dialog strf(strLang_ctalkError, __vvv, __www, __xxx)
+		return 0
+	}
+	f@m116 = 0
+	exist exedir + "user\\talk\\ctalkgender_" + cSex(__uuu) + ".txt"
+	if (strsize != (-1)) {
+		f@m116 = 1
+	}
+	exist exedir + "user\\talk\\ctalk" + cId(__uuu) + "_" + cSex(__uuu) + ".txt"
+	if (strsize != (-1)) {
+		f@m116 = 2
+	}
+	if (cId(__uuu) == 343) {
+		f@m116 = 3
+	}
+	if (cbit(989, __uuu)) {
+		exist exedir + "user\\talk\\" + cdatan(4, __uuu)
+		if (strsize != (-1)) {
+			f@m116 = 4
+		}
+	}
+	if (f@m116 == 0) {
+		if (__vvv >= 100 & __vvv <= 104) {
+			if (cCanTalk(__uuu) != 0) {
+				sstptalkc = __uuu + 2
+				sstptalkn = cdatan(0, __uuu)
+				dbid = cId(__uuu)
+				dbmode = __vvv
+				oom_talkchara = __uuu
+				oom_popup = 0, 1
+				gosub *label_2067
+				tcol@txtfunc = 255, 255, 255
+				noteunsel
+				sstptalkc = 0
+				sstptalkn = ""
+				return 1
+			}
+		}
+		tcol@txtfunc = 255, 255, 255
+		noteunsel
+		return 0
+	}
+*label_0059
+	notesel buff
+	if (f@m116 == 1) {
+		noteload exedir + "user\\talk\\ctalkgender_" + cSex(__uuu) + ".txt"
+	}
+	if (f@m116 == 2) {
+		noteload exedir + "user\\talk\\ctalk" + cId(__uuu) + "_" + cSex(__uuu) + ".txt"
+	}
+	if (f@m116 == 3) {
+		buff = "" + usertxt(cCnpcId(__uuu))
+	}
+	if (f@m116 == 4) {
+		noteload exedir + "user\\talk\\" + cdatan(4, __uuu)
+	}
+	if (f@m116 == 5) {
+		noteload exedir + "user\\talk\\ctalkweapon_" + aliveweaponname() + ".txt"
+	}
+	if (__vvv == 106) {
+		hajime = instr(buff, 0, "%txt_talk_order")
+		if (hajime != (-1)) {
+			if (junban(__uuu) == 0) {
+				junban(__uuu) = 1
+			}
+		}
+	}
+	sline = ""
+	oom_regexp_match = ""
+	_switch_val = __vvv
+	Nlf = 0 // Not log Flag 1ならログに出さない
+	buf_cnt = cnt
+	repeat 1
+		if (_switch_val == 101) {
+			sline = "%txtAggro"
+			break
+		}
+		if (_switch_val == 103) {
+			sline = "%txtKilled"
+			break
+		}
+		if (_switch_val == 102) {
+			sline = "%txtDead"
+			break
+		}
+		if (_switch_val == 104) {
+			sline = "%txtWelcome"
+			break
+		}
+		if (_switch_val == 100) {
+			sline = "%txtCalm"
+			break
+		}
+		if (_switch_val == 106) {
+			sline = "%txtDialog"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 401) {
+			sline = "%txtsorosu"
+			break
+		}
+		if (_switch_val == 402) {
+			sline = "%txtturusu"
+			break
+		}
+		if (_switch_val == 403) {
+			sline = "%txthodoku"
+			break
+		}
+		if (_switch_val == 404) {
+			sline = "%txtsibaru"
+			break
+		}
+		if (_switch_val == 405) {
+			sline = "%txtnikorose"
+			break
+		}
+		if (_switch_val == 406) {
+			sline = "%txtsaite"
+			break
+		}
+		if (_switch_val == 407) {
+			sline = "%txtbiyaku"
+			break
+		}
+		if (_switch_val == 408) {
+			sline = "%txtsibui"
+			break
+		}
+		if (_switch_val == 409) {
+			sline = "txtnamaniku"
+			break
+		}
+		if (_switch_val == 410) {
+			sline = "%txtkona"
+			break
+		}
+		if (_switch_val == 411) {
+			sline = "%txtnamamen"
+			break
+		}
+		if (_switch_val == 412) {
+			sline = "%txtheibon"
+			break
+		}
+		if (_switch_val == 413) {
+			sline = "txt1_2"
+			break
+		}
+		if (_switch_val == 414) {
+			sline = "txt3_4"
+			break
+		}
+		if (_switch_val == 415) {
+			sline = "txt5_6"
+			break
+		}
+		if (_switch_val == 416) {
+			sline = "txt7_8"
+			break
+		}
+		if (_switch_val == 417) {
+			sline = "%txt9saiko"
+			break
+		}
+		if (_switch_val == 418) {
+			sline = "%txtkunren"
+			break
+		}
+		if (_switch_val == 419) {
+			sline = "%txtonaka"
+			break
+		}
+		if (_switch_val == 420) {
+			sline = "%txthinsi"
+			break
+		}
+		if (_switch_val == 421) {
+			sline = "%txtsing"
+			break
+		}
+		if (_switch_val == 422) {
+			sline = "%txtcast" + __yyy
+			break
+		}
+		if (_switch_val == 423) {
+			sline = "%txtpornobook" + __yyy
+			break
+		}
+		if (_switch_val == 424) {
+			sline = "%txtpornobookdefault"
+			break
+		}
+		if (_switch_val == 425) {
+			sline = "%txtallykilled" + cdatan(0, __xxx)
+			break
+		}
+		if (_switch_val == 426) {
+			sline = "%txtallykilleddefault"
+			break
+		}
+		if (_switch_val == 427) {
+			sline = "%txtactbefore" + efid
+			break
+		}
+		if (_switch_val == 428) {
+			sline = "%txtactafter" + efid
+			break
+		}
+		if (_switch_val == 429) {
+			sline = "%txtmilkcurse"
+			break
+		}
+		if (_switch_val == 430) {
+			sline = "%txtmilk"
+			break
+		}
+		if (_switch_val == 431) {
+			sline = "%txtsakecurse"
+			break
+		}
+		if (_switch_val == 432) {
+			sline = "%txtsake"
+			break
+		}
+		if (_switch_val == 433) {
+			sline = "%txtyopparai"
+			break
+		}
+		if (_switch_val == 964) {
+			sline = "%txtkuyasii2"
+			break
+		}
+		if (_switch_val == 965) {
+			sline = "%txtcaststyle2"
+			break
+		}
+		if (_switch_val == 966) {
+			sline = "%txtswarm"
+			break
+		}
+		if (_switch_val == 967) {
+			sline = "%txtkisei"
+			break
+		}
+		if (_switch_val == 968) {
+			sline = "%txtcaststyle"
+			break
+		}
+		if (_switch_val == 969) {
+			sline = "%txtuzimushi"
+			break
+		}
+		if (_switch_val == 970) {
+			sline = "%txttoketa"
+			break
+		}
+		if (_switch_val == 971) {
+			sline = "%txttobidasi"
+			break
+		}
+		if (_switch_val == 972) {
+			sline = "%txtumare"
+			break
+		}
+		if (_switch_val == 973) {
+			sline = "%txtparasite"
+			break
+		}
+		if (_switch_val == 974) {
+			sline = "%txtbatou"
+			break
+		}
+		if (_switch_val == 975) {
+			sline = "%txtbravo"
+			break
+		}
+		if (_switch_val == 976) {
+			sline = "%txtthrowrock"
+			break
+		}
+		if (_switch_val == 977) {
+			sline = "%txturusai"
+			break
+		}
+		if (_switch_val == 978) {
+			sline = "%txtakita"
+			break
+		}
+		if (_switch_val == 979) {
+			sline = "%txtlayhand"
+			break
+		}
+		if (_switch_val == 980) {
+			sline = "%txtkaradake"
+			break
+		}
+		if (_switch_val == 981) {
+			sline = "%txttoriage"
+			break
+		}
+		if (_switch_val == 982) {
+			sline = "%txtyubikubi"
+			break
+		}
+		if (_switch_val == 983) {
+			sline = "%txtomiyage"
+			break
+		}
+		if (_switch_val == 984) {
+			sline = "%txttyohazusu"
+			break
+		}
+		if (_switch_val == 985) {
+			sline = "%txtsnaguru"
+			break
+		}
+		if (_switch_val == 989) {
+			sline = "%txtkya"
+			break
+		}
+		if (_switch_val == 993) {
+			sline = "%txtsand"
+			break
+		}
+		if (_switch_val == 994) {
+			sline = "%txttiti"
+			break
+		}
+		if (_switch_val == 996) {
+			sline = "%txtnoru"
+			break
+		}
+		if (_switch_val == 997) {
+			sline = "%txtoriru"
+			break
+		}
+		if (_switch_val == 998) {
+			sline = "%txtjigo"
+			break
+		}
+		if (_switch_val == 999) {
+			sline = "%txtkuyasii"
+			break
+		}
+		if (_switch_val == 1000) {
+			sline = "%txtabuse"
+			break
+		}
+		if (_switch_val == 1001) {
+			sline = "%txtmarriage"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1002) {
+			sline = "%txtanata"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1003) {
+			sline = "%txtiyayo"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1004) {
+			sline = "%txtnakanaka"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1005) {
+			sline = "%txtikuyo"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1006) {
+			sline = "%txtkiyameru"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1007) {
+			sline = "%txtpbou"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1008) {
+			sline = "%txtexhiya"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1009) {
+			sline = "%txtexthank"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1010) {
+			sline = "%txtgoei"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1011) {
+			sline = "%txtyatou"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1012) {
+			sline = "%txthihiya"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1013) {
+			sline = "%txtumaku"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1014) {
+			sline = "%txttikara"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1015) {
+			sline = "%txt0free"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1016) {
+			sline = "%txtokoto"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1017) {
+			sline = "%txtyanwari"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1018) {
+			sline = "%txtkodukuri"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1019) {
+			sline = "%txthousecooking"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1020) {
+			sline = "%txthousecookingyes"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1021) {
+			sline = "%txthousecookingno"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1022) {
+			sline = "%txtmaid2"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1023) {
+			sline = "%txtnpcpos1"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1024) {
+			sline = "%txtnpcpos2"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1025) {
+			sline = "%txtnpcpos3"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1026) {
+			sline = "%txtnpcpos4"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1027) {
+			sline = "%txtnpcpos0"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 963) {
+			sline = "%txtmidare"
+			break
+		}
+		if (_switch_val == 962) {
+			sline = "%txtgodskill" + efid
+			break
+		}
+		if (_switch_val == 961) {
+			sline = "%txtenchantelem" + efid
+			break
+		}
+		if (_switch_val == 960) {
+			sline = "%txtnight"
+			break
+		}
+		if (_switch_val == 959) {
+			sline = "%txtawake"
+			break
+		}
+		if (_switch_val == 958) {
+			sline = "%txtfood2_" + iParam2(ci) + "_" + p
+			break
+		}
+		if (_switch_val == 957) {
+			if (p == 0) {
+				sline = "%txtfood1_" + 0
+			} else {
+				sline = "%txtfood1_" + iParam2(ci)
+			}
+			oom_regexp_match = "m/" + sline + ".*_" + iId(ci) + "(_.*,JP|,JP)/"
+			break
+		}
+		if (_switch_val == 956) {
+			sline = "%txtdrunkkarami"
+			break
+		}
+		if (_switch_val == 955) {
+			sline = "%txtdrunkkaramare"
+			break
+		}
+		if (_switch_val == 954) {
+			sline = "%txtmeat_" + iParam2(ci)
+			oom_regexp_match = "m/" + sline + ".*_" + iSubname(ci) + "(_.*,JP|,JP)/"
+			break
+		}
+		if (_switch_val == 953) {
+			sline = "%txtjerky"
+			oom_regexp_match = "m/" + sline + ".*_" + iSubname(ci) + "(_.*,JP|,JP)/"
+			break
+		}
+		if (_switch_val == 952) {
+			sline = "%txtegg_" + iParam2(ci)
+			oom_regexp_match = "m/" + sline + ".*_" + iSubname(ci) + "(_.*,JP|,JP)/"
+			break
+		}
+		if (_switch_val == 951) {
+			sline = "%txtfished_" + iParam2(ci)
+			oom_regexp_match = "m/" + sline + ".*_" + iSubname(ci) + "(_.*,JP|,JP)/"
+			break
+		}
+		if (_switch_val == 950) {
+			sline = "%txtmilkcurse2"
+			oom_regexp_match = "m/" + sline + ".*_" + iSubname(ci) + "(_.*,JP|,JP)/"
+			break
+		}
+		if (_switch_val == 949) {
+			sline = "%txtmilk2"
+			oom_regexp_match = "m/" + sline + ".*_" + iSubname(ci) + "(_.*,JP|,JP)/"
+			break
+		}
+		if (_switch_val == 107) {
+			sline = "%txthurt1"
+			break
+		}
+		if (_switch_val == 108) {
+			sline = "%txthurt2"
+			break
+		}
+		if (_switch_val == 109) {
+			sline = "%txthurt3"
+			break
+		}
+
+		/* oomSEST begin */
+		if (_switch_val == 1028) {
+			sline = "%txtPutAwayEngagementAccessories"
+			break
+		}
+		if (_switch_val == 1029) {
+			sline = "%txtDairyProduct_" + iParam2(ci)
+			oom_regexp_match = "m/" + sline + ".*_" + iSubname(ci) + langTagRegexp
+			break
+		}
+		/* oomSEST end */
+
+		/* NC begin */
+
+		if (_switch_val == 1100) {
+			sline = "%txtmaid3"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1101) {
+			sline = "%txtmaid4"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1102) {
+			sline = "%txthomemaid"
+			break
+		}
+		if (_switch_val == 1103) {
+			sline = "%txtbadcook"
+			break
+		}
+		if (_switch_val == 1104) {
+			sline = "%txtitempickup"
+			break
+		}
+		if (_switch_val == 1105) {
+			sline = "%txtitempickup" + iId(ci)
+			break
+		}
+		if (_switch_val == 1106) {
+			sline = "%txtitembreak"
+			break
+		}
+		if (_switch_val == 1107) {
+			sline = "%txtitembreak" + iId(ci)
+			break
+		}
+		if (_switch_val == 1108) {
+			sline = "%txtwhipping"
+			break
+		}
+		if (_switch_val == 1109) {
+			sline = "%txtlikewhipping"
+			break
+		}
+		if (_switch_val == 1110) {
+			sline = "%txtwholeprice"
+			break
+		}
+		if (_switch_val == 1120) {
+			sline = "%txtcustomai1"
+			break
+		}
+		if (_switch_val == 1121) {
+			sline = "%txtcustomai2"
+			break
+		}
+		if (_switch_val == 1122) {
+			sline = "%txtcustomai3"
+			break
+		}
+		if (_switch_val == 1123) {
+			sline = "%txtcustomai4"
+			break
+		}
+		if (_switch_val == 1124) {
+			sline = "%txtcustomai5"
+			break
+		}
+		if (_switch_val == 1125) {
+			sline = "%txtcustomai6"
+			break
+		}
+		if (_switch_val == 1126) {
+			sline = "%txtcustomai7"
+			break
+		}
+		if (_switch_val == 1127) {
+			sline = "%txtcustomai8"
+			break
+		}
+		if (_switch_val == 1128) {
+			sline = "%txtcustomai9"
+			break
+		}
+		if (_switch_val == 1129) {
+			sline = "%txtcustomai10"
+			break
+		}
+		if (_switch_val == 1130) {
+			sline = "%txthomeshop"
+			break
+		}
+		if (_switch_val == 1131) {
+			sline = "%txtmaid5"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1132) {
+			sline = "%txtmaid6"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1133) {
+			sline = "%txtmaid7"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1134) {
+			sline = "%txtWinmessage"
+			break
+		}
+		if (_switch_val == 1135) {
+			sline = "%txtNohungry"
+			break
+		}
+		if (_switch_val == 1136) {
+			sline = "%txtCleanup"
+			break
+		}
+		if (_switch_val == 1137) {
+			sline = "%txtEatStare"
+			break
+		}
+		if (_switch_val == 1138) {
+			sline = "%txtHatchEgg"
+			break
+		}
+		if (_switch_val == 1139) {
+			sline = "%txttakelovepotion"
+			break
+		}
+		if (_switch_val == 1140) {
+			sline = "%txtnightfall"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1141) {
+			sline = "%txtnightfallsuccesssasayaki"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1142) {
+			sline = "%txtnightfallfailsasayaki"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1143) {
+			sline = "%txtnightfallsuccesskimotiiikoto"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1144) {
+			sline = "%txtnightfallfailkimotiiikoto"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1145) {
+			sline = "%txtnightfallsuccessaibu"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1146) {
+			sline = "%txtnightfallfailaibu"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1147) {
+			sline = "%txtnightfallsuccessdaku"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1148) {
+			sline = "%txtnightfallfaildaku"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1149) {
+			sline = "%txtcarddescription"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1150) {
+			sline = "%txtfigurinedescription"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1151) {
+			sline = "%txtdolldescription"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1152) {
+			sline = "%txtpornbookdescription"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1153) {
+			nc_strb_001 = ""
+			if (iParam2(ci) == 343) {
+				if (iParam3(ci) != usernpcmax) {
+					nc_strb_001 += userdatan(1, iParam3(ci))
+				} else {
+					nc_strb_001 += lang("残りカス", "garbage")
+				}
+			} else {
+				if (iParam2(ci) == 999) {
+					nc_strb_001 += cdatan(0, 0)
+				} else {
+					nc_strb_001 += refchara(iParam2(ci), 2, 1)
+				}
+			}
+			sline = "%txtpornbookdescriptionto" + nc_strb_001
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1154) {
+			nc_strb_001 = ""
+			if (iParam1(ci) == 343) {
+				if (inv(33, ci) != usernpcmax) {
+					nc_strb_001 += userdatan(1, inv(33, ci))
+				} else {
+					nc_strb_001 += lang("残りカス", "garbage")
+				}
+			} else {
+				if (iParam1(ci) == 999) {
+					nc_strb_001 += cdatan(0, 0)
+				} else {
+					nc_strb_001 += refchara(iParam1(ci), 2, 1)
+				}
+			}
+			sline = "%txtpornbookdescriptionsince" + nc_strb_001
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1155) {
+			sline = "%txtgivejeweloflove"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1156) {
+			sline = "%txtgivegp"
+			break
+		}
+		if (_switch_val == 1157) {
+			sline = "%txttakegp"
+			break
+		}
+		if (_switch_val == 1158) {
+			sline = "%txtwakeup"
+			break
+		}
+		if (_switch_val == 1159) {
+			sline = "%txtwakeup_consent"
+			break
+		}
+		if (_switch_val == 1160) {
+			sline = "%txtwakeup_rejection"
+			break
+		}
+		if (_switch_val == 1161) {
+			nc_strb_001 = ""
+			if (cId(__xxx) == 343) {
+				if (cCnpcId(__xxx) != usernpcmax) {
+					nc_strb_001 += lang("" + userdatan(1, cCnpcId(__xxx)), "" + userdatan(0, cCnpcId(__xxx)))
+				} else {
+					nc_strb_001 += lang("残りカス", "garbage")
+				}
+			} else {
+				if (__xxx == 0) {
+					nc_strb_001 += cdatan(0, 0)
+				} else {
+					nc_strb_001 += refchara(cId(__xxx), 2, 1)
+				}
+			}
+			sline = "%txtCalmLove" + nc_strb_001
+			break
+		}
+		if (_switch_val == 1162) {
+			sline = "%txtCalmLove" + cdatan(0, __xxx)
+			break
+		}
+		if (_switch_val == 1163) {
+			nc_strb_001 = ""
+			if (cId(__xxx) == 343) {
+				if (cCnpcId(__xxx) != usernpcmax) {
+					nc_strb_001 += lang("" + userdatan(1, cCnpcId(__xxx)), "" + userdatan(0, cCnpcId(__xxx)))
+				} else {
+					nc_strb_001 += lang("残りカス", "garbage")
+				}
+			} else {
+				if (__xxx == 0) {
+					nc_strb_001 += cdatan(0, 0)
+				} else {
+					nc_strb_001 += refchara(cId(__xxx), 2, 1)
+				}
+			}
+			sline = "%txtkuyasii" + nc_strb_001
+			break
+		}
+		if (_switch_val == 1164) {
+			sline = "%txtkuyasii" + cdatan(0, __xxx)
+			break
+		}
+		if (_switch_val == 1165) {
+			nc_strb_001 = ""
+			if (cId(__xxx) == 343) {
+				if (cCnpcId(__xxx) != usernpcmax) {
+					nc_strb_001 += lang("" + userdatan(1, cCnpcId(__xxx)), "" + userdatan(0, cCnpcId(__xxx)))
+				} else {
+					nc_strb_001 += lang("残りカス", "garbage")
+				}
+			} else {
+				if (__xxx == 0) {
+					nc_strb_001 += cdatan(0, 0)
+				} else {
+					nc_strb_001 += refchara(cId(__xxx), 2, 1)
+				}
+			}
+			sline = "%txtjigo" + nc_strb_001
+			break
+		}
+		if (_switch_val == 1166) {
+			if (__uuu == __yyy) {
+				sline = "%txtjigo" + cdatan(0, __xxx)
+			} else {
+				sline = "%txtjigo" + cdatan(0, __yyy)
+			}
+			break
+		}
+		// NC MMA implantation
+		if (_switch_val == 1200) {
+			sline = "%txtLayHand"
+			break
+		}
+		if (_switch_val == 1201) {
+			sline = "%txtBurn"
+			break
+		}
+		if (_switch_val == 1202) {
+			sline = "%txtPregnant"
+			break
+		}
+		if (_switch_val == 1203) {
+			sline = "%txtInsult"
+			break
+		}
+		if (_switch_val == 1204) {
+			sline = "%txtInsane"
+			break
+		}
+		if (_switch_val == 1205) {
+			sline = "%txtProstitution_Begin"
+			break
+		}
+		if (_switch_val == 1206) {
+			sline = "%txtProstitution_Ongoing"
+			break
+		}
+		if (_switch_val == 1207) {
+			sline = "%txtProstitution_Break"
+			break
+		}
+		if (_switch_val == 1208) {
+			sline = "%txtProstitution_Done"
+			break
+		}
+		if (_switch_val == 1209) {
+			sline = "%txtProstitution_Payment1"
+			break
+		}
+		if (_switch_val == 1210) {
+			sline = "%txtProstitution_Payment2"
+			break
+		}
+		if (_switch_val == 1211) {
+			sline = "%txtDrunk1"
+			break
+		}
+		if (_switch_val == 1212) {
+			sline = "%txtDrunk2"
+			break
+		}
+		if (_switch_val == 1213) {
+			sline = "%txtMilk1"
+			break
+		}
+		if (_switch_val == 1214) {
+			sline = "%txtMilk2"
+			break
+		}
+		if (_switch_val == 1215) {
+			sline = "%txtLoveMiracle_egg"
+			break
+		}
+		if (_switch_val == 1216) {
+			sline = "%txtLoveMiracle_water"
+			break
+		}
+		if (_switch_val == 1217) {
+			sline = "%txtLoveMiracle_shit"
+			break
+		}
+		if (_switch_val == 1218) {
+			sline = "%txtLoveMiracle_milk"
+			break
+		}
+		if (_switch_val == 1219) {
+			sline = "%txtRejectLovePotion"
+			break
+		}
+		if (_switch_val == 1220) {
+			sline = "%txtAlienEgg"
+			break
+		}
+		if (_switch_val == 1221) {
+			sline = "%txtLomiasKilled"
+			break
+		}
+		if (_switch_val == 1222) {
+			sline = "%txtLomiasNuked"
+			break
+		}
+		if (_switch_val == 1223) {
+			sline = "%txtGwenKilled"
+			break
+		}
+		if (_switch_val == 1224) {
+			sline = "%txtPerformSing"
+			break
+		}
+		if (_switch_val == 1225) {
+			sline = "%txtPerformBored"
+			break
+		}
+		if (_switch_val == 1226) {
+			sline = "%txtPerformBooboo"
+			break
+		}
+		if (_switch_val == 1227) {
+			sline = "%txtPerformBravo"
+			break
+		}
+		if (_switch_val == 1228) {
+			sline = "%txtRideBegin1"
+			break
+		}
+		if (_switch_val == 1229) {
+			sline = "%txtRideBegin2"
+			break
+		}
+		if (_switch_val == 1230) {
+			sline = "%txtRideEnd1"
+			break
+		}
+		if (_switch_val == 1231) {
+			sline = "%txtRideEnd2"
+			break
+		}
+		if (_switch_val == 1232) {
+			sline = "%txtItemHeavy"
+			break
+		}
+		if (_switch_val == 1233) {
+			sline = "%txtItemNoway"
+			break
+		}
+		if (_switch_val == 1234) {
+			sline = "%txtItemDontwant"
+			break
+		}
+		if (_switch_val == 1235) {
+			sline = "%txtItemNever"
+			break
+		}
+		if (_switch_val == 1236) {
+			sline = "%txtItemCreepy"
+			break
+		}
+		if (_switch_val == 1237) {
+			sline = "%txtItemCursed"
+			break
+		}
+		if (_switch_val == 1238) {
+			sline = "%txtItemRotten"
+			break
+		}
+		if (_switch_val == 1239) {
+			sline = "%txtCantdrinkmore"
+			break
+		}
+		if (_switch_val == 1240) {
+			sline = "%txtAbortion"
+			break
+		}
+		if (_switch_val == 1241) {
+			sline = "%txtDrinkbaby"
+			break
+		}
+		if (_switch_val == 1242) {
+			sline = "%txtAnnoyeddrunk"
+			break
+		}
+		if (_switch_val == 1243) {
+			sline = "%txtMochiChoke"
+			break
+		}
+		if (_switch_val == 1244) {
+			sline = "%txtMochiSpit"
+			break
+		}
+		if (_switch_val == 1245) {
+			sline = "%txtChoked"
+			break
+		}
+		if (_switch_val == 1246) {
+			sline = "%txtSalty"
+			break
+		}
+		if (_switch_val == 1247) {
+			sline = "%txtEatammoth"
+			break
+		}
+		if (_switch_val == 1248) {
+			sline = "%txtEatRotten"
+			break
+		}
+		if (_switch_val == 1249) {
+			sline = "%txtEatPoisoned"
+			break
+		}
+		if (_switch_val == 1250) {
+			sline = "%txtPoisonedWeapon"
+			break
+		}
+		if (_switch_val == 1251) {
+			sline = "%txtPoisonedFood"
+			break
+		}
+		if (_switch_val == 1252) {
+			sline = "%txtAphrodisiacFood"
+			break
+		}
+		if (_switch_val == 1253) {
+			sline = "%txtProstitutionAccept1"
+			break
+		}
+		if (_switch_val == 1254) {
+			sline = "%txtProstitutionAccept2"
+			break
+		}
+		if (_switch_val == 1255) {
+			sline = "%txtProstitutionFurious"
+			break
+		}
+		if (_switch_val == 1256) {
+			sline = "%txtEngagementBlush"
+			break
+		}
+		if (_switch_val == 1257) {
+			sline = "%txtEngagementSwallows"
+			break
+		}
+		if (_switch_val == 1258) {
+			sline = "%txtGlare"
+			break
+		}
+		if (_switch_val == 1259) {
+			sline = "%txtGuardCall"
+			break
+		}
+		if (_switch_val == 1260) {
+			sline = "%txtGuardFreeze"
+			break
+		}
+		if (_switch_val == 1261) {
+			sline = "%txtGuardSister"
+			break
+		}
+		if (_switch_val == 1262) {
+			sline = "%txtGuardPassover"
+			break
+		}
+		if (_switch_val == 1263) {
+			sline = "%txtResurrected"
+			break
+		}
+		if (_switch_val == 1264) {
+			sline = "%txtIronmaiden"
+			break
+		}
+		if (_switch_val == 1265) {
+			sline = "%txtGuillotine"
+			break
+		}
+		if (_switch_val == 1266) {
+			sline = "%txtHangself"
+			break
+		}
+		if (_switch_val == 1267) {
+			sline = "%txtWellFall"
+			break
+		}
+		if (_switch_val == 1268) {
+			sline = "%txtWellPetFall"
+			break
+		}
+		if (_switch_val == 1269) {
+			sline = "%txtWellFloat"
+			break
+		}
+		if (_switch_val == 1270) {
+			sline = "%txtPray"
+			break
+		}
+		if (_switch_val == 1271) {
+			sline = "%txtOffer"
+			break
+		}
+		if (_switch_val == 1272) {
+			sline = "%txtLeashPull"
+			break
+		}
+		if (_switch_val == 1273) {
+			sline = "%txtLeashUntangle"
+			break
+		}
+		if (_switch_val == 1274) {
+			sline = "%txtItemMine"
+			break
+		}
+		if (_switch_val == 1275) {
+			sline = "%txtEatCannibal"
+			break
+		}
+		if (_switch_val == 1276) {
+			sline = "%txtCastConfusion"
+			break
+		}
+		if (_switch_val == 1277) {
+			sline = "%txtItemChristmas"
+			break
+		}
+		if (_switch_val == 1278) {
+			sline = "%txtBelieve"
+			break
+		}
+		if (_switch_val == 1279) {
+			sline = "%txtBelieve_" + beforefaith
+			break
+		}
+		if (_switch_val == 1280) {
+			sline = "%txtBelieveDomain"
+			break
+		}
+		if (_switch_val == 1281) {
+			sline = "%txtBelieveDomain_" + beforefaith
+			break
+		}
+		if (_switch_val == 1282) {
+			sline = "%txtGlarePerformance"
+			break
+		}
+		if (_switch_val == 1283) {
+			sline = "%txtCallbackPet"
+			break
+		}
+		if (_switch_val == 1284) {
+			sline = "%txtCallbackDead"
+			break
+		}
+		if (_switch_val == 1285) {
+			sline = "%txtTimeStop"
+			break
+		}
+		if (_switch_val == 1286) {
+			sline = "%txtTimeStart"
+			break
+		}
+		if (_switch_val == 1287) {
+			sline = "%txtTimeTick"
+			break
+		}
+		if (_switch_val == 1288) {
+			sline = "%txtTimeTick" + gdata(801)
+			break
+		}
+		if (_switch_val == 1289) {
+			sline = "%txtItemGive"
+			break
+		}
+		if (_switch_val == 1290) {
+			sline = "%txtItemGive" + inv(3, limitmin(ci, 0))
+			break
+		}
+		if (_switch_val == 1291) {
+			sline = "%txtItemTake"
+			break
+		}
+		if (_switch_val == 1292) {
+			sline = "%txtItemTake" + inv(3, limitmin(ci, 0))
+			break
+		}
+		if (_switch_val == 1293) {
+			sline = "%txtVomit"
+			break
+		}
+		if (_switch_val == 1294) {
+			sline = "%txtVomitAlien"
+			break
+		}
+		if (_switch_val == 1295) {
+			sline = "%txtHeadOff"
+			break
+		}
+		if (_switch_val == 1296) {
+			sline = "%txtAssignShopkeeper"
+			break
+		}
+		if (_switch_val == 1297) {
+			sline = "%txtResignShopkeeper"
+			break
+		}
+		if (_switch_val == 1298) {
+			sline = "%txtAssignBreeder"
+			break
+		}
+		if (_switch_val == 1299) {
+			sline = "%txtResignBreeder"
+			break
+		}
+		if (_switch_val == 1300) {
+			sline = "%txtInvoke" + efid
+			break
+		}
+		if (_switch_val == 1301) {
+			sline = "%txtInvokeCounter" + efid
+			break
+		}
+		if (_switch_val == 1302) {
+			sline = "%txtDigging"
+			break
+		}
+		if (_switch_val == 1303) {
+			sline = "%txtReading"
+			break
+		}
+		if (_switch_val == 1304) {
+			sline = "%txtReadingPornobook"
+			break
+		}
+		if (_switch_val == 1305) {
+			sline = "%txtReadingPornobook" + prm_396
+			break
+		}
+		if (_switch_val == 1306) {
+			sline = "%txtFinishPornobook"
+			break
+		}
+		if (_switch_val == 1307) {
+			sline = "%txtFinishPornobook" + prm_396
+			break
+		}
+		if (_switch_val == 1308) {
+			sline = "%txtDifficult"
+			break
+		}
+		if (_switch_val == 1309) {
+			sline = "%txtConfusedMore"
+			break
+		}
+		if (_switch_val == 1310) {
+			sline = "%txtBookFallapart"
+			break
+		}
+		if (_switch_val == 1311) {
+			sline = "%txtStayHome"
+			break
+		}
+		if (_switch_val == 1312) {
+			sline = "%txtStayHomeCancel"
+			break
+		}
+		if (_switch_val == 1313) {
+			sline = "%txtGuardHome"
+			break
+		}
+		if (_switch_val == 1314) {
+			sline = "%txtGuardHomeCancel"
+			break
+		}
+		if (_switch_val == 1315) {
+			sline = "%txtAreaChanged" + gdata(20)
+			break
+		}
+		if (_switch_val == 1316) {
+			sline = "%txtWelcomeGuard"
+			break
+		}
+		if (_switch_val == 1317) {
+			sline = "%txtDismissed"
+			break
+		}
+		if (_switch_val == 1318) {
+			sline = "%txtExpelledBurnt"
+			break
+		}
+		if (_switch_val == 1319) {
+			sline = "%txtSaleSlave"
+			break
+		}
+		if (_switch_val == 1320) {
+			sline = "%txtHarvesting"
+			break
+		}
+		if (_switch_val == 1321) {
+			sline = "%txtLearning"
+			break
+		}
+		if (_switch_val == 1322) {
+			sline = "%txtTraining"
+			break
+		}
+		if (_switch_val == 1323) {
+			sline = "%txtSearchingMaterial"
+			break
+		}
+		if (_switch_val == 1324) {
+			sline = "%txtSearchingMaterial" + prm_396
+			break
+		}
+		if (_switch_val == 1325) {
+			sline = "%txtItemValentinesday"
+			break
+		}
+		if (_switch_val == 1326) {
+			sline = "%txtItemAfterValentinesday"
+			break
+		}
+		if (_switch_val == 1327) {
+			sline = "%txtOmiyageChristmas"
+			break
+		}
+		if (_switch_val == 1328) {
+			sline = "%txtOmiyageValentinesday"
+			break
+		}
+		if (_switch_val == 1329) {
+			sline = "%txtOmiyageAfterValentinesday"
+			break
+		}
+		if (_switch_val == 1330) {
+			sline = "%txtItemDollsfestival"
+			break
+		}
+		if (_switch_val == 1331) {
+			sline = "%txtItemAfterDollsfestival"
+			break
+		}
+		if (_switch_val == 1332) {
+			sline = "%txtOmiyageDollsfestival"
+			break
+		}
+		if (_switch_val == 1333) {
+			sline = "%txtOmiyageAfterDollsfestival"
+			break
+		}
+		if (_switch_val == 1334) {
+			sline = "%txtItemDollsfestivalMale"
+			break
+		}
+		if (_switch_val == 1335) {
+			sline = "%txtPayTax"
+			break
+		}
+		if (_switch_val == 1336) {
+			sline = "%txtCooking"
+			break
+		}
+		if (_switch_val == 1337) {
+			sline = "%txtDrinkWater"
+			break
+		}
+		if (_switch_val == 1338) {
+			sline = "%txtDrinkDirtywater"
+			break
+		}
+		if (_switch_val == 1339) {
+			sline = "%txtDrinkSoda"
+			break
+		}
+		if (_switch_val == 1340) {
+			sline = "%txtDrinkDrag"
+			break
+		}
+		if (_switch_val == 1341) {
+			sline = "%txtDrinkJuice"
+			break
+		}
+		if (_switch_val == 1342) {
+			sline = "%txtItemGeorgesday"
+			break
+		}
+		if (_switch_val == 1343) {
+			sline = "%txtOmiyageGeorgesday"
+			break
+		}
+		if (_switch_val == 1344) {
+			sline = "%txtCriticalHit"
+			break
+		}
+		if (_switch_val == 1345) {
+			sline = "%txtPiercingAttack"
+			break
+		}
+		if (_switch_val == 1346) {
+			sline = "%txtPiercingAmmo"
+			break
+		}
+		if (_switch_val == 1347) {
+			sline = "%txtSwallowing"
+			break
+		}
+		if (_switch_val == 1348) {
+			sline = "%txtSwallowed"
+			break
+		}
+		if (_switch_val == 1349) {
+			sline = "%txtCaughtupSwallow"
+			break
+		}
+		if (_switch_val == 1350) {
+			sline = "%txtItemIrisfestival"
+			break
+		}
+		if (_switch_val == 1351) {
+			sline = "%txtItemThrowIrisfestival"
+			break
+		}
+		if (_switch_val == 1352) {
+			sline = "%txtVisitAdvHappyNewYear"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1353) {
+			sline = "%txtVisitAdvNewYearGift"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1354) {
+			sline = "%txtVisitAdvGetAway"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1355) {
+			sline = "%txtVisitAdvEatThis"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1356) {
+			sline = "%txtVisitAdvTakeThis"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1357) {
+			sline = "%txtVisitAdvSkillTeach"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1358) {
+			sline = "%txtVisitAdvSkillTrain"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1359) {
+			sline = "%txtVisitAdvAskAgain"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1360) {
+			sline = "%txtVisitAdvSkillTaught"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1361) {
+			sline = "%txtVisitAdvSkillTrained"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1362) {
+			sline = "%txtVisitAdvFriendship"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1363) {
+			sline = "%txtVisitAdvJustStopped"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1364) {
+			sline = "%txtVisitAdvDuringJourney"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1365) {
+			sline = "%txtVisitAdvFavoriteSkill"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1366) {
+			sline = "%txtVisitAdvProudSkill"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1367) {
+			sline = "%txtVisitAdvBored"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1368) {
+			sline = "%txtVisitAdvDrinkBooze"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1369) {
+			sline = "%txtVisitAdvGoodBooze"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1370) {
+			sline = "%txtVisitAdvWantedSayHi"
+			Nlf = 1
+			break
+		}
+		if (_switch_val == 1371) {
+			sline = "%txtAreaChanged"
+			break
+		}
+		if (_switch_val == 1372) {
+			sline = "%txtMapChanged"
+			break
+		}
+		if (_switch_val == 1373) {
+			sline = "%txtHour"
+			break
+		}
+		if (_switch_val == 1374) {
+			sline = "%txtMapChangedDead"
+			break
+		}
+		if (_switch_val == 1375) {
+			sline = "%txtHourDead"
+			break
+		}
+		if (_switch_val == 1376) {
+			sline = "%txtCalmDead"
+			break
+		}
+		if (_switch_val == 1377) {
+			sline = "%txtJoinParty"
+			break
+		}
+		if (_switch_val == 1378) {
+			sline = "%txtResurrection"
+			break
+		}
+		if (_switch_val == 1379) {
+			sline = "%txtNight"
+			break
+		}
+		if (_switch_val == 1380) {
+			sline = "%txtAwake"
+			break
+		}
+		if (_switch_val == 1381) {
+			sline = "%txtItemSilverwolfDays"
+			break
+		}
+		if (_switch_val == 1382) {
+			sline = "%txtOmiyageSilverwolfDays"
+			break
+		}
+		if (_switch_val == 1383) {
+			sline = "%txtHastalavistaBaby"
+			break
+		}
+		if (_switch_val == 1384) {
+			sline = "%txtSummoned"
+			break
+		}
+		if (_switch_val == 1385) {
+			sline = "%txtGainWeight"
+			break
+		}
+		if (_switch_val == 1386) {
+			sline = "%txtLoseWeight"
+			break
+		}
+		if (_switch_val == 1387) {
+			sline = "%txtGrowTaller"
+			break
+		}
+		if (_switch_val == 1388) {
+			sline = "%txtGrowSmaller"
+			break
+		}
+		if (_switch_val == 1389) {
+			sline = "%txtFairySeed"
+			break
+		}
+		// System Message
+		// invctrl
+		if (_switch_val == 10001) {
+			sline = "%txtSysExamine"
+			break
+		}
+		if (_switch_val == 10002) {
+			sline = "%txtSysDrop"
+			break
+		}
+		if (_switch_val == 10003) {
+			sline = "%txtSysPick"
+			break
+		}
+		if (_switch_val == 10005) {
+			sline = "%txtSysEat"
+			break
+		}
+		if (_switch_val == 10006) {
+			sline = "%txtSysEquip"
+			break
+		}
+		if (_switch_val == 10007) {
+			sline = "%txtSysRead"
+			break
+		}
+		if (_switch_val == 10008) {
+			sline = "%txtSysDrink"
+			break
+		}
+		if (_switch_val == 10009) {
+			sline = "%txtSysZap"
+			break
+		}
+		if (_switch_val == 10010) {
+			sline = "%txtSysGive"
+			break
+		}
+		if (_switch_val == 10011) {
+			sline = "%txtSysBuy"
+			break
+		}
+		if (_switch_val == 10012) {
+			sline = "%txtSysSell"
+			break
+		}
+		if (_switch_val == 10013) {
+			sline = "%txtSysIdentify"
+			break
+		}
+		if (_switch_val == 10014) {
+			sline = "%txtSysUse"
+			break
+		}
+		if (_switch_val == 10015) {
+			sline = "%txtSysOpen"
+			break
+		}
+		if (_switch_val == 10016) {
+			sline = "%txtSysCook"
+			break
+		}
+		if (_switch_val == 10017) {
+			sline = "%txtSysBlend"
+			break
+		}
+		if (_switch_val == 10018) {
+			sline = "%txtSysBlendApply"
+			break
+		}
+		if (_switch_val == 10019) {
+			sline = "%txtSysOffer"
+			break
+		}
+		if (_switch_val == 10020) {
+			sline = "%txtSysTrade"
+			break
+		}
+		if (_switch_val == 10021) {
+			sline = "%txtSysTradeOffer"
+			break
+		}
+		if (_switch_val == 10022) {
+			sline = "%txtSysTake"
+			break
+		}
+		if (_switch_val == 10023) {
+			sline = "%txtSysTarget"
+			break
+		}
+		if (_switch_val == 10024) {
+			sline = "%txtSysPut"
+			break
+		}
+		if (_switch_val == 10025) {
+			sline = "%txtSysWantTake"
+			break
+		}
+		if (_switch_val == 10026) {
+			sline = "%txtSysThrow"
+			break
+		}
+		if (_switch_val == 10027) {
+			sline = "%txtSysSteal"
+			break
+		}
+		if (_switch_val == 10028) {
+			sline = "%txtSysTradeMedal"
+			break
+		}
+		if (_switch_val == 10029) {
+			sline = "%txtSysReserve"
+			break
+		}
+		// invctrl end
+		if (_switch_val == 10100) {
+			sline = "%txtSysSwap"
+			break
+		}
+		if (_switch_val == 10101) {
+			sline = "%txtSysDropItemCheck"
+			break
+		}
+		if (_switch_val == 10102) {
+			sline = "%txtSysSetItemCheck"
+			break
+		}
+		if (_switch_val == 10103) {
+			sline = "%txtSysTownItemCheck"
+			break
+		}
+		if (_switch_val == 10104) {
+			sline = "%txtSysManyItemCheck"
+			break
+		}
+		if (_switch_val == 10105) {
+			sline = "%txtSysPickupItem"
+			break
+		}
+		if (_switch_val == 10106) {
+			sline = "%txtSysPickContain"
+			break
+		}
+		if (_switch_val == 10107) {
+			sline = "%txtSysContainItem"
+			break
+		}
+		if (_switch_val == 10108) {
+			sline = "%txtSysDropItem"
+			break
+		}
+		if (_switch_val == 10109) {
+			sline = "%txtSysDropItemFail"
+			break
+		}
+		/* NC end */
+		break
+	loop
+	if (sline == "") {
+		return 0
+	}
+	if (oom_regexp_match != "") {
+		brex_gmatch oom_regexp_match, buff, 0, oom_idx, oom_len
+		if (stat) {
+			oom_regexp_f = 1
+			oom_regexp_list = rnd(stat)
+		}
+		oom_regexp = strmid(buff, oom_idx(oom_regexp_list), oom_len(oom_regexp_list))
+	}
+	//hajime = instr(buff, 0, sline + "," + lang("JP", "EN"))
+	talktxt = iftxtsearch(buff, 0, sline, cc, oom_bktc, oom_bktc)
+	if (talktxt != "") {
+		hajime = instr(buff, 0, talktxt)
+	} else {
+		hajime = (-1)
+	}
+	if (hajime != (-1) | oom_regexp_f > 0) {
+		unitid = __uuu
+		//if (oom_regexp_f > 0) {
+		//	txtmid buff, oom_regexp
+		//} else {
+		//	txtmid buff, sline + "," + lang("JP", "EN")
+		//}
+		buff = strmid(buff, hajime, instr(buff, hajime + 1, "%"))
+		addt buff, gdata, cdata, sdata, adata, mdata, cdatan, inv, addtlvar, addtgvar, unitid, tc, cc, filter_t
+		notedel 0
+		if (noteinfo(0) > 0) {
+			f = 0
+			if (__vvv == 106) {
+				if (junban(__uuu) != 0) {
+					f = 1
+				}
+			}
+			if (f) {
+				noteget serifutxt, junban(__uuu) - 1
+				junban(__uuu)++
+				if (junban(__uuu) > noteinfo(0)) {
+					junban(__uuu) = 0
+				}
+			} else {
+				if (_switch_val >= 1149 & _switch_val < 1155) {
+					serifutxt_sub = ""
+					serifutxt = ""
+					repeat noteinfo(0)
+						noteget serifutxt_sub, cnt
+						serifutxt += serifutxt_sub + "\n"
+					loop
+				} else {
+					noteget serifutxt, rnd(noteinfo(0))
+				}
+			}
+			buff = serifutxt
+			convert_word buff, __www, __xxx
+			if (buff != "" & buff != "default") {
+				if (Nlf == 1) {
+				} else {
+					parsesstptalk buff, sstptalk, 1
+					if (cfg_NC_sstp_enabled != 0 & (cfg_NC_sstp_sakura - 2 == __xxx | cfg_NC_sstp_unyu - 2 == __xxx)) {
+						throwsstptalk cdatan(0, __xxx), sstptalk, __xxx + 2
+					}
+					if (cfg_NC_sstp_enabled == 0 | (cfg_NC_sstp_sakura - 2 != __xxx & cfg_NC_sstp_unyu - 2 != __xxx) | cfg_NC_sstp_suppresslog == 0) {
+						tcolbk = tcol@txtfunc(0), tcol@txtfunc(1), tcol@txtfunc(2)
+						tcolfixbk = tcolfix@txtfunc
+						split buff, "|", splitbuff
+						oom_popup = stat - 1, 0
+						repeat oom_popup(0) + 1
+							oom_popup(1) = 1
+							tcol@txtfunc = tcolbk(0), tcolbk(1), tcolbk(2)
+							tcolfix@txtfunc = tcolfixbk
+							p = instr(splitbuff(cnt), 0, "["), instr(splitbuff(cnt), p, "]"), strlen(splitbuff(cnt))
+							if (p != (-1)) {
+								s = strmid(splitbuff(cnt), p + 1, p(1) - 1)
+								csvstr2 s, s
+								tcol@txtfunc = int(s(0)), int(s(1)), int(s(2))
+								tcolfix@txtfunc = 1
+								splitbuff(cnt) = strmid(splitbuff(cnt), p + p(1) + 1, p(2) - p(1) - p)
+							}
+							if (oom_popup(0) != cnt) {
+								oom_popup(1) = 0
+							}
+							txt __uuu, splitbuff(cnt)
+						loop
+					}
+				}
+				tcol@txtfunc = 255, 255, 255
+				noteunsel
+				return 1
+			}
+		}
+	}
+	if (Nlf == 1) {
+		tcol@txtfunc = 255, 255, 255
+		noteunsel
+		return 0
+	}
+	if (buff == "default") {
+		if (__vvv >= 100 & __vvv <= 104) {
+			if (cCanTalk(__uuu) != 0) {
+				sstptalkc = __uuu + 2
+				sstptalkn = cdatan(0, __uuu)
+				dbid = cId(__uuu)
+				dbmode = __vvv
+				oom_talkchara = __uuu
+				oom_popup = 0, 0
+				gosub *label_2067
+				tcol@txtfunc = 255, 255, 255
+				noteunsel
+				sstptalkc = 0
+				sstptalkn = ""
+				return 1
+			}
+		}
+	}
+	if (buff == "") {
+		tcol@txtfunc = 255, 255, 255
+		noteunsel
+		return 1
+	}
+	tcol@txtfunc = 255, 255, 255
+	noteunsel
+	return 0

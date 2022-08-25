@@ -1,0 +1,26 @@
+#deffunc chara_gainSkillBonus int __cc
+	// ler@st = l + (L - l) / 2
+	//        = l + L/2 - l/2
+	//        = l/2 + L/2
+	// where
+	//   l: Original Lerning
+	//   L: Current Lerning
+	// 分配則を使わないのはOFを避けるため
+	ler@st = sorgEx(14, __cc) / 2 + sdata(14, __cc) / 2
+
+	// 基本スキルボーナス
+	p = int((10.0 * ler@st + 100) * 5 / (300 + cLevel(__cc) * 15)) + 1
+
+	// イェルスフィート
+	if (gettrait(__cc, traitId_moreSkillBonus)) {
+		// 倍率:
+		//   x2.0   where ler@st < 20
+		//   x1.1   where ler@st >= 1800
+		multiplier@st = limitmin(200 - ler@st / 20, 110) // (%)
+		// OFを避けるため百分率から小数へと直す
+		p = int(double(multiplier@st) / 100 * p) + 1
+	}
+
+	cSkillBonus(__cc) = limitaddition(cSkillBonus(__cc), p)
+	cTotalSkillBonus(__cc) = limitaddition(cTotalSkillBonus(__cc), p)
+	return

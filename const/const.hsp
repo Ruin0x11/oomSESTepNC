@@ -1,0 +1,8 @@
+#include "const/buff.hsp"
+#include "const/cchip.hsp"
+#include "const/custom.hsp"
+#include "const/enchantment.hsp"
+#include "const/item.hsp"
+#include "const/skill.hsp"
+#include "const/trait.hsp"
+#include "const/reftype.hsp"

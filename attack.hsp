@@ -1,0 +1,39 @@
+#deffunc attack_weakGuard
+	// 攻撃されたのがPCかペットで、
+	if (tc == 0 | petcheck(tc)) {
+		// かばうを行うキャラを決定する
+		// かばうを行えるキャラは最大でも15人(PC1人 + ペット15人 - かばわれる対象の1人)
+		dim olist@oo2019, 15
+		olistmax@oo2019 = 0
+		repeat 15
+			if (cState(cnt) != 1) {
+				continue // 死んでいるならかばえない
+			}
+			if (cc == cnt) {
+				continue // 自分の攻撃を自分でかばうことはできない
+			}
+			if (tc == cnt) {
+				continue // 自分がかばわれる対象ならかばえない
+			}
+			if (cnt == 0 & gCurrentMap == 40) {
+				continue // ペットアリーナではPCはかばえない
+			}
+			if (dist(cX(cnt), cY(cnt), cX(tc), cY(tc)) >= 8) {
+				continue // かばわれる対象との距離が8以上なら視界範囲外となりかばえない
+			}
+			if (fov_los(cX(cnt), cY(cnt), cX(tc), cY(tc)) == 0) {
+				continue // かばわれる対象との間で視線が通っていなければかばえない
+			}
+			if (findbuff(cnt, buffId_weakShield) != -1) {
+				// ディバイドモードのバフがかかっていればかばうことができる
+				olist@oo2019(olistmax@oo2019) = cnt
+				olistmax@oo2019++
+			}
+		loop
+		if (olistmax@oo2019) {
+			p@tmp = olist@oo2019(rnd(olistmax@oo2019))
+			txt -1, lang(name(p@tmp) + "は" + name(tc) + "をかばった！", name(p@tmp) + " protect" + _s(p@tmp) + " " + name(tc) + "!")
+			tc = p@tmp
+		}
+	}
+	return

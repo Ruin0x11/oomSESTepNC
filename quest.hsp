@@ -1,0 +1,694 @@
+*quest_makeQuestClientDialog
+	randomize qdata(0, rq) + 1
+	s(6) = ""
+	s(5) = lang("金貨" + qdata(6, rq) + "枚", "" + qdata(6, rq) + " gold pieces")
+	if (qdata(7, rq) != 0) {
+		if (qdata(7, rq) < 10000) {
+			s(5) += lang("と", " and ") + _reward(qdata(7, rq))
+		} else {
+			s(5) += lang("と", " and ") + fltname(qdata(7, rq))
+		}
+	}
+	if (qdata(9, rq) == (-1)) {
+		nquestdate = lang("即時", "-")
+	} else {
+		nquestdate = "" + qdata(9, rq) + lang("日", "d")
+	}
+	if (qdata(3, rq) == 1006) {
+		s = "%HARVEST"
+		gosub *label_0232
+		s(10) = "" + cnvweight(qdata(12, rq))
+		s(11) = mapname(qdata(1, rq))
+		s(4) = lang("" + s(10) + "の作物の納入", "Gather harvests weight " + s(10) + ".")
+		if (gExecutingImmediateQuest == rq) {
+			s(4) += lang("(現在", " (Now ") + cnvweight(qdata(13, rq)) + ")"
+		}
+		s(6) = s(4)
+	}
+	if (qdata(3, rq) == 1009) {
+		s = "%PARTY"
+		gosub *label_0232
+		s(10) = "" + qdata(12, rq) + lang("ポイント", " points")
+		s(11) = mapname(qdata(1, rq))
+		s(4) = lang("" + s(10) + "の獲得", "Gather " + s(10) + ".")
+		if (gExecutingImmediateQuest == rq) {
+			s(4) += lang("(現在", " (Now ") + qdata(13, rq) + ")"
+		}
+		s(6) = s(4)
+	}
+	if (qdata(3, rq) == 1007) {
+		s = "%ESCORT," + qdata(4, rq)
+		gosub *label_0232
+		s(11) = "" + mapname(qdata(12, rq))
+		s(4) = lang("クライアントを" + s(11), "Escort the client to " + s(11) + ".")
+		s(6) = s(4) + lang("まで護衛", "")
+	}
+	if (qdata(3, rq) == 1001) {
+		s = "%HUNT"
+		gosub *label_0232
+		if (qdata(12, rq)) {
+			if (jp) {
+				s(4) = csetfamily(2, oqdata(0, rq))
+			} else {
+				s(4) = csetfamily(0, oqdata(0, rq))
+			}
+		} else {
+			s(4) = ""
+		}
+		s(6) = lang("全ての敵の殲滅", "Eliminate monsters.")
+	}
+	if (qdata(3, rq) == 1004) {
+		s = "%SUPPLY"
+		gosub *label_0232
+		s(4) = cnvarticle(cnvitemname(qdata(11, rq)))
+		s(6) = lang(s(4) + "の納入", "Give " + s(4) + " to the client.")
+	}
+	if (qdata(3, rq) == 1002) {
+		s = "%DELIVER," + qdata(12, rq)
+		gosub *label_0232
+		s(10) = cnvarticle(cnvitemname(qdata(11, rq)))
+		s(11) = "" + mapname(qdata(1, qdata(10, rq)))
+		s(12) = "" + qname(qdata(10, rq))
+		if (iorgweight(qdata(11, rq)) > 50000) {
+			s(10) += lang("(凄く重い)", "(Heavy!)")
+		}
+		s(4) = lang("" + s(11) + "に住む" + s(12) + "に" + s(10), "Deliver " + s(10) + " to " + s(12) + " who lives in " + s(11) + ".")
+		s(6) = s(4) + lang("を配達", "")
+	}
+	if (qdata(3, rq) == 1003) {
+		s = "%COOK," + qdata(12, rq)
+		if (rnd(6) == 0) {
+			s = "%COOK,GENERAL"
+		}
+		gosub *label_0232
+		s(4) = cnvarticle(foodname(qdata(12, rq), "", qdata(13, rq)))
+		s(6) = lang(s(4) + "の納入", "Give " + s(4) + " to the client.")
+	}
+	if (qdata(3, rq) == 1008) {
+		s = "%CONQUER"
+		gosub *label_0232
+		if (qdata(12, rq) == 343) {
+			if (qdata(13, rq) != usernpcmax) {
+				s(4) = userdatan(1, qdata(13, rq))
+			} else {
+				s(4) = lang("残りカス", "garbage")
+			}
+		} else {
+			s(4) = refchara(qdata(12, rq), 2, 1)
+		}
+		s(10) = "" + qdata(5, rq) * 10 / 6
+		s(6) = lang(s(4) + "の討伐", "Slay " + s(4) + ".")
+	}
+	if (qdata(3, rq) == 1010) {
+		s = "%HUNTEX"
+		gosub *label_0232
+		if (qdata(12, rq) == 343) {
+			if (qdata(13, rq) != usernpcmax) {
+				s(4) = userdatan(1, qdata(13, rq))
+			} else {
+				s(4) = lang("残りカス", "garbage")
+			}
+		} else {
+			s(4) = refchara(qdata(12, rq), 2, 1)
+		}
+		s(10) = "" + qdata(5, rq) * 3 / 2
+		s(6) = lang("全ての敵の殲滅", "Eliminate monsters")
+	}
+	if (qdata(3, rq) == 1011) {
+		s = "%COLLECT"
+		gosub *label_0232
+		s(10) = cnvarticle(cnvitemname(qdata(11, rq)))
+		s(11) = "" + mapname(qdata(1, rq))
+		if (gCurrentMap == qdata(1, rq) & gCurrentDungeonLevel == 1) {
+			s(12) = "" + cdatan(0, qdata(10, rq))
+		} else {
+			s(12) = lang(s(11) + "に住む人物", "the target in " + s(11))
+		}
+		if (iorgweight(qdata(11, rq)) > 50000) {
+			s(10) += lang("(凄く重い)", "(Heavy!)")
+		}
+		s(4) = lang("依頼人のために" + s(12) + "から" + s(10), "Acquire " + s(10) + " from " + s(12) + " for the client.")
+		s(6) = s(4) + lang("を調達", "")
+	}
+	gosub *label_0234
+	if (qdata(3, rq) == 1001) {
+		gosub *label_1828
+	}
+	if (val == 1) {
+		buff = lang(_kimi(3) + "に頼みたいことがある" + _nda(), "") + buff
+		if (qdata(9, rq) != (-1)) {
+			buff += lang("期限は残り" + qdata(9, rq) + "日" + _da(), " You have " + qdata(9, rq) + " days to perform the task. ")
+		}
+		buff += lang("依頼を受けてくれるの" + _kana(1), "How about it?")
+	}
+	if (val == 2) {
+		if (qdata(8, rq) == 3) {
+			buff += "@QC[" + lang("依頼 完了", "Complete") + "]" + s(3) + "\n"
+		} else {
+			buff += "@QL[" + lang("依頼", "Job") + "] " + s(3) + "\n"
+		}
+		buff += lang("依頼: ", "Client  : ") + qname(rq) + "\n"
+		buff += lang("場所: ", "Location: ") + mapname(qdata(1, rq)) + "\n"
+		buff += lang("期限: ", "Deadline: ")
+		if (qdata(9, rq) != (-1)) {
+			buff += lang("残り", "")
+		}
+		buff += nquestdate + "\n"
+		s(5) = lang("報酬: ", "Reward  : ") + s(5)
+		talk_conv s(5), 40 - en * 10
+		buff += s(5) + "\n"
+		if (qdata(8, rq) == 3) {
+			s(4) = lang("内容: あとは報告するだけだ。", "Detail  : Report to the client.")
+		} else {
+			s(4) = lang("内容: ", "Detail  : ") + s(6)
+		}
+		talk_conv s(4), 40 - en * 10
+		buff += s(4) + "\n"
+	}
+	if (val == 3) {
+		buff = lang("依頼を無事終わらせたよう" + _dana() + _thanks(2), "You've done well. Thanks. Here's your reward.")
+		if (int(s(5)) != 0) {
+			txt -1, lang("報酬の" + s(5) + "を受けとって" + _kure(), "")
+		}
+		if (qdata(3, rq) == 1006) {
+			if (qdata(12, rq) * 125 / 100 < qdata(13, rq)) {
+				buff += lang("予想以上にいい働きだったから、幾らか色を付けておいた" + _yo(), "I've added some extra coins since you worked really hard.")
+			}
+		}
+		if (qdata(3, rq) == 1009) {
+			if (qdata(12, rq) * 150 / 100 < qdata(13, rq)) {
+				buff += lang("予想以上の盛り上がりだったから、おまけをあげる" + _yo(), "The party was terrific! I'll give you these tickets as an extra bonus.")
+			}
+		}
+	}
+	randomize
+	return
+
+*quest_setupQuestDataForTownResidents
+	repeat 245 - 57, 57
+		if (cState(cnt) == 0) {
+			continue
+		}
+		if (cRole(cnt) == 0) {
+			continue
+		}
+		if (cQuality(cnt) == 6) {
+			continue
+		}
+		if (cRole(cnt) == 3) {
+			continue
+		}
+		i = -1
+		repeat 500
+			if (qdata(0, cnt) == 0) {
+				i = cnt
+				break
+			}
+		loop
+		cnt2 = cnt
+		repeat 500
+			if (qdata(0, cnt) == cnt2) {
+				if (qdata(1, cnt) == gCurrentMap) {
+					i = -1
+					break
+				}
+			}
+		loop
+		if (i == (-1)) {
+			break
+		}
+		qdata(0, i) = cnt
+		qdata(1, i) = gCurrentMap
+		qname(i) = cdatan(0, cnt)
+		cRelatedQuestId(cnt) = i + 1
+		gNumberOfExistingQuests = i + 1
+	loop
+	return
+
+
+
+*quest_updateQuests
+	repeat gNumberOfExistingQuests
+		if (qdata(0, cnt) == 0) {
+			continue
+		}
+		if (qdata(1, cnt) != gCurrentMap) {
+			continue
+		}
+		rc = qdata(0, cnt)
+		if (qdata(8, cnt) == 0) {
+			if (qdata(2, cnt) < getgametime()) {
+				rq = cnt
+				gosub *quest_addNewQuest
+				gosub *quest_setRewards
+			}
+		}
+	loop
+	return
+
+
+
+*quest_addNewQuest
+	qdata(3, rq) = 0
+	qdata(14, rq) = 0
+	qdata(8, rq) = 0
+	qdata(2, rq) = (rnd(3) + 1) * 24 + getgametime()
+	qdata(7, rq) = 0
+	if (rnd(3) == 0) {
+		return
+	}
+	if (rnd(14) == 0) {
+		// 交換依頼
+		i = -1
+		repeat 300
+			n = rnd(245 - 57) + 57
+			if (n == qdata(0, rq)) {
+				continue
+			}
+			if (cState(n) != 1) {
+				continue
+			}
+			if (cRelationship(n) != 0 | (cRole(n) != 4 & cRole(n) != 14)) {
+				continue
+			}
+			flt 40, 2
+			flttypemajor = fsetcollect(rnd(length(fsetcollect)))
+			itemcreate n, 0, -1, -1, 0
+			if (stat != 0) {
+				iCount(ci) = rq
+				i = n, iId(ci)
+				ibitmod 12, ci, 1
+				break
+			} else {
+				i = -1
+				break
+			}
+		loop
+		if (i != (-1)) {
+			qdata(10, rq) = i
+			qdata(11, rq) = i(1)
+			qdata(1, rq) = gCurrentMap
+			rewardfix = 60
+			qdata(7, rq) = 5
+			qdata(3, rq) = 1011
+			qdata(14, rq) = 3
+			qdata(4, rq) = 0
+			qdata(9, rq) = rnd(3) + 2
+			qdata(5, rq) = cLevel(i) / 3
+		}
+		return
+	}
+	if (cFame(0) >= 30000) {
+		// 変異種討伐依頼(複数体)
+		if (rnd(13) == 0) {
+			qdata(5, rq) = rnd(difficulty() + 1)
+			qdata(5, rq) = roundmargin(qdata(5, rq), cLevel(0))
+			minlevel = limit(qdata(5, rq) / 7, 5, 30)
+			if (rnd(30) == 0 | Seasonal_Check(0, 0)) {
+				flt qdata(5, rq), 2
+				characreate 56, 176, -3, 0
+			} else {
+				repeat 2000
+					flt qdata(5, rq), 2
+					characreate 56, 0, -3, 0
+					if (cmshade) {
+						continue
+					}
+					if (cLevel(rc) < minlevel) {
+						continue
+					}
+					break
+				loop
+			}
+			qdata(12, rq) = cId(56)
+			if (cId(56) == 343) {
+				qdata(13, rq) = cCnpcId(56)
+				qdata(15, rq) = createserialno(userdatan(0, cCnpcId(56)))
+			}
+			qdata(2, rq) = (rnd(6) + 2) * 24 + getgametime()
+			qdata(7, rq) = 0
+			qdata(3, rq) = 1010
+			qdata(14, rq) = 1
+			qdata(4, rq) = 0
+			qdata(7, rq) = 5
+			qdata(9, rq) = -1
+			rewardfix = 140
+			chara_vanquish 56
+			return
+		}
+	}
+	if (cFame(0) >= 50000) {
+		// 変異種討伐依頼(単体)
+		if (rnd(20) == 0) {
+			qdata(5, rq) = rnd(difficulty() + 1)
+			qdata(5, rq) = roundmargin(qdata(5, rq), cLevel(0))
+			minlevel = limit(qdata(5, rq) / 4, 5, 30)
+			if (rnd(30) == 0 | Seasonal_Check(0, 0)) {
+				flt qdata(5, rq), 2
+				characreate 56, 176, -3, 0
+			} else {
+				repeat 2000
+					flt qdata(5, rq), 2
+					characreate 56, 0, -3, 0
+					if (cmshade) {
+						continue
+					}
+					if (cLevel(rc) < minlevel) {
+						continue
+					}
+					break
+				loop
+			}
+			qdata(12, rq) = cId(56)
+			if (cId(56) == 343) {
+				qdata(13, rq) = cCnpcId(56)
+				qdata(15, rq) = createserialno(userdatan(0, cCnpcId(56)))
+			}
+			qdata(2, rq) = (rnd(6) + 2) * 24 + getgametime()
+			qdata(7, rq) = 0
+			qdata(3, rq) = 1008
+			qdata(14, rq) = 8
+			qdata(4, rq) = 0
+			qdata(7, rq) = 1
+			qdata(9, rq) = -1
+			rewardfix = 175
+			chara_vanquish 56
+			return
+		}
+	}
+	// 娼婦ギルドに加入中で
+	if (guildcheck(0) == "prostitute") {
+		// トーマットなら10%、その他の場所は5%
+		if ((gCurrentMap == areaId_tormat & rnd(10) == 0) | rnd(20) == 0) {
+			// 娼婦依頼
+			qdata(2, rq)  = (rnd(6) + 2) * 24 + getgametime()
+			qdata(3, rq)  = 1020
+			qdata(5, rq)  = limit(rnd(difficulty() * 3 + 1) + 1, 1, 50)
+			qdata(7, rq)  = 0
+			qdata(9, rq) = -1
+			qdata(12, rq) = limitmax(rnd(qdata(5, rq) / 10 + 1) + 2, 10)
+			qdata(13, rq) = 0
+			qdata(14, rq) = 8
+			rewardfix = 0
+			return
+		}
+	}
+	// キオスかヨウィンなら、11分の1の確率で
+	if ((gCurrentMap == areaId_khios | gCurrentMap == 12) & rnd(11) == 0) {
+		// 羊依頼
+		qdata(2, rq)  = (rnd(6) + 2) * 24 + getgametime()
+		qdata(3, rq)  = 1021
+		qdata(5, rq) = limit(rnd(difficulty() * 5 + 1) + 1, 1, 80)
+		if (rnd(2)) {
+			qdata(7, rq)  = 60000
+		} else {
+			qdata(7, rq)  = 56000
+		}
+		qdata(9, rq) = -1
+		qdata(12, rq) = 5
+		qdata(13, rq) = 0
+		qdata(14, rq) = 9
+		rewardfix = 150
+		return
+	}
+	if (rnd(11) == 0) {
+		// 護衛依頼
+		qdata(2, rq) = (rnd(6) + 2) * 24 + getgametime()
+		qdata(3, rq) = 1007
+		qdata(14, rq) = 6
+		qdata(4, rq) = rnd(3)
+		qdata(10, rq) = 0
+		qdata(7, rq) = 5
+		currentContinent@quest = map_getContinent(gCurrentMap)
+		// 1/4の確率で別大陸
+		if (rnd(4) == 0) {
+			destinationContinent@quest = 1 - currentContinent@quest
+		} else {
+			destinationContinent@quest = currentContinent@quest
+		}
+		qdata(12, rq) = quest_getEscortMapId(gCurrentMap, destinationContinent@quest)
+		p = qdata(12, rq)
+		if (qdata(4, rq) == 0) { // 暗殺
+			rewardfix = 140 + map_distance(gCurrentMap, p) * 2
+			qdata(9, rq) = rnd(8) + 6
+			qdata(5, rq) = limit(rnd(difficulty() * 5 + 1) + 1, 1, 80)
+		}
+		if (qdata(4, rq) == 1) { // 病人
+			rewardfix = 130 + map_distance(gCurrentMap, p) * 2
+			qdata(9, rq) = rnd(5) + 2
+			qdata(5, rq) = limit(rewardfix / 10 + 1, 1, 40)
+		}
+		if (qdata(4, rq) == 2) { // 通常
+			rewardfix = 80 + map_distance(gCurrentMap, p) * 2
+			qdata(9, rq) = rnd(8) + 6
+			qdata(5, rq) = limit(rewardfix / 20 + 1, 1, 40)
+		}
+		if (currentContinent@quest != destinationContinent@quest) {
+			// 時間延長 (2-4日加算)
+			qdata(9, rq) += 2 + rnd(3)
+			// 報酬を変更
+			if (areaOuterMap(gCurrentMap) == 44) {
+				rewardfix = (map_distance(gCurrentMap, 45) * 4) + (map_distance(p, 43) * 4) + 200
+			} else {
+				rewardfix = (map_distance(p, 45) * 4) + (map_distance(gCurrentMap, 43) * 4) + 200
+			}
+			if (qdata(4, rq) == 0) { // 暗殺
+				rewardfix += 100
+			}
+			if (qdata(4, rq) == 1) { // 病人
+				rewardfix += 50
+			}
+		}
+		// 護衛先がノイエル or 今いるのがノイエル
+		if (qdata(12, rq) == 33 | gCurrentMap == 33) {
+			rewardfix = rewardfix * 180 / 100
+		}
+		return
+	}
+	if (rnd(23 - (ogdata(485) == 2) * 10) == 0 | (gCurrentMap == 15 & rnd(8) == 0)) {
+		// 演奏依頼
+		qdata(5, rq) = limit(rnd(sdata(183, 0) + 10), int(1.5 * sqrt(sdata(183, 0))) + 1, cFame(0) / 1000 + 10)
+		qdata(2, rq) = (rnd(6) + 2) * 24 + getgametime()
+		qdata(7, rq) = 0
+		qdata(3, rq) = 1009
+		qdata(14, rq) = 7
+		qdata(4, rq) = 0
+		qdata(7, rq) = 0
+		qdata(12, rq) = limitmax(qdata(5, rq) * 10 + rnd(50), 6000)
+		qdata(13, rq) = 0
+		qdata(9, rq) = -1
+		rewardfix = 0
+		return
+	}
+	if (rnd(30) == 0 | (gCurrentMap == 12 & rnd(2) == 0)) {
+		// 収穫依頼
+		qdata(5, rq) = limit(rnd(difficulty() * 3 + 1) + 1, 1, 50)
+		qdata(2, rq) = (rnd(6) + 2) * 24 + getgametime()
+		qdata(3, rq) = 1006
+		qdata(14, rq) = 5
+		qdata(4, rq) = 0
+		qdata(7, rq) = 5
+		qdata(9, rq) = -1
+		qdata(12, rq) = limitmax(15000 + qdata(5, rq) * 2500, 200000)
+		qdata(13, rq) = 0
+		rewardfix = 60 + qdata(5, rq) * 2
+		return
+	}
+	if (rnd(8) == 0) {
+		// 討伐依頼
+		qdata(5, rq) = limit(rnd(difficulty() * 5 + 1) + 1, 1, 80)
+		qdata(5, rq) = roundmargin(qdata(5, rq), cLevel(0))
+		qdata(2, rq) = (rnd(6) + 2) * 24 + getgametime()
+		qdata(7, rq) = 0
+		qdata(3, rq) = 1001
+		qdata(14, rq) = 1
+		qdata(4, rq) = 0
+		qdata(7, rq) = 1
+		qdata(9, rq) = -1
+		flt calcobjlv(qdata(5, rq) + 1), 1
+		characreate 56, 0, -3, 0
+		sdim factionref, 10, 3
+		getfactionvalues rc, "family", factionref
+		i = stat
+		if (i) {
+			s = factionref(rnd(i))
+			repeat length2(csetfamily) - 1, 1
+				if (csetfamily(0, cnt) == s) {
+					oqdata(0, rq) = cnt
+					break
+				}
+			loop
+		}
+		chara_vanquish 56
+		rewardfix = 135
+		return
+	}
+	if (rnd(6) == 0) {
+		// 配達依頼
+		i = -1
+		repeat gNumberOfExistingQuests
+			p = rnd(gNumberOfExistingQuests)
+			repeat gNumberOfExistingQuests
+				if (qdata(3, cnt) == 1002) {
+					if (qdata(10, cnt) == p) {
+						p = -1
+						break
+					}
+				}
+			loop
+			if (p == (-1)) {
+				continue
+			}
+			if (qdata(0, p) != 0) {
+				if (qdata(1, p) != gCurrentMap | 0) {
+					i = p
+					break
+				}
+			}
+		loop
+		if (i != (-1)) {
+			p = qdata(1, i)
+			rewardfix = 70 + map_distance(gCurrentMap, p) * 2
+			// 大陸が違う場合
+			if (areaOuterMap(gCurrentMap) != areaOuterMap(p)) {
+				// 時間延長 (2-4日加算)
+				qdata(9, rq) += 2 + rnd(3)
+				// 報酬を変更
+				if (areaOuterMap(gCurrentMap) == 44) {
+					rewardfix = (map_distance(gCurrentMap, 45) * 4) + (map_distance(p, 43) * 4) + 200
+				} else {
+					rewardfix = (map_distance(p, 45) * 4) + (map_distance(gCurrentMap, 43) * 4) + 200
+				}
+			}
+			if (p == 33 | gCurrentMap == 33) {
+				rewardfix = rewardfix * 175 / 100
+			}
+			qdata(10, rq) = i
+			repeat
+				flt
+				dbmode = 1
+				flttypemajor = fsetdeliver(rnd(length(fsetdeliver)))
+				gosub *label_2426
+				if (dbid == 743) {
+					continue
+				}
+				break
+			loop
+			qdata(12, rq) = flttypemajor
+			qdata(7, rq) = 5
+			if (flttypemajor == 54000) {
+				qdata(7, rq) = 2
+			}
+			if (flttypemajor == 77000) {
+				qdata(7, rq) = 3
+			}
+			if (flttypemajor == 64000) {
+				qdata(7, rq) = 77000
+			}
+			if (flttypemajor == 60000) {
+				qdata(7, rq) = 60000
+			}
+			qdata(11, rq) = dbid
+			qdata(3, rq) = 1002
+			qdata(14, rq) = 2
+			qdata(4, rq) = 0
+			qdata(9, rq) = rnd(12) + 3
+			qdata(5, rq) = limit(rewardfix / 20 + 1, 1, 25)
+		}
+		return
+	}
+	if (rnd(6) == 0) {
+		// 料理依頼
+		qdata(3, rq) = 1003
+		qdata(14, rq) = 3
+		qdata(9, rq) = rnd(6) + 2
+		qdata(7, rq) = 5
+		qdata(12, rq) = rnd(9 - 1) + 1
+		if (qdata(12, rq) == 4) {
+			qdata(7, rq) = 52000
+		}
+		if (qdata(12, rq) == 6) {
+			qdata(7, rq) = 25000
+		}
+		if (qdata(12, rq) == 1) {
+			qdata(7, rq) = 25000
+		}
+		if (qdata(12, rq) == 5) {
+			qdata(7, rq) = 52000
+		}
+		if (qdata(12, rq) == 7) {
+			qdata(7, rq) = 77000
+		}
+		if (qdata(12, rq) == 2) {
+			qdata(7, rq) = 56000
+		}
+		if (qdata(12, rq) == 3) {
+			qdata(7, rq) = 53000
+		}
+		qdata(13, rq) = rnd(10 - 3) + 3
+		qdata(5, rq) = qdata(13, rq) * 3
+		rewardfix = 60 + qdata(5, rq)
+		return
+	}
+	if (rnd(5) == 0) {
+		// 納入依頼
+		qdata(3, rq) = 1004
+		qdata(14, rq) = 3
+		qdata(9, rq) = rnd(6) + 2
+		repeat
+			flt
+			dbmode = 1
+			flttypemajor = fsetsupply(rnd(length(fsetsupply)))
+			gosub *label_2426
+			if (dbid == 743) {
+				continue
+			}
+			break
+		loop
+		qdata(7, rq) = 5
+		qdata(11, rq) = dbid
+		qdata(5, rq) = limit(rnd(difficulty() + 5) + 1, 1, 30)
+		rewardfix = 65 + qdata(5, rq)
+		return
+	}
+	return
+
+
+
+*quest_setRewards
+	qdata(6, rq) = ((qdata(5, rq) + 3) * 100 + rnd(qdata(5, rq) * 30 + 200) + 400) * rewardfix / 100
+	qdata(6, rq) = qdata(6, rq) * 100 / (100 + qdata(5, rq) * 2 / 3)
+	if (qdata(14, rq) == 3 | qdata(14, rq) == 2) {
+		return
+	}
+	if (qdata(3, rq) == 1001) {
+		if (oqdata(0, rq)) {
+			qdata(6, rq) = qdata(6, rq) * (100 + isetfamily(0, oqdata(0, rq))) / 100
+		}
+	} else {
+		if (qdata(3, rq) == 1008 | qdata(3, rq) == 1010) {
+			i = 0
+			if (qdata(12, rq) != 343) {
+				i = refchara(qdata(12, rq), 10)
+			} else {
+				if (qdata(13, rq) != usernpcmax) {
+					i = userdata(2, qdata(13, rq))
+				}
+			}
+			qdata(6, rq) = qdata(6, rq) * (100 + limit(i / 5 * 25, 0, 400)) / 100
+		}
+	}
+	return
+
+
+
+// 今いる場所以外のどこか
+#defcfunc quest_getEscortMapId int __currentMap, int __continent
+	i@tmp = -1
+	repeat
+		i@tmp = asettown(rnd(length(asettown)), __continent)
+		if (i@tmp != __currentMap) {
+			break
+		}
+	loop
+	return i@tmp
