@@ -1,0 +1,235 @@
+
+#deffunc throwsstpmessage str prm_1631, str prm_1632
+	sstpsockid = 24
+	sockopen sstpsockid, cfg_NC_sstp_server, cfg_NC_sstp_port
+	sockput "NOTIFY SSTP/1.1\n", sstpsockid
+	sockput "Sender: " + prm_1631 + "\n", sstpsockid
+	sockput "Event: OnElonaOmakeMMALog\n", sstpsockid
+	sockput "Reference0: Elona ver 1.22 oomSESTepNC" + "\n", sstpsockid
+	sockput "Reference1: " + gdata(20) + ", " + gdata(22) + ", " + gdata(850) + ", " + cdata(1, 0) + ", " + cdata(2, 0) + "/" + mapname(gdata(20)) + "\n", sstpsockid
+	sockput "Reference2: " + cdata(38, 0) + ", " + cdata(50, 0) + ", " + cdata(51, 0) + "/" + cdatan(0, 0) + "\n", sstpsockid
+	sockput "Script: " + prm_1632 + "\\e\n", sstpsockid
+	sockput "Charset: Shift_JIS\n", sstpsockid
+	sockput "\n", sstpsockid
+	sockclose sstpsockid
+	return
+
+#deffunc throwsstptalk str prm_1633, str prm_1634, int prm_1635, int prm_1636, int prm_1637
+	if (prm_1634 == "") {
+		return
+	}
+	sstpmsghead = "\\t"
+	if (cfg_NC_sstp_nowait) {
+		sstpmsghead += "\\_q"
+	}
+	sstptalker = ""
+	sstpsurface = ""
+	if (prm_1635 == cfg_NC_sstp_unyu) {
+		sstptalker = "\\u"
+		sstpsurface = "\\s[" + prm_1637 + 10 + "]"
+		sstpmsghead += sstptalker + sstpsurface
+	}
+	if (prm_1635 == cfg_NC_sstp_sakura) {
+		sstptalker = "\\h"
+		sstpsurface = "\\s[" + prm_1636 + "]"
+		sstpmsghead += sstptalker + sstpsurface
+		if (cfg_NC_sstp_sakura == cfg_NC_sstp_unyu) {
+			sstptalk = prm_1634
+			if ( instr(sstptalk, 0, "\\h") == (-1) & instr(sstptalk, 0, "\\u") == (-1) | instr(sstptalk, 0, "\\0") == (-1) & instr(sstptalk, 0, "\\1") == (-1) ) {
+				sstpmsghead += "\\_s"
+			}
+		}
+	}
+	if (sstptalker == "") {
+		return
+	}
+	throwsstpmessage prm_1633, sstpmsghead + prm_1634
+	return
+
+#deffunc throwsstpevent str prm_1641, int prm_1642, str prm_1643, int prm_1644, int prm_1645, int prm_1646, int prm_1647
+	if (cfg_nc_sstp_enabled == 0 | cfg_nc_sstp_notifyevent == 0 ) {
+		return
+	}
+	sstpsockid = 24
+	sockopen sstpsockid, cfg_nc_sstp_server, cfg_nc_sstp_port
+	sockput "NOTIFY SSTP/1.1\n", sstpsockid
+	sockput "Sender: " + cdatan(0, 0) + "\n", sstpsockid
+	sockput "Event: OnElonaOmakeMMAEvent" + prm_1641 + "\n", sstpsockid
+	sockput "Reference0: Elona ver 1.22 oomSESTepNC" + "\n", sstpsockid
+	sockput "Reference1: " + gdata(10) + "\n", sstpsockid
+	sockput "Reference2: " + gdata(11) + "\n", sstpsockid
+	sockput "Reference3: " + gdata(12) + "\n", sstpsockid
+	sockput "Reference4: " + gdata(13) + "\n", sstpsockid
+	sockput "Reference5: " + gdata(14) + "\n", sstpsockid
+	sockput "Reference6: " + gdata(15) + "\n", sstpsockid
+	sockput "Reference7: " + _weather(gdata(17)) + "\n", sstpsockid
+	sockput "Reference8: " + mdatan(0) + "\n", sstpsockid
+	sockput "Reference9: " + mapname(gdata(20)) + "\n", sstpsockid
+	sockput "Reference10: " + mapname(gdata(850)) + "\n", sstpsockid
+	sockput "Reference11: " + gdata(22) + "\n", sstpsockid
+	sockput "Reference12: " + guildname() + "\n", sstpsockid
+	sockput "Reference13: " + "" + "\n", sstpsockid
+	sockput "Reference14: " + "" + "\n", sstpsockid
+	sockput "Reference15: " + "" + "\n", sstpsockid
+	sockput "Reference16: " + "" + "\n", sstpsockid
+	sockput "Reference17: " + "" + "\n", sstpsockid
+	sockput "Reference18: " + "" + "\n", sstpsockid
+	sockput "Reference19: " + "" + "\n", sstpsockid
+	sockput "Reference20: " + prm_1642 + "\n", sstpsockid
+	dbidn = cdatan(2, 0)
+	dbmode = 2
+	gosub *label_1525
+	dbidn = cdatan(3, 0)
+	dbmode = 2
+	gosub *label_1526
+	sockput "Reference21: " + cdatan(0, 0) + "\n", sstpsockid
+	sockput "Reference22: " + cdatan(1, 0) + "\n", sstpsockid
+	sockput "Reference23: " + lang(racename, cnven(cdatan(2, 0))) + "\n", sstpsockid
+	sockput "Reference24: " + lang(classname, cnven(cdatan(3, 0))) + "\n", sstpsockid
+	sockput "Reference25: " + godname(godcheck(0)) + "\n", sstpsockid
+	sockput "Reference26: " + refchara(0, 2, 1) + "\n", sstpsockid
+	sockput "Reference27: " + _sex2(cdata(8, 0)) + "\n", sstpsockid
+	sockput "Reference28: " + calcage(0) + "\n", sstpsockid
+	sockput "Reference29: " + cdata(19, 0) + "\n", sstpsockid
+	sockput "Reference30: " + cdata(20, 0) + "\n", sstpsockid
+	sockput "Reference31: " + cdata(38, 0) + "\n", sstpsockid
+	sockput "Reference32: " + cdata(50, 0) + "\n", sstpsockid
+	sockput "Reference33: " + cdata(51, 0) + "\n", sstpsockid
+	sockput "Reference34: " + cdata(55, 0) + "\n", sstpsockid
+	sockput "Reference35: " + cdata(56, 0) + "\n", sstpsockid
+	sockput "Reference36: " + cdata(30, 0) + "\n", sstpsockid
+	sockput "Reference37: " + cdata(34, 0) + "\n", sstpsockid
+	sockput "Reference38: " + cdata(49, 0) + "\n", sstpsockid
+	sockput "Reference39: " + cdata(71, 0) + "\n", sstpsockid
+	sockput "Reference40: " + cdata(70, 0) + "\n", sstpsockid
+	sockput "Reference41: " + sdata(10, 0) + "\n", sstpsockid
+	sockput "Reference42: " + sdata(11, 0) + "\n", sstpsockid
+	sockput "Reference43: " + sdata(12, 0) + "\n", sstpsockid
+	sockput "Reference44: " + sdata(13, 0) + "\n", sstpsockid
+	sockput "Reference45: " + sdata(14, 0) + "\n", sstpsockid
+	sockput "Reference46: " + sdata(15, 0) + "\n", sstpsockid
+	sockput "Reference47: " + sdata(16, 0) + "\n", sstpsockid
+	sockput "Reference48: " + sdata(17, 0) + "\n", sstpsockid
+	sockput "Reference49: " + cdata(11, 0) + "\n", sstpsockid
+	sockput "Reference50: " + sdata(19, 0) + "\n", sstpsockid
+	if (prm_1642 >= 0 & prm_1642 < 245) {
+		dbidn = cdatan(2, prm_1642)
+		dbmode = 2
+		gosub *label_1525
+		dbidn = cdatan(3, prm_1642)
+		dbmode = 2
+		gosub *label_1526
+		sockput "Reference51: " + cdatan(0, prm_1642) + "\n", sstpsockid
+		sockput "Reference52: " + cdatan(1, prm_1642) + "\n", sstpsockid
+		sockput "Reference53: " + lang(racename, cnven(cdatan(2, prm_1642))) + "\n", sstpsockid
+		sockput "Reference54: " + lang(classname, cnven(cdatan(3, prm_1642))) + "\n", sstpsockid
+		sockput "Reference55: " + godname(godcheck(prm_1642)) + "\n", sstpsockid
+		sockput "Reference56: " + refchara(prm_1642, 2, 1) + "\n", sstpsockid
+		sockput "Reference57: " + _sex2(cdata(8, prm_1642)) + "\n", sstpsockid
+		sockput "Reference58: " + calcage(prm_1642) + "\n", sstpsockid
+		sockput "Reference59: " + cdata(19, prm_1642) + "\n", sstpsockid
+		sockput "Reference60: " + cdata(20, prm_1642) + "\n", sstpsockid
+		sockput "Reference61: " + cdata(38, prm_1642) + "\n", sstpsockid
+		sockput "Reference62: " + cdata(50, prm_1642) + "\n", sstpsockid
+		sockput "Reference63: " + cdata(51, prm_1642) + "\n", sstpsockid
+		sockput "Reference64: " + cdata(55, prm_1642) + "\n", sstpsockid
+		sockput "Reference65: " + cdata(56, prm_1642) + "\n", sstpsockid
+		sockput "Reference66: " + cdata(30, prm_1642) + "\n", sstpsockid
+		sockput "Reference67: " + cdata(34, prm_1642) + "\n", sstpsockid
+		sockput "Reference68: " + cdata(49, prm_1642) + "\n", sstpsockid
+		sockput "Reference69: " + cdata(71, prm_1642) + "\n", sstpsockid
+		sockput "Reference70: " + cdata(70, prm_1642) + "\n", sstpsockid
+		sockput "Reference71: " + sdata(10, prm_1642) + "\n", sstpsockid
+		sockput "Reference72: " + sdata(11, prm_1642) + "\n", sstpsockid
+		sockput "Reference73: " + sdata(12, prm_1642) + "\n", sstpsockid
+		sockput "Reference74: " + sdata(13, prm_1642) + "\n", sstpsockid
+		sockput "Reference75: " + sdata(14, prm_1642) + "\n", sstpsockid
+		sockput "Reference76: " + sdata(15, prm_1642) + "\n", sstpsockid
+		sockput "Reference77: " + sdata(16, prm_1642) + "\n", sstpsockid
+		sockput "Reference78: " + sdata(17, prm_1642) + "\n", sstpsockid
+		sockput "Reference79: " + cdata(11, prm_1642) + "\n", sstpsockid
+		sockput "Reference80: " + sdata(19, prm_1642) + "\n", sstpsockid
+	}
+	else {
+		sockput "Reference51: " + "" + "\n", sstpsockid
+		sockput "Reference52: " + "" + "\n", sstpsockid
+		sockput "Reference53: " + "" + "\n", sstpsockid
+		sockput "Reference54: " + "" + "\n", sstpsockid
+		sockput "Reference55: " + "" + "\n", sstpsockid
+		sockput "Reference56: " + "" + "\n", sstpsockid
+		sockput "Reference57: " + "" + "\n", sstpsockid
+		sockput "Reference58: " + "" + "\n", sstpsockid
+		sockput "Reference59: " + "" + "\n", sstpsockid
+		sockput "Reference60: " + "" + "\n", sstpsockid
+		sockput "Reference61: " + "" + "\n", sstpsockid
+		sockput "Reference62: " + "" + "\n", sstpsockid
+		sockput "Reference63: " + "" + "\n", sstpsockid
+		sockput "Reference64: " + "" + "\n", sstpsockid
+		sockput "Reference65: " + "" + "\n", sstpsockid
+		sockput "Reference66: " + "" + "\n", sstpsockid
+		sockput "Reference67: " + "" + "\n", sstpsockid
+		sockput "Reference68: " + "" + "\n", sstpsockid
+		sockput "Reference69: " + "" + "\n", sstpsockid
+		sockput "Reference70: " + "" + "\n", sstpsockid
+		sockput "Reference71: " + "" + "\n", sstpsockid
+		sockput "Reference72: " + "" + "\n", sstpsockid
+		sockput "Reference73: " + "" + "\n", sstpsockid
+		sockput "Reference74: " + "" + "\n", sstpsockid
+		sockput "Reference75: " + "" + "\n", sstpsockid
+		sockput "Reference76: " + "" + "\n", sstpsockid
+		sockput "Reference77: " + "" + "\n", sstpsockid
+		sockput "Reference78: " + "" + "\n", sstpsockid
+		sockput "Reference79: " + "" + "\n", sstpsockid
+		sockput "Reference80: " + "" + "\n", sstpsockid
+	}
+	sockput "Reference81: " + prm_1643 + "\n", sstpsockid
+	sockput "Reference82: " + prm_1644 + "\n", sstpsockid
+	sockput "Reference83: " + prm_1645 + "\n", sstpsockid
+	sockput "Reference84: " + prm_1646 + "\n", sstpsockid
+	sockput "Reference85: " + prm_1647 + "\n", sstpsockid
+	sockput "Charset: Shift_JIS\n", sstpsockid
+	sockput "\n", sstpsockid
+	sockclose sstpsockid
+return
+
+#deffunc parsesstptalk var prm_1638, var prm_1639, int prm_1640
+	prm_1639 = ""
+	if (strmid(prm_1638, 0, 5) == "SSTP:") {
+		talkpos = instr(prm_1638, 0, "|")
+		if (talkpos == (-1)) {
+			prm_1639 = strmid(prm_1638, 5, strlen(prm_1638) - 5)
+			prm_1638 = ""
+		} else {
+			prm_1639 = strmid(prm_1638, 5, talkpos - 5)
+			prm_1638 = strmid(prm_1638, talkpos + 1, strlen(prm_1638) - talkpos - 1)
+		}
+		return
+	}
+	if (prm_1640 == 1) {
+		talktoken1 = lang("u", "\"")
+		talktoken2 = lang("v", "\"")
+		talkpos2 = -1
+		talkpos1 = instr(prm_1638, 0, talktoken1)
+		if (talkpos1 != (-1)) {
+			talkpos2 = instr(prm_1638, talkpos1 + strlen(talktoken1), talktoken2)
+		}
+		if (talkpos2 != (-1)) {
+			prm_1639 = strmid(prm_1638, talkpos1 + strlen(talktoken1), talkpos2)
+		}
+	} else {
+		prm_1639 = prm_1638
+	}
+	//prm_1639 = replace(prm_1639, "\\[[\\,0-9]*\\]", "")
+	//prm_1639 = replace(prm_1639, "\\|", "")
+	sreplace prm_1639, prm_1639, "[0]", ""
+	sreplace prm_1639, prm_1639, "[1]", ""
+	sreplace prm_1639, prm_1639, "[2]", ""
+	sreplace prm_1639, prm_1639, "[3]", ""
+	sreplace prm_1639, prm_1639, "[4]", ""
+	sreplace prm_1639, prm_1639, "[5]", ""
+	sreplace prm_1639, prm_1639, "[6]", ""
+	sreplace prm_1639, prm_1639, "[7]", ""
+	sreplace prm_1639, prm_1639, "[8]", ""
+	sreplace prm_1639, prm_1639, "[9]", ""
+	sreplace prm_1639, prm_1639, "|", ""
+	return

@@ -1,0 +1,2 @@
+#defcfunc randattb
+	return rnd(8) + 10

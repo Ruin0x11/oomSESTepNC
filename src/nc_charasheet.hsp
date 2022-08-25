@@ -1,0 +1,535 @@
+
+*label_N310
+  display_topic lang("能力 - 潜在能力 - 経験値", "Attributes - Potential - Exp"), wx + 28, wy + 122
+  display_topic lang("冒険の軌跡", "Trace"), wx + 28, wy + 273
+  display_topic lang("やりこみ", "Ranking"), wx + 400, wy + 122
+  display_topic lang("その他", "Extra Info"), wx + 220, wy + 273
+  display_topic lang("各種修正", "Combat Rolls"), wx + 400, wy + 273
+  if (cPortrait(cc) >= 0) {
+    p = cSex(cc) * 64 + cPortrait(cc)
+    pos wx + 560, wy + 27
+    exist exedir + "user\\graphic\\user_npcface" + p + ".bmp"
+    if (strsize != (-1)) {
+      gsel 32
+      pos 0, 0
+      picload_ exedir + "user\\graphic\\user_npcface" + p + ".bmp", 1
+      gsel 0
+      pos wx + 560, wy + 27
+      gzoom 80, 112, 32, 0, 0, 80, 112
+    } else {
+      if (ex_userface == 1) {
+        gzoom 80, 112, 4, p \ 16 * 80, p / 16 * 112, 80, 112
+      } else {
+        gzoom 80, 112, 4, p \ 16 * 48, p / 16 * 72, 48, 72
+      }
+    }
+  } else {
+    s = exedir + "user\\graphic\\face" + abs(cPortrait(cc) + 1) + ".bmp"
+    exist s
+    if (cPortrait(cc) != (-1)) {
+      if (strsize != (-1)) {
+        pos wx + 560, wy + 27
+        gzoom 80, 112, 4, 0, 0, 80, 112
+      }
+    } else {
+      if (cId(cc) == 343) {
+        if (userdata2(0, cCnpcId(cc))) {
+          pos wx + 560, wy + 27
+          gzoom 80, 112, 100, cCnpcId(cc) \ 16 * 80, cCnpcId(cc) / 16 * 112, 80, 112
+        }
+      }
+    }
+  }
+  window2 wx + 557, wy + 23, 87, 120, 1, 10
+  if (cbit(967, cc) == 1) {
+    pos wx + 596 + 22, wy + 86 + 24
+    gmode 2, 32, 48
+    if (cc == 0) {
+      grotate 10 + cc, 32, 0, 0, 24 + cfg_graphicpc * 8, 40 + cfg_graphicpc * 8
+    } else {
+      grotate 10 + cc, 32, 0, 0, 24 + cfg_graphicnpc * 8, 40 + cfg_graphicnpc * 8
+    }
+  } else {
+    transmissivity = 0
+    if (cId(cc) == 343) {
+      if (userdata2(1, cCnpcId(cc))) {
+        transmissivity = userdata2(1, cCnpcId(cc))
+      }
+    }
+    if (ocdata(101, cc)) {
+      transmissivity = ocdata(101, cc)
+    }
+    i = getcharapic(cc)
+    chara_preparepic i, getcharacolor(cc)
+    pos wx + 596 + 22, wy + 86 + 24
+    gmode 4, chipc(2, i), chipc(3, i), 256 - transmissivity
+    color 0, 0, 0
+    grotate 5, 0, 960, 0, chipc(2, i) / (1 + (chipc(3, i) > inf_tiles)), inf_tiles
+    gmode 2
+  }
+  font lang(cfg_font1, cfg_font2), 12 + sizefix - en * 2, 1
+  color 20, 10, 0
+  s = lang("レベル", "Level"), lang("経験", "EXP"), lang("必要値", "Next Lv"), lang("信仰", "God"), lang("所属", "Guild")
+  repeat 5
+    pos wx + 355, wy + 46 + cnt * 15
+    mes s(cnt)
+  loop
+  s = lang("名前", "Name"), lang("異名", "Aka"), lang("種族", "Race"), lang("性別", "Sex"), lang("職業", "Class"), lang("年齢", "Age"), lang("身長", "Height"), lang("体重", "Weight")
+  repeat 8
+    pos wx + 30 + cnt / 4 * 190, wy + 61 + cnt \ 4 * 15
+    mes s(cnt)
+  loop
+  repeat 8
+    pos wx + 37, wy + 157 + cnt * 15
+    gmode 2, inf_tiles, inf_tiles
+    grotate 1, cnt * inf_tiles, 672, 0, inf_tiles, inf_tiles
+    pos wx + 54, wy + 151 + cnt * 15
+    color 0, 0, 0
+    if (cfg_charasheet == 2) {
+      p = sdata(10 + cnt + 600, cc) \ 1000
+      if (p >= 400) {
+        color 0, 0, 255
+      } else {
+        if (p < 10) {
+          color 255, 0, 0
+        }
+      }
+    }
+    mes _stats2(cnt)
+  loop
+  s = lang("生命力", "Life"), lang("マナ", "Mana"), lang("速度", "Speed"), lang("運", "Luck"), lang("狂気度", "Insanity"), lang("名声", "Fame"), lang("カルマ", "Karma"), lang("信仰P", "Piety"), ""
+  repeat 8
+    pos wx + 220, wy + 151 + cnt * 15
+    color 0, 0, 0
+    if (cfg_charasheet == 2) {
+      if (cnt == 0 | cnt == 1 | cnt == 2 | cnt == 3) {
+        if (cnt == 0) {
+          p = 2
+        }
+        if (cnt == 1) {
+          p = 3
+        }
+        if (cnt == 2) {
+          p = 18
+        }
+        if (cnt == 3) {
+          p = 19
+        }
+        if (sdata(p + 600, cc) \ 1000 >= 400) {
+          color 0, 0, 255
+        } else {
+          if (sdata(p + 600, cc) \ 1000 < 10) {
+            color 255, 0, 0
+          }
+        }
+      }
+    }
+    mes s(cnt)
+  loop
+  s = lang("ターン", "Turns"), lang("経過日", "Days"), lang("殺害数", "Kills"), lang("総時間", "Time"), "", ""
+  repeat 5
+    pos wx + 32, wy + 301 + cnt * 15
+    mes s(cnt)
+  loop
+  s = lang("荷車重量", "Cargo Wt"), lang("荷車限界", "Cargo Lmt"), lang("装備重量", "Equip Wt"), lang("最深到達", "Deepest Lv")
+  repeat 4
+    pos wx + 224, wy + 301 + cnt * 15
+    mes s(cnt)
+  loop
+  font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+  color 0, 0, 0
+  s = "" + cLevel(cc), "" + cExperience(cc), "" + cRequiredExperience(cc), godname(godcheck(cc)), guildname(cc)
+  repeat 5
+    pos wx + 410 + en * 5, wy + 45 + cnt * 15
+    mes s(cnt)
+  loop
+  s = cdatan(0, cc), cdatan(1, cc)
+  cutname s, 22
+  dbidn = cdatan(2, cc)
+  dbmode = 2
+  gosub *label_1525
+  if (cId(cc) == 343) {
+    if (userdatan2(0, cCnpcId(cc)) != "") {
+      racename = userdatan2(0, cCnpcId(cc))
+    }
+  }
+  cutname racename, 14
+  s(2) = cnven(racename)
+  dbidn = cdatan(3, cc)
+  dbmode = 2
+  gosub *label_1526
+  if (cId(cc) == 343) {
+    if (userdatan2(1, cCnpcId(cc)) != "") {
+      classname = userdatan2(1, cCnpcId(cc))
+    }
+  }
+  cutname classname, 14
+  s(4) = cnven(lang("" + classname, cdatan(3, cc)))
+  if (cSex(cc) == 0) {
+    s(3) = cnven(strmale)
+  } else {
+    s(3) = cnven(strfemale)
+  }
+  s(5) = "" + calcage(cc) + " " + lang("歳", ""), "" + cHeight(cc) + " cm", "" + cWeight(cc) + " kg"
+  repeat 8
+    pos wx + 68 + cnt / 4 * 190 + en * ((cnt > 3) * 12), wy + 60 + cnt \ 4 * 15
+    mes s(cnt)
+  loop
+  repeat 8
+    cnt2 = cnt
+    p = sdata(10 + cnt + 600, cc) \ 1000
+    color 255, 30, 30
+    if (p >= 50) {
+      color 255, 130, 130
+    }
+    if (p >= 100) {
+      color 220, 255, 200
+    }
+    if (p >= 200) {
+      color 180, 220, 255
+    }
+    if (p >= 300) {
+      color 255, 255, 150
+    }
+    gmode 3,,,128
+    boxfa wx + 90, wy + 157 + (cnt * 15) , 10 + (p / 5), 8
+    p2 = stexp(10 + cnt + 600, cc)
+    color 200, 200, 200
+    boxfa wx + 90, wy + 150 + (cnt * 15) , 5 + (1000 / 10), 7
+    color 255, 255, 255
+    boxfa wx + 90, wy + 150 + (cnt * 15) , 5 + (p2 / 10), 5
+    gmode 0
+    color 0, 0, 0
+    s = ""
+    pos wx + 92, wy + 151 + cnt * 15
+    if (sdata(10 + cnt, cc) >= 10000000 & cfg_NC_stateshorten) {
+      mes "" + sdata(10 + cnt, cc) / 1000000 + "M"
+    } elseif (sdata(10 + cnt, cc) >= 10000 & cfg_NC_stateshorten) {
+      mes "" + sdata(10 + cnt, cc) / 1000 + "K"
+    } else {
+      mes "" + sdata(10 + cnt, cc)
+    }
+    pos wx + 124, wy + 151 + cnt * 15
+    mes s
+    pos wx + 170, wy + 151 + cnt * 15
+    if (cfg_NC_detail) {
+      mes "" + p2 / 10 + "%"
+    } else {
+      if (cfg_ST_attributesPotential == 0) {
+        if (p >= 450) {
+          mes "Extra"
+          continue
+        }
+        if (p >= 400) {
+          mes "Superb++"
+          continue
+        }
+        if (p >= 360) {
+          mes "Superb+"
+          continue
+        }
+        if (p >= 200) {
+          mes "Superb"
+          continue
+        }
+        if (p >= 150) {
+          mes "Great"
+          continue
+        }
+        if (p >= 100) {
+          mes "Good"
+          continue
+        }
+        if (p >= 50) {
+          mes "Bad"
+          continue
+        }
+        mes "Hopeless"
+      } else {
+        mes strf("%5d%%", p)
+      }
+    }
+  loop
+  s = "" + sdata(2, cc), "" + sdata(3, cc), "" + cCurrentSpeed(cc), "" + sdata(19, cc), "" + cInsanity(cc), "" + cFame(cc), "" + cKarma(cc), "", "", ""
+  repeat 8
+    if (cnt < 4) {
+      if (cnt == 0) {
+        pn = 2
+        p = sdata(2 + 600, cc) \ 1000
+      }
+      if (cnt == 1) {
+        pn = 3
+        p = sdata(3 + 600, cc) \ 1000
+      }
+      if (cnt == 2) {
+        pn = 18
+        p = sdata(18 + 600, cc) \ 1000
+      }
+      if (cnt == 3) {
+        pn = 19
+        p = sdata(19 + 600, cc) \ 1000
+      }
+      color 255, 30, 30
+      if (p >= 50) {
+        color 255, 130, 130
+      }
+      if (p >= 100) {
+        color 220, 255, 200
+      }
+      if (p >= 200) {
+        color 180, 220, 255
+      }
+      if (p >= 300) {
+        color 255, 255, 150
+      }
+      gmode 3,,,128
+      boxfa wx + 270, wy + 157 + (cnt * 15) , 10 + (p / 5), 8
+      p2 = stexp(pn + 600, cc)
+      color 200, 200, 200
+      boxfa wx + 270, wy + 150 + (cnt * 15) , 5 + (1000 / 10), 7
+      color 255, 255, 255
+      boxfa wx + 270, wy + 150 + (cnt * 15) , 5 + (p2 / 10), 5
+      gmode 0
+      color 0, 0, 0
+    }
+    pos wx + 270, wy + 150 + cnt * 15
+    mes s(cnt)
+    if (cnt < 4) {
+      pos wx + 365, wy + 150 + cnt * 15
+      if (cfg_NC_detail) {
+        mes "" + p2 / 10 + "%"
+      } else {
+        if (cfg_ST_attributesPotential == 0) {
+          if (p >= 450) {
+            mes "Extra"
+            continue
+          }
+          if (p >= 400) {
+            mes "Superb++"
+            continue
+          }
+          if (p >= 360) {
+            mes "Superb+"
+            continue
+          }
+          if (p >= 200) {
+            mes "Superb"
+            continue
+          }
+          if (p >= 150) {
+            mes "Great"
+            continue
+          }
+          if (p >= 100) {
+            mes "Good"
+            continue
+          }
+          if (p >= 50) {
+            mes "Bad"
+            continue
+          }
+          mes "Hopeless"
+        } else {
+          mes strf("%5d%%", p)
+        }
+    }
+  }
+  loop
+  pos wx + 270, wy + 151 + 7 * 15
+  mes "" + cPietyPoint(cc) + "/" + int(limitf(double(sdata(181, cc)) * 100, 0, 2147483647))
+  val = 0
+  gosub *label_1265
+  tc = cc
+  font lang(cfg_font1, cfg_font2), 12 + sizefix - en * 2, 1
+  color 20, 10, 0
+  pos wx + 417, wy + 301 + p(2) * 15
+  mes lang("軽減", "Prot")
+  pos wx + 590 - en * 16, wy + 301 + p(2) * 15
+  mes lang("回避", "Evade")
+  attackskill = 106
+  evade = calcattackhit(2)
+  prot = calcattackdmg(2)
+  font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+  color 0, 0, 0
+  pos wx + 460 + en * 8, wy + 300 + p(2) * 15
+  mes "" + (100 - 10000 / (prot + 100)) + "% + " + protdice1 + "d" + protdice2
+  pos wx + 625 - en * 8, wy + 300 + p(2) * 15
+  if (evade >= 10000000 & cfg_NC_stateshorten) {
+    mes "" + evade / 1000000 + "M%"
+  } elseif (evade >= 10000 & cfg_NC_stateshorten) {
+    mes "" + evade / 1000 + "K%"
+  } else {
+    mes "" + evade + "%"
+  }
+  p(2)++
+  s = "" + gPlayTurns + "" + lang("ターン", " Turns"), "" + gPlayDays + "" + lang("日", " Days"), "" + gKillCount, "" + cnvplaytime(gPlayTime + timeGetTime() / 1000 - time_begin), "", ""
+  repeat 5
+    pos wx + 80, wy + 299 + cnt * 15
+    mes s(cnt)
+  loop
+  if (godcheck() == "serria") {
+    s = "" + cnvweight(gCargoWeight), cnvweight(gCurrentCartLimit * 3), cnvweight(cSumOfEquipmentWeight(cc)) + " " + cnveqweight(cc), cnvrank(gDeepestDungeonLevel) + lang("階相当", " Level")
+  } else {
+    s = "" + cnvweight(gCargoWeight), cnvweight(gCurrentCartLimit), cnvweight(cSumOfEquipmentWeight(cc)) + " " + cnveqweight(cc), cnvrank(gDeepestDungeonLevel) + lang("階相当", " Level")
+  }
+  repeat 4
+    pos wx + 287 + en * 14, wy + 299 + cnt * 15
+    mes s(cnt)
+  loop
+  s(0) = lang("==========", "=========="), lang("最大ダメージ", "Max Damage"), lang("願い回数", "Wish Count"), lang("原子爆弾回数", "Bomb Count"), lang("気持ちいいこと回数", "Prostituting Count")
+  s(5) = lang("気持ちいいこと最高額", "Prostituting Highest"), lang("妹猫と遊んだ回数", "Playing Catgirl"), lang("少女騎士団護衛回数", "Knights protected"), lang("リトルシスター救助数", "L.Sister Rescue"), lang("リトルシスター殺害数", "L.Sister Killed")
+  s(10) = lang("ハンマー最高レベル", "Hammer MaxLevel"), lang("ハンマーでの製作数", "Hammer count"), lang("会心の出来回数", "Good Make"), lang("演奏最高額", "Max Perform"), lang("魔法詠唱回数", "Magic count")
+  s(15) = lang("人肉食回数", "Human flesh"), lang("すくつ到達階", "Void count"), lang("結婚人数", "Married count"), lang("愛情の証取得数", "LoveJewel count"), lang("バブル殺害数", "Bubbles killed")
+  s(20) = lang("ブルーバブル殺害数", "B.bubbles killed"), lang("塊の怪物殺害数", "M.monsters killed"), lang("キューブ殺害数", "Cubes killed"), lang("Tow殺害数", "Tow killed"), lang("依頼完了数", "Quest count")
+  s(25) = lang("総歩行距離", "Total distance"), lang("職人の魂使用回数", "Soul count"), lang("ならく到達階", "Abyss count")
+  repeat 8
+    s(28 + cnt) = lang("鍛えた", "Trained") + _stats2(cnt)
+  loop
+  s(36) = lang("鍛えた", "Trained") + lang("生命力", "Life")
+  s(37) = lang("鍛えた", "Trained") + lang("マナ", "Mana")
+  repeat 8
+    color 0, 0, 0
+    pos wx + 425, wy + 151 + cnt * 15
+    font lang(cfg_font1, cfg_font2), 12 - en * 2, 1
+    mes s(cfg_NC_charasheetdata(cnt))
+    color 20, 10, 0
+    pos wx + 565, wy + 150 + cnt * 15
+    font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+    cnt2 = cfg_NC_charasheetdata(cnt)
+    switch cnt2
+    	case 0
+      	s2 = ""
+    	swbreak
+    	case 1
+        s2 = "" + ncgdata(60)
+    	swbreak
+      case 2
+        s2 = "" + ncgdata(61)
+    	swbreak
+      case 3
+        s2 = "" + ogdata(431)
+    	swbreak
+      case 4
+        s2 = "" + ogdata(436)
+    	swbreak
+      case 5
+        s2 = "" + ncgdata(62)
+    	swbreak
+      case 6
+        s2 = "" + ncgdata(1)
+    	swbreak
+      case 7
+        s2 = "" + ncgdata(2)
+    	swbreak
+      case 8
+        s2 = "" + gSaveCountOfLittleSister
+    	swbreak
+      case 9
+        s2 = "" + gKillCountOfLittleSister
+    	swbreak
+      case 10
+        s2 = "" + ncgdata(63)
+    	swbreak
+      case 11
+        s2 = "" + ncgdata(64)
+    	swbreak
+      case 12
+        s2 = "" + ncgdata(3)
+    	swbreak
+      case 13
+        s2 = "" + ncgdata(65)
+    	swbreak
+      case 14
+        s2 = "" + ncgdata(66)
+    	swbreak
+      case 15
+        s2 = "" + ogdata(433)
+    	swbreak
+      case 16
+        s2 = "" + ncgdata(68)
+    	swbreak
+      case 17
+        s2 = "" + ogdata(430)
+    	swbreak
+      case 18
+        s2 = "" + ncgdata(0)
+    	swbreak
+      case 19
+        s2 = "" + npcmemory(0, 286)
+    	swbreak
+      case 20
+        s2 = "" + npcmemory(0, 285)
+    	swbreak
+      case 21
+        s2 = "" + npcmemory(0, 287)
+    	swbreak
+      case 22
+        s2 = "" + npcmemory(0, 327)
+    	swbreak
+      case 23
+        s2 = "" + ncgdata(69)
+    	swbreak
+      case 24
+        s2 = "" + ncgdata(70)
+    	swbreak
+      case 25
+        s2 = "" + ogdata(438)
+    	swbreak
+      case 26
+        s2 = "" + ncgdata(71)
+    	swbreak
+      case 27
+        s2 = "" + ncgdata(72)
+    	swbreak
+      default
+        if (cnt2 >= 28) {
+          repeat 8
+            if (cnt2 == 28 + cnt) {
+              s2 = "" + ncgdata(210 + cnt)
+            }
+  				loop
+          if (cnt2 == 36) {
+            s2 = "" + ncgdata(218)
+          }
+          if (cnt2 == 37) {
+            s2 = "" + ncgdata(219)
+          }
+        }
+      swbreak
+    swend
+    mes s2
+  loop
+  cs_buffmax = 0
+  repeat 8 + 8 - 1
+    if (ocdata(192 + cnt * 3, cc) == 0) {
+      continue
+    }
+    cs_buffmax++
+  loop
+  if (cs_buffmax != 0) {
+    calcbuff -2, ocdata(192 + cs_buff * 3, cc), ocdata(192 + cs_buff * 3 + 1, cc)
+    s = "" + buffname(ocdata(192 + cs_buff * 3, cc)) + ": " + ocdata(192 + cs_buff * 3 + 2, cc) + lang("(" + dur + ")ﾀｰﾝの間、", "(" + dur + ") ") + buffdesc
+    pos wx + 100, wy + 362
+  } else {
+    pos wx + 80, wy + 362
+    s = lang("今は持続効果を受けていない", "This character isn't currently blessed or hexed.")
+  }
+  font lang(cfg_font1, cfg_font2), 13 - en * 2, 0
+  mes s
+  if (cs_buffmax != 0) {
+      font lang(cfg_font1, cfg_font2), 12 + sizefix - en * 2, 1
+      color 20, 10, 0
+      pos wx + 32, wy + 363 - en * 3
+      mes lang("影響(", "Buff(") + (cs_buff + 1) + "/" + cs_buffmax + ")"
+  }
+return
+
+*label_N311
+  if (cfg_NC_charasheet == 1) {
+    if (checkyarikomi(yarikomi) == 1) {
+      snd 24
+      txtef 2
+      txt -1, lang("記録を更新した！", "You broke the record!")
+    }
+  }
+return

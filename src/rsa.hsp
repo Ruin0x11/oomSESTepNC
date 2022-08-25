@@ -1,0 +1,434 @@
+#ifndef __RSA_MODULE__
+#define __RSA_MODULE__
+#include "longint.hsp"
+#module
+#const HASHLEN 32 ;4ÇÃî{êî
+#const HASH_DWORD_LEN HASHLEN/4
+#define ctype BSWAP(%1) (((%1)<<24) | ((%1)<<8&0xff0000) | ((%1)>>8&0xff00) | ((%1)>>24&0xff))
+#deffunc SwapBytes var src,int srclen
+	repeat srclen/2
+		i=peek(src,cnt)
+		poke src,cnt,peek(src,srclen-1-cnt)
+		poke src,srclen-1-cnt,i
+	loop
+	return
+#deffunc GenerateMask var mask,var seed,int maskLen,int seedLen,int maskOffset,int seedOffset
+	repnum=(maskLen+(HASHLEN-1))/HASHLEN  // maskLen < INT_MAX-(HASHLEN-2)
+	dim octstr,HASH_DWORD_LEN*repnum
+	repeat repnum
+		counter=BSWAP(cnt)
+		InitSha256 context
+		InputSha256 context,seed,seedLen,seedOffset
+		InputSha256 context,counter,4
+		OutputSha256 context,octstr,HASHLEN*cnt
+	loop
+	memcpy mask,octstr,maskLen,maskOffset
+	dim octstr,1
+	return
+#deffunc GenerateHash var dest,var src,int srclen,int destOffser,int srcOffset
+	InitSha256 context
+	InputSha256 context,src,srclen,srcOffset
+	OutputSha256 context,dest,destOffser
+	return
+#global
+
+#module RsaKey type,modulus,publicExp,privateExp,primeP,primeQ,crtExpP,crtExpQ,invQ
+#const HASHLEN 32 ;4ÇÃî{êî
+#const HASH_DWORD_LEN HASHLEN/4
+#define RSAKEY_TYPE_PRIVATE 1
+#define RSAKEY_TYPE_PUBLIC 2
+#modfunc __SetPublicKeyData var mod,var pe
+	type=RSAKEY_TYPE_PUBLIC
+	modulus=mod
+	publicExp=pe
+	return
+#modfunc __CopyPublicKeyData var publicKey
+	__SetPublicKeyData	publicKey,modulus,publicExp
+	return
+#modfunc CreateRsaKey var publickey,int keylength
+//keylengthÇÕ64ÇÃî{êîÇ©Ç¬max(HASHLEN*2+2,HASHLEN+SALTLEN+3)*8à»è„
+	if keylength!=1024 & keylength!=2048 :return -1
+	modDwSize=keylength/64
+	type=RSAKEY_TYPE_PRIVATE : publicExp=65537
+	repeat 1
+		dim seed1,modDwSize : dim seed2,modDwSize
+		repeat modDwSize-1
+			seed1.cnt=GetRandNum()
+			seed2.cnt=GetRandNum()
+		loop
+		repeat
+			i=GetRandNum() : if i>>28:seed1(modDwSize-1)=i:break
+		loop
+		repeat
+			i=GetRandNum() : if i>>28:seed2(modDwSize-1)=i:break
+		loop
+
+		seed1 |= 1 : seed2 |= 1
+		primeP=LoadLongint(seed1,modDwSize,2)
+		primeQ=LoadLongint(seed2,modDwSize,2)
+		dim seed1,1 :dim seed2,1
+		repeat
+			if IsPrime(primeP):break
+			primeP+=2
+		loop
+		repeat
+			if IsPrime(primeQ):break
+			primeQ+=2
+		loop
+		if primeP==primeQ:continue 0
+		modulus=primeP*primeQ :	p1=primeP-1 : q1=primeQ-1 : l=p1*q1/GetGCD(p1,q1)
+		Exeuclid privateExp,publicExp,i,l,g
+		if g!=1:continue 0
+		if privateExp<0:privateExp+=l
+		crtExpP=privateExp\p1 : crtExpQ=privateExp\q1
+		Exeuclid invQ,primeQ,i,primeP,g
+		if invQ<0:invQ+=primeP
+		p1=0 : q1=0 : l=0 : i=0 : g=0
+	loop
+	__SetPublicKeyData publickey,modulus,publicExp
+	return 0
+#modfunc __GetRsaKeyType
+	if type==RSAKEY_TYPE_PUBLIC :return RSAKEY_TYPE_PUBLIC
+	if type==RSAKEY_TYPE_PRIVATE :return RSAKEY_TYPE_PRIVATE
+	return 0
+#defcfunc GetRsaKeyType var srcKey
+	__GetRsaKeyType srcKey
+	return stat
+#modfunc GetPublicKey var privateKey
+	if GetRsaKeyType(privateKey)!=RSAKEY_TYPE_PRIVATE :return -1
+	__CopyPublicKeyData privateKey,thismod
+	return 0
+#modfunc StoreRsaKey var dest
+	if type!=RSAKEY_TYPE_PUBLIC & type!=RSAKEY_TYPE_PRIVATE :return -1
+	modlen=GetLintsize(modulus,2)*4
+	destlen=modlen+16+HASHLEN
+	if type==RSAKEY_TYPE_PRIVATE : destlen+=modlen*7/2
+	dup _dest,dest
+	if vartype(_dest)!=4 | length(_dest)*4<destlen: dim dest,destlen/4 : else : memset dest,0,destlen
+	index=0
+	lpoke dest,index,0x4b415352 : index+=4
+	lpoke dest,index,modlen : index+=4
+	lpoke dest,index,type : index+=4
+	StoreLongint dest,modulus,2,index : index+=modlen
+	lpoke dest,index,publicExp : index+=4
+	if type==RSAKEY_TYPE_PRIVATE{
+		StoreLongint dest,privateExp,2,index : index+=modlen
+		StoreLongint dest,primeP,2,index : index+=modlen/2
+		StoreLongint dest,primeQ,2,index : index+=modlen/2
+		StoreLongint dest,crtExpP,2,index : index+=modlen/2
+		StoreLongint dest,crtExpQ,2,index : index+=modlen/2
+		StoreLongint dest,invQ,2,index : index+=modlen/2
+	}
+	GenerateHash dest,dest,index,index
+	return destlen
+#modfunc LoadRsaKey var src,int srclen
+	if srclen<12 :return -1
+	type=0
+	index=0
+	sig=lpeek(src,index) : index+=4
+	modlen=lpeek(src,index) : index+=4
+	_type=lpeek(src,index)  : index+=4
+	if sig!=0x4b415352 :return -1
+	if srclen != modlen+16+HASHLEN+(modlen*7/2)*(_type==RSAKEY_TYPE_PRIVATE):return -1
+	modulus=LoadLongint(src,modlen/4,2,index) : index+=modlen
+	publicExp=lpeek(src,index) : index+=4
+	if _type==RSAKEY_TYPE_PRIVATE{
+		privateExp=LoadLongint(src,modlen/4,2,index) : index+=modlen
+		primeP=LoadLongint(src,modlen/8,2,index) : index+=modlen/2
+		primeQ=LoadLongint(src,modlen/8,2,index) : index+=modlen/2
+		crtExpP=LoadLongint(src,modlen/8,2,index) : index+=modlen/2
+		crtExpQ=LoadLongint(src,modlen/8,2,index) : index+=modlen/2
+		invQ=LoadLongint(src,modlen/8,2,index) : index+=modlen/2
+	}
+	GenerateHash hash,src,index
+	dupptr hash2,varptr(src)+index,HASHLEN
+	ferr=0
+	repeat HASH_DWORD_LEN
+		if hash.cnt!=hash2.cnt : ferr=1:break
+	loop
+	if ferr:return -1
+	type=_type
+	return 0
+#deffunc SetRsaLabel var src,int srclen
+	dim RsaLabel,(srclen+3)/4 ;dimÇÕp2Ç™0ÇÃÇ∆Ç´é©ìÆìIÇ…1Ç…ïœä∑Ç∑ÇÈ
+	memcpy rsaLabel,src,srclen
+	rsaLabelLen=srclen
+	return
+//RSAES-OAEP
+#modfunc EncryptRsa var dest,var src,int srclen
+	if type!=RSAKEY_TYPE_PUBLIC :return -2
+	destlen=GetLintsize(modulus,2)*4
+	if srclen>(destlen-HASHLEN*2-2) | srclen<0:return -1
+	dblen=destlen-HASHLEN-1
+	dup _dest,dest
+	if vartype(_dest)!=4 | length(_dest)*4<destlen: dim dest,destlen/4 : else : memset dest,0,destlen
+	dupptr db,varptr(dest)+HASHLEN,dblen+1
+	GenerateHash db,rsaLabel,rsaLabelLen,1
+	poke db,dblen-srclen,0x01
+	memcpy db,src,srclen,dblen+1-srclen
+	repeat HASH_DWORD_LEN
+		seed.cnt=GetRandNum()
+	loop
+	dim mask,(dblen+1)/4
+	GenerateMask mask,seed,dblen,HASHLEN,1
+	repeat (dblen+1)/4
+		db.cnt^=mask.cnt
+	loop
+	dupptr mask,varptr(dest)+1,HASHLEN
+	GenerateMask mask,db,HASHLEN,dblen,0,1
+	repeat HASH_DWORD_LEN
+		mask.cnt^=seed.cnt
+	loop
+	SwapBytes dest,destlen
+	StoreLongint dest,GetPowMod(LoadLongint(dest,destlen/4,2),publicExp,modulus),2
+	memset dest,0,destlen-stat*4,stat*4
+	SwapBytes dest,destlen
+	return destlen
+#modfunc DecryptRsa var dest,var src,int srclen
+	if type!=RSAKEY_TYPE_PRIVATE :return -2
+	modDwSize=GetLintsize(modulus,2)
+	if modDwSize*4 != srclen :return -1
+//	if modDwSize*4 < HASHLEN*2+2:return -1
+	dim emBlock,modDwSize
+	memcpy emBlock,src,srclen :emlen=srclen
+	SwapBytes emBlock,emlen
+	ed=LoadLongint(emBlock,modDwSize,2)
+	if ed>=modulus :return -1
+	mq=GetPowMod(ed,crtExpQ,primeQ)
+	ed=invQ*(GetPowMod(ed,crtExpP,primeP)-mq)\primeP*primeQ+mq
+	if ed<0:ed+=modulus
+	StoreLongint emBlock,ed,2
+	memset emBlock,0,emlen-stat*4,stat*4
+	ed=0 : mq=0
+	SwapBytes emBlock,emlen
+	dblen=emlen-HASHLEN-1
+	dup db,emBlock.HASH_DWORD_LEN
+	dupptr seed,varptr(emBlock)+1,HASHLEN
+	dim mask,(dblen+1)/4
+	GenerateMask mask,db,HASHLEN,dblen,0,1
+	repeat HASH_DWORD_LEN
+		seed.cnt^=mask.cnt
+	loop
+	GenerateMask mask,seed,dblen,HASHLEN,1
+	repeat (dblen+1)/4
+		db.cnt^=mask.cnt
+	loop
+	dupptr db,varptr(db)+1,dblen
+	GenerateHash mask,rsaLabel,rsaLabelLen
+	ferr=peek(emBlock,0)
+	repeat HASH_DWORD_LEN
+		if db.cnt!=mask.cnt:ferr=1
+	loop
+	repeat dblen-HASHLEN,HASHLEN
+		i=peek(db,cnt)
+		if i:index=cnt+1:break
+	loop
+	if ferr!=0 | i!=1:return -1
+	destlen=dblen-index
+	dup _dest,dest
+	if vartype(_dest)!=4 | length(_dest)*4<destlen: dim dest,(destlen+3)/4
+	memcpy dest,db,destlen,0,index
+	dim emBlock,1 : dim mask,1
+	return destlen
+//RSASSA-PSS
+#modfunc SignRsa var dest,var shash
+#const SALTLEN HASHLEN ;4ÇÃî{êî
+#const SALT_DWORD_LEN SALTLEN/4
+	if type!=RSAKEY_TYPE_PRIVATE :return -1
+	modDwSize=GetLintsize(modulus,2)
+	i=int(modulus >> modDwSize*32-8)  // i>0
+	repeat 8
+		if i&0x80:emBits=modDwSize*32-cnt-1:break
+		i<<=1
+	loop
+//	if (emBits+7)/8 < HASHLEN+SALTLEN+2 :return -1
+	destlen=modDwSize*4
+	emlen=(emBits+7)/8
+	dblen=emlen-HASHLEN-1
+	dim msalt,(SALTLEN+HASHLEN+8)/4
+	dup salt,msalt(HASH_DWORD_LEN+2)
+	repeat SALT_DWORD_LEN
+		salt.cnt=GetRandNum();
+	loop
+	memcpy msalt,shash,HASHLEN,8
+	dup _dest,dest
+	if vartype(_dest)!=4 | length(_dest)<modDwSize: dim dest,modDwSize : else : memset dest,0,destlen
+	GenerateHash dest,msalt,SALTLEN+HASHLEN+8,dblen
+	dim db,(dblen+3)/4
+	poke db,dblen-SALTLEN-1,0x01
+	memcpy db,salt,SALTLEN,dblen-SALTLEN
+	dim mask,(dblen+3)/4
+	GenerateMask mask,dest,dblen,HASHLEN,0,dblen
+	repeat (dblen+3)/4
+		db.cnt^=mask.cnt
+	loop
+	poke db,0,(0x100>>emlen*8-emBits)-1 & peek(db,0)
+	memcpy dest,db,dblen
+	poke dest,emlen-1,0xbc
+	SwapBytes dest,emlen
+	ed=LoadLongint(dest,modDwSize,2)
+	mq=GetPowMod(ed,crtExpQ,primeQ)
+	ed=invQ*(GetPowMod(ed,crtExpP,primeP)-mq)\primeP*primeQ+mq
+	if ed<0:ed+=modulus
+	StoreLongint dest,ed,2
+	memset dest,0,destlen-stat*4,stat*4
+	SwapBytes dest,destlen
+	dim db,1:dim msalt,1:dim mask,1:ed=0:mq=0
+	return destlen
+#modfunc __VerifyRsaSign var src,int srclen,var shash
+	if type!=RSAKEY_TYPE_PUBLIC :return 0
+	modDwSize=GetLintsize(modulus,2)
+	if modDwSize*4 != srclen :return 0
+	dim emBlock,modDwSize
+	memcpy emBlock,src,srclen
+	SwapBytes emBlock,srclen
+	ed=LoadLongint(emBlock,modDwSize,2)
+	if ed>=modulus :return 0
+	ed=GetPowMod(ed,publicExp,modulus)
+	i=int(modulus >> modDwSize*32-8)  // i>0
+	repeat 8
+		if i&0x80:emBits=modDwSize*32-cnt-1:break
+		i<<=1
+	loop
+//	if (emBits+7)/8 < HASHLEN+SALTLEN+2 :return 0
+	if ed >= longint(1)<<emBits :return 0
+	StoreLongint emBlock,ed,2
+	memset emBlock,0,srclen-stat*4,stat*4
+	ed=0
+	emlen=(emBits+7)/8
+	dblen=emlen-HASHLEN-1
+	SwapBytes emBlock,emlen
+	if peek(emBlock,emlen-1)!=0xbc:return 0
+	dim db,(dblen+3)/4
+	memcpy db,emBlock,dblen
+	dim mask,(dblen+3)/4
+	dupptr hash,varptr(emBlock)+dblen,HASHLEN
+	GenerateMask mask,hash,dblen,HASHLEN
+	repeat (dblen+3)/4
+		db.cnt^=mask.cnt
+	loop
+	poke db,0,(0x100>>emlen*8-emBits)-1 & peek(db,0)
+	ferr=0
+	repeat dblen-SALTLEN-1
+		if peek(db,cnt):ferr=1:break
+	loop
+	if ferr!=0 | peek(db,dblen-SALTLEN-1)!=0x01 :return 0
+	dim msalt,(SALTLEN+HASHLEN+8)/4
+	memcpy msalt,shash,HASHLEN,8
+	memcpy msalt,db,SALTLEN,HASHLEN+8,dblen-SALTLEN
+	GenerateHash msalt,msalt,SALTLEN+HASHLEN+8
+	repeat HASH_DWORD_LEN
+		if msalt.cnt!=hash.cnt:ferr=1:break
+	loop
+	if ferr:return 0
+	dim db,1:dim msalt,1:dim mask,1
+	return 1
+#defcfunc VerifyRsaSign var SrcKey,var src,int srclen,var shash
+	__VerifyRsaSign SrcKey,src,srclen,shash
+	return stat
+#global
+
+#module
+#deffunc GetFileSha256 var dest,str filename
+#define BUFSIZE 1048576
+	sdim buf,BUFSIZE
+	index=0
+	InitSha256 context
+	repeat
+		bload filename,buf,BUFSIZE,index
+		if strsize==0:break
+		index+=strsize
+		InputSha256 context,buf,strsize
+		await 0
+	loop
+	OutputSha256 context,dest
+	return
+#deffunc GetDataSha256 var dest,var src,int srclen,int destOffser,int srcOffset
+	InitSha256 context
+	InputSha256 context,src,srclen,srcOffset
+	OutputSha256 context,dest,destOffset
+	return
+#global
+
+#module
+#deffunc __initBase64
+	if fInitBase64:return
+	encodeTable="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+	dim decodeTable,256/4 : memset decodeTable,128,256
+	repeat 26:poke decodeTable,'A'+cnt,cnt:loop
+	repeat 26:poke decodeTable,'a'+cnt,cnt+26:loop
+	repeat 10:poke decodeTable,'0'+cnt,cnt+52:loop
+	poke decodeTable,'+',62
+	poke decodeTable,'/',63
+	poke decodeTable,13,129
+	poke decodeTable,10,129
+	poke decodeTable,'=',254
+	poke decodeTable,0,255
+	fInitBase64=1
+	return
+#deffunc EncodeBase64 var dest,var src,int srclen
+	__InitBase64
+	dest="":memexpand dest,(srclen+2)/3*4+(srclen+2)/3*4/76*2+1
+	srcIndex=0 : destIndex=0
+	repeat srclen/3
+		rdata=peek(src,srcIndex)<<16 | peek(src,srcIndex+1)<<8 | peek(src,srcIndex+2)
+		poke dest,destIndex,peek(encodeTable,rdata>>18)
+		poke dest,destIndex+1,peek(encodeTable,rdata>>12&63)
+		poke dest,destIndex+2,peek(encodeTable,rdata>>6&63)
+		poke dest,destIndex+3,peek(encodeTable,rdata&63)
+		srcIndex+=3 : destIndex+=4
+		if destIndex\78==76: poke dest,destIndex,"\n" : destIndex+=2
+	loop
+	if srclen\3>0{
+		rdata=peek(src,srcIndex)
+		poke dest,destIndex,peek(encodeTable,rdata>>2)
+		if srclen\3==1{
+			poke dest,destIndex+1,peek(encodeTable,rdata<<4&63)
+			wpoke dest,destIndex+2,0x3d3d ;'=='
+		}else{
+			rdata=(rdata&3)<<8 | peek(src,srcIndex+1)
+			poke dest,destIndex+1,peek(encodeTable,rdata>>4)
+			poke dest,destIndex+2,peek(encodeTable,rdata<<2&63)
+			poke dest,destIndex+3,'='
+		}
+		destIndex+=4
+		if destIndex\78==76: poke dest,destIndex,"\n" : destIndex+=2
+	}
+	poke dest,destIndex,0
+	return destIndex
+#deffunc DecodeBase64 var dest,var src
+	__InitBase64
+	dim dest,((strlen(src)+3)/4*3+3)/4
+	mref _stat,64
+	srcIndex=0 : destIndex=0 :fStat=0
+	repeat
+		rdata=0
+		repeat 4
+			srcChar=peek(decodeTable,peek(src,srcIndex)) : 	srcIndex++
+			if srcChar>=254: rIndex=cnt:break
+			if srcChar>63: fStat|=(srcChar==128):continue cnt
+			rdata=rdata<<6 | srcChar
+		loop
+		if srcChar>63:break
+		poke dest,destIndex,rdata>>16
+		poke dest,destIndex+1,rdata>>8&255
+		poke dest,destIndex+2,rdata&255
+		destIndex+=3
+	loop
+	if rIndex{
+		rdata<<=(4-rIndex)*6
+		poke dest,destIndex,rdata>>16 : destIndex++
+		if rIndex==3: poke dest,destIndex,rdata>>8&255 :destIndex++
+		if srcChar!=254{
+			fStat|=2
+		}else{
+			fStat|=(rIndex==1 | (rIndex==2 & peek(decodeTable,peek(src,srcIndex))!=254))*2
+		}
+	}else{
+		fStat|=(srcChar!=255)*2
+	}
+	_stat=destIndex
+	return double(fStat)
+#global
+#endif
+

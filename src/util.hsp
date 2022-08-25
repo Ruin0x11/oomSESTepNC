@@ -1,0 +1,56 @@
+#defcfunc weight2str int __weightInStone
+	return strf("%d.%03ds", abs(__weightInStone) / 1000, abs(__weightInStone) \ 1000)
+
+
+
+#deffunc picload_ str __filename, int __mode
+	oomsest_lastLoadedImage = __filename
+	picload __filename, __mode
+	return
+
+
+
+#defcfunc oomsest_getHumanReadableErrorReason int __errorId
+	switch __errorId
+	case 12 : return "File not found"
+	case 13 : return "Image not found(filename: " + oomsest_lastLoadedImage + ")"
+	case 14 : return "External program failed"
+	case 17 : return "Too long string"
+	case 19 : return "Zero divide"
+	case 20 : return "Buffer overflow"
+	case 21 : return "Unsupported feature"
+	case 26 : return "No enough memory"
+	case 38 : return "DLL loading error"
+	case 39 : return "DLL calling error"
+	default : return "Fatal system error(error ID: " + __errorId + ")"
+	swend
+
+
+
+// doubleå^ÇÃílÇintç≈ëÂílÇ…ï‚ê≥Ç∑ÇÈ
+// ñﬂÇËílÇÕintå^Ç…Ç»ÇÈ
+#defcfunc limitIntMax double __in
+	if (double(INT_MAX) < __in) {
+		return INT_MAX
+	}
+	return int(__in)
+
+
+
+#defcfunc oomsest_insertSeparater str __number
+	str@separate = __number
+	if (cfg_ST_moreSeparation) {
+		str@separate = thousandsep(__number)
+	}
+	return str@separate
+
+
+
+// Executes "__x -= __y" without overflow.
+#deffunc safe_subtract var __x, int __y
+	if (__x < INT_MIN + __y) {
+		__x = INT_MIN
+	} else {
+		__x -= __y
+	}
+	return

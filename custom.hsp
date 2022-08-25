@@ -1,9 +1,0 @@
-// @param __cc The character
-// @return True if the character looks like god servant; otherwise false.
-#defcfunc custom_isGodServant int __cc
-	if (cId(__cc) == cId_user) {
-		if (userdata2(10, cCnpcId(__cc))) {
-			return 1
-		}
-	}
-	return cdatan(2, __cc) == "servant"

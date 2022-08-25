@@ -1,0 +1,76 @@
+// *エーテル抗体*のポーション 使用時の処理
+*label_SESTItem_EtherCureCorruptionPotion
+	ethermax = 26
+	dim etherPromptIdlist, ethermax
+	sdim etherPromptEffectlist, 128, ethermax
+	r1 = 0
+	traitmode = 0
+	promptmax = 0
+
+	// 発症しているエーテル病の情報を収集
+	repeat efp / 200
+		dim etherPromptIdlist, ethermax
+		sdim etherPromptEffectlist, 128, ethermax
+		r1 = 0
+		traitmode = 0
+		promptmax = 0
+		repeat ethermax + 1, 201
+			tid = cnt
+			traitLv = gettrait(r1, tid)
+			if (traitLv < 0) {
+				gosub *label_0097
+				etherPromptIdlist(promptmax) = tid
+				etherPromptEffectlist(promptmax) = traitrefn(0)
+				promptl(0, promptmax) = traitrefn(2 + abs(traitLv)), "null", "" + promptmax
+				promptmax++
+			}
+		loop
+
+		if (promptmax == 0 & cnt == 0) {
+			txt -1, lang("何もおきない… ", "Nothing happens...")
+			break
+		}
+		if (promptmax == 0) {
+			break
+		}
+
+		txtnew
+		txt -1, lang("どのエーテル病を治す？", "Which ether disease do you want to cure?")
+		val = promptx, prompty, 550, 1
+		gosub *label_1353 // show prompt
+
+		if (rtval != -1) {
+			addtrait 0, etherPromptIdlist(rtval), 1
+			snd 64
+			txtef 2
+			txt -1, lang("エーテルの抗体があなたの体内に行き渡った。", "Your Ether Disease is cured greatly.")
+			txtef 2
+			txt -1, lang("あなたのエーテルの侵食はやわらいだ。", "The symptoms of the Ether disease seem to calm down.")
+			txtef 2
+			txt -1, etherPromptEffectlist(rtval)
+			animeload 10, 0
+			nc_intb_001 = 0
+			repeat 28, 700
+				if (gdata(cnt) == etherPromptIdlist(rtval) & nc_intb_001 == 0) {
+					nc_intb_001 = 1
+				}
+				if (nc_intb_001) {
+					gdata(cnt) = gdata(cnt + 1)
+				}
+				if (gdata(cnt + 1) == 0) {
+					break
+				}
+			loop
+			gEtherDiseaseStage -= 1000
+		} else {
+			snd 64
+			txtef 2
+			txt -1, lang("エーテルの抗体があなたの体内に行き渡った。", "Your Ether Disease is cured greatly.")
+			txtef 2
+			txt -1, lang("あなたのエーテルの侵食はやわらいだ。", "The symptoms of the Ether disease seem to calm down.")
+			modcorrupt -1000
+		}
+		r1 = 0
+		gosub *chara_refresh
+	loop
+	return

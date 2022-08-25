@@ -1,0 +1,29 @@
+#deffunc text_init
+	colorNames(0) = lang("“§–¾", "transparent")
+	colorNames(1) = lang("“§–¾", "transparent")
+	colorNames(2) = lang("á—Î", "mintgreen")
+	colorNames(3) = lang("Ô", "red")
+	colorNames(4) = lang("Â", "blue")
+	colorNames(5) = lang("ò", "orange")
+	colorNames(6) = lang("‰©", "yellow")
+	colorNames(7) = lang("ŠD", "gray")
+	colorNames(8) = lang("‡", "purple")
+	colorNames(9) = lang("ó”K", "light cyan")
+	colorNames(10) = lang("“", "pink")
+	colorNames(11) = lang("”–‰©", "light yellow")
+	colorNames(12) = lang("“§–¾", "transparent")
+	colorNames(13) = lang("”–’ƒ", "light brown")
+	colorNames(14) = lang("—Î", "green")
+	colorNames(15) = lang("‹â", "light gray")
+	colorNames(16) = lang("÷", "cherry blossom")
+	colorNames(17) = lang("”–Â", "light blue")
+	colorNames(18) = lang("“¡", "light purple")
+	colorNames(19) = lang("”’—Î", "palegreen")
+	colorNames(20) = lang("–G‰©", "springgreen")
+	return
+
+
+
+#defcfunc text_dyeColor2Str int __color
+	return colorNames(__color)
+

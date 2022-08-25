@@ -1,0 +1,311 @@
+// oo2019の変数割り当てと同じになるよう{__cc`のocdataを正規化する
+// この関数を呼んだあとは、
+//   108 => 愛情の証が次に受け取れるようになる日時
+//   109 => クミロミの秘密の経験または愛情の証が次に使えるようになるレベル
+// となる
+#deffunc migration_normalizeFieldsOfJewelOfLoveAndKumiromisExperience int __cc
+	// ゲーム内日時はどうやっても517年より遡ることはない。
+	// したがって、この数字を閾値にすることで変数の使い道を判定できる。
+	if (ocdata(108, __cc) < 517*12*30*24) {
+		// oomSEのデータ
+		//   108 => クミロミの秘密の経験が次に使えるようになるレベル
+		//   109 => 未使用
+		// oo由来のデータであっても、ocdata(108, cc)が0の場合、すなわち愛情の証を一度も受け取っていない場合も
+		// こちらの分岐に来るが、このときocdata(109, cc)も0であるから以降の処理を行っても問題ない
+		ocdata(109, __cc) = ocdata(108, __cc)
+		ocdata(108, __cc) = 0
+	} else {
+		// oo2019のデータ
+		//   108 => 愛情の証が次に受け取れるようになる日時
+		//   109 => 愛情の証が次に使えるようになるレベル
+		// Do nothing.
+	}
+	return
+
+
+
+// oomSE準拠のスキルIDに対し、対応するoomSEST準拠のスキルIDを返す。
+// oomSEのスキルでない場合は引数をそのまま返す
+#defcfunc migration_oomse2oomsestId int __id
+	if (__id == sId_overCureOfJure_se)      { return sId_overCureOfJure      }
+	if (__id == sId_superSpeed_se)          { return sId_superSpeed          }
+	if (__id == sId_opatosBarrier_se)       { return sId_opatosBarrier       }
+	if (__id == sId_kumiromisCutter_se)     { return sId_kumiromisCutter     }
+	if (__id == sId_enchantmentSeal_se)     { return sId_enchantmentSeal     }
+	if (__id == sId_falseSwipe_se)          { return sId_falseSwipe          }
+	if (__id == sId_escape_se)              { return sId_escape              }
+	if (__id == sId_summonServants_se)      { return sId_summonServants      }
+	if (__id == sId_maelstromOfTheAbyss_se) { return sId_maelstromOfTheAbyss }
+	if (__id == sId_poundingOut_se)         { return sId_poundingOut         }
+	return __id
+
+
+
+#deffunc migration_updateSave
+	if (gVersion != 1220) {
+		dialog lang("1.22にしてから出直してきてねお兄ちゃん！", "Come back after changing to 1.22 brother!")
+		goto *system_quitElona
+	}
+
+	migration_updateOldVanila
+	migration_updateOldOmake
+	migration_updateOldOO
+	migration_updateOldOOMSEST
+	return
+
+
+
+#deffunc migration_updateOldVanila
+	if (gRightsToSucceedTo < 0) {
+		gRightsToSucceedTo = 1
+	}
+	if (gDepartureDate == 0) {
+		gDepartureDate = getgametime()
+	}
+	repeat 20
+		if (gdata(120 + cnt) == 0) {
+			gdata(120 + cnt) = 10000
+		}
+	loop
+	itemmemory(2, 289) = 0
+	itemmemory(2, 732) = 0
+	del_chara 56
+	cbitmod 967, 0, 1
+	gosub *blending_clearRecipeMemory
+	return
+
+
+
+#deffunc migration_updateOldOmake
+	if (ogdata(35) < 10) {
+		gdata(79) = 1
+	}
+	if (ogdata(35) < 20) {
+		repeat 11
+			cnt2 = 100 + cnt
+			exist exedir + "save\\" + playerid + "\\cdata_7_" + cnt2 + ".s2"
+			if (strsize != (-1)) {
+				mid = "7_" + cnt2
+				ctrlFile 1
+				repeat 245 - 57, 57
+					if (cRole(cnt) == 4) {
+						cRole(cnt) = 10001
+					}
+				loop
+				ctrlFile 2
+			}
+		loop
+	}
+	if (ogdata(35) < 30) {
+		repeat 57
+			ocdata(100, cnt) = 0
+		loop
+	}
+	if (ogdata(35) < 40) {
+		ogdata(100) = ogdata(36)
+	}
+	if (ogdata(35) < 50) {
+		repeat 11
+			ospact(663 + cnt - 661) = 0
+		loop
+	}
+	ospact(662 - 661) = 1
+	ogdata(35) = int(double("0.05") * 1000)
+	return
+
+
+
+#deffunc migration_updateOldOO
+	if (ogdata(100) < 142) {
+		gdata(79) = 1
+	}
+	if (ogdata(100) >= 5 & ogdata(100) < 31) {
+		dirlist buff, exedir + "save\\" + playerid + "\\faction*"
+		notesel buff
+		repeat stat
+			noteget file, cnt
+			delete exedir + "save\\" + playerid + "\\" + file
+		loop
+		repeat length(faction)
+			faction(cnt) = ""
+		loop
+		dialog lang("所属を初期化しました。", "Initialized factions")
+	}
+	if (ogdata(100) >= 40 & ogdata(100) < 61) {
+		repeat length2(isetadditionitem)
+			s = isetadditionitem(1, cnt) + ".item"
+			exist exedir + "user\\" + s
+			if (strsize != (-1)) {
+				delete exedir + "user\\" + s
+			}
+		loop
+		repeat length2(gsetadditiongod)
+			cnt2 = cnt
+			s = gsetadditiongod(1, cnt2) + ".god"
+			exist exedir + "user\\" + s
+			if (strsize != (-1)) {
+				delete exedir + "user\\" + s
+				p = -1
+				repeat usergodmax
+					if (gsetadditiongod(1, cnt2) == cgodId(cnt)) {
+						p = cnt
+						break
+					}
+				loop
+				if (p != (-1)) {
+					exist exedir + "user\\" + cgodServantId(p) + ".npc"
+					if (strsize != (-1)) {
+						delete exedir + "user\\" + cgodServantId(p) + ".npc"
+					}
+					exist exedir + "user\\" + cgodGiftId1(p) + ".item"
+					if (strsize != (-1)) {
+						delete exedir + "user\\" + cgodGiftId1(p) + ".item"
+					}
+					exist exedir + "user\\" + cgodGiftId2(p) + ".item"
+					if (strsize != (-1)) {
+						delete exedir + "user\\" + cgodGiftId2(p) + ".item"
+					}
+				}
+			}
+		loop
+		gosub *custom_loadCgods
+		gosub *custom_loadCnpcs
+		gosub *custom_loadCitems
+		dialog lang("新しい神をアップデートしました。", "Finished updating new gods.")
+	}
+	if (ogdata(100) >= 43 & ogdata(100) < 70) {
+		exist exedir + "data\\oo_talk.txt"
+		if (strsize != (-1)) {
+			delete exedir + "data\\oo_talk.txt"
+		}
+		bcopy "oo_talk.txt", exedir + "data\\oo_talk.txt"
+	}
+	if (ogdata(100) >= 88 & ogdata(100) < 98) {
+		exist exedir + "user\\god\\omake_overhaul\\【【omake用】イナリ神社】.eum"
+		if (strsize != (-1)) {
+			delete exedir + "user\\god\\omake_overhaul\\【【omake用】イナリ神社】.eum"
+		}
+	}
+	if (ogdata(100) >= 1 & ogdata(100) < 105) {
+		npcmemory(0, 25) = 0
+		npcmemory(1, 25) = 0
+		npcmemory(0, 26) = 0
+		npcmemory(1, 26) = 0
+		npcmemory(0, 27) = 0
+		npcmemory(1, 27) = 0
+		npcmemory(0, 32) = 0
+		npcmemory(1, 32) = 0
+		memset cnpcmemory(0, 0), 0, 3 * 900 * 4
+		cnpcmemorymax = 0
+		dialog lang("ユニークモンスターの出現回数と殺害数を初期化しました。", "Reseted unique monster encounter and kill count.")
+	}
+	if (ogdata(100) < 114) {
+		if (trait(170) != 0) {
+			settrait 0, 170, trait(170)
+			trait(170) = 0
+		}
+		repeat 5, 217
+			if (trait(cnt) != 0) {
+				settrait 0, cnt, trait(cnt)
+				trait(cnt) = 0
+			}
+		loop
+	}
+	if (ogdata(100) < 125) {
+		if (guildcheck(0) != "mage") {
+			ogdata(250) = 0, 0, 0, 0
+		}
+	}
+	if (ogdata(100) < 130) {
+		if (getcgodno() != (-1)) {
+			god_no = stat
+			if (cgodSpecialPowerId(god_no) != 0) {
+				if (cgodSpecialPowerId(god_no) / 1000 == 0) {
+					ospact(781 - 661) = 1
+				}
+			}
+		}
+	}
+	if (ogdata(100) < 132) {
+		if (eqfaction(0, "dragon")) {
+			ospact(782 - 661) = 1
+		}
+	}
+	if (ogdata(100) < 138) {
+		repeat 15, 1
+			ocdata(7, cnt) = 0
+			ocdata(8, cnt) = 0
+			ocdata(9, cnt) = 0
+			ocdata(10, cnt) = 0
+		loop
+	}
+	if (ogdata(100) < 187) {
+		if (ocdata(200, 0) != 0) {
+			delbuff 0, 2
+		}
+	}
+	if (ogdata(100) < 163) {
+		file = exedir + "save\\" + playerid + "\\" + "ocdata.s1"
+		exist file
+		if (strsize != (-1)) {
+			zOpen hgz, file, 0
+			zRead ocdata, hgz, 57000
+			zClose hgz
+		}
+		dirlist buff, exedir + "save\\" + playerid + "\\ocdata_*"
+		notesel buff
+		repeat stat
+			noteget file, cnt
+			exist file
+			if (strsize == (-1)) {
+				bcopy exedir + "save\\" + playerid + "\\" + file, exedir + "save\\" + playerid + "\\" + "o" + file
+			}
+		loop
+	}
+	if (ogdata(100) >= 64 & ogdata(100) < 193) {
+		gInitialCartLimit = 80000
+		exist exedir + "data\\oo_talk.txt"
+		if (strsize != (-1)) {
+			delete exedir + "data\\oo_talk.txt"
+		}
+		bcopy "oo_talk.txt", exedir + "data\\oo_talk.txt"
+	}
+	ogdata(100) = int(ooversionstr)
+	return
+
+
+
+#deffunc migration_updateOldOOMSEST
+	// Detect save data version from "st_version.s0".
+	stVersionFilepath@tmp = exedir + "save\\" + playerid + "\\st_version.s0"
+	exist stVersionFilepath@tmp
+	if (strsize == -1) {
+		// Not found; set 0.
+		stVersion@tmp = 0
+	} else {
+		// Found; read the file and convert to an integer.
+		sdim buff@tmp, strsize
+		bload stVersionFilepath@tmp, buff@tmp, strsize
+		stVersion@tmp = int(buff@tmp)
+	}
+	oomSEST_log "[Save] version=" + stVersion@tmp
+
+	if (stVersion@tmp < int("20190322")) {
+		// Shift oomSE's skill IDs.
+		if (ospact(sId_falseSwipe_se - 661)) {
+			ospact(sId_falseSwipe_se - 661) = 0
+			ospact(sId_falseSwipe - 661) = 1
+		}
+		if (ospact(sId_escape_se - 661)) {
+			ospact(sId_escape_se - 661) = 0
+			ospact(sId_escape - 661) = 1
+		}
+		if (ospact(sId_poundingOut_se - 661)) {
+			ospact(sId_poundingOut_se - 661) = 0
+			ospact(sId_poundingOut - 661) = 1
+		}
+	}
+
+	releasedayInt@tmp = int(releaseday)
+	bsave stVersionFilepath@tmp, releasedayInt@tmp, 4
+	return

@@ -1,0 +1,12 @@
+// elapse_XXX 系を使った場合のみを想定する
+// すなわち日付がマイナスになったり60以上になったりはしない
+#deffunc datetime_normalizeGameDate
+	if (gDay > 30) {
+		gMonth++
+		gDay = gDay \ 30
+	}
+	if (gMonth > 12) {
+		gMonth = gMonth \ 12
+		gYear++
+	}
+	return

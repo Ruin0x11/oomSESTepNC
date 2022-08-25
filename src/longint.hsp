@@ -1,0 +1,20 @@
+#ifndef __longint__
+#define __longint__
+#regcmd "_init@4","longint.dll",1
+#cmd ExEuclid 0x100
+#cmd StoreLongInt 0x101
+#cmd InitSha256 0x102
+#cmd InputSha256 0x103
+#cmd InitRc4 0x104
+#cmd EncryptRc4 0x105
+#cmd CloseRc4 0x106
+
+#cmd GetPowMod 0x300
+#cmd GetGCD 0x301
+#cmd IsPrime 0x302
+#cmd GetRandNum 0x303
+#cmd LoadLongInt 0x304
+#cmd GetLintSize 0x305
+#cmd LongInt 0x800
+#cmd OutputSha256 0x801
+#endif

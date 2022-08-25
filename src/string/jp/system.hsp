@@ -1,0 +1,5 @@
+#define strJP_ctalkError "エラーです。以下の文章をoomSEST作者がいそうな所に報告してくれると助かります。\ntalkline = %%d\nsnpcNum = %%d\nnpcNum = %%d"
+#define strJP_networkError "エラー: "
+#define strJP_dbFileNotFoundError "dataフォルダにo_skill.dbが存在しません。"
+#define strJP_needToSwitchShortcutOptionToOmake "[拡張設定2]の[ショートカットキー登録]オプションを[Omake用]にする必要がある。"
+

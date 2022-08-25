@@ -1,0 +1,708 @@
+#deffunc initializeOneSouthTyrisTown int __id, int __x, int __y, int __appearance
+	p = __id
+	areaId(p) = p
+	areaAppearance(p) = __appearance
+	areaType(p) = areaType_town
+	areaX(p) = __x
+	areaY(p) = __y
+	areaEntranceType(p) = areaEntranceType_enteredDirection
+	areaTileSet(p) = 1
+	areaTileType(p) = 2
+	areaTurnCost(p) = 10000
+	areaDangerLevel(p) = 1
+	areaLastFloor(p) = 1
+	areaIndoorOrOutdoor(p) = areaIndoorOrOutdoor_outdoor
+	areaIsFixed(p) = 1
+	areaDefaultAiCalm(p) = 1
+	areaTownId(p) = __id - areaId_southTyrisIdHead + areaTownId_southTyrisIdHead
+	areaOuterMap(p) = 44
+	return
+
+
+#deffunc initializeSouthTyrisTowns
+	p(1) = 0
+	initializeOneSouthTyrisTown areaId_serria,  17, 8, areaAppearance_town
+	initializeOneSouthTyrisTown areaId_tormat, 56, 32, areaAppearance_town
+	areaLastFloor(areaId_tormat) = 999
+	initializeOneSouthTyrisTown areaId_khios,  31, 13, areaAppearance_village
+	initializeOneSouthTyrisTown areaId_carlia, 48, 18, areaAppearance_fortressNefia
+	areaLastFloor(areaId_carlia) = 999
+	areaEntranceType(areaId_carlia) = areaEntranceType_bottom
+	areaIndoorOrOutdoor(areaId_carlia) = areaIndoorOrOutdoor_indoor
+	initializeOneSouthTyrisTown areaId_trian, 21, 34, areaAppearance_city
+	areaEntranceType(areaId_trian) = areaEntranceType_bottom
+	areaLastFloor(areaId_trian) = 999
+	// å√ë„ÇÃà‚ê’
+	p = 57
+	areaId(p) = 57
+	areaAppearance(p) = 146
+	areaType(p) = 20
+	areaX(p) = 18
+	areaY(p) = 50
+	areaEntranceType(p) = 1
+	areaTileSet(p) = 1
+	areaTileType(p) = 0
+	areaTurnCost(p) = 10000
+	areaDangerLevel(p) = 20
+	areaLastFloor(p) = 25
+	areaIndoorOrOutdoor(p) = 1
+	areaIsFixed(p) = 1
+	areaDefaultAiCalm(p) = 0
+	areaOuterMap(p) = 44
+	// ä¸ÇƒÇÁÇÍÇΩî_ë∫ín
+	p = 58
+	areaId(p) = 58
+	areaAppearance(p) = 135
+	areaType(p) = 20
+	areaX(p) = 33
+	areaY(p) = 27
+	areaEntranceType(p) = 1
+	areaTileSet(p) = 1
+	areaTileType(p) = 300
+	areaTurnCost(p) = 10000
+	areaDangerLevel(p) = 5
+	areaLastFloor(p) = 7
+	areaIndoorOrOutdoor(p) = 1
+	areaIsFixed(p) = 1
+	areaDefaultAiCalm(p) = 0
+	areaOuterMap(p) = 44
+	// ç¨ì◊ÇÃèÈ<ód>
+	p = 59
+	areaId(p) = 59
+	areaAppearance(p) = 149
+	areaType(p) = 6
+	areaX(p) = 12
+	areaY(p) = 42
+	areaEntranceType(p) = 8
+	areaTileSet(p) = 1
+	areaTileType(p) = 100
+	areaTurnCost(p) = 10000
+	areaDangerLevel(p) = 33
+	areaLastFloor(p) = 33
+	areaIndoorOrOutdoor(p) = 1
+	areaIsFixed(p) = 1
+	areaDefaultAiCalm(p) = 1
+	areaOuterMap(p) = 44
+	// ïœàŸéÌÇÃì¥åA
+	p = 60
+	areaId(p) = 60
+	areaAppearance(p) = 139
+	areaType(p) = 20
+	areaX(p) = 47
+	areaY(p) = 12
+	areaEntranceType(p) = 1
+	areaTileSet(p) = 1
+	areaTileType(p) = 0
+	areaTurnCost(p) = 10000
+	areaDangerLevel(p) = 1
+	areaLastFloor(p) = 60
+	areaIndoorOrOutdoor(p) = 1
+	areaIsFixed(p) = 1
+	areaDefaultAiCalm(p) = 0
+	areaOuterMap(p) = 44
+	// ÉVÅ[ÉNÉåÉbÉgÉ]Å[Éì
+	p = 61
+	areaId(p) = 61
+	areaAppearance(p) = 162
+	areaType(p) = 6
+	areaX(p) = 60
+	areaY(p) = 3
+	areaEntranceType(p) = 8
+	areaTileSet(p) = 1
+	areaTileType(p) = 2
+	areaTurnCost(p) = 10000
+	areaDangerLevel(p) = 1
+	areaLastFloor(p) = 1
+	areaIndoorOrOutdoor(p) = 2
+	areaIsFixed(p) = 1
+	areaDefaultAiCalm(p) = 1
+	areaOuterMap(p) = 44
+	return
+
+
+
+#deffunc generateSerria
+	areaLastFloor(50) = 100
+	if (gCurrentDungeonLevel == 1) {
+		mapDensity = 0
+		map_initcustom "st_serria"
+		map_placeplayer
+		mdata(15) = 0
+		placeCitizensInSerria
+		map_placeItemsSerria
+	}
+	if (gCurrentDungeonLevel == 5) {
+		mapTileType = 0
+		map_initcustom "nc_subquest_nymph"
+		mapIndoorOrOutdoor = 2
+		mapType = 20
+		mapDensity = 0
+		mdata(17) = 1
+		mdatan(0) = lang("ãﬂäC", "coastal waters")
+		flt
+		fixlv = 6
+		initlv = 30
+		characreate -1, 92, 5, 4
+		cAiMove(rc) = 30
+		cAiDist(rc) = 3
+		cAiActSubFreq(rc) = 30
+		cdata(215, rc) = -1
+		cdata(220, rc) = 521, 521, 521, 521, 529
+		cAiActNum(rc) = 51
+		skillinit 2, rc, 15
+		skillinit 172, rc, 3
+		gosub *chara_refresh
+		cHp(rc) = cMaxHp(rc)
+		cMp(rc) = cMaxMp(rc)
+		cdatan(0, rc) = lang("ÅsÉlÅ[ÉåÉCÉXÅt", "<Nereis>")
+		ocdata(191, rc) = 7
+		flt
+		fixlv = 6
+		initlv = 30
+		characreate -1, 92, 6, 10
+		cAiMove(rc) = 30
+		cAiDist(rc) = 3
+		cAiActSubFreq(rc) = 30
+		cdata(215, rc) = -1
+		cdata(220, rc) = 521, 521, 521, 521, 529
+		cAiActNum(rc) = 51
+		skillinit 2, rc, 15
+		skillinit 172, rc, 3
+		gosub *chara_refresh
+		cHp(rc) = cMaxHp(rc)
+		cMp(rc) = cMaxMp(rc)
+		cdatan(0, rc) = lang("ÅsÉlÅ[ÉåÉCÉXÅt", "<Nereis>")
+		ocdata(191, rc) = 7
+		cell_featset 1, 35, tile_upstairs, 10, 1
+		gEntranceType = 7
+		mapstartx = 1
+		mapstarty = 35
+		map_placeplayer
+	}
+	return
+
+
+#deffunc generateTormat
+	if (gCurrentDungeonLevel == 1) {
+		mapDensity = 0
+		map_initcustom "st_tormat"
+		map_placeplayer
+		mdata(15) = 0
+		placeCitizensInTormat
+		cell_featset 25, 4, tile_downstairs, 11, 3
+	}
+	if (gCurrentDungeonLevel == 3) {
+		mapTileType = 0
+		map_initcustom "st_prostituteguild"
+		mapIndoorOrOutdoor = 1
+		mapType = 2
+		mapDensity = 25
+		mapBgm = 79
+		mdata(17) = 0
+		mdatan(0) = lang("è©ïwÉMÉãÉh", "Prostitute Guild")
+		map_placeplayer
+		flt
+		characreate -1, 1, 19, 12
+		cRole(rc) = 3106, 10
+		cdatan(0, rc) = lang("è©ïwÉMÉãÉhìXÇÃ" + cdatan(0, rc), sncnv(cdatan(0, rc)) + "the Guild shop")
+		repeat 8
+			flt
+			characreate -1, 335, -3, 0
+			cdatan(0, rc) = lang("è©ïwÉMÉãÉh", "Prostitute Guild")
+			cRelationship(rc) = -1
+			cOriginalRelationship(rc) = -1
+		loop
+		repeat 12
+			flt
+			characreate -1, 274, -3, 0
+		loop
+		cell_featset 28, 6, tile_upstairs, 10, 1
+	}
+	return
+
+
+#deffunc generateKhios
+	mapDensity = 0
+	map_initcustom "st_khios"
+	map_placeplayer
+	mdata(15) = 0
+	placeCitizensInKhios
+	map_placeItemsKhios
+	return
+
+
+#deffunc generateCarlia
+	if (gCurrentDungeonLevel == 1) {
+		mapDensity = 0
+		map_initcustom "st_carlia"
+		map_placeplayer
+		mdata(15) = 0
+		placeCitizensInCarlia
+		cell_featset 23, 4, tile_downstairs, 11, 3
+	}
+	if (gCurrentDungeonLevel == 3) {
+		mapTileType = 0
+		map_initcustom "st_smithguild"
+		mapIndoorOrOutdoor = 1
+		mapType = 2
+		mapDensity = 25
+		mapBgm = 79
+		mdata(17) = 0
+		mdatan(0) = lang("íbñËÉMÉãÉh", "Blacksmith Guild")
+		map_placeplayer
+		flt
+		characreate -1, 1, 27, 12
+		cRole(rc) = 3107, 10
+		cdatan(0, rc) = lang("íbñËÉMÉãÉhìXÇÃ" + cdatan(0, rc), sncnv(cdatan(0, rc)) + "the Guild shop")
+		placeOneCitizen 7, 12, cId_shopkeeper, 1012, 10
+		cdatan(0, rc) = lang("â∆ãÔîÑÇËÇÃ" + cdatan(0, rc), sncnv(cdatan(0, rc)) + "the Furniture shop")
+		flt
+		initlv = 50
+		characreate -1, 250, 6, 5
+		cRelationship(rc) = 0
+		cOriginalRelationship(rc) = 0
+		cSex(rc) = 1
+		cImage(rc) = 500
+		cdatan(0, rc) = lang("ódê∏ÇÃíbñËémÅwÉãÅ[ÉWÉBÅx", "<lurgy> the metallurgy fairy")
+		faction(rc) = ""
+		addfaction rc, "lurgy"
+		addfaction rc, "family,man"
+		addfaction rc, "align,neutral"
+		addfaction rc, "god,eyth"
+		cQuality(rc) = 6
+		cRole(rc) = 3108
+		cInterest(rc) = 0
+		repeat 8
+			flt
+			characreate -1, 159, -3, 0
+			cdatan(0, rc) = lang("íbñËÉMÉãÉh", "Blacksmith Guild")
+			cRelationship(rc) = -1
+			cOriginalRelationship(rc) = -1
+		loop
+		cell_featset 18, 28, tile_upstairs, 10, 1
+	}
+	return
+
+
+#deffunc generateTrian
+	if (gCurrentDungeonLevel == 1) {
+		mapDensity = 0
+		map_initcustom "st_trian"
+		map_placeplayer
+		mdata(15) = 0
+		placeCitizensInTrian
+		cell_featset 16, 5, tile_downstairs, 11, 3
+	}
+	if (gCurrentDungeonLevel == 3) {
+		mapTileType = 0
+		map_initcustom "st_musicianguild"
+		mapIndoorOrOutdoor = 1
+		mapType = 2
+		mapDensity = 25
+		mapBgm = 79
+		mdata(17) = 0
+		mdatan(0) = lang("ínâ∫âÔèÍ", "Underground venue")
+		map_placeplayer
+		placeOneCitizen 4, 10, cId_shopkeeper, 3109, 10
+		cdatan(0, rc) = lang("äyäÌîÑÇËÇÃ" + cdatan(0, rc), sncnv(cdatan(0, rc)) + " Musical instrument seller")
+		placeOneCitizen 12, 3, 334, 3110
+		cell_featset 5, 16, tile_upstairs, 10, 1
+		flt
+		fixlv = 5
+		initlv = 50
+		characreate -1, 326, 22, 5
+		cRelationship(rc) = -1
+		cOriginalRelationship(rc) = -1
+		ocdata(191, rc) = 7
+		repeat 8
+			flt
+			characreate -1, 185, -3, 0
+			cRelationship(rc) = -1
+			cOriginalRelationship(rc) = -1
+		loop
+		repeat 8
+			flt
+			characreate -1, 274, -3, 0
+			cRelationship(rc) = -1
+			cOriginalRelationship(rc) = -1
+		loop
+	}
+	return
+
+#deffunc placeOneCitizen int __x, int __y, int __id, int __role, int __rank
+	flt
+	characreate -1, __id, __x, __y
+	cRole(rc) = __role, __rank
+	return
+
+
+
+#deffunc placeOneCitizenWithRelationship int __x, int __y, int __id, int __role, int __rank, int __relationship
+	placeOneCitizen __x, __y, __id, __role, __rank
+	cOriginalRelationship(rc) = __relationship
+	cRelationship(rc) = __relationship
+	cdatan(0, rc) = lang(cdatan(0, rc) + "ÇÃ" + randomname(), randomname() + " the " + cdatan(0, rc))
+	return
+
+
+
+// ñ{óàìGëŒä÷åWÇ≈ê∂ê¨Ç≥ÇÍÇÈÉLÉÉÉâÇíÜóßä÷åWÇ≈ê∂ê¨Ç∑ÇÈ
+#deffunc placeOneCitizenNeutral int __x, int __y, int __id, int __role, int __rank
+	placeOneCitizenWithRelationship __x, __y, __id, __role, __rank, 0
+	faction(rc) = ""
+	addfaction rc, "family,man"
+	addfaction rc, "align,neutral"
+	addfaction rc, "god,eyth"
+	return
+
+
+
+// ñ{óàìGëŒä÷åWÇ≈ê∂ê¨Ç≥ÇÍÇÈÉLÉÉÉâÇñ≥ä÷êSä÷åWÇ≈ê∂ê¨Ç∑ÇÈ
+#deffunc placeOneCitizenUnconcern int __x, int __y, int __id, int __role, int __rank
+	placeOneCitizenWithRelationship __x, __y, __id, __role, __rank, -1
+	faction(rc) = ""
+	addfaction rc, "align,neutral"
+	addfaction rc, "god,eyth"
+	return
+
+
+#deffunc placeCitizensInSerria
+	// Citizens
+	placeOneCitizen 4, 14, cId_citizen1, cRole_citizen
+	placeOneCitizen 13, 22, cId_citizen2, cRole_citizen
+	placeOneCitizen 15, 7, cId_citizen1, cRole_citizen
+	placeOneCitizen 20, 33, cId_citizen2, cRole_citizen
+	placeOneCitizen 31, 14, cId_citizen1, cRole_citizen
+	placeOneCitizen 32, 29, cId_citizen2, cRole_citizen
+	// Elder
+	placeOneCitizen 11, 32, cId_elder, cRole_elder
+	cdatan(0, rc) = lang("É|Å[ÉgÅEÉZÉäÉAÇÃ" + cdatan(0, rc), cdatan(0, rc) + " of Port Serria")
+	// Sailors
+	placeOneCitizen 2, 5, cId_sailor, cRole_citizen
+	placeOneCitizen 17, 3, cId_sailor, cRole_citizen
+	placeOneCitizen 38, 17, cId_sailor, cRole_citizen
+	placeOneCitizen 44, 34, cId_sailor, cRole_citizen
+	// Captain
+	placeOneCitizen 31, 5, cId_captain, cRole_citizen
+	// Guards
+	placeOneCitizen 13, 18, cId_guard2, cRole_guard
+	placeOneCitizen 21, 28, cId_guard2, cRole_guard
+	placeOneCitizen 40, 19, cId_guard2, cRole_guard
+	// Bard
+	placeOneCitizen 16, 19, cId_bard, cRole_others
+	// Shopkeepers
+	placeOneCitizen 10, 4, cId_shopkeeper, cRole_fisher, 5
+	snfish cdatan(0, rc)
+	placeOneCitizen 23, 25, cId_shopkeeper, cRole_generalVendor, 10
+	sngeneral cdatan(0, rc)
+	placeOneCitizen 27, 25, cId_wizard, cRole_magicVendor, 10
+	snmagic cdatan(0, rc)
+	placeOneCitizen 25, 19, cId_shopkeeper, cRole_foodVendor, 9
+	snfood cdatan(0, rc)
+	placeOneCitizen 33, 22, cId_shopkeeper, cRole_blacksmith, 12
+	snarmor cdatan(0, rc)
+	placeOneCitizen 39, 12, cId_shopkeeper, cRole_trader, 12
+	sntrade cdatan(0, rc)
+	placeOneCitizen 39, 30, cId_shopkeeper, cRole_innKeeper, 8
+	sninn cdatan(0, rc)
+	// Informer
+	placeOneCitizen 28, 33, cId_informer, cRole_informer
+	// Trainer
+	placeOneCitizen 27, 34, cId_trainer, cRole_trainer
+	sntrainer cdatan(0, rc)
+	// Appraiser
+	placeOneCitizen 25, 33, cId_wizard, cRole_appraiser
+	// Bartender
+	placeOneCitizen 42, 13, cId_bartender, cRole_bartender
+	// Healer
+	placeOneCitizen 4, 20, cId_healer, cRole_healer
+	// Cleaner
+	placeOneCitizen 15, 25, cId_cleaner, cRole_others
+	// Tourist
+	placeOneCitizen 43, 30, cId_tourist, cRole_others
+	// Citizen (â∑êÚÉ}ÉjÉA)
+	placeOneCitizen 43, 25, cId_citizen3, cRole_others
+	gosub *quest_setupQuestDataForTownResidents
+	repeat 15
+		gosub *map_setCharaSpawnFactors
+		characreate -1, dbid, -3, 0
+		if (stat) {
+			gosub *label_1759
+		}
+	loop
+	return
+
+
+#deffunc placeCitizensInTormat
+	// Citizens
+	placeOneCitizen 3, 22, cId_citizen1, cRole_citizen
+	placeOneCitizen 14, 33, cId_citizen2, cRole_citizen
+	placeOneCitizen 16, 25, cId_citizen2, cRole_citizen
+	placeOneCitizen 22, 18, cId_citizen1, cRole_citizen
+	placeOneCitizen 26, 20, cId_citizen2, cRole_citizen
+	placeOneCitizen 28, 39, cId_citizen1, cRole_citizen
+	// Elder
+	placeOneCitizen 7, 2, cId_elder, cRole_elder
+	cdatan(0, rc) = lang("ÉgÅ[É}ÉbÉgÇÃ" + cdatan(0, rc), cdatan(0, rc) + " of Tormat")
+	// Sailors
+	placeOneCitizen 3, 3, cId_sailor, cRole_citizen
+	placeOneCitizen 9, 4, cId_sailor, cRole_citizen
+	placeOneCitizen 12, 22, cId_sailor, cRole_citizen
+	placeOneCitizen 36, 32, cId_sailor, cRole_citizen
+	placeOneCitizen 44, 1, cId_sailor, cRole_citizen
+	// Guards
+	placeOneCitizen 7, 34, cId_guard2, cRole_guard
+	placeOneCitizen 22, 25, cId_guard2, cRole_guard
+	placeOneCitizen 27, 40, cId_guard2, cRole_guard
+	placeOneCitizen 45, 42, cId_guard2, cRole_guard
+	// Bard
+	placeOneCitizen 25, 14, cId_bard, cRole_others
+	// Shopkeepers
+	placeOneCitizen 2, 15, cId_shopkeeper, cRole_blacksmith, 12
+	snarmor cdatan(0, rc)
+	placeOneCitizen 17, 14, cId_shopkeeper, cRole_goodsVendor, 8
+	sngoods cdatan(0, rc)
+	placeOneCitizen 26, 18, cId_shopkeeper, cRole_trader, 12
+	sntrade cdatan(0, rc)
+	placeOneCitizen 35, 38, cId_wizard, cRole_magicVendor, 10
+	snmagic cdatan(0, rc)
+	placeOneCitizen 41, 25, cId_shopkeeper, cRole_blackMarketVendor, 10
+	snblack cdatan(0, rc)
+	placeOneCitizen 45, 5, cId_shopkeeper, cRole_innKeeper, 8
+	sninn cdatan(0, rc)
+	placeOneCitizen 43, 31, cId_shopkeeper, cRole_foodVendor, 9
+	snfood cdatan(0, rc)
+	// Bartender
+	placeOneCitizen 27, 17, cId_bartender, cRole_bartender
+	// Captain
+	placeOneCitizen 25, 1, cId_captain, cRole_citizen
+	placeOneCitizen 52, 33, cId_captain, cRole_citizen
+	// Informer
+	placeOneCitizen 20, 37, cId_informer, cRole_informer
+	// Trainer
+	placeOneCitizen 20, 41, cId_trainer, cRole_trainer
+	sntrainer cdatan(0, rc)
+	// Appraiser
+	placeOneCitizen 23, 38, cId_wizard, cRole_appraiser
+	// Healer
+	placeOneCitizen 47, 14, cId_healer, cRole_healer
+	// Arena master
+	placeOneCitizen 5, 28, cId_arenaMaster, cRole_arenaMaster
+	// Cleaner
+	placeOneCitizen 8, 21, cId_cleaner, cRole_others
+	placeOneCitizen 29, 30, cId_cleaner, cRole_others
+	placeOneCitizen 25, 4, 335, 299
+	cQuality(rc) = 6
+	cdatan(0, rc) = lang("Åwè©ïwÉMÉãÉhÇÃñÂî‘Åx", "<the guild watchman>")
+	cAiCalm(rc) = 3
+	faction(rc) = ""
+	addfaction rc, "family,man"
+	addfaction rc, "align,neutral"
+	addfaction rc, "god,eyth"
+	gosub *quest_setupQuestDataForTownResidents
+	repeat 20
+		gosub *map_setCharaSpawnFactors
+		characreate -1, dbid, -3, 0
+		if (stat) {
+			gosub *label_1759
+		}
+	loop
+	return
+
+
+#deffunc placeCitizensInKhios
+	// Citizens
+	placeOneCitizen 5, 4, cId_citizen1, cRole_citizen
+	placeOneCitizen 7, 11, cId_citizen2, cRole_citizen
+	placeOneCitizen 14, 19, cId_citizen1, cRole_citizen
+	placeOneCitizen 16, 12, cId_citizen2, cRole_citizen
+	placeOneCitizen 21, 11, cId_citizen1, cRole_citizen
+	placeOneCitizen 28, 10, cId_citizen2, cRole_citizen
+	// Elder
+	placeOneCitizen 27, 5, cId_elder, cRole_elder
+	cdatan(0, rc) = lang("ÉLÉIÉXÇÃ" + cdatan(0, rc), cdatan(0, rc) + " of Khios")
+	// Shopkeepers
+	placeOneCitizen 8, 16, cId_shopkeeper, cRole_foodVendor, 8
+	snfood cdatan(0, rc)
+	placeOneCitizen 12, 7, cId_shopkeeper, cRole_generalVendor, 8
+	sngeneral cdatan(0, rc)
+	placeOneCitizen 23, 7, cId_shopkeeper, cRole_goodsVendor, 8
+	sngoods cdatan(0, rc)
+	placeOneCitizen 28, 17, cId_shopkeeper, cRole_innKeeper, 8
+	sninn cdatan(0, rc)
+	// Informer
+	placeOneCitizen 25, 15, cId_informer, cRole_informer
+	// Trainer
+	placeOneCitizen 26, 16, cId_trainer, cRole_trainer
+	sntrainer cdatan(0, rc)
+	// Appraiser
+	placeOneCitizen 23, 17, cId_wizard, cRole_appraiser
+	// Chickin
+	repeat 5
+		placeOneCitizenUnconcern -3, 0, cId_chicken, cRole_others
+	loop
+	// Sheep
+	repeat 5
+		placeOneCitizenUnconcern -3, 0, cId_sheep, cRole_others
+	loop
+	gosub *quest_setupQuestDataForTownResidents
+	repeat 10
+		gosub *map_setCharaSpawnFactors
+		characreate -1, dbid, -3, 0
+		if (stat) {
+			gosub *label_1759
+		}
+	loop
+	return
+
+
+#deffunc placeCitizensInCarlia
+	placeOneCitizenNeutral 2, 4, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 4, 4, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 7, 5, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 13, 13, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 15, 11, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 23, 11, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 30, 16, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 34, 9, cId_juereInfantry, cRole_citizen
+	placeOneCitizen 10, 14, cId_citizen2, cRole_citizen
+	placeOneCitizen 15, 3, cId_citizen2, cRole_citizen
+	placeOneCitizen 15, 14, cId_citizen1, cRole_citizen
+	placeOneCitizen 20, 6, cId_citizen1, cRole_citizen
+	// Shopkeepers
+	placeOneCitizen 3, 12, cId_shopkeeper, cRole_blackMarketVendor, 10
+	snblack cdatan(0, rc)
+	placeOneCitizen 10, 12, cId_shopkeeper, cRole_baker, 9
+	snbakery cdatan(0, rc)
+	placeOneCitizen 12, 10, cId_shopkeeper, cRole_trader, 12
+	sntrade cdatan(0, rc)
+	placeOneCitizen 19, 10, cId_shopkeeper, cRole_generalVendor, 8
+	sngeneral cdatan(0, rc)
+	placeOneCitizen 28, 17, cId_shopkeeper, cRole_blacksmith, 12
+	snarmor cdatan(0, rc)
+	placeOneCitizen 34, 17, cId_wizard, cRole_magicVendor, 10
+	snmagic cdatan(0, rc)
+	placeOneCitizen 35, 8, cId_shopkeeper, cRole_innKeeper, 8
+	sninn cdatan(0, rc)
+	// Guards
+	placeOneCitizen 7, 3, cId_guard1, cRole_guard
+	placeOneCitizen 18, 11, cId_guard1, cRole_guard
+	placeOneCitizen 28, 8, cId_guard1, cRole_guard
+	// Informer
+	placeOneCitizen 20, 18, cId_informer, cRole_informer
+	// Trainer
+	placeOneCitizen 18, 18, cId_trainer, cRole_trainer
+	sntrainer cdatan(0, rc)
+	// Appraiser
+	placeOneCitizen 17, 19, cId_wizard, cRole_appraiser
+	// Bartender
+	placeOneCitizen 13, 12, cId_bartender, cRole_bartender
+	// Healer
+	placeOneCitizen 36, 17, cId_healer, cRole_healer
+
+	placeOneCitizen 23, 4, 214, 298
+	cQuality(rc) = 6
+	cdatan(0, rc) = lang("ÅwíbñËÉMÉãÉhÇÃî‘êlÅx","<the guild watchman>")
+	cAiCalm(rc) = 3
+	cRelationship(rc) = 0
+	cOriginalRelationship(rc) = 0
+	faction(rc) = ""
+	addfaction rc, "family,man"
+	addfaction rc, "align,neutral"
+	addfaction rc, "god,eyth"
+	gosub *quest_setupQuestDataForTownResidents
+	repeat 15
+		gosub *map_setCharaSpawnFactors
+		characreate -1, dbid, -3, 0
+		if (stat) {
+			gosub *label_1759
+		}
+	loop
+	return
+
+
+#deffunc placeCitizensInTrian
+	// Citizens
+	placeOneCitizenNeutral 3, 14, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 4, 15, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 8, 12, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 15, 11, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 16, 24, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 20, 27, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 25, 13, cId_juereInfantry, cRole_citizen
+	placeOneCitizenNeutral 33, 24, cId_juereInfantry, cRole_citizen
+	// Shopkeepers
+	placeOneCitizen 6, 11, cId_shopkeeper, cRole_trader, 12
+	sntrade cdatan(0, rc)
+	placeOneCitizen 11, 26, cId_shopkeeper, cRole_horseMater, 12
+	snhorse cdatan(0, rc)
+	placeOneCitizen 15, 9, cId_shopkeeper, cRole_blacksmith, 12
+	snarmor cdatan(0, rc)
+	placeOneCitizen 27, 27, cId_shopkeeper, cRole_goodsVendor, 8
+	sngoods cdatan(0, rc)
+	placeOneCitizen 30, 8, cId_shopkeeper, cRole_baker, 9
+	snbakery cdatan(0, rc)
+	placeOneCitizen 37, 20, cId_wizard, cRole_magicVendor, 10
+	snmagic cdatan(0, rc)
+	placeOneCitizen 38, 10, cId_shopkeeper, cRole_innKeeper, 8
+	sninn cdatan(0, rc)
+	// Informer
+	placeOneCitizen 18, 14, cId_informer, cRole_informer
+	// Trainer
+	placeOneCitizen 20, 14, cId_trainer, cRole_trainer
+	sntrainer cdatan(0, rc)
+	// Appraiser
+	placeOneCitizen 20, 12, cId_wizard, cRole_appraiser
+	// Bartender
+	placeOneCitizen 5, 14, cId_bartender, cRole_bartender
+	// Healer
+	placeOneCitizen 37, 12, cId_healer, cRole_healer
+	// Arena master
+	placeOneCitizen 11, 4, cId_arenaMaster, cRole_arenaMaster
+	gosub *quest_setupQuestDataForTownResidents
+	repeat 15
+		gosub *map_setCharaSpawnFactors
+		characreate -1, dbid, -3, 0
+		if (stat) {
+			gosub *label_1759
+		}
+	loop
+	return
+
+
+#deffunc placeCitizensInMayroon
+	return
+
+
+
+#deffunc map_generateItemIfNeeded int __id, int __x, int __y
+	if (map(__x, __y, 4) == 0) {
+		flt
+		itemcreate -1, __id, __x, __y, 0
+		return stat
+	}
+	return 0
+
+
+
+#deffunc map_placeItemsSerria
+	map_generateItemIfNeeded iId_altar, 5, 21
+	if (stat != 0) {
+		iParam1(ci) = 0
+		iParam2(ci) = findgodid("Serria of Sea road")
+		iParam3(ci) = creategoduid(iParam2(ci))
+		iOwnState(ci) = 1
+	}
+	return
+
+
+
+#deffunc map_placeItemsKhios
+	map_generateItemIfNeeded iId_altar, 17, 6
+	if (stat != 0) {
+		iParam1(ci) = 0
+		iParam2(ci) = findgodid("Dybony of cattle farming")
+		iParam3(ci) = creategoduid(iParam2(ci))
+		iOwnState(ci) = 1
+	}
+	return

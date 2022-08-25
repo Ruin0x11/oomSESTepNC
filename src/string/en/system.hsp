@@ -1,0 +1,4 @@
+#define strEN_ctalkError "Error occurred. Please report the below messages to us.\ntalkline = %%d\nsnpcNum = %%d\nnpcNum = %%d"
+#define strEN_networkError "Error: "
+#define strEN_dbFileNotFoundError "nc_skill.db is missing from data folder."
+#define strEN_needToSwitchShortcutOptionToOmake "Need to switch \"Shortcut keys\" option in \"Ex Setting 2\" to \"Omake\"."

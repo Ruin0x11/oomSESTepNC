@@ -1,0 +1,203 @@
+#define ctype cState(%1)                     cdata(0,   %1)
+#define ctype cX(%1)                         cdata(1,   %1)
+#define ctype cY(%1)                         cdata(2,   %1)
+#define ctype cNextX(%1)                     cdata(3,   %1)
+#define ctype cNextY(%1)                     cdata(4,   %1)
+#define ctype cTimeToRevive(%1)              cdata(5,   %1)
+#define ctype cVisionFlag(%1)                cdata(6,   %1)
+#define ctype cImage(%1)                     cdata(7,   %1)
+#define ctype cSex(%1)                       cdata(8,   %1)
+#define ctype cRelationship(%1)              cdata(9,   %1)
+#define ctype cTurnCost(%1)                  cdata(10,  %1)
+#define ctype cCurrentSpeed(%1)              cdata(11,  %1)
+#define ctype cItemWhichWillBeUsed(%1)       cdata(12,  %1)
+#define ctype cPortrait(%1)                  cdata(13,  %1)
+#define ctype cInterest(%1)                  cdata(14,  %1)
+#define ctype cTimeInterestRevive(%1)        cdata(15,  %1)
+#define ctype cPersonality(%1)               cdata(16,  %1)
+#define ctype cImpression(%1)                cdata(17,  %1)
+#define ctype cTalkType(%1)                  cdata(18,  %1)
+#define ctype cHeight(%1)                    cdata(19,  %1)
+#define ctype cWeight(%1)                    cdata(20,  %1)
+#define ctype cBirthYear(%1)                 cdata(21,  %1)
+#define ctype cNutrition(%1)                 cdata(22,  %1)
+#define ctype cCanTalk(%1)                   cdata(23,  %1)
+#define ctype cQuality(%1)                   cdata(25,  %1)
+#define ctype cTurn(%1)                      cdata(26,  %1)
+#define ctype cId(%1)                        cdata(27,  %1)
+#define ctype cVisionDistance(%1)            cdata(28,  %1)
+#define ctype cEnemyId(%1)                   cdata(29,  %1)
+#define ctype cGold(%1)                      cdata(30,  %1)
+#define ctype cPlatinumCoin(%1)              cdata(31,  %1)
+#define ctype cEquipmentType(%1)             cdata(32,  %1)
+#define ctype cMeleeAttackType(%1)           cdata(33,  %1)
+#define ctype cFame(%1)                      cdata(34,  %1)
+#define ctype cExperience(%1)                cdata(35,  %1)
+#define ctype cRequiredExperience(%1)        cdata(36,  %1)
+#define ctype cSpeedPercentage(%1)           cdata(37,  %1)
+#define ctype cLevel(%1)                     cdata(38,  %1)
+#define ctype cSpeedPercentageInNextTurn(%1) cdata(39,  %1)
+#define ctype cSkillBonus(%1)                cdata(41,  %1)
+#define ctype cTotalSkillBonus(%1)           cdata(42,  %1)
+#define ctype cInventoryWeight(%1)           cdata(43,  %1)
+#define ctype cMaxInventoryWeight(%1)        cdata(44,  %1)
+#define ctype cInventoryWeightType(%1)       cdata(45,  %1)
+#define ctype cMaxLevel(%1)                  cdata(48,  %1)
+#define ctype cKarma(%1)                     cdata(49,  %1)
+#define ctype cHp(%1)                        cdata(50,  %1)
+#define ctype cMaxHp(%1)                     cdata(51,  %1)
+#define ctype cSp(%1)                        cdata(52,  %1)
+#define ctype cMaxSp(%1)                     cdata(53,  %1)
+#define ctype cMp(%1)                        cdata(55,  %1)
+#define ctype cMaxMp(%1)                     cdata(56,  %1)
+#define ctype cHealValuePerNetherAttack(%1)  cdata(60,  %1)
+#define ctype cGod(%1)                       cdata(61,  %1)
+#define ctype cPietyPoint(%1)                cdata(62,  %1)
+#define ctype cPrayingPoint(%1)              cdata(63,  %1)
+#define ctype cSumOfEquipmentWeight(%1)      cdata(64,  %1)
+#define ctype cSpecialAttackType(%1)         cdata(65,  %1)
+#define ctype cRateToPierce(%1)              cdata(66,  %1)
+#define ctype cRateOfCriticalHit(%1)         cdata(67,  %1)
+#define ctype cSpeedCorrectionValue(%1)      cdata(68,  %1)
+#define ctype cOriginalRelationship(%1)      cdata(69,  %1)
+#define ctype cPv(%1)                        cdata(70,  %1)
+#define ctype cDv(%1)                        cdata(71,  %1)
+#define ctype cHitBonus(%1)                  cdata(72,  %1)
+#define ctype cDamageBonus(%1)               cdata(73,  %1)
+#define ctype cPvCorrectionValue(%1)         cdata(76,  %1)
+#define ctype cDvCorrectionValue(%1)         cdata(77,  %1)
+#define ctype cDamageReactionInfo(%1)        cdata(78,  %1)
+#define ctype cEmotionIcon(%1)               cdata(79,  %1)
+#define ctype cCurrentMap(%1)                cdata(80,  %1)
+#define ctype cCurrentDungeonLevel(%1)       cdata(81,  %1)
+#define ctype cRelatedQuestId(%1)            cdata(82,  %1)
+#define ctype cDirection(%1)                 cdata(83,  %1)
+#define ctype cPeriodOfContract(%1)          cdata(84,  %1)
+#define ctype cHireCount(%1)                 cdata(85,  %1)
+#define ctype cInsanity(%1)                  cdata(86,  %1)
+#define ctype cCursePower(%1)                cdata(87,  %1)
+#define ctype cExtraAttack(%1)               cdata(88,  %1)
+#define ctype cExtraShot(%1)                 cdata(89,  %1)
+#define ctype cDecreasePhysicalDamage(%1)    cdata(90,  %1)
+#define ctype cNullifyDamage(%1)             cdata(91,  %1)
+#define ctype cCutCounterattack(%1)          cdata(92,  %1)
+#define ctype cAnorexiaCount(%1)             cdata(93,  %1)
+#define ctype cContinuousActionId(%1)        cdata(140, %1)
+#define ctype cContinuousActionTurn(%1)      cdata(141, %1)
+#define ctype cContinuousActionItem(%1)      cdata(142, %1)
+#define ctype cStopsContinuousAction(%1)     cdata(143, %1)
+#define ctype cQualityOfPerformance(%1)      cdata(144, %1)
+#define ctype cTipGold(%1)                   cdata(145, %1)
+#define ctype cRole(%1)                      cdata(150, %1)
+#define ctype cShopRank(%1)                  cdata(151, %1)
+#define ctype cContinuousActionTarget(%1)    cdata(152, %1)
+#define ctype cShopStoreId(%1)               cdata(153, %1)
+#define ctype cTimeToRestore(%1)             cdata(154, %1)
+#define ctype cCnpcId(%1)                    cdata(157, %1)
+#define ctype cInitialX(%1)                  cdata(171, %1)
+#define ctype cInitialY(%1)                  cdata(172, %1)
+#define ctype cShopRankRebirth(%1)           cdata(200, %1)
+#define ctype cHate(%1)                      cdata(201, %1)
+#define ctype cAiCalm(%1)                    cdata(202, %1)
+#define ctype cAiMove(%1)                    cdata(207, %1)
+#define ctype cAiDist(%1)                    cdata(208, %1)
+#define ctype cAiActSubFreq(%1)              cdata(209, %1)
+#define ctype cAiHeal(%1)                    cdata(211, %1)
+#define ctype cAiActNum(%1)                  cdata(212, %1)
+#define ctype cElementOfUnarmedAttack(%1)    cdata(230, %1)
+#define ctype cPoisoned(%1)                  cdata(250, %1)
+#define ctype cSleep(%1)                     cdata(251, %1)
+#define ctype cParalyzed(%1)                 cdata(252, %1)
+#define ctype cBlind(%1)                     cdata(253, %1)
+#define ctype cConfused(%1)                  cdata(254, %1)
+#define ctype cFear(%1)                      cdata(255, %1)
+#define ctype cDimmed(%1)                    cdata(256, %1)
+#define ctype cDrunk(%1)                     cdata(257, %1)
+#define ctype cBleeding(%1)                  cdata(258, %1)
+#define ctype cWet(%1)                       cdata(259, %1)
+#define ctype cInsane(%1)                    cdata(260, %1)
+#define ctype cSick(%1)                      cdata(261, %1)
+#define ctype cGravity(%1)                   cdata(262, %1)
+#define ctype cChoked(%1)                    cdata(263, %1)
+#define ctype cFurious(%1)                   cdata(264, %1)
+#define ctype cAphrodisiac(%1)               cdata(265, %1)
+// 媚薬装備の数
+#define ctype cAphropower(%1)                cdata(266, %1)
+// スタミナブースト値
+#define ctype cSPboost(%1)                   cdata(267, %1)
+// 石化
+#define ctype cStoned(%1)                    cdata(268, %1)
+
+#define ctype cnRace(%1)                     cdatan(2, %1)
+
+#const cId_shopkeeper 1
+#const cId_sheep 10
+#const cId_citizen1 16
+#const cId_elder 38
+#const cId_citizen2 39
+#const cId_trainer 40
+#const cId_wizard 41
+#const cId_informer 69
+#const cId_bartender 70
+#const cId_sailor 71
+#const cId_captain 72
+#const cId_arenaMaster 73
+#const cId_healer 74
+#const cId_guard2 76
+#const cId_guard1 77
+#const cId_cat 164
+#const cId_tourist 185
+#const cId_chicken 195
+#const cId_juereInfantry 233
+#const cId_juereSwordman 235
+#const cId_citizen3 239
+#const cId_silverCat 246
+#const cId_youngerSister 249
+#const cId_android 262
+#const cId_rogue 271
+#const cId_noble 274
+#const cId_cleaner 320
+#const cId_bard 326
+#const cId_strayCat 332
+#const cId_prostitute 335
+#const cId_user 343
+
+
+#define ctype cbit_splits(%1) cbit(23, %1) /* bubble type */
+#define ctype cbit_splits2(%1) cbit(27, %1) /* cube type */
+#define ctype cbit_isMarried(%1) cbit(961, %1)
+
+#define ctype chara_splits(%1) (cbit_splits(%1) | cbit_splits2(%1))
+
+
+
+#const cRole_others 3
+#const cRole_citizen 4
+#const cRole_appraiser 5
+#const cRole_elder 6
+#const cRole_trainer 7
+#const cRole_informer 8
+#const cRole_bartender 9
+#const cRole_arenaMaster 10
+#const cRole_healer 12
+#const cRole_guard 14
+#const cRole_horseMater 22
+#const cRole_blacksmith 1001
+#const cRole_foodVendor 1002
+#const cRole_baker 1003
+#const cRole_magicVendor 1004
+#const cRole_innKeeper 1005
+#const cRole_generalVendor 1006
+#const cRole_blackMarketVendor 1007
+#const cRole_goodsVendor 1008
+#const cRole_trader 1009
+#const cRole_wanderingVendor 1010
+#const cRole_fisher 1014
+#const cRole_legendarySmith 1016
+#const cRole_visitingWanderingVendor 2003
+
+#define ctype chara_isShopKeeper(%1) (cRole(%1) >= 1000 & cRole(%1) < 2000 | cRole(%1) == 2003 | cRole(%1) == 3100 | cRole(%1) == 3101 | cRole(%1) == 3102 | cRole(%1) == 3103 | cRole(%1) == 3104 | cRole(%1) == 3105 | cRole(%1) == 3106 | cRole(%1) == 3107 | cRole(%1) == 3109 | cRole(%1) == 3111 | cRole(%1) == 3112)
+
+
+
+#define CHARA_ALL_PETS 15, 1

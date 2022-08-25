@@ -1,9 +1,0 @@
-#include "macro/adata.hsp"
-#include "macro/cdata.hsp"
-#include "macro/cgod.hsp"
-#include "macro/gdata.hsp"
-#include "macro/inv.hsp"
-#include "macro/mdata.hsp"
-#include "macro/ocdata.hsp"
-#include "macro/util.hsp"
-

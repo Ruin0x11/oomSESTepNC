@@ -1,0 +1,154 @@
+*label_N300
+	if (gCurrentMap == 35 | gCurrentMap == 6 | gCurrentMap == 40 | gCurrentMap == 49 | gettrait(0, 194) < 0) {
+		redraw 0
+		snd 27
+		txt -1, lang("このマップでは利用できない。", "Can't do it in this area.")
+		return
+	}
+	gift = ""
+	gift2 = ""
+	giftbuf = ""
+	redraw 0
+	txtnew
+	txt -1, lang("[不思議な贈り物]何をする？", "[mysterious gift] What do you do?")
+	promptl(0, promptmax) = lang("贈り物を受け取る", "Receiving Gifts"), "a", "" + promptmax
+	promptmax++
+	promptl(0, promptmax) = lang("贈り物を渡す", "Give a gift"), "b", "" + promptmax
+	promptmax++
+	val = promptx, prompty, 240, 1
+	gosub *label_1353
+	gosub *label_0623
+	gosub *label_1595
+  	if (rtval == 0) {
+			if (ncgdata(200) == 1) {
+				txt -1, lang("今月はもう不思議な贈り物を受け取れない。", "Won't be receiving any more magical gifts this month.")
+        return
+			}
+      if (inv_getspace(-1) == 0) {
+        txt -1, lang("不思議な贈り物を受け取るスペースがない。", "There is no space to receive the mysterious gift.")
+        return
+      }
+    	comctrl = 0
+    	fileext = "egift"
+    	filedsc = "Elona Gift"
+    	_fdialog fileext, 16, filedsc, exedir + "user", ""
+    	if (stat == 0) {
+    		return
+    	}
+      userfile = refstr
+      dim giftinv, 71
+			notesel gift
+      noteload userfile
+			noteget giftinv, 71
+			folder = exedir + "save\\" + playerid + "\\"
+			exist folder + "giftlist.data"
+			if (strsize != (-1)) {
+				notesel gift2
+				noteload folder + "\\giftlist.data"
+				nc_dc = 0
+				repeat noteinfo(0)
+					noteget giftid, cnt
+					if (giftid == giftbuf) {
+						txtef 3
+			  		txt -1, lang("この贈り物はすでに受け取っている。", "already received this gift.")
+						nc_dc = 1
+						break
+					}
+				loop
+			}
+			gift = ""
+			giftbuf = ""
+			if (nc_dc== 1) {
+				return
+			}
+			notesel gift
+			noteload userfile
+			noteget giftbuf, 4
+			itemcreate -1, int(giftbuf), cX(0), cY(0)
+      repeat 70
+          noteget giftbuf, cnt
+          inv(cnt, ci) = int(giftbuf)
+      loop
+			noteget giftbuf, 70
+			inputlog = ""
+			noteget inputlog, 71
+			notesel gift2
+			noteadd giftbuf
+			notesave folder + "\\giftlist.data"
+      iX(ci) = cX(0)
+			iY(ci) = cY(0)
+			iOwnState(ci) = 0
+      txtef 2
+  		txt -1, lang("不思議な贈り物を受け取った。", "received a strange gift.")
+			if (inputlog != "") {
+				txtef 2
+	  		txt -1, lang("贈り物にメッセージが込められていた。", "The gift contained a message.")
+				txt -1, inputlog
+			}
+			ncgdata(200) = 1
+      gift = ""
+			gift2 = ""
+      snd 44
+  		gosub *label_1339
+  		txtef 5
+  		txt -1, lang(" *保存* ", "*saving*")
+  		return
+  	}
+  	if (rtval == 1) {
+  		txt -1, lang("贈り物として渡すアイテムを選ぶ必要がある。選択したアイテムは永久に失われる。", "You need to choose an item to give as a gift. The selected item will be permanently lost.")
+      invctrl = 33, 0
+  		snd 100
+  		gosub *label_1280
+  		if (stat == 0) {
+  			return
+  		}
+			if (iValue(ci) < 1 | iValue(ci) > 2000000000) {
+				txt -1, lang("このアイテムは価値が適切ではないため送ることができない。", "This item cannot be sent because its value is not appropriate.")
+				return
+			}
+			if (cFame(0) < (iValue(ci) / 100) * 100) {
+				txt -1, lang("このアイテムを送るためには名声が" + (iValue(ci) / 100) * 100 + "必要だ。" , "In order to send this item, you need " + (iValue(ci) / 100) * 100 + " fame.")
+				return
+			}
+			txt -1, lang("ゲームは自動的に保存されて選択したアイテムは永久に失われる。本当にこのアイテムを贈り物にする？", "The game will be automatically saved and the selected item will be lost forever. Do you really want to give this item as a gift?")
+    	promptl(0, 0) = stryes, "y", "0"
+    	promptl(0, 1) = strno, "n", "1"
+      promptmax = 2
+    	val = promptx, prompty, 160, 1
+    	gosub *label_1353
+    	if (rtval == 1) {
+        return
+    	}
+			txt -1, lang("不思議な贈り物にメッセージを添えることができる。", "You can add a message to the mysterious gift.")
+			val = (windoww - 514) / 2 + inf_screenx, winposy(90), 30, 0, 0
+			inputlog = ""
+			gosub *label_1349
+      txt -1, lang("不思議な贈り物を保存する場所は？", "Where do I store my mysterious gifts?")
+      redraw 1
+  		fileext = "egift"
+  		filedsc = "Elona Gift"
+  		_fdialog fileext, 17, filedsc, exedir + "user", "default.egift"
+  		if (stat == 0) {
+  			return
+  		}
+      userfile = refstr
+      dim giftinv, 71
+      notesel gift
+      repeat 70
+        giftinv(cnt) = inv(cnt, ci)
+        noteadd str(giftinv(cnt))
+  		loop
+			item_delete ci
+			iOwnState(ci) = -1
+			noteadd str((gettime(5) * 10000) + (gettime(6) * 1000) + (rnd(100) + 1))
+			noteadd inputlog
+      notesave userfile
+      gift = ""
+      txtef 2
+  		txt -1, lang("不思議な贈り物は宙に消えた。", "The mysterious gift disappeared into thin air.")
+      snd 44
+  		gosub *label_1339
+  		txtef 5
+  		txt -1, lang(" *保存* ", "*saving*")
+  	}
+		return

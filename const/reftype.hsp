@@ -1,8 +1,0 @@
-//reftype
-#const iRef_meleeWeapon 10000
-#const iRef_furniture 60000
-#const iRef_ore 77000
-
-
-//reftypeminor
-#const iRefm_ore 77001
