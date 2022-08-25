@@ -1,5 +1,7 @@
 #packopt name "oomSESTep_NC"
 #packopt icon "chousy.ico"
+#packopt type 0
+#cmpopt varname 1
 
 #ifdef _DEBUG
 dbg_runtimeDirectory = dirinfo(0) + "\\..\\bin\\"
