@@ -1,0 +1,2573 @@
+#defcfunc seasonal_check int seasonal_check_season_id, int seasonal_check_ignore_realtime, local seasonal_check_prm2
+	seasonal_check_prm2 = 0
+	if ( cfg_nc_noseasonalevent == 2 ) {
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_YOUNGER_SISTERS_DAY ) {
+		if ( gettime(1) == 9 & gettime(3) == 6 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 9 & gDay  == 6) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_PARTY_DAY ) {
+		if ( gettime(1) == 7 & gettime(3) == 24 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 7 & gDay  == 24) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_CHRISTMAS_EVE ) {
+		if ( gettime(1) == 12 & gettime(3) == 24 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 12 & gDay  == 24) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_CHRISTMAS ) {
+		if ( gettime(1) == 12 & gettime(3) == 25 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 12 & gDay  == 25) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_VALENTINES_DAY ) {
+		if ( gettime(1) == 2 & gettime(3) == 14 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 2 & gDay  == 14) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_AFTER_VALENTINES_DAY ) {
+		if ( gettime(1) == 2 & gettime(3) == 15 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 2 & gDay  == 15) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_RENRI ) {
+		if ( gettime(1) == 1 & gettime(3) == 7 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 1 & gDay  == 7) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_HINAMATSURI ) {
+		if ( gettime(1) == 3 & (gettime(3) == 3 | gettime(3) == 4) & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 3 & (gDay  == 3 | gDay  == 4)) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_TAX_WEEK ) {
+		if ( gettime(1) == 3 & gettime(3) >= 9 & gettime(3) <= 15 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 3 & gDay  >= 9 & gDay  <= 15) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_APRIL_FOOLS ) {
+		if ( gettime(1) == 4 & gettime(3) == 1 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 4 & gDay  == 1) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_DRAGON_SLAYERS_DAY ) {
+		if ( gettime(1) == 4 & gettime(3) == 23 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 4 & gDay  == 23) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_GOLDEN_WEEK ) {
+		if ( gettime(1) == 4 & gettime(3) >= 29 | (gettime(1) == 5 & gettime(3) <= 5) & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 4 & gDay  >= 29) | (gMonth  == 5 & gDay  <= 5) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_AYAME ) {
+		if ( gettime(1) == 5 & gettime(3) == 5 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | gMonth  == 5 & gDay  == 5 ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_MIDSUMMER ) {
+		if ( gettime(1) == 6 & gettime(3) == 23 | (gettime(1) == 6 & gettime(3) == 24) & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 6 & (gDay  == 23 | gDay  == 24)) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_SASA ) {
+		if ( gettime(1) == 7 & gettime(3) == 7 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 7 & gDay  == 7) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_SILVER_WOLF ) {
+		if ( gettime(1) == 7 & gettime(3) >= 19 & gettime(3) <= 31 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 7 & (gDay  >= 19 & gDay  <= 31)) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_LANTERN_FESTIVAL ) {
+		if ( gettime(1) == 8 & gettime(3) >= 13 & gettime(3) <= 16 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 8 & (gDay  >= 13 & gDay  <= 16)) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_DEFENDERS_DAY ) {
+		if ( gettime(1) == 9 & gettime(3) == 12 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 9 & gDay  == 12) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_HALLOWEEN_EVE ) {
+		if ( gettime(1) == 10 & gettime(3) == 30 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 10 & gDay  == 30) ) {
+			return 1
+		}
+		return 0
+	}
+	if ( seasonal_check_season_id == SEASON_HALLOWEEN ) {
+		if ( gettime(1) == 10 & gettime(3) == 31 & seasonal_check_ignore_realtime == FALSE ) {
+			seasonal_check_prm2 = 1
+		}
+		if ( seasonal_check_prm2 == 1 & cfg_nc_noseasonalevent == 0 | (gMonth  == 10 & gDay  == 31) ) {
+			return 1
+		}
+		return 0
+	}
+	return 0
+
+#deffunc subquestrequirement str subquestrequirement_req
+	txtef COLOR_RED
+	txt -1, lang("サブクエスト発生条件:", "Subquest Requirement:") + subquestrequirement_req
+	return
+
+#deffunc newtitle int newtitle_title_id
+	if ( ogdata(440 + newtitle_title_id) == 0 ) {
+		ogdata(440 + newtitle_title_id) = 1
+		snd SOUNDLIST_WRITE1
+		txtef COLOR_GREEN
+		txt -1, lang("新しい称号を獲得した！", "Earned a new title!")
+	}
+	return
+
+#deffunc check_stquest
+	if ( ncgQuestThePassionOfTheEggShop == 1000 ) {
+		if ( ncgQuestNewcomersProblems == 1000 ) {
+			if ( ncgQuestSpiritOfDistraction == 1000 ) {
+				if ( ncgQuestSingleCombat == 1000 ) {
+					if ( ncgQuestAwaitOnesReturn == 1000 ) {
+						if ( ncgQuestCreateDangerousArmor == 1000 ) {
+							if ( ncgQuestASmallExpense == 1000 ) {
+								if ( ncgQuestForMyFriends == 1000 ) {
+									newtitle TITLE_LOVE_SAVES_THE_TYRIS
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return
+
+#defcfunc check_stquest_amount local check_stquest_amount_prm0
+	check_stquest_amount_prm0 = 0
+	if ( ncgQuestThePassionOfTheEggShop == 1000 ) {
+		check_stquest_amount_prm0++
+	}
+	if ( ncgQuestNewcomersProblems == 1000 ) {
+		check_stquest_amount_prm0++
+	}
+	if ( ncgQuestSpiritOfDistraction == 1000 ) {
+		check_stquest_amount_prm0++
+	}
+	if ( ncgQuestSingleCombat == 1000 ) {
+		check_stquest_amount_prm0++
+	}
+	if ( ncgQuestAwaitOnesReturn == 1000 ) {
+		check_stquest_amount_prm0++
+	}
+	if ( ncgQuestCreateDangerousArmor == 1000 ) {
+		check_stquest_amount_prm0++
+	}
+	if ( ncgQuestASmallExpense == 1000 ) {
+		check_stquest_amount_prm0++
+	}
+	if ( ncgQuestForMyFriends == 1000 ) {
+		check_stquest_amount_prm0++
+	}
+	return check_stquest_amount_prm0
+
+#deffunc addplat int addplat_prm0, int addplat_prm1
+	if ( addplat_prm0 == 0 & godcheck() == "krula" ) {
+		if ( inv_getfreeid(CHARA_PLAYER) == (-1) ) {
+			txt -1, lang("バックパックが一杯だ。", "Your inventory is full.")
+			cPlat(addplat_prm0) = limitaddition(cPlat(addplat_prm0), addplat_prm1)
+			return
+		}
+		flt
+		itemcreate CHARA_PLAYER, ITEM_ID_PLATINUM_COIN, -1, -1, addplat_prm1
+		txt -1, lang(itemname(ci, 1) + "をバックパックに入れた。", "You put " + itemname(ci, 1) + " in your backpack.")
+	}
+	else {
+		cPlat(addplat_prm0) = limitaddition(cPlat(addplat_prm0), addplat_prm1)
+	}
+	return
+
+#defcfunc pethealthcheck
+	locvar_check_stquest_amount_p = 0
+	repeat 15, 1
+		if ( cExist(cnt) != CHAR_STATE_DEAD ) {
+			locvar_check_stquest_amount_p = 1
+		}
+	loop
+	if ( locvar_check_stquest_amount_p == 0 ) {
+		return 0
+	}
+	locvar_check_stquest_amount_p = 1
+	repeat 15, 1
+		if ( cExist(cnt) == CHAR_STATE_ALLY_DEAD ) {
+			locvar_check_stquest_amount_p = 0
+			break
+		}
+		if ( cExist(cnt) == CHAR_STATE_ALIVE ) {
+			if ( cHP(cnt) < cMHP(cnt) * 3 / 4 ) {
+				locvar_check_stquest_amount_p = 0
+				break
+			}
+		}
+	loop
+	if ( locvar_check_stquest_amount_p == 0 ) {
+		return 0
+	}
+	return 1
+
+#deffunc charastone int charastone_prm0, int charastone_prm1, int charastone_prm2
+	nc_intb_100 = 0
+	if ( findbuff(charastone_prm1, BUFF_HOLY_VEIL) != (-1) ) {
+		if ( ocdata(OCDATA_STARTING_CURSE_BUFF_TYPE + findbuff(charastone_prm1, BUFF_HOLY_VEIL) * 3 + 1, charastone_prm1) + 50 > charastone_prm2 * 5 / 2 | rnd(ocdata(OCDATA_STARTING_CURSE_BUFF_TYPE + findbuff(charastone_prm1, BUFF_HOLY_VEIL) * 3 + 1, charastone_prm1) + 50) > rndex(charastone_prm2 + 1) ) {
+			txt -1, lang("ホーリーヴェイルが呪いを防いだ。", "The holy veil repels the hex.")
+			animeload 8, charastone_prm1
+			return
+		}
+	}
+	locvar_check_stquest_amount_f = 0
+	if ( cQuality(charastone_prm1) >= FIX_QUALITY_MIRACLE ) {
+		if ( rnd(10) ) {
+			locvar_check_stquest_amount_f = 1
+		}
+	}
+	if ( locvar_check_stquest_amount_f != 1 ) {
+		if ( findfaction(charastone_prm1, "regist", "hex") ) {
+			locvar_check_stquest_amount_f = 1
+		}
+		else {
+			if ( findfaction(charastone_prm1, "regist", "stone") ) {
+				locvar_check_stquest_amount_f = 1
+			}
+		}
+	}
+	if ( locvar_check_stquest_amount_f == 1 ) {
+		if ( synccheck(charastone_prm1, -1) ) {
+			txt -1, lang(name(charastone_prm1) + "は抵抗した。", name(charastone_prm1) + " resist" + _s(charastone_prm1) + " the hex.")
+			animeload 8, charastone_prm1
+			return
+		}
+	}
+	animeload 8, charastone_prm1
+	dmgcon charastone_prm1, 14, 10
+	if ( charastone_prm0 == 0 ) {
+		hostileaction CHARA_PLAYER, charastone_prm1
+	}
+	return
+
+#defcfunc short_show int short_show_prm0
+	if ( short_show_prm0 >= 1000000 ) {
+		return "" + short_show_prm0 / 1000000 + "M"
+	}
+	else {
+		if ( short_show_prm0 >= 1000 ) {
+			return "" + short_show_prm0 / 1000 + "K"
+		}
+	}
+	return "" + short_show_prm0
+
+#defcfunc performance_check
+	if ( ogTitleWailingChoir == 2 ) {
+		if ( cc == CHARA_PLAYER ) {
+			return 0
+		}
+		if ( cc < MAX_CHARA_FOLLOWER & tc < MAX_CHARA_FOLLOWER ) {
+			return 0
+		}
+	}
+	else {
+		if ( cc < MAX_CHARA_FOLLOWER & tc < MAX_CHARA_FOLLOWER ) {
+			return 0
+		}
+	}
+	return 1
+
+#deffunc transformsstat
+	pagesize = 0
+	s = lang("変化前", "Before"), ""
+	display_window (windoww - 750) / 2 + inf_screenx, winposy(550), 375, 200
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	color 0, 0, 0
+	wy -= 32
+	pos wx + 38, wy + 66 + cnt * 19 - 2
+	mes lang("素材: ", "素材: ") + mtname(0, nc_intb_107)
+	wy += 16
+	if ( refitem(iID(ci), DBSPEC_TYPE, ci) <= FILTER_ACCESSORY_AMULET ) {
+		if ( nc_intb_105 != 0 ) {
+			pos wx + 38, wy + 66 + cnt * 19 - 2
+			mes lang("ダメージ: ", "Damage: ") + nc_intb_105 + "d" + nc_intb_106 + cnvfix(nc_intb_103) + "(" + (nc_intb_105 + nc_intb_103) + "-" + (nc_intb_105 * nc_intb_106 + nc_intb_103) + ")"
+			wy += 16
+		}
+		pos wx + 38, wy + 66 + cnt * 19 - 2
+		mes "Pv: " + nc_intb_101
+		wy += 16
+		pos wx + 38, wy + 66 + cnt * 19 - 2
+		mes "Dv: " + nc_intb_102
+		wy += 16
+		pos wx + 38, wy + 66 + cnt * 19 - 2
+		mes lang("ダメージ修正: ", "DamageBonus: ") + nc_intb_103
+		wy += 16
+		pos wx + 38, wy + 66 + cnt * 19 - 2
+		mes lang("命中修正: ", "HitBonus: ") + nc_intb_104
+		wy += 16
+	}
+	pos wx + 38, wy + 66 + cnt * 19 - 2
+	mes lang("価値: ", "Value: ") + nc_intb_108
+	s = lang("変化後", "After")
+	display_window (windoww - 25) / 2 + inf_screenx, winposy(550), 375, 200
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	color 0, 0, 0
+	wy -= 32
+	pos wx + 38, wy + 66 + cnt * 19 - 2
+	mes lang("素材: ", "素材: ") + mtname(0, iMaterial(ci))
+	wy += 16
+	if ( refitem(iID(ci), DBSPEC_TYPE, ci) <= FILTER_ACCESSORY_AMULET ) {
+		if ( nc_intb_105 != 0 ) {
+			pos wx + 38, wy + 66 + cnt * 19 - 2
+			mes lang("ダメージ: ", "Damage: ") + iDice1(ci) + "d" + iDice2(ci) + cnvfix(iDmg(ci)) + "(" + (iDice1(ci) + iDmg(ci)) + "-" + (iDice1(ci) * iDice2(ci) + iDmg(ci)) + ")"
+			wy += 16
+		}
+		pos wx + 38, wy + 66 + cnt * 19 - 2
+		mes "Pv: " + iPV(ci) + "(" + cnvfix(iPV(ci) - nc_intb_101) + ")"
+		wy += 16
+		pos wx + 38, wy + 66 + cnt * 19 - 2
+		mes "Dv: " + iDV(ci) + "(" + cnvfix(iDV(ci) - nc_intb_102) + ")"
+		wy += 16
+		pos wx + 38, wy + 66 + cnt * 19 - 2
+		mes lang("ダメージ修正: ", "DamageBonus: ") + iDmg(ci) + "(" + cnvfix(iDmg(ci) - nc_intb_103) + ")"
+		wy += 16
+		pos wx + 38, wy + 66 + cnt * 19 - 2
+		mes lang("命中修正: ", "HitBonus: ") + iAtk(ci) + "(" + cnvfix(iAtk(ci) - nc_intb_104) + ")"
+		wy += 16
+	}
+	pos wx + 38, wy + 66 + cnt * 19 - 2
+	mes lang("価値: ", "Value: ") + iValue(ci) + "(" + cnvfix(iValue(ci) - nc_intb_108) + ")"
+	return
+
+#deffunc bodycheck int bodycheck_prm0
+	cs = 0
+	cs_bk = -1
+	pagemax = 0
+	page = 0
+	list(0, 0) = -1
+
+*bodycheck_prompt
+	redraw 0
+	if ( cs != cs_bk | p == (-2) ) {
+		keyrange = 0
+		s = lang("求める部位の選択", "Select want part"), strhint3b
+		display_window (windoww - 400) / 2 + inf_screenx, winposy(458, 1) + 20, 400, 358
+		x = ww / 3 * 2
+		y = wh - 80
+		gmode 2
+		display_topic lang("部位の候補", "Parts"), wx + 28, wy + 30
+		font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+		color 0, 0, 0
+		repeat 9
+			key_list(cnt) = key_select(cnt)
+			list(0, keyrange) = cnt
+			listn(0, keyrange) = bodyn(cnt + 1)
+			pos wx + 38, wy + 66 + keyrange * 19 - 2
+			gcopy BUFFER_INF, keyrange * 24 + 72, 30, 24, 18
+			cs_list listn(0, keyrange), wx + 64, wy + 66 + keyrange * 19 - 1, 19
+			keyrange += 1
+		loop
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			p = cnt
+			break
+		}
+		else {
+			p = -1
+		}
+	loop
+	if ( p != (-1) ) {
+		return p
+	}
+	if ( key == key_cancel ) {
+		return -1
+	}
+	goto *bodycheck_prompt
+	return -1
+
+#defcfunc showdamagecheck int showdamagecheck_prm0
+	if ( cfg_dmgmonitor0 == 0 ) {
+		return 0
+	}
+	if ( cfg_nc_notshowzero == 1 ) {
+		if ( showdamagecheck_prm0 == 0 ) {
+			return 0
+		}
+	}
+	return 1
+
+#defcfunc trophycheck int trophycheck_trophy_id
+	if ( gettrait(0, 194) < 0 ) {
+		return 0
+	}
+	return trophy(trophycheck_trophy_id)
+
+#defcfunc effortcnt
+	f = 0
+	repeat 10
+		if ( ogdata(520 + cnt) == 2 ) {
+			f++
+		}
+	loop
+	return f
+
+#deffunc recoverstorn int recoverstorn_prm0
+	healcon recoverstorn_prm0, 14, 99999
+	return
+
+#defcfunc isstorned int isstorned_prm0
+	if ( cdata(268, isstorned_prm0) > 0 ) {
+		return 1
+	}
+	return 0
+
+#deffunc boxfa int boxfa_prm0, int boxfa_prm1, int boxfa_prm2, int boxfa_prm3
+	pdx = boxfa_prm0, boxfa_prm2 + boxfa_prm0, boxfa_prm2 + boxfa_prm0, boxfa_prm0
+	pdy = boxfa_prm1, boxfa_prm1, boxfa_prm3 + boxfa_prm1, boxfa_prm3 + boxfa_prm1
+	gsquare -1, pdx, pdy
+	return
+
+#defcfunc checkyarikomi int checkyarikomi_prm0
+	flg = 0
+	repeat 8
+		if ( cfg_nc_charasheetdata(cnt) == checkyarikomi_prm0 ) {
+			flg = 1
+			break
+		}
+	loop
+	if ( flg == 1 ) {
+		return 1
+	}
+	return 0
+
+#deffunc resetcai int resetcai_prm0
+	repeat 10
+		cnt2 = cnt
+		repeat 45
+			nc_ai(resetcai_prm0, cnt2, cnt) = 0
+		loop
+	loop
+	return
+
+#defcfunc check_buff int check_buff_prm0, int check_buff_prm1
+	if ( check_buff_prm1 == 442 & findbuff(check_buff_prm0, BUFF_HOLY_SHIELD) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 444 & findbuff(check_buff_prm0, BUFF_REGENERATION) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 445 & findbuff(check_buff_prm0, BUFF_ATTRIBUTE_SHIELD) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 446 & findbuff(check_buff_prm0, BUFF_SPEED) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 448 & findbuff(check_buff_prm0, BUFF_HERO) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 451 & findbuff(check_buff_prm0, BUFF_HOLY_VEIL) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 453 & findbuff(check_buff_prm0, BUFF_DIVINE_WISDOM) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 625 & findbuff(check_buff_prm0, BUFF_LULWYS_TRICK) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 458 & findbuff(check_buff_prm0, BUFF_INCOGNITO) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 647 & findbuff(check_buff_prm0, BUFF_BOOST) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 462 & findbuff(check_buff_prm0, BUFF_CONTINGENCY) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 775 & findbuff(check_buff_prm0, 95) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 776 & findbuff(check_buff_prm0, 96) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 778 & findbuff(check_buff_prm0, 97) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 901 & findbuff(check_buff_prm0, 60) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 902 & findbuff(check_buff_prm0, 61) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 794 & findbuff(check_buff_prm0, 98) == (-1) ) {
+		return 1
+	}
+	if ( check_buff_prm1 == 501 & findbuff(check_buff_prm0, 69) == (-1) ) {
+		return 1
+	}
+	return 0
+
+#defcfunc check_debuff int check_debuff_prm0, int check_debuff_prm1
+	if ( check_debuff_prm1 == 443 & findbuff(check_debuff_prm0, BUFF_MIST_OF_SILENCE) == (-1) ) {
+		return 1
+	}
+	if ( check_debuff_prm1 == 447 & findbuff(check_debuff_prm0, BUFF_SLOW) == (-1) ) {
+		return 1
+	}
+	if ( check_debuff_prm1 == 449 & findbuff(check_debuff_prm0, BUFF_MIST_OF_FRAILNESS) == (-1) ) {
+		return 1
+	}
+	if ( check_debuff_prm1 == 450 & findbuff(check_debuff_prm0, BUFF_ELEMENT_SCAR) == (-1) ) {
+		return 1
+	}
+	if ( check_debuff_prm1 == 452 & findbuff(check_debuff_prm0, BUFF_NIGHTMARE) == (-1) ) {
+		return 1
+	}
+	if ( check_debuff_prm1 == 646 & findbuff(check_debuff_prm0, BUFF_DEATH_WORD) == (-1) ) {
+		return 1
+	}
+	if ( check_debuff_prm1 == 502 & findbuff(check_debuff_prm0, 68) == (-1) ) {
+		return 1
+	}
+	if ( check_debuff_prm1 == 509 & findbuff(check_debuff_prm0, 70) == (-1) ) {
+		return 1
+	}
+	return 0
+
+#deffunc add_bigench int add_bigench_prm0
+	if ( add_bigench_prm0 == 2 ) {
+		repeat
+			inv(37, ci) = rnd(8) + 11
+			if ( inv(37, ci) == 2 | inv(37, ci) == 4 | inv(37, ci) == 9 | inv(37, ci) == 10 | inv(37, ci) == 13 & iDice1(ci) == 0 ) {
+				continue
+			}
+			if ( inv(37, ci) == 1 & iDice1(ci) != 0 ) {
+				continue
+			}
+			if ( inv(37, ci) == 12 ) {
+				continue
+			}
+			break
+		loop
+		if ( inv(37, ci) == 0 ) {
+			repeat
+				nc_buf = rnd(301) + 1
+				if ( nc_buf == 1 | (nc_buf >= 4 & nc_buf <= 9) | (nc_buf >= 20 & nc_buf <= 99) | (nc_buf >= 112 & nc_buf <= 149) | (nc_buf >= 190 & nc_buf <= 299) ) {
+					continue
+				}
+				break
+			loop
+			inv(37, ci) = 10000 + nc_buf
+			inv(38, ci) = rnd((gLevel  - 50) / 200 + 3) + 1
+		}
+		else {
+			if ( inv(37, ci) == 2 ) {
+				inv(38, ci) = rnd(20) + 1 + rnd((gLevel  - 50) / 100 + 1)
+			}
+			if ( inv(37, ci) == 4 | inv(37, ci) == 7 ) {
+				inv(38, ci) = rnd(5) + 1 + rnd((gLevel  - 50) / 100 + 1)
+			}
+			if ( inv(37, ci) == 5 ) {
+				inv(38, ci) = rnd(4) + 1 + rnd((gLevel  - 50) / 100 + 1)
+			}
+			if ( inv(37, ci) == 8 ) {
+				inv(38, ci) = rnd(10) + 1 + rnd((gLevel  - 50) / 100 + 1)
+			}
+			if ( inv(37, ci) == 9 | inv(37, ci) == 10 ) {
+				inv(38, ci) = rnd(3) + 1 + rnd((gLevel  - 50) / 100 + 1)
+			}
+			if ( inv(37, ci) == 15 ) {
+				inv(38, ci) = rnd(5) + 1 + rnd((gLevel  - 50) / 100 + 1)
+			}
+			if ( inv(37, ci) == 16 ) {
+				inv(38, ci) = rnd(3) + 1 + rnd((gLevel  - 50) / 100 + 1)
+			}
+			if ( inv(37, ci) == 17 ) {
+				inv(38, ci) = rnd(3) + 1 + rnd((gLevel  - 50) / 200 + 1)
+			}
+			if ( inv(37, ci) == 18 ) {
+				ibitmod ITEM_BIT_LOVE_BLEND, ci, TRUE
+			}
+		}
+	}
+	else {
+		if ( add_bigench_prm0 == 1 ) {
+			repeat
+				inv(37, ci) = rnd(19)
+				if ( inv(37, ci) == 2 | inv(37, ci) == 4 | inv(37, ci) == 9 | inv(37, ci) == 10 | inv(37, ci) == 13 & iDice1(ci) == 0 ) {
+					continue
+				}
+				if ( inv(37, ci) == 1 & iDice1(ci) != 0 ) {
+					continue
+				}
+				if ( inv(37, ci) == 12 ) {
+					continue
+				}
+				break
+			loop
+			if ( inv(37, ci) == 0 ) {
+				repeat
+					nc_buf = rnd(301) + 1
+					if ( nc_buf == 1 | (nc_buf >= 4 & nc_buf <= 9) | (nc_buf >= 20 & nc_buf <= 99) | (nc_buf >= 112 & nc_buf <= 149) | (nc_buf >= 190 & nc_buf <= 299) ) {
+						continue
+					}
+					break
+				loop
+				inv(37, ci) = 10000 + nc_buf
+				inv(38, ci) = rnd((gLevel  - 50) / 200 + 3) + 1
+			}
+			else {
+				if ( inv(37, ci) == 2 ) {
+					inv(38, ci) = rnd(20) + 1 + rnd((gLevel  - 50) / 100 + 1)
+				}
+				if ( inv(37, ci) == 4 | inv(37, ci) == 7 ) {
+					inv(38, ci) = rnd(5) + 1 + rnd((gLevel  - 50) / 100 + 1)
+				}
+				if ( inv(37, ci) == 5 ) {
+					inv(38, ci) = rnd(4) + 1 + rnd((gLevel  - 50) / 100 + 1)
+				}
+				if ( inv(37, ci) == 8 ) {
+					inv(38, ci) = rnd(10) + 1 + rnd((gLevel  - 50) / 100 + 1)
+				}
+				if ( inv(37, ci) == 9 | inv(37, ci) == 10 ) {
+					inv(38, ci) = rnd(3) + 1 + rnd((gLevel  - 50) / 100 + 1)
+				}
+				if ( inv(37, ci) == 15 ) {
+					inv(38, ci) = rnd(5) + 1 + rnd((gLevel  - 50) / 100 + 1)
+				}
+				if ( inv(37, ci) == 16 ) {
+					inv(38, ci) = rnd(3) + 1 + rnd((gLevel  - 50) / 100 + 1)
+				}
+				if ( inv(37, ci) == 17 ) {
+					inv(38, ci) = rnd(3) + 1 + rnd((gLevel  - 50) / 200 + 1)
+				}
+				if ( inv(37, ci) == 18 ) {
+					ibitmod ITEM_BIT_LOVE_BLEND, ci, TRUE
+				}
+			}
+		}
+		else {
+			repeat
+				inv(37, ci) = rnd(11)
+				if ( inv(37, ci) == 2 | inv(37, ci) == 4 | inv(37, ci) == 9 | inv(37, ci) == 10 & iDice1(ci) == 0 ) {
+					continue
+				}
+				if ( inv(37, ci) == 1 & iDice1(ci) != 0 ) {
+					continue
+				}
+				break
+			loop
+			if ( inv(37, ci) == 0 ) {
+				repeat
+					nc_buf = rnd(301) + 1
+					if ( nc_buf == 1 | (nc_buf >= 4 & nc_buf <= 9) | (nc_buf >= 20 & nc_buf <= 99) | (nc_buf >= 112 & nc_buf <= 149) | (nc_buf >= 190 & nc_buf <= 299) ) {
+						continue
+					}
+					break
+				loop
+				inv(37, ci) = 10000 + nc_buf
+				inv(38, ci) = rnd(3) + 1
+			}
+			else {
+				if ( inv(37, ci) == 2 ) {
+					inv(38, ci) = rnd(20) + 1
+				}
+				if ( inv(37, ci) == 4 | inv(37, ci) == 7 ) {
+					inv(38, ci) = rnd(5) + 1
+				}
+				if ( inv(37, ci) == 5 ) {
+					inv(38, ci) = rnd(4) + 1
+				}
+				if ( inv(37, ci) == 8 ) {
+					inv(38, ci) = rnd(10) + 1
+				}
+				if ( inv(37, ci) == 9 | inv(37, ci) == 10 ) {
+					inv(38, ci) = rnd(3) + 1
+				}
+			}
+		}
+	}
+	return
+
+#defcfunc check_abnormal int check_abnormal_prm0
+	if ( cPoison(check_abnormal_prm0) | cSleep(check_abnormal_prm0) | cParalyze(check_abnormal_prm0) | cBlind(check_abnormal_prm0) | cConfuse(check_abnormal_prm0) | cFear(check_abnormal_prm0) | cDim(check_abnormal_prm0) | cDrunk(check_abnormal_prm0) | cBleed(check_abnormal_prm0) | cInsane(check_abnormal_prm0) | cdata(268, check_abnormal_prm0) ) {
+		return 1
+	}
+	return 0
+
+#defcfunc check_bigench int check_bigench_prm0
+	if ( inv(37, check_bigench_prm0) != 0 ) {
+		return inv(37, check_bigench_prm0)
+	}
+	return 0
+
+#defcfunc have_bigench int have_bigench_prm0, int have_bigench_prm1
+	nc_intb_001 = 0
+	nc_intb_002 = 0
+	nc_intb_003 = 0
+	repeat 30, 100
+		nc_intb_003 = cdata(cnt, have_bigench_prm0)
+		if ( nc_intb_003 \ 10000 == 0 ) {
+			continue
+		}
+		nc_intb_001 = nc_intb_003 \ 10000 - 1
+		if ( inv(37, nc_intb_001) == have_bigench_prm1 ) {
+			nc_intb_002 = 1
+			break
+		}
+	loop
+	return nc_intb_002
+
+#defcfunc have_bigench2 int have_bigench2_prm0, int have_bigench2_prm1
+	nc_intb_001 = 0
+	nc_intb_002 = 0
+	nc_intb_003 = 0
+	repeat 30, 100
+		nc_intb_004 = cdata(cnt, have_bigench2_prm0)
+		if ( nc_intb_004 \ 10000 == 0 ) {
+			continue
+		}
+		nc_intb_001 = nc_intb_004 \ 10000 - 1
+		if ( inv(37, nc_intb_001) == have_bigench2_prm1 ) {
+			nc_intb_002 += inv(38, nc_intb_001)
+		}
+	loop
+	return nc_intb_002
+
+#defcfunc have_skillbigench int have_skillbigench_prm0
+	nc_intb_001 = 0
+	nc_intb_002 = 0
+	repeat 30, 100
+		nc_intb_003 = cdata(cnt, have_skillbigench_prm0)
+		if ( nc_intb_003 \ 10000 == 0 ) {
+			continue
+		}
+		nc_intb_002 = nc_intb_003 \ 10000 - 1
+		if ( inv(37, nc_intb_002) >= 10000 ) {
+			nc_intb_001 = 1
+			break
+		}
+	loop
+	if ( nc_intb_001 == 1 ) {
+		return 1
+	}
+	return 0
+
+#defcfunc subactget int subactget_prm0
+	if ( subactget_prm0 == 0 ) {
+		return lang("何もしない", "nothing")
+	}
+	if ( subactget_prm0 < 0 ) {
+		if ( subactget_prm0 == (-1) ) {
+			return lang("近接攻撃", "melee attack")
+		}
+		if ( subactget_prm0 == (-2) ) {
+			return lang("遠隔攻撃", "range attack")
+		}
+		if ( subactget_prm0 == (-3) ) {
+			return lang("接近待ち", "waiting")
+		}
+		if ( subactget_prm0 == (-4) ) {
+			return lang("ランダム移動", "random move")
+		}
+		if ( subactget_prm0 == (-9994) ) {
+			return lang("媚薬投擲", "aphrodisiac throwing")
+		}
+		if ( subactget_prm0 == (-9995) ) {
+			return lang("トマト投擲", "tomato throwing")
+		}
+		if ( subactget_prm0 == (-9996) ) {
+			return lang("塩投擲", "salt throwing")
+		}
+		if ( subactget_prm0 == (-9997) ) {
+			return lang("ポーション投擲 No.1", "potion throw no.1")
+		}
+		if ( subactget_prm0 == (-9998) ) {
+			return lang("ポーション投擲 No.2", "potion throw no.2")
+		}
+		if ( subactget_prm0 == (-9999) ) {
+			return lang("ポーション投擲 No.3", "potion throw no.3")
+		}
+	}
+	else {
+		return skillname(subactget_prm0)
+	}
+	return "何もしない"
+
+*nc_com_ai
+	if ( jp ) {
+		ainame(0) = "ターゲットの距離が適正距離より遠いなら", "ターゲットの距離が適正距離より近いなら", "ターゲットの距離が適正距離なら", "ターゲットと隣接していないなら", "ターゲットと隣接しているなら"
+		ainame(5) = "プレイヤーのＨＰが回復ライン以下なら", "プレイヤーのＨＰが回復ラインより多いなら", "自分がこの技のバフに掛かっていないなら", "ターゲットがこの技のデバフに掛かっていないなら", "自分が状態異常なら"
+		ainame(10) = "ターゲットが状態異常ではないなら", "魔法を唱えられるなら", "プレイヤーの距離が適正距離より遠いなら", "プレイヤーの距離が適正距離より近いなら", "プレイヤーの距離が適正距離なら"
+		ainame(15) = "周囲の味方のＨＰが回復ライン以下なら", "周囲の味方のＨＰが回復ラインより多いなら", "周囲の味方が状態異常の時なら", "自分のＨＰが回復ライン以下なら", "自分のＨＰが回復ラインより多いなら"
+		ainame(20) = "自分のＭＰが25％以下なら", "自分のＭＰが26％以上なら", "ターゲットのＨＰが80%以上なら", "ターゲットのＨＰが10%以下なら", "スウォーム範囲に複数敵がいるなら"
+		ainame(25) = "ターゲットが自爆生物なら", "ターゲットがカウンターを持っているなら", "ターゲットが変異種でないなら", "50%の確率で", "25%の確率で"
+		ainame(30) = "この技の属性が無効化されないなら", "この技の属性が大きく軽減されないなら", "===============", "===============", "==============="
+		ainame(35) = "===============", "===============", "===============", "===============", "==============="
+		ainame(40) = "===============", "===============", "優先的に判定を行う", "他の設定に関わらず絶対に実行する", "他の設定に関わらず絶対に実行しない"
+	}
+	else {
+		ainame(0) = "If the target distance is farther than the proper distance", "If the target distance is closer than the proper distance", "If the target distance is the right distance", "If this is not adjacent to the target", "If this is adjacent to the target"
+		ainame(5) = "If the PC HP is below the recovery line", "If the PC has more HP than the recovery line", "If this character is not buffed by this skill", "If the target is not affected by the debuff of this skill", "If this is in an abnormal state"
+		ainame(10) = "If the target isn't in a state", "If this is can cast a spell", "If PC is farther away than the proper distance", "If PC distance is closer than the proper distance", "If PC distance is the right distance"
+		ainame(15) = "If the HP of surrounding allies is below the recovery line", "If the surrounding allies have more HP than the recovery line", "If the surrounding allies are in an abnormal state", "If this HP is below the recovery line", "If this HP is above the recovery line"
+		ainame(20) = "If this MP is below 25%", "If this MP is above 26%", "If the target's HP is above 80%", "If the target's HP is below 10%", "If there are multiple enemies in the Swarm range"
+		ainame(25) = "If the target is a self-destructing organism", "If the target has a counter", "If the target isn't a {}", "50%", "25%"
+		ainame(30) = "If the attribute of this Skill is not invalidated", "If the attributes of this skill are not greatly reduced", "===============", "===============", "==============="
+		ainame(35) = "===============", "===============", "===============", "===============", "==============="
+		ainame(40) = "===============", "===============", "Prioritize decisions", "Run absolutely regardless of other settings", "Never run it, regardless of other settings"
+	}
+	listmax = 0
+	page = 0
+	pagesize = 15
+	cs = 0
+	cs_bk = -1
+	page_load
+	curmenu = 2
+	ww = 800
+	wh = 400
+	wx = (windoww - ww) / 2 + inf_screenx
+	wy = winposy(wh)
+	windowanime wx, wy, ww, wh, 10, 4
+	redraw 0
+	gsel BUFFER_INF
+	pos 960, 96
+	picload_ exedir + "graphic\\deco_feat.bmp", 1
+	gsel BUFFER_SCREEN
+	windowshadow = 1
+
+*nc_com_ai_pgchk
+	listmax = 0
+	repeat length(ainame) * (int(cActIndex(tc) / 10) + 5)
+		if ( cnt < 45 * (int(cActIndex(tc) / 10) + 5) ) {
+			list(0, listmax) = cnt, cnt + 1
+			listmax++
+		}
+	loop
+	gosub *sort_list
+	repeat listmax
+		s = ainame(cnt \ (aipage * 15))
+		pos wx + 30, wy + 61 + cnt * 19
+		x = 84
+		listn(0, cnt) = s
+	loop
+	redraw 0
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+
+*nc_com_ai_loop
+	redraw 0
+	rc_subact = cdata(STARTING_CDATA_ACT_MAIN + int(page / aipage), tc)
+	s = lang("行動", "Act") + (int(page / aipage) + 1) + ":" + subactget(rc_subact)
+	s(1) = lang("判別したい条件を有効化してください " + key_target + "でORモードで選択します " + key_msglog + "で必須モードで選択します", "Activate the condition you want to judge. " + key_target + " Select in OR mode. " + key_msglog + " Select in Required mode.")
+	i = 0
+	display_window (windoww - 730) / 2 + inf_screenx, winposy(430, i) + i * 15, 730, 430, 55, 40
+	if ( jp ) {
+		s = "条件"
+	}
+	else {
+		s = "condition"
+	}
+	display_topic s, wx + 46, wy + 36
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+		if ( cnt \ 2 == 0 ) {
+			pos wx + 57, wy + 66 + cnt * 19
+			gfini 640, 18
+			gfdec2 12, 14, 16
+		}
+		display_key wx + 58, wy + 66 + cnt * 19 - 2, cnt
+	loop
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	cs_listbk
+	repeat pagesize
+		p = pagesize * page + cnt
+		p2 = page / aipage
+		p3 = p \ (aipage * 15)
+		if ( p >= listmax ) {
+			break
+		}
+		if ( nc_ai(tc, p2, p3) != 0 ) {
+			if ( nc_ai(tc, p2, p3) == 3 ) {
+				cs_list "/" + listn(0, p), wx + x, wy + 66 + cnt * 19 - 1, 19, 0, 6, 0
+			}
+			if ( nc_ai(tc, p2, p3) == 2 ) {
+				cs_list "*" + listn(0, p), wx + x, wy + 66 + cnt * 19 - 1, 19, 0, 6, 0
+			}
+			if ( nc_ai(tc, p2, p3) == 1 ) {
+				cs_list listn(0, p), wx + x, wy + 66 + cnt * 19 - 1, 19, 0, 6, 0
+			}
+		}
+		else {
+			cs_list listn(0, p), wx + x, wy + 66 + cnt * 19 - 1, 19, 0, 5, 0
+		}
+	loop
+	if ( keyrange != 0 ) {
+		cs_bk = cs
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			p = pagesize * page + cnt
+			p2 = page / aipage
+			p3 = p \ (aipage * 15)
+			sf = 0
+			break
+		}
+		if ( key == key_target ) {
+			p = pagesize * page + cs_bk
+			p2 = page / aipage
+			p3 = p \ (aipage * 15)
+			sf = 1
+			break
+		}
+		if ( key == key_msglog ) {
+			p = pagesize * page + cs_bk
+			p2 = page / aipage
+			p3 = p \ (aipage * 15)
+			sf = 3
+			break
+		}
+	loop
+	if ( p >= 0 ) {
+		snd SOUNDLIST_SPEND1
+		if ( nc_ai(tc, p2, p3) == 1 | nc_ai(tc, p2, p3) == 2 | nc_ai(tc, p2, p3) == 3 ) {
+			nc_ai(tc, p2, p3) = 0
+		}
+		else {
+			if ( sf == 0 ) {
+				nc_ai(tc, p2, p3) = 1
+			}
+			else {
+				if ( sf == 1 ) {
+					nc_ai(tc, p2, p3) = 2
+				}
+				else {
+					nc_ai(tc, p2, p3) = 3
+				}
+			}
+		}
+		goto *nc_com_ai_pgchk
+	}
+	if ( key == key_pageup ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page++
+			goto *nc_com_ai_pgchk
+		}
+	}
+	if ( key == key_pagedown ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page--
+			goto *nc_com_ai_pgchk
+		}
+	}
+	if ( key == key_cancel ) {
+		if ( cAiSub(tc) != 101 ) {
+			txt -1, lang("今すぐカスタムAIを使う？", "Use custom AI now?")
+			promptl(0, 0) = stryes, "y", "0"
+			promptl(0, 1) = strno, "n", "1"
+			promptmax = 2
+			val = promptx, prompty, 240, 1
+			gosub *prompt_key
+			if ( rtval == 0 ) {
+				cAiSub(tc) = 101
+				ocbitmod 0, tc, 1
+			}
+		}
+		gosub *screen_draw
+		goto *pc_turn
+	}
+	goto *nc_com_ai_loop
+
+*nc_ai_special
+	prif = 0
+	repeat int(cActIndex(cc) / 10) + 5
+		if ( nc_ai(cc, cnt, 42) != 0 ) {
+			andf = 1
+			orf = 0
+			cai_distance(0) = dist(cX(tc), cY(tc), cX(cc), cY(cc)), dist(cX(CHARA_PLAYER), cY(CHARA_PLAYER), cX(cc), cY(cc))
+			if ( nc_ai(cc, cnt, 44) != 0 ) {
+				continue
+			}
+			if ( nc_ai(cc, cnt, 43) != 0 ) {
+				act = cdata(STARTING_CDATA_ACT_MAIN + cnt, cc)
+				prif = 1
+				break
+			}
+			if ( nc_ai(cc, cnt, 0) != 0 ) {
+				if ( cai_distance(0) > cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 0) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 0) == 1 | nc_ai(cc, cnt, 0) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 0) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 1) != 0 ) {
+				if ( cai_distance(0) < cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 1) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 1) == 1 | nc_ai(cc, cnt, 1) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 1) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 2) != 0 ) {
+				if ( cai_distance(0) == cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 2) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 2) == 1 | nc_ai(cc, cnt, 2) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 2) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 3) != 0 ) {
+				if ( cai_distance(0) != 1 ) {
+					if ( nc_ai(cc, cnt, 3) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 3) == 1 | nc_ai(cc, cnt, 3) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 3) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 4) != 0 ) {
+				if ( cai_distance(0) == 1 ) {
+					if ( nc_ai(cc, cnt, 4) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 4) == 1 | nc_ai(cc, cnt, 4) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 4) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 5) != 0 ) {
+				if ( cHP(CHARA_PLAYER) <= cMHP(CHARA_PLAYER) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+					if ( nc_ai(cc, cnt, 5) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 5) == 1 | nc_ai(cc, cnt, 5) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 5) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 6) != 0 ) {
+				if ( cHP(CHARA_PLAYER) > cMHP(CHARA_PLAYER) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+					if ( nc_ai(cc, cnt, 6) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 6) == 1 | nc_ai(cc, cnt, 6) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 6) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 7) != 0 ) {
+				if ( check_buff(cc, cdata(STARTING_CDATA_ACT_MAIN + cnt, cc)) ) {
+					if ( nc_ai(cc, cnt, 7) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 7) == 1 | nc_ai(cc, cnt, 7) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 7) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 8) != 0 ) {
+				if ( check_debuff(tc, cdata(STARTING_CDATA_ACT_MAIN + cnt, cc)) != 0 ) {
+					if ( nc_ai(cc, cnt, 8) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 8) == 1 | nc_ai(cc, cnt, 8) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 8) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 9) != 0 ) {
+				if ( check_abnormal(cc) == 1 ) {
+					if ( nc_ai(cc, cnt, 9) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 9) == 1 | nc_ai(cc, cnt, 9) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 9) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 10) != 0 ) {
+				if ( check_abnormal(tc) == 0 ) {
+					if ( nc_ai(cc, cnt, 10) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 10) == 1 | nc_ai(cc, cnt, 10) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 10) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 11) != 0 ) {
+				if ( cConfuse(cc) == 0 & cDim(cc) == 0 & findbuff(cc, BUFF_MIST_OF_SILENCE) == (-1) & findbuff(cc, 93) == (-1) & oabit(0, gArea ) == 0 ) {
+					if ( nc_ai(cc, cnt, 11) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 11) == 1 | nc_ai(cc, cnt, 11) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 11) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 12) != 0 ) {
+				if ( cai_distance(1) < cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 12) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 12) == 1 | nc_ai(cc, cnt, 12) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 12) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 13) != 0 ) {
+				if ( cai_distance(1) > cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 13) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 13) == 1 | nc_ai(cc, cnt, 13) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 13) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 14) != 0 ) {
+				if ( cai_distance(1) == cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 14) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 14) == 1 | nc_ai(cc, cnt, 14) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 14) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 15) != 0 ) {
+				naf = 0
+				repeat 16
+					if ( dist(cX(cnt), cY(cnt), cX(cc), cY(cc)) <= 3 & fov_los(cX(cc), cY(cc), cX(cnt), cY(cnt)) == 1 & cExist(cnt) == CHAR_STATE_ALIVE & cnt != cc ) {
+						if ( cHP(cnt) <= cMHP(cnt) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+							naf = 1
+							break
+						}
+					}
+				loop
+				if ( naf == 1 ) {
+					if ( nc_ai(cc, cnt, 15) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 15) == 1 | nc_ai(cc, cnt, 15) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 15) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 16) != 0 ) {
+				naf = 0
+				repeat 16
+					if ( dist(cX(cnt), cY(cnt), cX(cc), cY(cc)) <= 3 & fov_los(cX(cc), cY(cc), cX(cnt), cY(cnt)) == 1 & cExist(cnt) == CHAR_STATE_ALIVE & cnt != cc ) {
+						if ( cHP(cnt) > cMHP(cnt) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+							naf = 1
+							break
+						}
+					}
+				loop
+				if ( naf == 1 ) {
+					if ( nc_ai(cc, cnt, 16) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 16) == 1 | nc_ai(cc, cnt, 16) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 16) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 17) != 0 ) {
+				naf = 0
+				repeat 16
+					if ( dist(cX(cnt), cY(cnt), cX(cc), cY(cc)) <= 3 & fov_los(cX(cc), cY(cc), cX(cnt), cY(cnt)) == 1 & cExist(cnt) == CHAR_STATE_ALIVE & cnt != cc ) {
+						if ( check_abnormal(cnt) == 1 ) {
+							naf = 1
+							break
+						}
+					}
+				loop
+				if ( naf == 1 ) {
+					if ( nc_ai(cc, cnt, 17) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 17) == 1 | nc_ai(cc, cnt, 17) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 17) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 18) != 0 ) {
+				if ( cHP(cc) <= cMHP(cc) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+					if ( nc_ai(cc, cnt, 18) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 18) == 1 | nc_ai(cc, cnt, 18) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 18) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 19) != 0 ) {
+				if ( cHP(cc) > cMHP(cc) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+					if ( nc_ai(cc, cnt, 19) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 19) == 1 | nc_ai(cc, cnt, 19) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 19) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 20) != 0 ) {
+				if ( cMP(cc) <= cMMP(cc) / 4 ) {
+					if ( nc_ai(cc, cnt, 20) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 20) == 1 | nc_ai(cc, cnt, 20) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 20) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 21) != 0 ) {
+				if ( cMP(cc) > cMMP(cc) / 4 ) {
+					if ( nc_ai(cc, cnt, 21) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 21) == 1 | nc_ai(cc, cnt, 21) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 21) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 22) != 0 ) {
+				if ( cHP(tc) >= cMHP(tc) / 10 * 8 & cHP(tc) > 1 ) {
+					if ( nc_ai(cc, cnt, 22) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 22) == 1 | nc_ai(cc, cnt, 22) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 22) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 23) != 0 ) {
+				if ( cHP(tc) <= cMHP(tc) / 10 | cHP(tc) <= 1 ) {
+					if ( nc_ai(cc, cnt, 23) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 23) == 1 | nc_ai(cc, cnt, 23) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 23) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 24) != 0 ) {
+				naf = 0
+				repeat 245
+					if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+						continue
+					}
+					if ( cc == cnt ) {
+						continue
+					}
+					if ( relationbetween(cc, cnt) != (-3) ) {
+						continue
+					}
+					dx = cX(cnt)
+					dy = cY(cnt)
+					if ( dist(cX(cc), cY(cc), dx, dy) > skillTg(631) \ 1000 + 1 + (ogTitleGodOfWar == 2) + (ogTitleStrengthIsPower == 2) ) {
+						continue
+					}
+					if ( fov_los(cX(cc), cY(cc), dx, dy) == 0 ) {
+						continue
+					}
+					naf += 1
+					if ( naf >= 2 ) {
+						break
+					}
+				loop
+				if ( naf >= 2 ) {
+					if ( nc_ai(cc, cnt, 24) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 24) == 1 | nc_ai(cc, cnt, 24) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 24) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 25) != 0 ) {
+				if ( cbit(CHARA_BIT_SUICIDE, tc) ) {
+					if ( nc_ai(cc, cnt, 25) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 25) == 1 | nc_ai(cc, cnt, 25) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 25) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 26) != 0 ) {
+				if ( cBarrier(tc) != 0 | cReflectDamage(tc) > 0 | eqfaction(tc, "overwish") ) {
+					if ( nc_ai(cc, cnt, 26) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 26) == 1 | nc_ai(cc, cnt, 26) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 26) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 27) != 0 ) {
+				if ( cQuality(tc) <= FIX_QUALITY_GREAT ) {
+					if ( nc_ai(cc, cnt, 27) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 27) == 1 | nc_ai(cc, cnt, 27) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 27) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 28) != 0 ) {
+				if ( rnd(2) == 0 ) {
+					if ( nc_ai(cc, cnt, 28) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 28) == 1 | nc_ai(cc, cnt, 28) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 28) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 29) != 0 ) {
+				if ( rnd(4) == 0 ) {
+					if ( nc_ai(cc, cnt, 29) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 29) == 1 | nc_ai(cc, cnt, 29) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 29) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 30) != 0 ) {
+				calcskill cdata(STARTING_CDATA_ACT_MAIN + cnt, cc), cc, 100
+				if ( ele == SKILL_NONE | ele >= SKILL_RESDMG_CUT ) {
+				}
+				else {
+					if ( sdata(ele, tc) / 50 < 10 ) {
+						if ( nc_ai(cc, cnt, 30) == 2 ) {
+							orf = 1
+						}
+					}
+					else {
+						if ( nc_ai(cc, cnt, 30) == 1 | nc_ai(cc, cnt, 30) == 2 ) {
+							andf = 0
+						}
+						else {
+							if ( nc_ai(cc, cnt, 30) == 3 ) {
+								continue
+							}
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 31) != 0 ) {
+				calcskill cdata(STARTING_CDATA_ACT_MAIN + cnt, cc), cc, 100
+				if ( ele == SKILL_NONE | ele >= SKILL_RESDMG_CUT ) {
+				}
+				else {
+					if ( sdata(ele, tc) / 50 < 10 ) {
+						if ( nc_ai(cc, cnt, 30) == 2 ) {
+							orf = 1
+						}
+					}
+					else {
+						if ( nc_ai(cc, cnt, 30) == 1 | nc_ai(cc, cnt, 30) == 2 ) {
+							andf = 0
+						}
+						else {
+							if ( nc_ai(cc, cnt, 30) == 3 ) {
+								continue
+							}
+						}
+					}
+				}
+			}
+			if ( andf == 1 | orf == 1 ) {
+				act = cdata(STARTING_CDATA_ACT_MAIN + cnt, cc)
+				prif = 1
+				ctalk cc, 1120 + cnt, tc, cc
+				break
+			}
+		}
+	loop
+	if ( prif == 0 ) {
+		repeat int(cActIndex(cc) / 10) + 5
+			andf = 1
+			orf = 0
+			cai_distance(0) = dist(cX(tc), cY(tc), cX(cc), cY(cc)), dist(cX(CHARA_PLAYER), cY(CHARA_PLAYER), cX(cc), cY(cc))
+			if ( nc_ai(cc, cnt, 44) != 0 ) {
+				continue
+			}
+			if ( nc_ai(cc, cnt, 43) != 0 ) {
+				act = cdata(STARTING_CDATA_ACT_MAIN + cnt, cc)
+				break
+			}
+			if ( nc_ai(cc, cnt, 0) != 0 ) {
+				if ( cai_distance(0) > cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 0) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 0) == 1 | nc_ai(cc, cnt, 0) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 0) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 1) != 0 ) {
+				if ( cai_distance(0) < cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 1) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 1) == 1 | nc_ai(cc, cnt, 1) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 1) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 2) != 0 ) {
+				if ( cai_distance(0) == cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 2) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 2) == 1 | nc_ai(cc, cnt, 2) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 2) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 3) != 0 ) {
+				if ( cai_distance(0) != 1 ) {
+					if ( nc_ai(cc, cnt, 3) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 3) == 1 | nc_ai(cc, cnt, 3) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 3) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 4) != 0 ) {
+				if ( cai_distance(0) == 1 ) {
+					if ( nc_ai(cc, cnt, 4) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 4) == 1 | nc_ai(cc, cnt, 4) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 4) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 5) != 0 ) {
+				if ( cHP(CHARA_PLAYER) <= cMHP(CHARA_PLAYER) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+					if ( nc_ai(cc, cnt, 5) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 5) == 1 | nc_ai(cc, cnt, 5) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 5) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 6) != 0 ) {
+				if ( cHP(CHARA_PLAYER) > cMHP(CHARA_PLAYER) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+					if ( nc_ai(cc, cnt, 6) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 6) == 1 | nc_ai(cc, cnt, 6) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 6) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 7) != 0 ) {
+				if ( check_buff(cc, cdata(STARTING_CDATA_ACT_MAIN + cnt, cc)) ) {
+					if ( nc_ai(cc, cnt, 7) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 7) == 1 | nc_ai(cc, cnt, 7) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 7) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 8) != 0 ) {
+				if ( check_debuff(tc, cdata(STARTING_CDATA_ACT_MAIN + cnt, cc)) != 0 ) {
+					if ( nc_ai(cc, cnt, 8) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 8) == 1 | nc_ai(cc, cnt, 8) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 8) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 9) != 0 ) {
+				if ( check_abnormal(cc) == 1 ) {
+					if ( nc_ai(cc, cnt, 9) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 9) == 1 | nc_ai(cc, cnt, 9) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 9) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 10) != 0 ) {
+				if ( check_abnormal(tc) == 0 ) {
+					if ( nc_ai(cc, cnt, 10) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 10) == 1 | nc_ai(cc, cnt, 10) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 10) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 11) != 0 ) {
+				if ( cConfuse(cc) == 0 & cDim(cc) == 0 & findbuff(cc, BUFF_MIST_OF_SILENCE) == (-1) & findbuff(cc, 93) == (-1) & oabit(0, gArea ) == 0 ) {
+					if ( nc_ai(cc, cnt, 11) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 11) == 1 | nc_ai(cc, cnt, 11) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 11) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 12) != 0 ) {
+				if ( cai_distance(1) < cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 12) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 12) == 1 | nc_ai(cc, cnt, 12) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 12) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 13) != 0 ) {
+				if ( cai_distance(1) > cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 13) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 13) == 1 | nc_ai(cc, cnt, 13) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 13) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 14) != 0 ) {
+				if ( cai_distance(1) == cAiDistance(cc) ) {
+					if ( nc_ai(cc, cnt, 14) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 14) == 1 | nc_ai(cc, cnt, 14) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 14) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 15) != 0 ) {
+				naf = 0
+				repeat 16
+					if ( dist(cX(cnt), cY(cnt), cX(cc), cY(cc)) <= 3 & fov_los(cX(cc), cY(cc), cX(cnt), cY(cnt)) == 1 & cExist(cnt) == CHAR_STATE_ALIVE & cnt != cc ) {
+						if ( cHP(cnt) <= cMHP(cnt) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+							naf = 1
+							break
+						}
+					}
+				loop
+				if ( naf == 1 ) {
+					if ( nc_ai(cc, cnt, 15) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 15) == 1 | nc_ai(cc, cnt, 15) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 15) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 16) != 0 ) {
+				naf = 0
+				repeat 16
+					if ( dist(cX(cnt), cY(cnt), cX(cc), cY(cc)) <= 3 & fov_los(cX(cc), cY(cc), cX(cnt), cY(cnt)) == 1 & cExist(cnt) == CHAR_STATE_ALIVE & cnt != cc ) {
+						if ( cHP(cnt) > cMHP(cnt) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+							naf = 1
+							break
+						}
+					}
+				loop
+				if ( naf == 1 ) {
+					if ( nc_ai(cc, cnt, 16) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 16) == 1 | nc_ai(cc, cnt, 16) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 16) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 17) != 0 ) {
+				naf = 0
+				repeat 16
+					if ( dist(cX(cnt), cY(cnt), cX(cc), cY(cc)) <= 3 & fov_los(cX(cc), cY(cc), cX(cnt), cY(cnt)) == 1 & cExist(cnt) == CHAR_STATE_ALIVE & cnt != cc ) {
+						if ( check_abnormal(cnt) == 1 ) {
+							naf = 1
+							break
+						}
+					}
+				loop
+				if ( naf == 1 ) {
+					if ( nc_ai(cc, cnt, 17) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 17) == 1 | nc_ai(cc, cnt, 17) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 17) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 18) != 0 ) {
+				if ( cHP(cc) <= cMHP(cc) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+					if ( nc_ai(cc, cnt, 18) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 18) == 1 | nc_ai(cc, cnt, 18) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 18) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 19) != 0 ) {
+				if ( cHP(cc) > cMHP(cc) / (4 - (ocAIHealingBehavior(cc) == 1) * 2) ) {
+					if ( nc_ai(cc, cnt, 19) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 19) == 1 | nc_ai(cc, cnt, 19) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 19) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 20) != 0 ) {
+				if ( cMP(cc) <= cMMP(cc) / 4 ) {
+					if ( nc_ai(cc, cnt, 20) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 20) == 1 | nc_ai(cc, cnt, 20) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 20) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 21) != 0 ) {
+				if ( cMP(cc) > cMMP(cc) / 4 ) {
+					if ( nc_ai(cc, cnt, 21) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 21) == 1 | nc_ai(cc, cnt, 21) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 21) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 22) != 0 ) {
+				if ( cHP(tc) >= cMHP(tc) / 10 * 8 & cHP(tc) > 1 ) {
+					if ( nc_ai(cc, cnt, 22) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 22) == 1 | nc_ai(cc, cnt, 22) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 22) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 23) != 0 ) {
+				if ( cHP(tc) <= cMHP(tc) / 10 | cHP(tc) <= 1 ) {
+					if ( nc_ai(cc, cnt, 23) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 23) == 1 | nc_ai(cc, cnt, 23) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 23) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 24) != 0 ) {
+				naf = 0
+				repeat 245
+					if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+						continue
+					}
+					if ( cc == cnt ) {
+						continue
+					}
+					if ( relationbetween(cc, cnt) != (-3) ) {
+						continue
+					}
+					dx = cX(cnt)
+					dy = cY(cnt)
+					if ( dist(cX(cc), cY(cc), dx, dy) > skillTg(631) \ 1000 + 1 + (ogTitleGodOfWar == 2) + (ogTitleStrengthIsPower == 2) ) {
+						continue
+					}
+					if ( fov_los(cX(cc), cY(cc), dx, dy) == 0 ) {
+						continue
+					}
+					naf += 1
+					if ( naf >= 2 ) {
+						break
+					}
+				loop
+				if ( naf >= 2 ) {
+					if ( nc_ai(cc, cnt, 24) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 24) == 1 | nc_ai(cc, cnt, 24) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 24) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 25) != 0 ) {
+				if ( cbit(CHARA_BIT_SUICIDE, tc) ) {
+					if ( nc_ai(cc, cnt, 25) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 25) == 1 | nc_ai(cc, cnt, 25) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 25) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 26) != 0 ) {
+				if ( cBarrier(tc) != 0 | cReflectDamage(tc) > 0 | eqfaction(tc, "overwish") ) {
+					if ( nc_ai(cc, cnt, 26) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 26) == 1 | nc_ai(cc, cnt, 26) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 26) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 27) != 0 ) {
+				if ( cQuality(tc) <= FIX_QUALITY_GREAT ) {
+					if ( nc_ai(cc, cnt, 27) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 27) == 1 | nc_ai(cc, cnt, 27) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 27) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 28) != 0 ) {
+				if ( rnd(2) == 0 ) {
+					if ( nc_ai(cc, cnt, 28) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 28) == 1 | nc_ai(cc, cnt, 28) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 28) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 29) != 0 ) {
+				if ( rnd(4) == 0 ) {
+					if ( nc_ai(cc, cnt, 29) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 29) == 1 | nc_ai(cc, cnt, 29) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 29) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 30) != 0 ) {
+				calcskill cdata(STARTING_CDATA_ACT_MAIN + cnt, cc), cc, 100
+				if ( ele == SKILL_NONE | ele >= SKILL_RESDMG_CUT | sdata(ele, tc) / 50 < 10 ) {
+					if ( nc_ai(cc, cnt, 30) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 30) == 1 | nc_ai(cc, cnt, 30) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 30) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( nc_ai(cc, cnt, 31) != 0 ) {
+				calcskill cdata(STARTING_CDATA_ACT_MAIN + cnt, cc), cc, 100
+				if ( ele == SKILL_NONE | ele >= SKILL_RESDMG_CUT | sdata(ele, tc) / 50 < 3 ) {
+					if ( nc_ai(cc, cnt, 31) == 2 ) {
+						orf = 1
+					}
+				}
+				else {
+					if ( nc_ai(cc, cnt, 31) == 1 | nc_ai(cc, cnt, 31) == 2 ) {
+						andf = 0
+					}
+					else {
+						if ( nc_ai(cc, cnt, 31) == 3 ) {
+							continue
+						}
+					}
+				}
+			}
+			if ( andf == 1 | orf == 1 ) {
+				act = cdata(STARTING_CDATA_ACT_MAIN + cnt, cc)
+				ctalk cc, 1120 + cnt, tc, cc
+				break
+			}
+		loop
+	}
+	return
+
+*nc_ai_changeskill
+	txtnew
+	txt -1, lang("どの技を変更する？", "Which skills to change?")
+	bufstr = ""
+	promptmax = 0
+	repeat int(cActIndex(tc) / 10)
+		rc_subact = cdata(STARTING_CDATA_ACT_SUB + cnt, tc)
+		promptl(0, cnt) = subactget(rc_subact), "null", "" + cnt
+		promptmax++
+	loop
+	val = promptx, prompty, 350, 1
+	gosub *prompt_key
+	if ( rtval != (-1) ) {
+		cm = rtval
+		txtnew
+		txt -1, lang("技を入れ替える場合は入れ替え先の技を、忘れる場合は忘れさせるを選択。", "If you want to change your skills, select the skill you want to change, or if you want to forget, select Forget.")
+		bufstr = ""
+		promptmax = 0
+		repeat int(cActIndex(tc) / 10)
+			rc_subact = cdata(STARTING_CDATA_ACT_SUB + cnt, tc)
+			promptl(0, cnt) = subactget(rc_subact), "null", "" + cnt
+			promptmax++
+		loop
+		promptl(0, int(cActIndex(tc) / 10)) = lang("忘れさせる", "Forget"), "null", "" + int(cActIndex(tc) / 10)
+		promptmax++
+		val = promptx, prompty, 350, 1
+		gosub *prompt_key
+		if ( rtval == int(cActIndex(tc) / 10) ) {
+			repeat int(cActIndex(tc) / 10) - cm, cm
+				if ( cnt == cm ) {
+					rc_subact = cdata(STARTING_CDATA_ACT_SUB + cnt, tc)
+					bufstr = subactget(rc_subact)
+				}
+				if ( cm < 4 ) {
+					cdata(STARTING_CDATA_ACT_SUB + cnt, tc) = cdata(221 + cnt, tc)
+					cdata(221 + cnt, tc) = 0
+					nc_aicnt = cnt
+					if ( nc_aicnt != 0 ) {
+						repeat aipage * 15
+							nc_ai(tc, 4 + nc_aicnt, cnt) = nc_ai(tc, 5 + nc_aicnt, cnt)
+							nc_ai(tc, 5 + nc_aicnt, cnt) = 0
+						loop
+					}
+				}
+			loop
+			cActIndex(tc) -= 10
+			txtnew
+			txt -1, lang(name(tc) + "は" + bufstr + "を忘れた。", name(tc) + " forget " + bufstr + ".")
+		}
+		else {
+			if ( rtval != (-1) ) {
+				bufact = cdata(STARTING_CDATA_ACT_SUB + cm, tc)
+				cdata(STARTING_CDATA_ACT_SUB + cm, tc) = cdata(STARTING_CDATA_ACT_SUB + rtval, tc)
+				cdata(STARTING_CDATA_ACT_SUB + rtval, tc) = bufact
+				repeat aipage * 15
+					nc_ai(0, cm + 5, cnt) = nc_ai(tc, cm + 5, cnt)
+					nc_ai(tc, cm + 5, cnt) = nc_ai(tc, rtval + 5, cnt)
+					nc_ai(tc, rtval + 5, cnt) = nc_ai(0, cm + 5, cnt)
+				loop
+				bufstr = subactget(cdata(STARTING_CDATA_ACT_SUB + cm, tc))
+				bufstr2 = subactget(cdata(STARTING_CDATA_ACT_SUB + rtval, tc))
+				txt -1, lang(bufstr + "と" + bufstr2 + "を入れ替えた。", "")
+			}
+		}
+	}
+	gosub *screen_draw
+	goto *pc_turn
+
+*label_0422
+	if ( cGold(CHARA_PLAYER) < 0 & ncgGoldOverflow > 0 ) {
+		ncgGoldOverflow -= 1
+		cGold(CHARA_PLAYER) += 2147483647
+	}
+	if ( cGold(CHARA_PLAYER) < 0 ) {
+		cGold(CHARA_PLAYER) = 0
+	}
+	return
+
+*nc_yotogi
+	txtnew
+	txt -1, lang("誰と夜伽をする？", "Who do you want to go to bed with?")
+	snd SOUNDLIST_POP2
+	listmax = 0
+	page = 0
+	pagesize = 16
+	cs = 0
+	cc = CHARA_PLAYER
+	cs_bk = -1
+	repeat 16
+		if ( cnt == 0 ) {
+			continue
+		}
+		if ( cImpression(cnt) < 200 ) {
+			continue
+		}
+		if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+			continue
+		}
+		list(0, listmax) = cnt, -cLevel(cnt)
+		listmax++
+	loop
+	gosub *sort_list
+	windowshadow = 1
+
+*nc_yotogi_pgchk
+	redraw 0
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+
+*nc_yotogi_loop
+	redraw 0
+	s = lang("夜伽", "Nightfall"), strhint2 + strhint3
+	display_window (windoww - 450) / 2 + inf_screenx, winposy(448), 450, 448
+	display_topic lang("NPCの名前", "Name"), wx + 28, wy + 36
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+		if ( cnt \ 2 == 0 ) {
+			pos wx + 70, wy + 66 + cnt * 19
+			gfini 350, 18
+			gfdec2 12, 14, 16
+		}
+		display_key wx + 58, wy + 66 + cnt * 19 - 2, cnt
+	loop
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	cs_listbk
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		transmissivity = 0
+		if ( cId(list(0, p)) == CREATURE_ID_USER ) {
+			if ( userdata2(1, cUNID(list(0, p))) ) {
+				transmissivity = userdata2(1, cUNID(list(0, p)))
+			}
+		}
+		if ( ocChipTransparency(list(0, p)) ) {
+			transmissivity = ocChipTransparency(list(0, p))
+		}
+		i = getcharapic(list(0, p)), getcharacolor(list(0, p))
+		chara_preparepic i, i(1)
+		pos wx + 40, wy + 74 + cnt * 19 - 8
+		gmode 4, chipc(CHIPC_WIDTH, i), chipc(CHIPC_HEIGHT, i), 256 - transmissivity
+		color 0, 0, 0
+		grotate BUFFER_CHR, 0, 960, 0, chipc(CHIPC_WIDTH, i) / (1 + (chipc(CHIPC_HEIGHT, i) > inf_tiles)), inf_tiles
+		gmode 2
+		i = list(0, p)
+		s = cnName(i)
+		cutname s, 36
+		cs_list s, wx + 84, wy + 66 + cnt * 19 - 1, 19
+	loop
+	if ( keyrange != 0 ) {
+		cs_bk = cs
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			p = list(0, pagesize * page + cnt)
+			break
+		}
+	loop
+	if ( p != (-1) ) {
+		return p
+	}
+	if ( key == key_pageup ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page++
+			goto *nc_yotogi_pgchk
+		}
+	}
+	if ( key == key_pagedown ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page--
+			goto *nc_yotogi_pgchk
+		}
+	}
+	if ( key == key_cancel ) {
+		i = 0
+		gosub *label_4990
+		return -1
+	}
+	goto *nc_yotogi_loop
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

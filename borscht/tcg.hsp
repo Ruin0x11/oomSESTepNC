@@ -1,0 +1,810 @@
+#defcfunc cdbit int cdbit_bit, int cdbit_charid
+	HMMBITCHECK locvar_cdbit_card(30 + cdbit_bit / 32, cdbit_charid), cdbit_bit \ 32
+	return abs(stat)
+
+#deffunc cdbitmod int cdbitmod_bit, int cdbitmod_charid, int cdbitmod_seton
+	if ( cdbitmod_seton == 0 ) {
+		HMMBITOFF locvar_cdbit_card(30 + cdbitmod_bit / 32, cdbitmod_charid), cdbitmod_bit \ 32
+		return
+	}
+	HMMBITON locvar_cdbit_card(30 + cdbitmod_bit / 32, cdbitmod_charid), cdbitmod_bit \ 32
+	return
+	return
+
+*label_2389
+	return
+
+*label_2391
+	listmax = 0
+	page = 0
+	pagesize = 10
+	cs = 0
+	cc = CHARA_PLAYER
+	cs_bk = -1
+	page_load
+	if ( invctrl == 0 ) {
+		gosub *label_4439
+	}
+	else {
+		repeat 50
+			gosub *label_2389
+			listn(0, listmax) = "" + prodcheck()
+			list(0, listmax) = 630, cnt
+			listmax++
+		loop
+	}
+	windowshadow = 1
+
+*com_product
+	redraw 0
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+	s = lang("生産品の選択", "Production"), strhint2 + strhint3b
+	display_window (windoww - 640) / 2 + inf_screenx, winposy(448), 640, 448
+	display_topic lang("生産品", "Product"), wx + 28, wy + 36
+	display_topic lang("説明", "Detail"), wx + 296, wy + 36
+	display_topic lang("詳細", "Requirement"), wx + 28, wy + 258
+	display_topic lang("必要素材", "Material"), wx + 28, wy + 304
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+		if ( cnt \ 2 == 0 ) {
+			pos wx + 70, wy + 66 + cnt * 19
+			gfini 540, 18
+			gfdec2 12, 14, 16
+		}
+		display_key wx + 58, wy + 66 + cnt * 19 - 2, cnt
+	loop
+	cs_listbk
+	f = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		i = list(0, p), list(1, p)
+		if ( cs == cnt ) {
+			matid = i
+			if ( invctrl == 0 ) {
+				font lang(cfg_font1, cfg_font2), 13 - en * 2, 0
+				if ( i < 100000 ) {
+					gosub *recipe_ref
+					s = lang("必要スキル: ", "Skill needed: ")
+					if ( matval == SKILL_NORMAL_ALCHEMY ) {
+						s += lang("錬金術", "Alchemy")
+					}
+					if ( matval == SKILL_NORMAL_CARPENTRY ) {
+						s += lang("大工", "Carpentry")
+					}
+					if ( matval == SKILL_NORMAL_JEWELER ) {
+						s += lang("宝石細工", "Jeweler")
+					}
+					if ( matval == SKILL_NORMAL_TAILORING ) {
+						s += lang("裁縫", "Tailoring")
+					}
+					s += " " + matval(1) + "(" + sdata(matval, CHARA_PLAYER) + ")"
+					if ( matval(1) <= sdata(matval, CHARA_PLAYER) ) {
+						color 30, 30, 200
+					}
+					else {
+						color 200, 30, 30
+					}
+					pos wx + 37, wy + 288
+					mes s + " "
+				}
+				else {
+					if ( i < 1000000 ) {
+						gosub *label_1274
+					}
+					else {
+						if ( i < 2000000 ) {
+							gosub *label_1275
+						}
+						else {
+							gosub *label_1276
+						}
+						s = lang("必要スキル: ", "Skill needed: ")
+						s += skillname(matval(0))
+						s += " " + matval(1) + "(" + sdata(matval, CHARA_PLAYER) + ")"
+						if ( matval(1) <= sdata(matval, CHARA_PLAYER) ) {
+							color 30, 30, 200
+						}
+						else {
+							color 200, 30, 30
+						}
+						pos wx + 37, wy + 288
+						mes s + " "
+						if ( matval(4) > SKILL_NONE ) {
+							s = skillname(matval(3)) + " " + matval(4) + "(" + sdata(matval(3), CHARA_PLAYER) + ")"
+							if ( matval(4) <= sdata(matval(3), CHARA_PLAYER) ) {
+								color 30, 30, 200
+							}
+							else {
+								color 200, 30, 30
+							}
+							pos wx + 37 + 192, wy + 288
+							mes s + " "
+						}
+						matlevel = matval(1)
+						matskill = sdata(matval, CHARA_PLAYER)
+						if ( matval(4) > SKILL_NONE ) {
+							matlevel = (matlevel + matval(4)) / 2
+							matskill = (matskill + sdata(matval(3), CHARA_PLAYER)) / 2
+						}
+						s = lang("成功率: ", "Success rate: ") + limit(limit(matval(2) * matskill / matlevel, matval(2), matval(2) * 2), 0, 100) + "%"
+						color 30, 30, 200
+						pos wx + 37 + 192 * 2, wy + 288
+						mes s + " "
+					}
+				}
+			}
+			repeat 6
+				j = matneed(cnt * 2), matneed(cnt * 2 + 1)
+				if ( j == (-1) ) {
+					break
+				}
+				if ( i < 1000000 ) {
+					s = matname(j) + lang(" × ", " x ") + j(1) + "(" + mat(j) + ")"
+					if ( mat(j) >= j(1) ) {
+						color 30, 30, 200
+					}
+					else {
+						color 200, 30, 30
+					}
+				}
+				else {
+					s = another_matname(j) + lang(" × ", " x ") + j(1) + "(" + ncgdata(STARTING_NCGDATA_ANOTHER_MATERIALS + j) + ")"
+					if ( ncgdata(STARTING_NCGDATA_ANOTHER_MATERIALS + j) >= j(1) ) {
+						color 30, 30, 200
+					}
+					else {
+						color 200, 30, 30
+					}
+				}
+				pos wx + 37 + cnt \ 3 * 192, wy + 334 + cnt / 3 * 16
+				mes s
+			loop
+			f = 1
+		}
+		if ( i < 10000 ) {
+			s = ioriginalnameref(i)
+			p(1) = ipicref(i)
+			gsel BUFFER_ITEM
+			color 0
+			boxf 0, 960, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1)) + 960
+			if ( p(1) == 528 ) {
+				gmode 2
+				pos 0, 960
+				gcopy BUFFER_ITEM, 0, 768, inf_tiles, inf_tiles
+				pos 0, 1008
+				gzoom 22, 20, 5, chipc(CHIPC_X, xy2pic(0, 0)) + 8, chipc(CHIPC_Y, xy2pic(0, 0)) + 4 + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 8, chipc(CHIPC_WIDTH, xy2pic(0, 0)) - 16, chipc(CHIPC_HEIGHT, xy2pic(0, 0)) - 8 - (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 10, 1
+				pos 6, 974
+				gcopy BUFFER_ITEM, 0, 1008, 22, 20
+				gsel selcur
+			}
+			else {
+				if ( p(1) == 531 ) {
+					pos 8, 1058 - chipc(CHIPC_HEIGHT, xy2pic(0, 0))
+					gcopy BUFFER_CHR, chipc(CHIPC_X, xy2pic(0, 0)) + 8, chipc(CHIPC_Y, xy2pic(0, 0)) + 2, chipc(CHIPC_WIDTH, xy2pic(0, 0)) - 16, chipc(CHIPC_HEIGHT, xy2pic(0, 0)) - 8
+					gmode 4, , , 150
+					color 0, 0, 0
+					pos 0, 960 + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) == inf_tiles) * 48
+					gcopy BUFFER_ITEM, 144, 768 + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 48, inf_tiles, chipc(CHIPC_HEIGHT, xy2pic(0, 0)) + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 48
+					gmode 2
+					gsel selcur
+				}
+				else {
+					if ( p(1) == 529 ) {
+						pos 0, 1056 - chipc(CHIPC_HEIGHT, xy2pic(0, 0))
+						gcopy BUFFER_CHR, chipc(CHIPC_X, xy2pic(0, 0)), chipc(CHIPC_Y, xy2pic(0, 0)), chipc(CHIPC_WIDTH, xy2pic(0, 0)), chipc(CHIPC_HEIGHT, xy2pic(0, 0))
+						gmode 2
+						gsel selcur
+					}
+					else {
+						pos 0, 960
+						gcopy BUFFER_ITEM, chipi(CHIPI_X, p(1)), chipi(CHIPI_Y, p(1)), chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+						gfini chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+						gfdec2 c_col(0, COLOR_DEFAULT), c_col(1, COLOR_DEFAULT), c_col(2, COLOR_DEFAULT)
+						gsel selcur
+					}
+				}
+			}
+		}
+		else {
+			if ( i < 100000 ) {
+				s = matname(i - 10000)
+				p(1) = matref(MATREF_PIC, i - 10000)
+				gsel BUFFER_ITEM
+				color 0
+				boxf 0, 960, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1)) + 960
+				pos 0, 960
+				gcopy BUFFER_ITEM, chipi(CHIPI_X, p(1)), chipi(CHIPI_Y, p(1)), chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+				gfini chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+				gfdec2 c_col(0, COLOR_DEFAULT), c_col(1, COLOR_DEFAULT), c_col(2, COLOR_DEFAULT)
+				gsel selcur
+			}
+			else {
+				if ( i < 1000000 ) {
+					s = another_matname(i - 100000)
+					p(1) = another_matref(2, i - 100000)
+					gsel BUFFER_ITEM
+					color 0
+					boxf 0, 960, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1)) + 960
+					pos 0, 960
+					gcopy BUFFER_ITEM, chipi(CHIPI_X, p(1)), chipi(CHIPI_Y, p(1)), chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+					gfini chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+					gfdec2 c_col(0, COLOR_DEFAULT), c_col(1, COLOR_DEFAULT), c_col(2, COLOR_DEFAULT)
+					gsel selcur
+				}
+				else {
+					if ( i < 2000000 ) {
+						s = lang("" + userdatan(1, i - 1000000), "" + userdatan(0, i - 1000000))
+						gsel BUFFER_ITEM
+						color 0
+						boxf 0, 960, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1)) + 960
+						gsel selcur
+					}
+					else {
+						s = lang("" + useritemdatan(1, i - 2000000), "" + useritemdatan(0, i - 2000000))
+						gsel BUFFER_ITEM
+						color 0
+						boxf 0, 960, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1)) + 960
+						gsel selcur
+					}
+				}
+			}
+		}
+		if ( i < 1000000 ) {
+			if ( i < 100000 ) {
+				if ( i < 10000 ) {
+					s(1) = lang("アイテム[" + s + "]", "Make [" + s + "]")
+				}
+				else {
+					s(1) = lang("マテリアル[" + s + "]", "Make [" + s + "]")
+				}
+			}
+			else {
+				s(1) = lang("異界マテリアル[" + s + "]", "Make [" + s + "(Another)]")
+			}
+		}
+		else {
+			if ( i < 2000000 ) {
+				s(1) = lang("カスタムNPC[" + s + "]", "Make [" + s + "(CNPC)]")
+			}
+			else {
+				s(1) = lang("カスタムアイテム[" + s + "]", "Make [" + s + "(CItem)]")
+			}
+		}
+		font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+		if ( int(listn(0, p)) == (-1) ) {
+			p(2) = 3
+		}
+		else {
+			p(2) = 0
+		}
+		cs_list cnven(s), wx + 86, wy + 66 + cnt * 19 - 1, 19, 0, p(2)
+		pos wx + 308, wy + 66 + cnt * 19 + 2
+		mes s(1)
+		pos wx + 37, wy + 69 + cnt * 19 + 2
+		gmode 2, inf_tiles, inf_tiles
+		grotate BUFFER_ITEM, 0, 960, 0, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+	loop
+	if ( keyrange != 0 ) {
+		cs_bk = cs
+	}
+	if ( f == 1 | listmax == 0 ) {
+		redraw 1
+	}
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			p = list(0, pagesize * page + cnt)
+			break
+		}
+	loop
+	if ( p != (-1) ) {
+		matid = p
+		if ( matid >= 2000000 ) {
+			gosub *label_1276
+			if ( prodcheck_custom() == (-1) ) {
+				snd SOUNDLIST_FAIL1
+				txt -1, lang("生産の条件を満たしてない。", "You don't meet requirements to create the material.")
+				goto *com_product
+			}
+			if ( inv_getspace() == 0 ) {
+				snd SOUNDLIST_FAIL1
+				txt -1, lang("バックパックが一杯だ。", "Your inventory is full.")
+				goto *com_product
+			}
+			in = 1
+			if ( matval(2) < SKILL_WEAPON_LONGSWORD ) {
+				autosave = 1 * (gArea  != AREA_SHOW_HOUSE)
+				if ( cfg_noautosave > 2 & gettrait(0, 190) == 0 ) {
+					autosave = 0
+				}
+			}
+			matexp = 0
+			repeat 6
+				j = matneed(cnt * 2), matneed(cnt * 2 + 1)
+				if ( j == (-1) ) {
+					break
+				}
+				ncgdata(STARTING_NCGDATA_ANOTHER_MATERIALS + j) -= j(1) * in
+				matexp += j(1) * another_matref(1, j) * limit(in, 1, 1000)
+			loop
+			if ( limit(matval(2) * matskill / matlevel, matval(2), matval(2) * 2) < rnd(100) ) {
+				txtef COLOR_PURPLE
+				txt -1, lang("製造に失敗した…", "You failed to product the item...")
+				page_save
+				return
+			}
+			snd SOUNDLIST_BUILD1
+			fixlv = FIX_QUALITY_GOOD
+			if ( rnd(200 + matval(1) * 2) < sdata(matval, CHARA_PLAYER) + 20 ) {
+				fixlv = FIX_QUALITY_MIRACLE
+			}
+			if ( rnd(100 + matval(1) * 2) < sdata(matval, CHARA_PLAYER) + 20 ) {
+				fixlv = FIX_QUALITY_GREAT
+			}
+			flt calcobjlv(sdata(matval, CHARA_PLAYER)), calcfixlv(fixlv)
+			inititemid = finditemid(useritemdatan(0, matid - 2000000))
+			itemcreate CHARA_PLAYER, ITEM_ID_CARNEADES_PLANK, -1, -1, in
+			txt -1, lang(itemname(ci, in) + "を製造した。", "You crafted " + itemname(ci, 1) + ".")
+			item_stack CHARA_PLAYER, ci
+			r1 = matval
+			r2 = matexp
+			gosub *label_1608
+			r1 = 0
+			gosub *charaRefresh
+			gosub *screen_drawStatus
+			page_save
+			return
+		}
+		if ( matid >= 1000000 ) {
+			gosub *label_1275
+			if ( prodcheck_custom() == (-1) ) {
+				snd SOUNDLIST_FAIL1
+				txt -1, lang("生産の条件を満たしてない。", "You don't meet requirements to create the material.")
+				goto *com_product
+			}
+			if ( get_freechara() == (-1) ) {
+				snd SOUNDLIST_FAIL1
+				txt -1, lang("スペースが足りない。", "There is not enough space.")
+				goto *com_product
+			}
+			if ( matval(2) < SKILL_WEAPON_LONGSWORD ) {
+				autosave = 1 * (gArea  != AREA_SHOW_HOUSE)
+				if ( cfg_noautosave > 2 & gettrait(0, 190) == 0 ) {
+					autosave = 0
+				}
+			}
+			matexp = 0
+			repeat 6
+				j = matneed(cnt * 2), matneed(cnt * 2 + 1)
+				if ( j == (-1) ) {
+					break
+				}
+				ncgdata(STARTING_NCGDATA_ANOTHER_MATERIALS + j) -= j(1)
+				matexp += j(1) * another_matref(1, j) * limit(in, 1, 1000)
+			loop
+			if ( limit(matval(2) * matskill / matlevel, matval(2), matval(2) * 2) < rnd(100) ) {
+				txtef COLOR_PURPLE
+				txt -1, lang("製造に失敗した…", "You failed to product the item...")
+				page_save
+				return
+			}
+			initunid = findunid(userdatan(0, matid - 1000000))
+			flt
+			characreate -1, CREATURE_ID_USER, cX(CHARA_PLAYER), cY(CHARA_PLAYER)
+			txt -1, lang(userdatan(1, matid - 1000000) + "を製造した。", "You crafted " + userdatan(0, matid - 1000000) + ".")
+			if ( userdata3(4, matid - 1000000) == 1 ) {
+				gosub *cm_race_loop_WHILE1
+			}
+			r1 = matval
+			r2 = matexp
+			gosub *label_1608
+			r1 = 0
+			gosub *charaRefresh
+			gosub *screen_drawStatus
+			page_save
+			return
+		}
+		if ( matid >= 100000 ) {
+			gosub *label_1274
+			if ( prodcheck_another() == (-1) ) {
+				snd SOUNDLIST_FAIL1
+				txt -1, lang("生産の条件を満たしてない。", "You don't meet requirements to create the material.")
+				goto *com_product
+			}
+			txt -1, lang(another_matname(matid - 100000) + "を製造した。", "You crafted " + another_matname(matid - 100000) + ".")
+			another_matgetmain matid - 100000, 1
+			repeat 6
+				j = matneed(cnt * 2), matneed(cnt * 2 + 1)
+				if ( j == (-1) ) {
+					break
+				}
+				mat(j) -= j(1)
+			loop
+			r1 = 0
+			gosub *charaRefresh
+			gosub *screen_drawStatus
+			page_save
+			goto *label_2391
+		}
+		gosub *recipe_ref
+		if ( matid >= 10000 ) {
+			if ( prodcheck() == (-1) ) {
+				snd SOUNDLIST_FAIL1
+				txt -1, lang("生産の条件を満たしてない。", "You don't meet requirements to create the material.")
+				goto *com_product
+			}
+			txt -1, lang(matname(matid - 10000) + "を製造した。", "You crafted " + matname(matid - 10000) + ".")
+			matgetmain matid - 10000, 1
+			matexp = 0
+			repeat 6
+				j = matneed(cnt * 2), matneed(cnt * 2 + 1)
+				if ( j == (-1) ) {
+					break
+				}
+				mat(j) -= j(1)
+				matexp += j(1) * matref(MATREF_RARITY, j)
+			loop
+			r1 = matval
+			r2 = matexp
+			gosub *label_1608
+			r1 = 0
+			gosub *charaRefresh
+			gosub *screen_drawStatus
+			page_save
+			goto *label_2391
+		}
+		s = ioriginalnameref(matid)
+		if ( prodcheck() == (-1) ) {
+			snd SOUNDLIST_FAIL1
+			txt -1, lang("生産の条件を満たしてない。", "You don't meet requirements to create the item.")
+			goto *com_product
+		}
+		if ( inv_getspace() == 0 ) {
+			snd SOUNDLIST_FAIL1
+			txt -1, lang("バックパックが一杯だ。", "Your inventory is full.")
+			goto *com_product
+		}
+		in = 1
+		if ( refitem(p, DBSPEC_TYPE, 0) >= FILTER_ITEM_MIN ) {
+			locvar_cdbitmod_j = mat(matneed(0)) / matneed(1)
+			repeat 5, 1
+				if ( matneed(cnt * 2) == (-1) ) {
+					break
+				}
+				if ( locvar_cdbitmod_j > mat(matneed(cnt * 2)) / matneed(cnt * 2 + 1) ) {
+					locvar_cdbitmod_j = mat(matneed(cnt * 2)) / matneed(cnt * 2 + 1)
+				}
+			loop
+			txtnew
+			txt -1, lang("幾つ作る？", "How many items do you want to create?")
+			val = (windoww - 200) / 2 + inf_screenx, winposy(60), 8, 1, locvar_cdbitmod_j
+			inputlog = "1"
+			gosub *prompt_word
+			in = int(inputlog)
+			if ( in == 0 | rtval == (-1) ) {
+				goto *com_product
+			}
+		}
+		matexp = 0
+		repeat 6
+			j = matneed(cnt * 2), matneed(cnt * 2 + 1)
+			if ( j == (-1) ) {
+				break
+			}
+			mat(j) -= j(1) * in
+			matexp += j(1) * matref(MATREF_RARITY, j) * limit(in, 1, 1000)
+		loop
+		snd SOUNDLIST_BUILD1
+		fixlv = FIX_QUALITY_GOOD
+		if ( rnd(200 + matval(1) * 2) < sdata(matval, CHARA_PLAYER) + 20 ) {
+			fixlv = FIX_QUALITY_MIRACLE
+		}
+		if ( rnd(100 + matval(1) * 2) < sdata(matval, CHARA_PLAYER) + 20 ) {
+			fixlv = FIX_QUALITY_GREAT
+		}
+		flt calcobjlv(sdata(matval, CHARA_PLAYER)), calcfixlv(fixlv)
+		itemcreate CHARA_PLAYER, p, -1, -1, in
+		txt -1, lang(itemname(ci, in) + "を製造した。", "You crafted " + itemname(ci, 1) + ".")
+		item_stack CHARA_PLAYER, ci
+		r1 = matval
+		r2 = matexp
+		gosub *label_1608
+		r1 = 0
+		gosub *charaRefresh
+		gosub *screen_drawStatus
+		page_save
+		goto *label_2391
+	}
+	if ( key == key_pageup ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page++
+			goto *com_product
+		}
+	}
+	if ( key == key_pagedown ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page--
+			goto *com_product
+		}
+	}
+	if ( key == key_cancel ) {
+		return
+	}
+	goto *com_product
+
+*com_material
+	listmax = 0
+	page = 0
+	pagesize = 15
+	cs = 0
+	cc = CHARA_PLAYER
+	cs_bk = -1
+	curmenu = 3
+	repeat 400
+		if ( mat(cnt) != 0 ) {
+			list(0, listmax) = cnt
+			listmax++
+		}
+	loop
+	repeat 100
+		if ( ncgdata(STARTING_NCGDATA_ANOTHER_MATERIALS + cnt) != 0 ) {
+			list(0, listmax) = cnt + 10000
+			listmax++
+		}
+	loop
+	redraw 0
+	gsel BUFFER_PIC
+	pos 0, 0
+	picload_ exedir + "graphic\\ie_scroll.bmp"
+	gsel BUFFER_SCREEN
+	snd SOUNDLIST_SCROLL
+	drawmenu
+	wx = (windoww - 600) / 2 + inf_screenx
+	wy = winposy(430)
+	ww = 600
+	wh = 430
+	windowanime wx, wy, ww, wh, 10, 4
+	windowshadow = 1
+
+*com_material_loop_pgchk
+	redraw 0
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+	drawmenu
+
+*com_material_loop
+	redraw 0
+	s = strhint2 + strhint3b
+	showscroll wx, wy, ww, wh
+	display_topic lang("所持マテリアル", "Name"), wx + 38, wy + 36
+	display_topic lang("説明", "Detail"), wx + 296, wy + 36
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+		if ( cnt \ 2 == 0 ) {
+			pos wx + 70, wy + 66 + cnt * 19
+			gfini 490, 18
+			gfdec2 12, 14, 16
+		}
+		display_key wx + 68, wy + 66 + cnt * 19 - 2, cnt
+	loop
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	cs_listbk
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		i = list(0, p)
+		if ( i >= 10000 ) {
+			s = "" + another_matname(i - 10000) + lang(" × ", " x ") + oomsest_insertseparater(str(ncgdata(STARTING_NCGDATA_ANOTHER_MATERIALS + i - 10000)))
+			cs_list s, wx + 96, wy + 66 + cnt * 19 - 1, 19, 0, 0
+			s = another_matdesc(i - 10000)
+			pos wx + 308, wy + 66 + cnt * 19 + 2
+			mes s
+			p(1) = matref(MATREF_PIC, i - 10000)
+			gsel BUFFER_ITEM
+			color 0
+			boxf 0, 960, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1)) + 960
+			if ( p(1) == 528 ) {
+				gmode 2
+				pos 0, 960
+				gcopy BUFFER_ITEM, 0, 768, inf_tiles, inf_tiles
+				pos 0, 1008
+				gzoom 22, 20, 5, chipc(CHIPC_X, xy2pic(0, 0)) + 8, chipc(CHIPC_Y, xy2pic(0, 0)) + 4 + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 8, chipc(CHIPC_WIDTH, xy2pic(0, 0)) - 16, chipc(CHIPC_HEIGHT, xy2pic(0, 0)) - 8 - (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 10, 1
+				pos 6, 974
+				gcopy BUFFER_ITEM, 0, 1008, 22, 20
+				gsel selcur
+			}
+			else {
+				if ( p(1) == 531 ) {
+					pos 8, 1058 - chipc(CHIPC_HEIGHT, xy2pic(0, 0))
+					gcopy BUFFER_CHR, chipc(CHIPC_X, xy2pic(0, 0)) + 8, chipc(CHIPC_Y, xy2pic(0, 0)) + 2, chipc(CHIPC_WIDTH, xy2pic(0, 0)) - 16, chipc(CHIPC_HEIGHT, xy2pic(0, 0)) - 8
+					gmode 4, , , 150
+					color 0, 0, 0
+					pos 0, 960 + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) == inf_tiles) * 48
+					gcopy BUFFER_ITEM, 144, 768 + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 48, inf_tiles, chipc(CHIPC_HEIGHT, xy2pic(0, 0)) + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 48
+					gmode 2
+					gsel selcur
+				}
+				else {
+					if ( p(1) == 529 ) {
+						pos 0, 1056 - chipc(CHIPC_HEIGHT, xy2pic(0, 0))
+						gcopy BUFFER_CHR, chipc(CHIPC_X, xy2pic(0, 0)), chipc(CHIPC_Y, xy2pic(0, 0)), chipc(CHIPC_WIDTH, xy2pic(0, 0)), chipc(CHIPC_HEIGHT, xy2pic(0, 0))
+						gmode 2
+						gsel selcur
+					}
+					else {
+						pos 0, 960
+						gcopy BUFFER_ITEM, chipi(CHIPI_X, p(1)), chipi(CHIPI_Y, p(1)), chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+						gfini chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+						gfdec2 c_col(0, COLOR_DEFAULT), c_col(1, COLOR_DEFAULT), c_col(2, COLOR_DEFAULT)
+						gsel selcur
+					}
+				}
+			}
+		}
+		else {
+			s = "" + matname(i) + lang(" × ", " x ") + oomsest_insertseparater(str(mat(i)))
+			cs_list s, wx + 96, wy + 66 + cnt * 19 - 1, 19, 0, 0
+			s = matdesc(i)
+			pos wx + 308, wy + 66 + cnt * 19 + 2
+			mes s
+			p(1) = matref(MATREF_PIC, i)
+			gsel BUFFER_ITEM
+			color 0
+			boxf 0, 960, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1)) + 960
+			if ( p(1) == 528 ) {
+				gmode 2
+				pos 0, 960
+				gcopy BUFFER_ITEM, 0, 768, inf_tiles, inf_tiles
+				pos 0, 1008
+				gzoom 22, 20, 5, chipc(CHIPC_X, xy2pic(0, 0)) + 8, chipc(CHIPC_Y, xy2pic(0, 0)) + 4 + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 8, chipc(CHIPC_WIDTH, xy2pic(0, 0)) - 16, chipc(CHIPC_HEIGHT, xy2pic(0, 0)) - 8 - (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 10, 1
+				pos 6, 974
+				gcopy BUFFER_ITEM, 0, 1008, 22, 20
+				gsel selcur
+			}
+			else {
+				if ( p(1) == 531 ) {
+					pos 8, 1058 - chipc(CHIPC_HEIGHT, xy2pic(0, 0))
+					gcopy BUFFER_CHR, chipc(CHIPC_X, xy2pic(0, 0)) + 8, chipc(CHIPC_Y, xy2pic(0, 0)) + 2, chipc(CHIPC_WIDTH, xy2pic(0, 0)) - 16, chipc(CHIPC_HEIGHT, xy2pic(0, 0)) - 8
+					gmode 4, , , 150
+					color 0, 0, 0
+					pos 0, 960 + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) == inf_tiles) * 48
+					gcopy BUFFER_ITEM, 144, 768 + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 48, inf_tiles, chipc(CHIPC_HEIGHT, xy2pic(0, 0)) + (chipc(CHIPC_HEIGHT, xy2pic(0, 0)) > inf_tiles) * 48
+					gmode 2
+					gsel selcur
+				}
+				else {
+					if ( p(1) == 529 ) {
+						pos 0, 1056 - chipc(CHIPC_HEIGHT, xy2pic(0, 0))
+						gcopy BUFFER_CHR, chipc(CHIPC_X, xy2pic(0, 0)), chipc(CHIPC_Y, xy2pic(0, 0)), chipc(CHIPC_WIDTH, xy2pic(0, 0)), chipc(CHIPC_HEIGHT, xy2pic(0, 0))
+						gmode 2
+						gsel selcur
+					}
+					else {
+						pos 0, 960
+						gcopy BUFFER_ITEM, chipi(CHIPI_X, p(1)), chipi(CHIPI_Y, p(1)), chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+						gfini chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+						gfdec2 c_col(0, COLOR_DEFAULT), c_col(1, COLOR_DEFAULT), c_col(2, COLOR_DEFAULT)
+						gsel selcur
+					}
+				}
+			}
+		}
+		pos wx + 47, wy + 69 + cnt * 19 + 2
+		gmode 2, inf_tiles, inf_tiles
+		grotate BUFFER_ITEM, 0, 960, 0, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+	loop
+	if ( keyrange != 0 ) {
+		cs_bk = cs
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			p = list(0, pagesize * page + cnt)
+			break
+		}
+	loop
+	if ( menucycle == 1 ) {
+		if ( key == key_next | key == key_prev ) {
+			p = curmenu
+			if ( key == key_next ) {
+				curmenu++
+				if ( curmenu > 3 ) {
+					curmenu = 0
+				}
+			}
+			if ( key == key_prev ) {
+				curmenu--
+				if ( curmenu < 0 ) {
+					curmenu = 3
+				}
+			}
+			if ( p != curmenu ) {
+				screenupdate = -1
+				gosub *screen_draw
+				if ( curmenu == 0 ) {
+					csctrl = 0
+					goto *label_2879
+				}
+				if ( curmenu == 1 ) {
+					goto *label_2943
+				}
+				if ( curmenu == 2 ) {
+					goto *com_trait
+				}
+				if ( curmenu == 3 ) {
+					goto *com_material
+				}
+			}
+		}
+	}
+	if ( key == key_pageup ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page++
+			goto *com_material_loop_pgchk
+		}
+	}
+	if ( key == key_pagedown ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page--
+			goto *com_material_loop_pgchk
+		}
+	}
+	if ( key == key_cancel ) {
+		gosub *screen_draw
+		goto *pc_turn
+	}
+	goto *com_material_loop
+
+
+
+
+
+
+
+
+

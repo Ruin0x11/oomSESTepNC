@@ -1,0 +1,2028 @@
+*map_randomDungeon
+	randomize
+	rdtry++
+	mWall = 0
+	mWidth = 34 + rnd(15)
+	mHeight = 22 + rnd(15)
+	mModerateCrowd = mWidth * mHeight / 100
+	roomsum = 0
+	rdroomnum = mWidth * mHeight / 70
+	rdroomsizemin = 3
+	rdroomsizemax = 4
+	rdroomdoor = 80
+	rdroomentrance = 1
+	rdhiddenpath = 20
+	rdval(2) = 2
+	rdtunnel = mWidth * mHeight
+	rdextraroom = 10
+	rdtype = RANDOM_DUNGEON_STANDARD
+	if ( oabit(10, gArea ) == 0 ) {
+		if ( rnd(30) == 0 ) {
+			rdtype = RANDOM_DUNGEON_BIG_ROOM
+		}
+	}
+	if ( areaType(gArea ) == (20 /*!!!@[MAP_TYPE_DUNGEON @@@ MAP_TYPE_DUNGEON_MIN]@!!! */) ) {
+		rdtype = RANDOM_DUNGEON_WIDE
+		if ( rnd(4) == 0 ) {
+			rdtype = RANDOM_DUNGEON_STANDARD
+		}
+		if ( rnd(6) == 0 ) {
+			rdtype = RANDOM_DUNGEON_DOG
+		}
+		if ( rnd(10) == 0 ) {
+			rdtype = RANDOM_DUNGEON_RESIDENT
+		}
+		if ( rnd(25) == 0 ) {
+			rdtype = RANDOM_DUNGEON_LONG
+		}
+		if ( rnd(20) == 0 ) {
+			mTileSet = MAP_TILESET_WATER
+		}
+	}
+	if ( areaType(gArea ) == MAP_TYPE_FOREST ) {
+		rdtype = RANDOM_DUNGEON_WIDE
+		if ( rnd(6) == 0 ) {
+			rdtype = RANDOM_DUNGEON_STANDARD
+		}
+		if ( rnd(6) == 0 ) {
+			rdtype = RANDOM_DUNGEON_DOG
+		}
+		if ( rnd(25) == 0 ) {
+			rdtype = RANDOM_DUNGEON_LONG
+		}
+		if ( rnd(20) == 0 ) {
+			rdtype = RANDOM_DUNGEON_RESIDENT
+		}
+	}
+	if ( areaType(gArea ) == MAP_TYPE_TOWER ) {
+		rdtype = RANDOM_DUNGEON_STANDARD
+		if ( rnd(5) == 0 ) {
+			rdtype = RANDOM_DUNGEON_RESIDENT
+		}
+		if ( oabit(10, gArea ) == 0 ) {
+			if ( rnd(10) == 0 ) {
+				rdtype = RANDOM_DUNGEON_BIG_ROOM
+			}
+		}
+		if ( rnd(25) == 0 ) {
+			rdtype = RANDOM_DUNGEON_WIDE
+		}
+		if ( rnd(40) == 0 ) {
+			mTileSet = MAP_TILESET_WATER
+		}
+	}
+	if ( areaType(gArea ) == (23 /*!!!@[MAP_TYPE_DUNGEON_MAX @@@ MAP_TYPE_FORT]@!!! */) ) {
+		rdtype = RANDOM_DUNGEON_STANDARD
+		if ( rnd(5) == 0 ) {
+			rdtype = RANDOM_DUNGEON_RESIDENT
+		}
+		if ( rnd(6) == 0 ) {
+			rdtype = RANDOM_DUNGEON_JAIL
+		}
+		if ( rnd(7) == 0 ) {
+			rdtype = RANDOM_DUNGEON_WIDE
+		}
+		if ( rnd(40) == 0 ) {
+			mTileSet = MAP_TILESET_WATER
+		}
+	}
+	if ( areaId(gArea ) == AREA_LESIMAS ) {
+		mModerateCrowd += gLevel  / 2
+		mTileSet = MAP_TILESET_NEFIA_TOWER2
+		if ( rnd(20) == 0 ) {
+			mTileSet = MAP_TILESET_WATER
+		}
+		if ( gLevel  < 35 ) {
+			mTileSet = MAP_TILESET_DUNGEON
+		}
+		if ( gLevel  < 20 ) {
+			mTileSet = MAP_TILESET_NEFIA_TOWER1
+		}
+		if ( gLevel  < 10 ) {
+			mTileSet = MAP_TILESET_NEFIA_FORT
+		}
+		if ( gLevel  < 5 ) {
+			mTileSet = MAP_TILESET_DUNGEON
+		}
+		rdtype = RANDOM_DUNGEON_STANDARD
+		repeat 1
+			if ( gLevel  == 1 ) {
+				rdtype = RANDOM_DUNGEON_WIDE
+				break
+			}
+			if ( gLevel  == 5 ) {
+				rdtype = RANDOM_DUNGEON_JAIL
+				break
+			}
+			if ( gLevel  == 10 ) {
+				rdtype = RANDOM_DUNGEON_BIG_ROOM
+				break
+			}
+			if ( gLevel  == 15 ) {
+				rdtype = RANDOM_DUNGEON_JAIL
+				break
+			}
+			if ( gLevel  == 20 ) {
+				rdtype = RANDOM_DUNGEON_BIG_ROOM
+				break
+			}
+			if ( gLevel  == 25 ) {
+				rdtype = RANDOM_DUNGEON_JAIL
+				break
+			}
+			if ( gLevel  == 30 ) {
+				rdtype = RANDOM_DUNGEON_BIG_ROOM
+				break
+			}
+			if ( gLevel  < 30 ) {
+				if ( rnd(4) == 0 ) {
+					rdtype = RANDOM_DUNGEON_WIDE
+				}
+			}
+			if ( rnd(5) == 0 ) {
+				rdtype = RANDOM_DUNGEON_RESIDENT
+			}
+			if ( rnd(20) == 0 ) {
+				rdtype = RANDOM_DUNGEON_LONG
+			}
+			if ( rnd(6) == 0 ) {
+				rdtype = RANDOM_DUNGEON_DOG
+			}
+		loop
+	}
+	if ( areaId(gArea ) == AREA_TOWER_OF_FIRE ) {
+		mModerateCrowd += gLevel  / 2
+		mTileSet = MAP_TILESET_TOWER_OF_FIRE
+		rdtype = RANDOM_DUNGEON_STANDARD
+	}
+	if ( areaId(gArea ) == AREA_CRYPT_OF_THE_DAMNED ) {
+		mModerateCrowd += gLevel  / 2
+		mTileSet = MAP_TILESET_DUNGEON
+		rdtype = RANDOM_DUNGEON_STANDARD
+	}
+	if ( areaId(gArea ) == AREA_ANCIENT_CASTLE ) {
+		mModerateCrowd += gLevel  / 2
+		mTileSet = MAP_TILESET_NEFIA_FORT
+		rdtype = RANDOM_DUNGEON_STANDARD
+	}
+	if ( areaId(gArea ) == AREA_MOUNTAIN_PASS ) {
+		rdtype = RANDOM_DUNGEON_LONG
+	}
+	if ( areaId(gArea ) == AREA_PUPPY_CAVE ) {
+		rdtype = RANDOM_DUNGEON_DOG
+	}
+	if ( areaId(gArea ) == AREA_MINOTAUR_NEST ) {
+		rdtype = RANDOM_DUNGEON_MAZE
+	}
+	if ( areaId(gArea ) == AREA_QUEST ) {
+		if ( gQuest == QUEST_TYPE_HUNT ) {
+			mTileSet = MAP_TILESET_NEFIA_FOREST
+			mWidth = 28 + rnd(6)
+			mHeight = 20 + rnd(6)
+			rdtype = RANDOM_DUNGEON_HUNT
+		}
+		if ( gQuest == QUEST_TYPE_PARTY ) {
+			gosub *label_2023
+			return
+		}
+		if ( gQuest == QUEST_TYPE_HARVEST ) {
+			gosub *map_createDungeonHarvest
+			return
+		}
+		if ( gQuest == QUEST_TYPE_CONQUER ) {
+			gosub *label_2065
+			return
+		}
+		if ( gQuest == QUEST_TYPE_HUNTEX ) {
+			gosub *label_2065
+			return
+		}
+		if ( gQuest == 1020 ) {
+			gosub *label_2048
+			return
+		}
+		if ( gQuest == 1021 ) {
+			gosub *NC_MAP_SHEEP
+			return
+		}
+	}
+	if ( oabit(0, gArea ) | oabit(8, gArea ) ) {
+		rdtype = RANDOM_DUNGEON_BIG_ROOM
+	}
+	if ( rdtype == RANDOM_DUNGEON_WIDE ) {
+		gosub *map_createDungeonWide
+	}
+	if ( rdtype == RANDOM_DUNGEON_STANDARD ) {
+		gosub *map_createDungeonStandard
+	}
+	if ( rdtype == RANDOM_DUNGEON_RESIDENT ) {
+		gosub *map_createDungeonResident
+	}
+	if ( rdtype == RANDOM_DUNGEON_JAIL ) {
+		gosub *map_createDungeonJail
+	}
+	if ( rdtype == RANDOM_DUNGEON_BIG_ROOM ) {
+		gosub *map_createDungeonBigRoom
+	}
+	if ( rdtype == RANDOM_DUNGEON_HUNT ) {
+		mField = MAP_FIELD_OUTDOOR
+		gosub *map_createDungeonHunt
+		return
+	}
+	if ( rdtype == RANDOM_DUNGEON_LONG ) {
+		gosub *label_2070
+	}
+	if ( rdtype == RANDOM_DUNGEON_DOG ) {
+		_mclass = 5 + rnd(4)
+		_bold = 2
+		gosub *label_2091
+	}
+	if ( rdtype == RANDOM_DUNGEON_MAZE ) {
+		_mclass = 12
+		_bold = 2
+		gosub *map_createDungeonMaze
+	}
+	if ( stat == 0 ) {
+		goto *map_randomDungeon
+	}
+	map_converttile
+	map_placeplayer
+	if ( oabit(5, gArea ) ) {
+		repeat 200
+			repeat 2
+				x = rnd(mWidth)
+				y = rnd(mHeight)
+				mapId(x, y) = xy2pic(4, 1)
+			loop
+			x = rnd(inf_screenw) + scx
+			y = rnd(inf_screenh) + scy
+			if ( x < 0 | y < 0 | x >= mWidth | y >= mHeight | rnd(5) == 0 ) {
+				x = rnd(mWidth)
+				y = rnd(mHeight)
+			}
+			addmef x, y, MEF_TYPE_FIRE, xy2pic(24, 0), rnd(15) + 20, 50, -1
+			mapitem_fire x, y
+			if ( cnt \ 4 == 0 ) {
+				gosub *label_2163
+				characreate -1, dbid, x, y
+				if ( stat ) {
+					gosub *label_4551
+				}
+			}
+		loop
+	}
+	else {
+		rdmonsterhouse = 0
+		rdcreaturepack = 0
+		repeat roomsum
+			rx = roomx(cnt) + 1
+			rw = roomwidth(cnt) - 2
+			ry = roomy(cnt) + 1
+			rh = roomheight(cnt) - 2
+			rdsize = rw * rh
+			cnt2 = cnt
+			repeat rnd(rdsize / 8 + 2)
+				if ( rnd(2) == 0 ) {
+					flt calcobjlv(gLevel ), calcfixlv(FIX_QUALITY_GOOD)
+					flttypemajor = fltsetdungeon()
+					if ( oabit(13, gArea ) ) {
+						encpfix = 1
+					}
+					itemcreate -1, ITEM_ID_DUMMY, rnd(rw) + rx, rnd(rh) + ry, 0
+				}
+				gosub *label_2163
+				if ( oabit(4, gArea ) ) {
+					if ( cnt2 == 0 & cnt == 0 | rnd(5) == 0 ) {
+						gosub *label_4419
+					}
+				}
+				characreate -1, dbid, rnd(rw) + rx, rnd(rh) + ry
+				if ( stat == 1 ) {
+					gosub *label_4551
+					if ( gLevel  > 3 ) {
+						if ( creaturepack != FILTER_NOTHING ) {
+							if ( rnd(rdcreaturepack * 5 + 5) == 0 ) {
+								rdcreaturepack++
+								fixgod = godcheck(rc)
+								repeat 10 + rnd(20)
+									flt cLevel(rc), calcfixlv(FIX_QUALITY_GOOD)
+									flttypemajor = creaturepack
+									if ( oabit(17, gArea ) | oabit(18, gArea ) ) {
+										initlv = 5000
+									}
+									characreate -1, CREATURE_ID_BUG, rnd(rw) + rx, rnd(rh) + ry
+									gosub *label_4551
+								loop
+								fixgod = ""
+								break
+							}
+						}
+					}
+				}
+			loop
+			if ( areaType(gArea ) == MAP_TYPE_FOREST ) {
+				if ( rnd(3) == 0 ) {
+					repeat rw
+						cnt2 = cnt
+						repeat rh
+							if ( rnd(5) ) {
+								if ( (chipm(CHIPM_ATTRIB, mapId(rx + cnt2, ry + cnt)) & CHIPM_ATTRIB_CANT_PASS) == 0 ) {
+									if ( mapFeat(rx + cnt2, ry + cnt) == 0 ) {
+										flt calcobjlv(gLevel )
+										flttypeminor = FILTER_ITEM_SEED
+										itemcreate -1, ITEM_ID_DUMMY, rx + cnt2, ry + cnt, 1
+										cell_featset rx + cnt2, ry + cnt, tile_plant + rnd(2) + rnd(2) + rnd(2), CELL_FEATURE_PLANTED_SEED, iMaterial(ci), 4 + rnd(5)
+										removeitem ci, 1
+									}
+								}
+							}
+						loop
+					loop
+				}
+			}
+			if ( oabit(10, gArea ) ) {
+				if ( rnd(3) ) {
+					flt
+					itemcreate -1, ITEM_ID_CEREMONY_ALTAR, rnd(rw) + rx, rnd(rh) + ry, 0
+					iProperty(ci) = PROP_NPC
+					iWeight(ci) = 9999999
+					setgod ci
+				}
+			}
+			if ( oabit(6, gArea ) ) {
+				continue
+			}
+			if ( cnt == rdroomdownstair ) {
+				continue
+			}
+			if ( cnt == rdroomupstair ) {
+				continue
+			}
+			if ( rdmonsterhouse == 0 | rdtype == RANDOM_DUNGEON_WIDE ) {
+				if ( rnd(8) == 0 ) {
+					if ( rw * rh < 40 ) {
+						rdmonsterhouse++
+						repeat rh, ry
+							rdy3 = cnt
+							repeat rw, rx
+								rdx3 = cnt
+								gosub *label_2163
+								characreate -1, dbid, rdx3, rdy3
+								if ( stat ) {
+									gosub *label_4551
+								}
+							loop
+						loop
+						if ( rdtype != RANDOM_DUNGEON_WIDE ) {
+							repeat rnd(3) + 1
+								flt
+								flttypemajor = FILTER_CONTAINER
+								itemcreate -1, ITEM_ID_DUMMY, rnd(rw) + rx, rnd(rh) + ry, 0
+							loop
+						}
+					}
+				}
+			}
+		loop
+		mobdensity = mModerateCrowd / 4
+		itemdensity = mModerateCrowd / 4
+		if ( rdtype == RANDOM_DUNGEON_BIG_ROOM ) {
+			flt
+			flttypemajor = fsetwear(rnd(length(fsetwear)))
+			fixlv = FIX_QUALITY_MIRACLE
+			if ( oabit(13, gArea ) ) {
+				encpfix = 1
+			}
+			itemcreate -1, ITEM_ID_DUMMY, -1, -1, 0
+			mobdensity = mModerateCrowd / 2
+			itemdensity = mModerateCrowd / 3
+		}
+		if ( rdtype == RANDOM_DUNGEON_LONG ) {
+			mobdensity = mModerateCrowd / 4
+			itemdensity = mModerateCrowd / 10
+		}
+		if ( rdtype == RANDOM_DUNGEON_DOG ) {
+			mobdensity = mModerateCrowd / 3
+			itemdensity = mModerateCrowd / 6
+		}
+		if ( rdtype == RANDOM_DUNGEON_MAZE ) {
+			mobdensity = mModerateCrowd / 3
+			itemdensity = mModerateCrowd / 10
+		}
+		repeat mobdensity
+			gosub *label_2163
+			characreate -1, dbid, -3, 0
+			if ( stat ) {
+				gosub *label_4551
+			}
+		loop
+		repeat itemdensity
+			flt calcobjlv(gLevel ), calcfixlv(FIX_QUALITY_GOOD)
+			flttypemajor = fltsetdungeon()
+			if ( oabit(13, gArea ) ) {
+				encpfix = 1
+			}
+			itemcreate -1, ITEM_ID_DUMMY, -1, -1, 0
+		loop
+		if ( gArea  == 210 ) {
+			repeat 10
+				if ( rnd(3) == 0 ) {
+					flt
+					fixlv = FIX_QUALITY_GODLY
+					flttypemajor = isetabyss(rnd(length(isetabyss)))
+					itemcreate -1, ITEM_ID_DUMMY, -1, -1, 0
+					repeat 15
+						if ( inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, ci) == 0 ) {
+							break
+						}
+						inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, ci) = limitmax(inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, ci) * (rnd((gLevel  - 50) / 5 + 1) + 50), 2100000000)
+						if ( ncgAbyssPoints > 0 & inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, ci) > 0 ) {
+							inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, ci) += inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, ci) / 10 * rnd(ncgAbyssPoints) + 1
+						}
+					loop
+				}
+			loop
+		}
+		if ( oabit(1, gArea ) ) {
+			repeat 3
+				if ( rnd(3) == 0 ) {
+					flt
+					itemcreate -1, isetforgetnefia(rnd(length(isetforgetnefia))), -1, -1, 0
+				}
+			loop
+		}
+		if ( oabit(7, gArea ) ) {
+			repeat 3 + rnd(10)
+				flt calcobjlv(gLevel  * 3)
+				flttypemajor = fsetwear(rnd(length(fsetwear)))
+				if ( oabit(13, gArea ) ) {
+					encpfix = 1
+				}
+				itemcreate -1, ITEM_ID_DUMMY, -1, -1, 0
+			loop
+		}
+		if ( oabit(15, gArea ) | oabit(18, gArea ) | (gArea  == 210 & ncgdata(NCGDATA_ABYSS_TITLE_9)) ) {
+			repeat 1 + rnd(10)
+				flt
+				itemcreate -1, ITEM_ID_TORCH, -1, -1, 0
+			loop
+			repeat 3
+				if ( rnd(3) == 0 ) {
+					flt
+					if ( oabit(13, gArea ) ) {
+						encpfix = 1
+					}
+					itemcreate -1, isetrarewear(rnd(length(isetrarewear))), -1, -1, 0
+				}
+			loop
+		}
+		if ( oabit(16, gArea ) ) {
+			repeat 5
+				if ( rnd(2) == 0 ) {
+					flt
+					itemcreate -1, ITEM_ID_CHEST, -1, -1, 0
+					iProperty(ci) = PROP_NPC
+					iWeight(ci) = 9999999
+				}
+			loop
+		}
+		if ( oabit(16, gArea ) ) {
+			p = mWidth * mHeight / 80
+		}
+		else {
+			p = rnd(mWidth * mHeight / 80)
+		}
+		repeat p
+			map_trap 0, 0, gLevel 
+		loop
+		if ( rnd(5) == 0 ) {
+			p = rnd(mWidth * mHeight / 40)
+			if ( rnd(5) == 0 ) {
+				p = rnd(mWidth * mHeight / 5)
+			}
+			repeat p
+				map_web 0, 0, gLevel  * 10 + 100
+			loop
+		}
+		if ( rnd(4) == 0 ) {
+			p = limit(rnd(mWidth * mHeight / 500 + 1) + 1, 3, 15)
+			repeat p
+				map_barrel 0, 0
+			loop
+		}
+		repeat 5
+			if ( rnd(10) == 0 ) {
+				map_medal 0, 0
+			}
+		loop
+		if ( gArea  == 210 ) {
+			if ( ncgdata(NCGDATA_ABYSS_TITLE_7) ) {
+				repeat 300
+					map_zirai 0, 0
+				loop
+			}
+		}
+		if ( mCanSave == 1 ) {
+			if ( have_bigench(0, 17) ) {
+				if ( have_bigench2(0, 17) > rnd(100) ) {
+					repeat 15, 1
+						if ( cExist(cnt) == CHAR_STATE_ALLY_DEAD ) {
+							rc = cnt
+							gosub *resurrect
+							cxinit = cX(cc)
+							cyinit = cY(cc)
+							place_chara rc, cxinit, cyinit
+							cType(rc) = 0
+							txtef COLOR_YELLOW
+							txt -1, cnven(cnName(rc)) + lang("は復活した！", " " + have(rc) + " been resurrected!")
+							ctalk rc, 1263, rc, cc
+							if ( stat == 0 ) {
+								txt rc, lang("「ありがとう！」", cnvtalk("Thanks!"))
+							}
+							f += 1
+							animeid = ANIMATION_HOLY
+							animode = 100 + rc
+							gosub *anime
+							snd SOUNDLIST_PRAY2
+						}
+					loop
+					animeload 11, cc
+				}
+			}
+			if ( oabit(10, gArea ) == 0 ) {
+				if ( rnd(limit(15 - sLUC(CHARA_PLAYER) / 500, 5, 15) + limit(gSisterKilled, 0, 5)) == 0 ) {
+					flt
+					initlv = limit(gLevel  + rnd(5), 30, 2000)
+					characreate -1, CREATURE_ID_BIG_DADDY, -3, 0
+				}
+				p = 0
+				repeat 450 - 300, 300
+					if ( areaId(cnt) == AREA_DUNGEON ) {
+						p = 1
+						break
+					}
+				loop
+				if ( p ) {
+					repeat 2
+						if ( rnd(25 - limit(gLevel  / 5, 0, 15)) == 0 ) {
+							charakind = rnd(19)
+							flt
+							novoidlv = 1
+							if ( charakind == 0 ) {
+								characreate -1, CREATURE_ID_ARENA_MASTER, -3, 0
+							}
+							if ( charakind == 1 ) {
+								characreate -1, CREATURE_ID_GUARD, -3, 0
+							}
+							if ( charakind == 2 ) {
+								characreate -1, CREATURE_ID_GUARD2, -3, 0
+							}
+							if ( charakind == 3 ) {
+								characreate -1, CREATURE_ID_SHOPKEEPER, -3, 0
+							}
+							if ( charakind == 4 ) {
+								characreate -1, CREATURE_ID_CLEANER, -3, 0
+							}
+							if ( charakind == 5 ) {
+								characreate -1, CREATURE_ID_BARTENDER, -3, 0
+							}
+							if ( charakind == 6 ) {
+								characreate -1, CREATURE_ID_HEALER, -3, 0
+							}
+							if ( charakind == 7 ) {
+								characreate -1, CREATURE_ID_INFORMER, -3, 0
+							}
+							if ( charakind == 8 ) {
+								characreate -1, CREATURE_ID_WIZARD, -3, 0
+							}
+							if ( charakind == 9 ) {
+								characreate -1, CREATURE_ID_SISTER, -3, 0
+							}
+							if ( charakind == 10 ) {
+								characreate -1, CREATURE_ID_BARD, -3, 0
+							}
+							if ( charakind == 11 ) {
+								characreate -1, CREATURE_ID_CITIZEN2, -3, 0
+							}
+							if ( charakind == 12 ) {
+								characreate -1, CREATURE_ID_CITIZEN2, -3, 0
+							}
+							if ( charakind == 13 ) {
+								characreate -1, CREATURE_ID_CITIZEN, -3, 0
+							}
+							if ( charakind == 14 ) {
+								characreate -1, CREATURE_ID_CITIZEN, -3, 0
+							}
+							if ( charakind == 15 ) {
+								characreate -1, CREATURE_ID_SAILOR, -3, 0
+							}
+							if ( charakind == 16 ) {
+								characreate -1, CREATURE_ID_SAILOR, -3, 0
+							}
+							if ( charakind == 17 ) {
+								characreate -1, CREATURE_ID_CAPTAIN, -3, 0
+							}
+							if ( charakind == 18 ) {
+								characreate -1, CREATURE_ID_YOUNGER_SISTER, -3, 0
+							}
+							if ( stat != 0 ) {
+								cRelation(rc) = RELATION_NEUTRAL
+								cOrgRelation(rc) = RELATION_NEUTRAL
+								cRole(rc) = 10000
+							}
+						}
+					loop
+				}
+			}
+			if ( ogYoungLadySeed == (-1) ) {
+				if ( rnd(30) == 0 ) {
+					x = -3
+					y = 0
+					gosub *label_4574
+				}
+			}
+		}
+	}
+	if ( dbg_testtrap ) {
+		repeat 80
+			map_trap 0, 0, gLevel 
+		loop
+		repeat mHeight
+			y = cnt
+			repeat mWidth
+				x = cnt
+				cell_featread x, y
+				if ( featId == CELL_FEATURE_TRAP ) {
+					mapId(x, y) = xy2pic(15, 0)
+				}
+			loop
+		loop
+	}
+	if ( areaId(gArea ) == AREA_LESIMAS ) {
+		if ( gLevel  == 3 | gLevel  == 17 | gLevel  == 25 | gLevel  == 44 ) {
+			x = mDownStairPos \ 1000
+			y = mDownStairPos / 1000
+			cell_featset x, y, tile_downlocked, CELL_FEATURE_DOWNSTAIRS
+		}
+	}
+	return
+
+*map_createDungeonHunt
+	map_initialize
+	repeat mHeight
+		p = cnt
+		repeat mWidth
+			mapId(cnt, p) = xy2pic(3, 0)
+		loop
+	loop
+	repeat rnd(mWidth * mHeight / 30)
+		x = rnd(mWidth)
+		y = rnd(mHeight)
+		mapId(x, y) = xy2pic(1, 0)
+	loop
+	if ( gReturnArea == 33 ) {
+		tile_room = xy2pic(12, 1), 6
+	}
+	map_converttile
+	map_placeplayer
+	mModerateCrowd = 0
+	repeat 10 + rnd(6)
+		gosub *label_2163
+		characreate -1, dbid, -3, 0
+		if ( stat != 0 ) {
+			gosub *label_4551
+			cRelation(rc) = RELATION_ENEMY
+			cOrgRelation(rc) = RELATION_ENEMY
+		}
+	loop
+	repeat 10 + rnd(10)
+		flt
+		flttypemajor = FILTER_ENVIRONMENT
+		itemcreate -1, ITEM_ID_DUMMY, -1, -1, 0
+		iProperty(ci) = PROP_NPC
+	loop
+	return
+	return 1
+
+*map_createDungeonHarvest
+	gTimelimit = 120
+	gCountNotice = 9999
+	mField = MAP_FIELD_OUTDOOR
+	mTileSet = MAP_TILESET_WILDERNESS
+	mWidth = 58 + rnd(16)
+	mHeight = 50 + rnd(16)
+	map_initialize
+	repeat mHeight
+		p = cnt
+		repeat mWidth
+			mapId(cnt, p) = tile_default + (rnd(tile_default(2)) == 0) * rnd(tile_default(1))
+		loop
+	loop
+	mdatan(0) = lang("街周辺の畑", "Field nearby town")
+	map_randomtile 9, 10
+	map_randomtile 10, 10
+	map_randomtile 0, 30
+	map_randomtile 1, 4
+	map_randomtile 4, 2
+	map_randomtile 3, 2
+	map_randomtile 4, 2
+	map_randomtile 5, 2
+	repeat 30
+		w = rnd(5) + 5
+		h = rnd(4) + 4
+		dx = rnd(mWidth)
+		dy = rnd(mHeight)
+		if ( rnd(2) ) {
+			tile = 30
+		}
+		else {
+			tile = 31
+		}
+		size = limit(dist(dx, dy, mWidth / 2, mHeight / 2) / 8, 0, 8)
+		crop = isetcrop(rnd(length(isetcrop)))
+		repeat h, dy
+			y = cnt
+			if ( y >= mHeight ) {
+				break
+			}
+			repeat w, dx
+				x = cnt
+				if ( x >= mWidth ) {
+					break
+				}
+				mapId(x, y) = tile
+				if ( rnd(10) != 0 | mapItems(x, y) != 0 ) {
+					continue
+				}
+				if ( rnd(4) ) {
+					dbid = crop
+				}
+				else {
+					dbid = isetcrop(rnd(length(isetcrop)))
+				}
+				flt
+				itemcreate -1, dbid, x, y, 0
+				iProperty(ci) = PROP_QUEST
+				p = limit(size + rnd(rnd(4) + 1), 0, 9)
+				iWeight(ci) = iWeight(ci) * (80 + p * p * 100) / 100
+				iSubName(ci) = p
+			loop
+		loop
+	loop
+	gLevelStartOn = 7
+	mapstartx = rnd(mWidth / 3) + mWidth / 3
+	mapstarty = rnd(mHeight / 3) + mHeight / 3
+	map_placeplayer
+	flt
+	itemcreate -1, ITEM_ID_MASTERS_DELIVERY_CHEST, cX(CHARA_PLAYER) + 1, cY(CHARA_PLAYER), 0
+	iProperty(ci) = PROP_NPC
+	repeat 70 + rnd(20)
+		x = rnd(mWidth)
+		y = rnd(mHeight)
+		if ( mapId(x, y) != xy2pic(30, 0) & mapId(x, y) != xy2pic(31, 0) ) {
+			if ( mapItems(x, y) == 0 ) {
+				if ( rnd(8) ) {
+					flt
+					flttypemajor = FILTER_ENVIRONMENT
+					itemcreate -1, ITEM_ID_DUMMY, x, y, 0
+					iProperty(ci) = PROP_NPC
+				}
+				else {
+					cell_featset x, y, tile_pot, CELL_FEATURE_POT
+				}
+			}
+		}
+	loop
+	mModerateCrowd = 15
+	repeat 30
+		gosub *label_2163
+		characreate -1, CREATURE_ID_BUG, -3, 0
+		if ( stat ) {
+			gosub *label_4551
+		}
+	loop
+	return 1
+
+*map_createDungeonStandard
+	map_initialize
+	map_createroom 1
+	if ( stat == 0 ) {
+		return 0
+	}
+	map_placeupstairs
+	map_createroom 1
+	if ( stat == 0 ) {
+		return 0
+	}
+	map_placedownstairs
+	repeat rdroomnum
+		map_createroom 1
+	loop
+	map_connectroom
+	if ( stat == 0 ) {
+		return 0
+	}
+	map_makedoor
+	return 1
+
+*map_createDungeonResident
+	rdroomsizemin = 8
+	map_initialize
+	p = rdroomsizemin - 1
+	repeat mHeight
+		y = cnt
+		repeat mWidth
+			x = cnt
+			mapId(x, y) = xy2pic(1, 0)
+			if ( x > p & y > p & x + 1 < mWidth - p & y + 1 < mHeight - p ) {
+				mapId(x, y) = xy2pic(1, 3)
+			}
+		loop
+	loop
+	map_createroom 2
+	if ( stat == 0 ) {
+		return 0
+	}
+	map_placeupstairs
+	map_createroom 2
+	if ( stat == 0 ) {
+		return 0
+	}
+	map_placedownstairs
+	repeat rdroomnum
+		map_createroom 2
+	loop
+	if ( rnd(2) == 0 ) {
+		repeat rdroomnum / 4 + 1
+			map_createroom 3
+		loop
+	}
+	else {
+		p = rdroomsizemin + 1 + rnd(3)
+		repeat mHeight - p * 2
+			y = p + cnt
+			repeat mWidth - p * 2
+				x = p + cnt
+				mapId(x, y) = xy2pic(1, 0)
+			loop
+		loop
+	}
+	return 1
+
+*map_createDungeonJail
+	rdroomsizemin = 8
+	mWidth = 48 + rnd(20)
+	mHeight = 22
+	mModerateCrowd = mWidth * mHeight / 20
+	map_initialize
+	p = rdroomsizemin - 1
+	repeat mHeight
+		y = cnt
+		repeat mWidth
+			x = cnt
+			mapId(x, y) = xy2pic(1, 0)
+			if ( x > p & y > p & x + 1 < mWidth - p & y + 1 < mHeight - p ) {
+				mapId(x, y) = xy2pic(1, 3)
+			}
+		loop
+	loop
+	map_createroom 2
+	if ( stat == 0 ) {
+		return 0
+	}
+	map_placeupstairs
+	map_createroom 2
+	if ( stat == 0 ) {
+		return 0
+	}
+	map_placedownstairs
+	repeat rdroomnum
+		map_createroom 2
+	loop
+	if ( rnd(2) == 0 ) {
+		repeat rdroomnum / 4 + 1
+			map_createroom 3
+		loop
+	}
+	else {
+		p = rdroomsizemin + 1 + rnd(3)
+		repeat mHeight - p * 2
+			y = p + cnt
+			repeat mWidth - p * 2
+				x = p + cnt
+				mapId(x, y) = xy2pic(1, 0)
+			loop
+		loop
+	}
+	return 1
+
+*map_createDungeonWide
+	rdroomsizemax = 3
+	map_initialize
+	dx = mWidth / 2
+	dy = mHeight / 2
+	mapId(dx, dy) = xy2pic(3, 0)
+	p = 0
+	repeat rdtunnel
+		if ( rnd(rdval(2)) == 0 ) {
+			p = rnd(4)
+		}
+		if ( p == 2 ) {
+			dx++
+			if ( dx > mWidth - 2 ) {
+				p = 0
+				dx = mWidth - 2
+			}
+		}
+		if ( p == 1 ) {
+			dx--
+			if ( dx < 1 ) {
+				p = 3
+				dx = 1
+			}
+		}
+		if ( p == 0 ) {
+			dy++
+			if ( dy > mHeight - 2 ) {
+				p = 1
+				dy = mHeight - 2
+			}
+		}
+		if ( p == 3 ) {
+			dy--
+			if ( dy < 1 ) {
+				p = 2
+				dy = 1
+			}
+		}
+		mapId(dx, dy) = xy2pic(3, 0)
+	loop
+	map_createroom
+	if ( stat == 0 ) {
+		return 0
+	}
+	map_placeupstairs
+	map_createroom
+	if ( stat == 0 ) {
+		return 0
+	}
+	map_placedownstairs
+	repeat rdroomnum
+		map_createroom 0
+	loop
+	repeat rdextraroom
+		p = 0
+		repeat 100
+			x = rnd(mWidth)
+			y = rnd(mHeight)
+			if ( mapId(x, y) == xy2pic(3, 0) ) {
+				dx = rnd(rdroomsizemax) + rdroomsizemin
+				dy = rnd(rdroomsizemax) + rdroomsizemin
+				rx = rnd(dx)
+				ry = rnd(dy)
+				if ( x > 1 & y > 1 & x + dx < mWidth - 2 & y + dy < mHeight - 2 ) {
+					p = 1
+					break
+				}
+			}
+		loop
+		if ( p == 0 ) {
+			continue
+		}
+		dy = y
+		repeat ry
+			dx = x
+			repeat rx
+				mapId(dx, dy) = xy2pic(3, 0)
+				dx++
+			loop
+			dy++
+		loop
+	loop
+	return 1
+
+*map_createDungeonBigRoom
+	mWidth = 48 + rnd(20)
+	mHeight = 22
+	mModerateCrowd = mWidth * mHeight / 20
+	map_initialize
+	repeat mHeight
+		y = cnt
+		repeat mWidth
+			x = cnt
+			if ( x == 0 | y == 0 | x + 1 == mWidth | y + 1 == mHeight ) {
+				continue
+			}
+			mapId(x, y) = xy2pic(3, 0)
+		loop
+	loop
+	p = rnd(mWidth / 2) + 2, rnd(mWidth / 2) + mWidth / 2 - 2
+	if ( rnd(2) == 0 ) {
+		p(2) = p
+		p = p(1)
+		p(1) = p(2)
+	}
+	map_placeupstairs p, rnd(mHeight - 4) + 2
+	map_placedownstairs p(1), rnd(mHeight - 4) + 2
+	return 1
+
+*label_2023
+	if ( ogExtravagantParty == 0 ) {
+		gTimelimit = 60
+		gCountNotice = 9999
+		rdroomsizemin = 5
+		mdatan(0) = lang("パーティー場", "Party Room")
+		mField = MAP_FIELD_INDOOR
+		mTileSet = MAP_TILESET_CASTLE
+		mWidth = 38
+		mHeight = 28
+		map_initialize
+		rdroomnum = 80
+		repeat mHeight
+			y = cnt
+			repeat mWidth
+				x = cnt
+				if ( x == 0 | y == 0 | x + 1 == mWidth | y + 1 == mHeight ) {
+					continue
+				}
+				mapId(x, y) = xy2pic(1, 3)
+			loop
+		loop
+		repeat rdroomnum
+			map_createroom 4
+		loop
+		map_converttile
+		repeat 500
+			dx = rnd(mWidth - 5)
+			dy = rnd(mHeight - 5)
+			p = 1, 1
+			repeat 4
+				y = dy + cnt
+				repeat 4
+					x = dx + cnt
+					if ( mapId(x, y) != tile_tunnel | mapItems(x, y) != 0 ) {
+						p(0) = 0
+					}
+					if ( mapId(x, y) != tile_room | mapItems(x, y) != 0 ) {
+						p(1) = 0
+					}
+				loop
+			loop
+			if ( p(0) == 1 ) {
+				n = rnd(5)
+				repeat 4
+					y = dy + cnt
+					cnt2 = cnt
+					repeat 4
+						x = dx + cnt
+						if ( n < 2 ) {
+							if ( cnt != 0 & cnt != 3 & cnt2 != 0 & cnt2 != 3 ) {
+								mapId(x, y) = xy2pic(11, 14)
+							}
+						}
+						if ( n == 2 ) {
+							if ( cnt == 3 | cnt2 == 3 ) {
+								break
+							}
+							if ( cnt == 1 & cnt2 == 1 ) {
+								mapId(x, y) = xy2pic(4, 20)
+							}
+							else {
+								mapId(x, y) = xy2pic(8, 6)
+								flt
+								itemcreate -1, ITEM_ID_BARREL, x, y, 0
+							}
+						}
+						if ( n == 3 ) {
+							if ( cnt == 1 & cnt2 == 1 ) {
+								mapId(x, y) = xy2pic(6, 6)
+								flt
+								itemcreate -1, ITEM_ID_FANCY_LAMP, x, y, 0
+							}
+						}
+						if ( n == 4 ) {
+							if ( cnt == 1 & cnt2 == 1 ) {
+								flt
+								mapId(x, y) = xy2pic(3, 2)
+								itemcreate -1, ITEM_ID_PLANT_ADORNED_PILLAR, x, y, 0
+							}
+						}
+					loop
+				loop
+			}
+			if ( p(1) == 1 ) {
+				flt
+				itemcreate -1, ITEM_ID_MODERN_TABLE, dx + 1, dy + 1, 0
+				if ( rnd(2) ) {
+					flt
+					itemcreate -1, ITEM_ID_STYLISH_CHAIR, dx + 1, dy, 0
+				}
+				if ( rnd(2) ) {
+					flt
+					itemcreate -1, ITEM_ID_STYLISH_CHAIR, dx + 1, dy + 2, 0
+				}
+				if ( rnd(2) ) {
+					flt
+					itemcreate -1, ITEM_ID_STYLISH_CHAIR, dx, dy + 1, 0
+				}
+				if ( rnd(2) ) {
+					flt
+					itemcreate -1, ITEM_ID_STYLISH_CHAIR, dx + 2, dy + 1, 0
+				}
+			}
+		loop
+		if ( seasonal_check(SEASON_YOUNGER_SISTERS_DAY, FALSE) ) {
+			list(0, 0) = 176, 176, 176
+			list(0, 1) = 176, 176, 176
+			list(0, 2) = 176, 176, 176
+			list(0, 3) = 176, 176, 176
+			list(0, 4) = 176, 176, 176
+			list(0, 5) = 176, 176, 176
+			list(0, 6) = 176, 176, 176
+			list(0, 7) = 176, 176, 176
+			list(0, 8) = 176, 176, 176
+			list(0, 9) = 176, 176, 176
+		}
+		else {
+			if ( seasonal_check(SEASON_PARTY_DAY, FALSE) ) {
+				list(0, 0) = 326, 326, 326
+				list(0, 1) = 326, 326, 326
+				list(0, 2) = 326, 326, 326
+				list(0, 3) = 326, 326, 326
+				list(0, 4) = 326, 326, 326
+				list(0, 5) = 326, 326, 326
+				list(0, 6) = 326, 326, 326
+				list(0, 7) = 326, 326, 326
+				list(0, 8) = 326, 326, 326
+				list(0, 9) = 326, 326, 326
+			}
+			else {
+				list(0, 0) = 171, 9, 36
+				list(0, 1) = 269, 273, 35
+				list(0, 2) = 269, 174, 8
+				list(0, 3) = 174, 16, 239
+				list(0, 4) = 16, 185, 41
+				list(0, 5) = 185, 274, 184
+				list(0, 6) = 274, 272, 70
+				list(0, 7) = 272, 38, 1
+				list(0, 8) = 38, 206, 72
+				list(0, 9) = 206, 73, 69
+			}
+		}
+		repeat roomsum
+			rx = roomx(cnt) + 1
+			rw = roomwidth(cnt) - 2
+			ry = roomy(cnt) + 1
+			rh = roomheight(cnt) - 2
+			rdsize = rw * rh
+			roomdiff = limit(rnd(qLevel(gQuestRef) / 3 + 3), 0, 9)
+			if ( rnd(2) == 0 ) {
+				x = rnd(rw) + rx
+				y = rnd(rh) + ry
+				if ( mapItems(x, y) == 0 ) {
+					flt
+					itemcreate -1, ITEM_ID_GRAND_PIANO, x, y, 0
+				}
+			}
+			if ( rnd(3) == 0 ) {
+				x = rnd(rw) + rx
+				y = rnd(rh) + ry
+				if ( mapItems(x, y) == 0 ) {
+					flt
+					itemcreate -1, ITEM_ID_CASINO_TABLE, x, y, 0
+				}
+			}
+			if ( rnd(2) == 0 ) {
+				x = rnd(rw) + rx
+				y = rnd(rh) + ry
+				if ( mapItems(x, y) == 0 ) {
+					flt
+					itemcreate -1, ITEM_ID_NARROW_DINING_TABLE, x, y, 0
+				}
+			}
+			if ( rnd(3) == 0 ) {
+				x = rnd(rw) + rx
+				y = rnd(rh) + ry
+				if ( mapItems(x, y) == 0 ) {
+					flt
+					itemcreate -1, ITEM_ID_BARBECUE_SET, x, y, 0
+				}
+			}
+			repeat rnd(rdsize / 5 + 2) + rdsize / 5 + 3
+				flt roomdiff * 5, calcfixlv(FIX_QUALITY_GOOD)
+				initlv = roomdiff * 7 + rnd(5)
+				dbid = list(rnd(3), roomdiff)
+				characreate -1, dbid, rnd(rw) + rx, rnd(rh) + ry
+				cRole(rc) = ROLE_SPECIAL
+				cRelation(rc) = RELATION_DISLIKE
+				cOrgRelation(rc) = RELATION_DISLIKE
+				cGold(rc) = cLevel(rc) * (20 + rnd(20))
+			loop
+		loop
+		gLevelStartOn = 7
+		mapstartx = rnd(mWidth / 3) + mWidth / 3
+		mapstarty = rnd(mHeight / 3) + mHeight / 3
+		map_placeplayer
+		mModerateCrowd = 0
+		repeat 25 + rnd(10)
+			x = rnd(mWidth)
+			y = rnd(mHeight)
+			if ( mapItems(x, y) != 0 | (chipm(CHIPM_ATTRIB, mapId(x, y)) & CHIPM_ATTRIB_CANT_PASS) ) {
+				continue
+			}
+			flt
+			p = 217, 218, 216, 215, 215, 152, 152, 91, 189
+			itemcreate -1, p(rnd(9)), x, y, 0
+		loop
+		flt
+		characreate -1, CREATURE_ID_LOYTER_THE_CRIMSON_OF_ZANAN, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		flt
+		characreate -1, CREATURE_ID_GILBERT_THE_COLONEL, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		flt
+		characreate -1, CREATURE_ID_SHENA_THE_DRAW, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		flt
+		characreate -1, CREATURE_ID_MIA_THE_CAT_FREAK, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		if ( rnd(10) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_LOMIAS_THE_MESSENGER_FROM_VINDALE, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(10) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_WHOM_DWELL_IN_THE_VANITY, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(10) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_RAPHAEL_THE_WOMANIZER, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(10) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_RENTON_THE_SUFFERING_WIZARD, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(10) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_STRANGE_SCIENTIST, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		inv_getheader -1
+		repeat invrange, invhead
+			if ( iNum(cnt) > 0 ) {
+				iProperty(cnt) = PROP_NPC
+			}
+		loop
+	}
+	if ( ogExtravagantParty == 1 ) {
+		gTimelimit = 120
+		gCountNotice = 9999
+		rdroomsizemin = 7
+		mdatan(0) = lang("パーティー場", "Party Room")
+		mField = MAP_FIELD_INDOOR
+		mTileSet = MAP_TILESET_CASTLE
+		mWidth = 50
+		mHeight = 35
+		map_initialize
+		tile_default = xy2pic(0, 14)
+		tile_fog = xy2pic(2, 16)
+		tile_tunnel = xy2pic(4, 6)
+		tile_wall = xy2pic(2, 14)
+		tile_room = xy2pic(3, 6)
+		rdroomnum = 80
+		repeat mHeight
+			y = cnt
+			repeat mWidth
+				x = cnt
+				if ( x == 0 | y == 0 | x + 1 == mWidth | y + 1 == mHeight ) {
+					continue
+				}
+				mapId(x, y) = xy2pic(1, 3)
+			loop
+		loop
+		repeat rdroomnum
+			map_createroom 4
+		loop
+		map_converttile
+		repeat 500
+			dx = rnd(mWidth - 5)
+			dy = rnd(mHeight - 5)
+			p = 1, 1
+			repeat 4
+				y = dy + cnt
+				repeat 4
+					x = dx + cnt
+					if ( mapId(x, y) != tile_tunnel | mapItems(x, y) != 0 ) {
+						p(0) = 0
+					}
+					if ( mapId(x, y) != tile_room | mapItems(x, y) != 0 ) {
+						p(1) = 0
+					}
+				loop
+			loop
+			if ( p(0) == 1 ) {
+				n = rnd(5)
+				repeat 4
+					y = dy + cnt
+					cnt2 = cnt
+					repeat 4
+						x = dx + cnt
+						if ( n < 2 ) {
+							if ( cnt != 0 & cnt != 3 & cnt2 != 0 & cnt2 != 3 ) {
+								mapId(x, y) = xy2pic(11, 14)
+							}
+						}
+						if ( n == 2 ) {
+							if ( cnt == 3 | cnt2 == 3 ) {
+								break
+							}
+							if ( cnt == 1 & cnt2 == 1 ) {
+								mapId(x, y) = xy2pic(4, 20)
+							}
+							else {
+								mapId(x, y) = xy2pic(8, 6)
+								flt
+								itemcreate -1, ITEM_ID_BARREL, x, y, 0
+							}
+						}
+						if ( n == 3 ) {
+							if ( cnt == 1 & cnt2 == 1 ) {
+								mapId(x, y) = xy2pic(6, 6)
+								flt
+								itemcreate -1, ITEM_ID_GORGEOUS_CANDLESTICK, x, y, 0
+							}
+						}
+						if ( n == 4 ) {
+							if ( cnt == 1 & cnt2 == 1 ) {
+								flt
+								mapId(x, y) = xy2pic(3, 2)
+								if ( rnd(4) == 0 ) {
+									itemcreate -1, ITEM_ID_STATUE_CREATOR, x, y, 0
+								}
+								else {
+									itemcreate -1, ITEM_ID_FLOWER_ADORNED_PILLAR, x, y, 0
+								}
+							}
+						}
+					loop
+				loop
+			}
+			if ( p(1) == 1 ) {
+				flt
+				itemcreate -1, ITEM_ID_ELEGANT_TABLE, dx + 1, dy + 1, 0
+				if ( rnd(2) ) {
+					flt
+					itemcreate -1, ITEM_ID_STYLISH_CHAIR, dx + 1, dy, 0
+				}
+				if ( rnd(2) ) {
+					flt
+					itemcreate -1, ITEM_ID_STYLISH_CHAIR, dx + 1, dy + 2, 0
+				}
+				if ( rnd(2) ) {
+					flt
+					itemcreate -1, ITEM_ID_STYLISH_CHAIR, dx, dy + 1, 0
+				}
+				if ( rnd(2) ) {
+					flt
+					itemcreate -1, ITEM_ID_STYLISH_CHAIR, dx + 2, dy + 1, 0
+				}
+			}
+		loop
+		if ( seasonal_check(SEASON_YOUNGER_SISTERS_DAY, FALSE) ) {
+			list(0, 0) = 176, 176, 176
+			list(0, 1) = 176, 176, 176
+			list(0, 2) = 176, 176, 176
+			list(0, 3) = 176, 176, 176
+			list(0, 4) = 176, 176, 176
+			list(0, 5) = 176, 176, 176
+			list(0, 6) = 176, 176, 176
+			list(0, 7) = 176, 176, 176
+			list(0, 8) = 176, 176, 176
+			list(0, 9) = 176, 176, 176
+		}
+		else {
+			if ( seasonal_check(SEASON_PARTY_DAY, FALSE) ) {
+				list(0, 0) = 326, 326, 326
+				list(0, 1) = 326, 326, 326
+				list(0, 2) = 326, 326, 326
+				list(0, 3) = 326, 326, 326
+				list(0, 4) = 326, 326, 326
+				list(0, 5) = 326, 326, 326
+				list(0, 6) = 326, 326, 326
+				list(0, 7) = 326, 326, 326
+				list(0, 8) = 326, 326, 326
+				list(0, 9) = 326, 326, 326
+			}
+			else {
+				list(0, 0) = 170, 16, 39
+				list(0, 1) = 176, 176, 176
+				list(0, 2) = 270, 71, 72
+				list(0, 3) = 211, 210, 166
+				list(0, 4) = 185, 185, 183
+				list(0, 5) = 274, 183, 184
+				list(0, 6) = 69, 70, 74
+				list(0, 7) = 40, 38, 1
+				list(0, 8) = 206, 73, 76
+				list(0, 9) = 216, 218, 220
+			}
+		}
+		flt
+		characreate -1, CREATURE_ID_WHOM_DWELL_IN_THE_VANITY, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		flt
+		characreate -1, CREATURE_ID_LOYTER_THE_CRIMSON_OF_ZANAN, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_MICHES_THE_APPRENTICE, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		flt
+		characreate -1, CREATURE_ID_SHENA_THE_DRAW, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		flt
+		characreate -1, CREATURE_ID_LARNNEIRE_THE_LISTENER_OF_WIND, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		rc_x = cX(rc)
+		rc_y = cY(rc)
+		flt
+		characreate -1, CREATURE_ID_LOMIAS_THE_MESSENGER_FROM_VINDALE, rc_x, rc_y
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_STERSHA_THE_QUEEN_OF_PALMIA, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+			rc_x = cX(rc)
+			rc_y = cY(rc)
+			if ( flagMain < 90 ) {
+				flt
+				characreate -1, CREATURE_ID_XABI_THE_KING_OF_PALMIA, rc_x, rc_y
+				cRole(rc) = ROLE_SPECIAL
+				cRelation(rc) = RELATION_DISLIKE
+				cOrgRelation(rc) = RELATION_DISLIKE
+			}
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_ERYSTIA_THE_SCHOLAR_OF_HISTORY, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_MASTER_OF_PET_ARENA, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_EBON_THE_FIRE_GIANT, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+			rc_x = cX(rc)
+			rc_y = cY(rc)
+			flt
+			characreate -1, CREATURE_ID_MOYER_THE_CROOKED, rc_x, rc_y
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_GAROK_THE_LEGENDARY_SMITH, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+			rc_x = cX(rc)
+			rc_y = cY(rc)
+			flt
+			characreate -1, CREATURE_ID_MIRAL_THE_LEGENDARY_SMITH, rc_x, rc_y
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_GWEN_THE_INNOCENT, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		flt
+		characreate -1, CREATURE_ID_RAPHAEL_THE_WOMANIZER, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_AINC_THE_NOVICE_KNIGHT, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_POPPY_THE_LITTLE_DOG, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+			rc_x = cX(rc)
+			rc_y = cY(rc)
+			flt
+			characreate -1, CREATURE_ID_RILIAN_THE_DOG_LOVER, rc_x, rc_y
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_TAM_THE_CAT_HATER, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		flt
+		characreate -1, CREATURE_ID_GILBERT_THE_COLONEL, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_ARNORD_THE_INJURED_SOLDIER, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		flt
+		characreate -1, CREATURE_ID_MIA_THE_CAT_FREAK, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		flt
+		characreate -1, CREATURE_ID_RENTON_THE_SUFFERING_WIZARD, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_MARKS_THE_GREAT_THIEF, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_NOEL_THE_BOMBER, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_ICOLLE_THE_BIOLOGIST, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_BALZAK_THE_JANITOR, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_REVLUS_THE_MAGE_GUILDMASTER, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_FRAY_THE_FIGHTER_GUILDMASTER, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_SIN_THE_THIEF_GUILDMASTER, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( ogTitlePhantomSlasher == 2 ) {
+			flt
+			characreate -1, CREATURE_ID_UNGAGA_THE_MINOTAUR_KING, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_CONERY_PALMIAN_MAJOR_GENERAL, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		flt
+		characreate -1, CREATURE_ID_STRANGE_SCIENTIST, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		flt
+		characreate -1, CREATURE_ID_MYSTERIOUS_PRODUCER, -3, 0
+		cRole(rc) = ROLE_SPECIAL
+		cRelation(rc) = RELATION_DISLIKE
+		cOrgRelation(rc) = RELATION_DISLIKE
+		if ( rnd(5) == 0 ) {
+			flt
+			characreate -1, CREATURE_ID_THE_LEOPARD_WARRIOR, -3, 0
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+			rc_x = cX(rc)
+			rc_y = cY(rc)
+			flt
+			characreate -1, CREATURE_ID_SILVIA_THE_PRINCESS, rc_x, rc_y
+			cRole(rc) = ROLE_SPECIAL
+			cRelation(rc) = RELATION_DISLIKE
+			cOrgRelation(rc) = RELATION_DISLIKE
+		}
+		if ( ogTitleMonsterHunter == 2 ) {
+			flt
+			initunid = findunid("The Unicorn of Order")
+			if ( initunid ) {
+				characreate -1, CREATURE_ID_USER, -3, 0
+				cRole(rc) = ROLE_SPECIAL
+				cRelation(rc) = RELATION_DISLIKE
+				cOrgRelation(rc) = RELATION_DISLIKE
+			}
+		}
+		repeat roomsum
+			rx = roomx(cnt) + 1
+			rw = roomwidth(cnt) - 2
+			ry = roomy(cnt) + 1
+			rh = roomheight(cnt) - 2
+			rdsize = rw * rh
+			roomdiff = rnd(limit(rnd(qLevel(gQuestRef) / 3 + 3), 0, 9) + 1)
+			if ( rnd(2) == 0 ) {
+				x = rnd(rw) + rx
+				y = rnd(rh) + ry
+				if ( mapItems(x, y) == 0 ) {
+					flt
+					itemcreate -1, ITEM_ID_GRAND_PIANO, x, y, 0
+				}
+			}
+			if ( rnd(3) == 0 ) {
+				x = rnd(rw) + rx
+				y = rnd(rh) + ry
+				if ( mapItems(x, y) == 0 ) {
+					flt
+					itemcreate -1, ITEM_ID_CASINO_TABLE, x, y, 0
+				}
+			}
+			if ( rnd(2) == 0 ) {
+				x = rnd(rw) + rx
+				y = rnd(rh) + ry
+				if ( mapItems(x, y) == 0 ) {
+					flt
+					itemcreate -1, ITEM_ID_NARROW_DINING_TABLE, x, y, 0
+				}
+			}
+			if ( rnd(3) == 0 ) {
+				x = rnd(rw) + rx
+				y = rnd(rh) + ry
+				if ( mapItems(x, y) == 0 ) {
+					flt
+					itemcreate -1, ITEM_ID_BARBECUE_SET, x, y, 0
+				}
+			}
+			repeat rnd(rdsize / 5 + 2) + rdsize / 5 + 3
+				flt roomdiff * 5, calcfixlv(FIX_QUALITY_GOOD)
+				initlv = roomdiff * 14 + rnd(5)
+				dbid = list(rnd(3), roomdiff)
+				characreate -1, dbid, rnd(rw) + rx, rnd(rh) + ry
+				cRole(rc) = ROLE_SPECIAL
+				cRelation(rc) = RELATION_DISLIKE
+				cOrgRelation(rc) = RELATION_DISLIKE
+				cGold(rc) = cLevel(rc) * (20 + rnd(20)) * 10
+			loop
+		loop
+		gLevelStartOn = 7
+		mapstartx = rnd(mWidth / 3) + mWidth / 3
+		mapstarty = rnd(mHeight / 3) + mHeight / 3
+		map_placeplayer
+		mModerateCrowd = 0
+		repeat 25 + rnd(10)
+			x = rnd(mWidth)
+			y = rnd(mHeight)
+			if ( mapItems(x, y) != 0 | (chipm(CHIPM_ATTRIB, mapId(x, y)) & CHIPM_ATTRIB_CANT_PASS) ) {
+				continue
+			}
+			flt
+			p = 217, 218, 216, 215, 770, 152, 770, 91, 189
+			itemcreate -1, p(rnd(9)), x, y, 0
+		loop
+		inv_getheader -1
+		repeat invrange, invhead
+			if ( iNum(cnt) > 0 ) {
+				iProperty(cnt) = PROP_NPC
+			}
+		loop
+	}
+	return 1
+
+*label_2048
+	gTimelimit = 120
+	gCountNotice = 9999
+	mdatan(0) = lang("近辺の館", "Mansion")
+	mField = MAP_FIELD_INDOOR
+	mTileSet = MAP_TILESET_CASTLE
+	map_initcustom "nc_prostitute"
+	gLevelStartOn = 7
+	mapstartx = mWidth / 2
+	mapstarty = mHeight / 2
+	map_placeplayer
+	mModerateCrowd = 0
+	nc_intb_100 = rnd(4)
+	nc_intb_101 = rnd(4)
+	_switch_val = nc_intb_100
+	if ( 0 ) {
+		_switch_sw++
+	}
+	if ( _switch_val == 0 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 12, 2, 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 13, 2, 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 14, 2, 0
+		goto *label_2049
+		_switch_sw++
+	}
+	if ( _switch_val == 1 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 32, 8, 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 33, 8, 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 34, 8, 0
+		goto *label_2049
+		_switch_sw++
+	}
+	if ( _switch_val == 2 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 14, 20, 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 15, 20, 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 16, 20, 0
+		goto *label_2049
+		_switch_sw++
+	}
+	if ( _switch_val == 3 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 30, 27, 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 31, 27, 0
+		flt
+		itemcreate -1, ITEM_ID_BOTTLE_SODA, 32, 27, 0
+		goto *label_2049
+	}
+
+*label_2049
+	_switch_val = nc_intb_101
+	if ( 0 ) {
+		_switch_sw++
+	}
+	if ( _switch_val == 0 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 25, 1, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 26, 1, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 27, 1, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		goto *label_2050
+		_switch_sw++
+	}
+	if ( _switch_val == 1 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 8, 8, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 9, 8, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 10, 8, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		goto *label_2050
+		_switch_sw++
+	}
+	if ( _switch_val == 2 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 24, 20, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 25, 20, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 26, 20, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		goto *label_2050
+		_switch_sw++
+	}
+	if ( _switch_val == 3 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 4, 27, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 5, 27, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		flt
+		itemcreate -1, ITEM_ID_POTION_CURE_MINOR_WOUND, 6, 27, 0
+		iStatus(ci) = ITEM_STATUS_BLESSED
+		goto *label_2050
+	}
+
+*label_2050
+	repeat 16
+		_switch_val = cnt
+		if ( 0 ) {
+			_switch_sw++
+		}
+		if ( _switch_val == 0 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 7
+			nc_intb_101 = 4
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 1 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 13
+			nc_intb_101 = 4
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 2 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 26
+			nc_intb_101 = 4
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 3 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 32
+			nc_intb_101 = 4
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 4 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 7
+			nc_intb_101 = 11
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 5 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 13
+			nc_intb_101 = 11
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 6 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 26
+			nc_intb_101 = 11
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 7 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 32
+			nc_intb_101 = 11
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 8 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 7
+			nc_intb_101 = 16
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 9 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 13
+			nc_intb_101 = 16
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 10 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 26
+			nc_intb_101 = 16
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 11 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 32
+			nc_intb_101 = 16
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 12 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 7
+			nc_intb_101 = 23
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 13 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 13
+			nc_intb_101 = 23
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 14 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 26
+			nc_intb_101 = 23
+			goto *NC_MAP_PRO
+			_switch_sw++
+		}
+		if ( _switch_val == 15 | _switch_sw ) {
+			_switch_sw = 0
+			nc_intb_100 = 32
+			nc_intb_101 = 23
+			goto *NC_MAP_PRO
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+

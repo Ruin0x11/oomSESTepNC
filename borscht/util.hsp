@@ -1,0 +1,361 @@
+#defcfunc weight2str int weight2str_weightInStone
+	return strf("%d.%03ds", abs(weight2str_weightInStone) / 1000, abs(weight2str_weightInStone) \ 1000)
+
+#deffunc picload_ str picload__prm0, int picload__prm1
+	oomsest_lastloadedimage = picload__prm0
+	picload picload__prm0, picload__prm1
+	return
+
+#defcfunc oomsest_gethumanreadableerrorreason int oomsest_gethumanreadableerrorreason_prm0
+	_switch_val = oomsest_gethumanreadableerrorreason_prm0
+	if ( 0 ) {
+		_switch_sw++
+	}
+	if ( _switch_val == 12 | _switch_sw ) {
+		_switch_sw = 0
+		return "File not found"
+		_switch_sw++
+	}
+	if ( _switch_val == 13 | _switch_sw ) {
+		_switch_sw = 0
+		return "Image not found(filename: " + oomsest_lastloadedimage + ")"
+		_switch_sw++
+	}
+	if ( _switch_val == 14 | _switch_sw ) {
+		_switch_sw = 0
+		return "External program failed"
+		_switch_sw++
+	}
+	if ( _switch_val == 17 | _switch_sw ) {
+		_switch_sw = 0
+		return "Too long string"
+		_switch_sw++
+	}
+	if ( _switch_val == 19 | _switch_sw ) {
+		_switch_sw = 0
+		return "Zero divide"
+		_switch_sw++
+	}
+	if ( _switch_val == 20 | _switch_sw ) {
+		_switch_sw = 0
+		return "Buffer overflow"
+		_switch_sw++
+	}
+	if ( _switch_val == 21 | _switch_sw ) {
+		_switch_sw = 0
+		return "Unsupported feature"
+		_switch_sw++
+	}
+	if ( _switch_val == 26 | _switch_sw ) {
+		_switch_sw = 0
+		return "No enough memory"
+		_switch_sw++
+	}
+	if ( _switch_val == 38 | _switch_sw ) {
+		_switch_sw = 0
+		return "DLL loading error"
+		_switch_sw++
+	}
+	if ( _switch_val == 39 | _switch_sw ) {
+		_switch_sw = 0
+		return "DLL calling error"
+	}
+	if ( 1 ) {
+		return "Fatal system error(error ID: " + oomsest_gethumanreadableerrorreason_prm0 + ")"
+	}
+
+#defcfunc limitintmax double limitintmax_prm0
+	if ( double(2147483647) < limitintmax_prm0 ) {
+		return 2147483647
+	}
+	return int(limitintmax_prm0)
+
+#defcfunc oomsest_insertseparater str oomsest_insertseparater_prm0
+	locvar_weight2str_str = oomsest_insertseparater_prm0
+	if ( cfg_st_moreseparation ) {
+		locvar_weight2str_str = thousandsep(oomsest_insertseparater_prm0)
+	}
+	return locvar_weight2str_str
+
+#deffunc safe_subtract var safe_subtract_prm0, int safe_subtract_prm1
+	if ( safe_subtract_prm0 < (-2147483648) + safe_subtract_prm1 ) {
+		safe_subtract_prm0 = -2147483648
+	}
+	else {
+		safe_subtract_prm0 -= safe_subtract_prm1
+	}
+	return
+
+*label_0286
+	dbmax = 0
+	dblist(0, dbmax) = 159
+	dbmax++
+	dblist(0, dbmax) = 173
+	dbmax++
+	if ( gArea  == AREA_YOWYN ) {
+		dblist(0, dbmax) = 154
+		dbmax++
+		dblist(0, dbmax) = 162
+		dbmax++
+		dblist(0, dbmax) = 184
+		dbmax++
+		dblist(0, dbmax) = 176
+		dbmax++
+		dblist(0, dbmax) = 177
+		dbmax++
+		dblist(0, dbmax) = 180
+		dbmax++
+		dblist(0, dbmax) = 301
+		dbmax++
+		dblist(0, dbmax) = 167
+		dbmax++
+		dblist(0, dbmax) = 153
+		dbmax++
+	}
+	if ( gArea  == AREA_VERNIS ) {
+		dblist(0, dbmax) = 178
+		dbmax++
+		dblist(0, dbmax) = 154
+		dbmax++
+		dblist(0, dbmax) = 184
+		dbmax++
+		dblist(0, dbmax) = 163
+		dbmax++
+		dblist(0, dbmax) = 182
+		dbmax++
+		dblist(0, dbmax) = 185
+		dbmax++
+		dblist(0, dbmax) = 158
+		dbmax++
+	}
+	if ( gArea  == AREA_PALMIA ) {
+		dblist(0, dbmax) = 151
+		dbmax++
+		dblist(0, dbmax) = 150
+		dbmax++
+		dblist(0, dbmax) = 161
+		dbmax++
+		dblist(0, dbmax) = 179
+		dbmax++
+		dblist(0, dbmax) = 301
+		dbmax++
+		dblist(0, dbmax) = 156
+		dbmax++
+		dblist(0, dbmax) = 160
+		dbmax++
+		dblist(0, dbmax) = 172
+		dbmax++
+		dblist(0, dbmax) = 178
+		dbmax++
+	}
+	if ( gArea  == AREA_NOYEL ) {
+		dblist(0, dbmax) = 181
+		dbmax++
+		dblist(0, dbmax) = 150
+		dbmax++
+		dblist(0, dbmax) = 162
+		dbmax++
+		dblist(0, dbmax) = 184
+		dbmax++
+		dblist(0, dbmax) = 182
+		dbmax++
+		dblist(0, dbmax) = 155
+		dbmax++
+		dblist(0, dbmax) = 153
+		dbmax++
+	}
+	if ( gArea  == AREA_LUMIEST ) {
+		if ( gLevel  == 1 ) {
+			dblist(0, dbmax) = 172
+			dbmax++
+			dblist(0, dbmax) = 154
+			dbmax++
+			dblist(0, dbmax) = 150
+			dbmax++
+			dblist(0, dbmax) = 174
+			dbmax++
+			dblist(0, dbmax) = 185
+			dbmax++
+			dblist(0, dbmax) = 171
+			dbmax++
+			dblist(0, dbmax) = 160
+			dbmax++
+			dblist(0, dbmax) = 167
+			dbmax++
+		}
+	}
+	if ( gArea  == AREA_LUMIEST ) {
+		if ( gLevel  == 3 ) {
+			dblist(0, dbmax) = 172
+			dbmax++
+			dblist(0, dbmax) = 165
+			dbmax++
+			dblist(0, dbmax) = 155
+			dbmax++
+			dblist(0, dbmax) = 164
+			dbmax++
+			dblist(0, dbmax) = 178
+			dbmax++
+			dblist(0, dbmax) = 188
+			dbmax++
+			dblist(0, dbmax) = 171
+			dbmax++
+			dblist(0, dbmax) = 187
+			dbmax++
+		}
+	}
+	if ( gArea  == AREA_DERPHY ) {
+		if ( gLevel  == 1 ) {
+			dblist(0, dbmax) = 158
+			dbmax++
+			dblist(0, dbmax) = 157
+			dbmax++
+			dblist(0, dbmax) = 170
+			dbmax++
+			dblist(0, dbmax) = 171
+			dbmax++
+			dblist(0, dbmax) = 176
+			dbmax++
+			dblist(0, dbmax) = 174
+			dbmax++
+			dblist(0, dbmax) = 183
+			dbmax++
+			dblist(0, dbmax) = 163
+			dbmax++
+		}
+	}
+	if ( gArea  == AREA_DERPHY ) {
+		if ( gLevel  == 3 ) {
+			dblist(0, dbmax) = 300
+			dbmax++
+			dblist(0, dbmax) = 175
+			dbmax++
+			dblist(0, dbmax) = 158
+			dbmax++
+			dblist(0, dbmax) = 157
+			dbmax++
+			dblist(0, dbmax) = 189
+			dbmax++
+		}
+	}
+	if ( gArea  == AREA_PORT_KAPUL ) {
+		if ( gLevel  == 1 ) {
+			dblist(0, dbmax) = 156
+			dbmax++
+			dblist(0, dbmax) = 160
+			dbmax++
+			dblist(0, dbmax) = 183
+			dbmax++
+			dblist(0, dbmax) = 185
+			dbmax++
+			dblist(0, dbmax) = 174
+			dbmax++
+			dblist(0, dbmax) = 151
+			dbmax++
+		}
+	}
+	if ( gArea  == AREA_PORT_KAPUL ) {
+		if ( gLevel  == 3 ) {
+			dblist(0, dbmax) = 153
+			dbmax++
+			dblist(0, dbmax) = 166
+			dbmax++
+			dblist(0, dbmax) = 167
+			dbmax++
+			dblist(0, dbmax) = 169
+			dbmax++
+			dblist(0, dbmax) = 152
+			dbmax++
+			dblist(0, dbmax) = 189
+			dbmax++
+			dblist(0, dbmax) = 168
+			dbmax++
+			dblist(0, dbmax) = 186
+			dbmax++
+		}
+	}
+	if ( gArea  == 50 ) {
+		dblist(0, dbmax) = 153
+		dbmax++
+		dblist(0, dbmax) = 156
+		dbmax++
+		dblist(0, dbmax) = 161
+		dbmax++
+		dblist(0, dbmax) = 182
+		dbmax++
+		dblist(0, dbmax) = 184
+		dbmax++
+		dblist(0, dbmax) = 185
+		dbmax++
+	}
+	if ( gArea  == 51 ) {
+		dblist(0, dbmax) = 156
+		dbmax++
+		dblist(0, dbmax) = 160
+		dbmax++
+		dblist(0, dbmax) = 185
+		dbmax++
+		dblist(0, dbmax) = 178
+		dbmax++
+	}
+	if ( gArea  == 52 ) {
+		dblist(0, dbmax) = 161
+		dbmax++
+		dblist(0, dbmax) = 162
+		dbmax++
+		dblist(0, dbmax) = 177
+		dbmax++
+		dblist(0, dbmax) = 183
+		dbmax++
+		dblist(0, dbmax) = 301
+		dbmax++
+	}
+	if ( gArea  == 53 ) {
+		dblist(0, dbmax) = 167
+		dbmax++
+		dblist(0, dbmax) = 158
+		dbmax++
+		dblist(0, dbmax) = 163
+		dbmax++
+		dblist(0, dbmax) = 179
+		dbmax++
+		dblist(0, dbmax) = 183
+		dbmax++
+	}
+	if ( gArea  == 54 ) {
+		dblist(0, dbmax) = 167
+		dbmax++
+		dblist(0, dbmax) = 176
+		dbmax++
+		dblist(0, dbmax) = 156
+		dbmax++
+		dblist(0, dbmax) = 160
+		dbmax++
+		dblist(0, dbmax) = 183
+		dbmax++
+		dblist(0, dbmax) = 161
+		dbmax++
+	}
+	repeat dbmax
+		p = dblist(0, cnt)
+		f = 0
+		if ( sorg(p, cc) == 0 ) {
+			if ( skillUse(p) != SKILL_NONE ) {
+				f = 1
+			}
+		}
+		if ( f ) {
+			list(0, listmax) = p, skillUse(p) + 21000
+			listmax++
+		}
+	loop
+	return
+	goto *label_0290
+
+
+
+
+
+
+
+

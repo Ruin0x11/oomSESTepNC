@@ -1,0 +1,2824 @@
+#deffunc addbuilding int addbuilding_arg1, int addbuilding_arg2, int addbuilding_arg3, int addbuilding_arg3
+	locvar_addbuilding_p = -1
+	repeat 10
+		if ( bddata(0, addbuilding_arg1, cnt) == 0 ) {
+			locvar_addbuilding_p = cnt
+			break
+		}
+	loop
+	if ( locvar_addbuilding_p == (-1) ) {
+		return
+	}
+	bddata(0, addbuilding_arg1, locvar_addbuilding_p) = addbuilding_arg2, addbuilding_arg3, addbuilding_arg3, bdref(0, addbuilding_arg2) + 363
+	return
+
+*label_3860
+	if ( initeco ) {
+		gCapital = 15
+	}
+	bkdata = gArea , gLevel , cX(CHARA_PLAYER), cY(CHARA_PLAYER)
+	snd SOUNDLIST_WRITE1
+	gosub *game_save
+	mode = MODELIST_MAP
+	cX(CHARA_PLAYER) = 0
+	cY(CHARA_PLAYER) = 0
+	scx = cX(CHARA_PLAYER)
+	scy = cY(CHARA_PLAYER)
+	repeat 500
+		if ( areaId(cnt) == AREA_NONE ) {
+			continue
+		}
+		if ( areaEconomy(cnt) == 0 ) {
+			continue
+		}
+		gArea  = areaId(cnt)
+		gLevel  = 1
+		if ( gArea  != bkdata(0) | gLevel  != bkdata(1) ) {
+			gosub *map_init
+		}
+		p = areaEconomy(cnt)
+		if ( initeco ) {
+			if ( p == 1 ) {
+				addbuilding p, 1, 27, 22
+				addbuilding p, 1, 28, 23
+			}
+			if ( p == 2 ) {
+				addbuilding p, 2, 42, 31
+				addbuilding p, 2, 43, 33
+			}
+			if ( p == 3 ) {
+			}
+			if ( p == 4 ) {
+				addbuilding p, 5, 12, 34
+			}
+			if ( p == 5 ) {
+				addbuilding p, 6, 4, 16
+			}
+			if ( p == 6 ) {
+			}
+			if ( p == 7 ) {
+				addbuilding p, 3, 60, 33
+			}
+		}
+		gosub *label_2172
+	loop
+	gArea  = bkdata(0)
+	gLevel  = bkdata(1)
+	cX(CHARA_PLAYER) = bkdata(2)
+	cY(CHARA_PLAYER) = bkdata(3)
+	gWorldRenew = TRUE
+	mode = MODELIST_CONTINUE
+	mapsubroutine = 1
+	gosub *map_init
+	initeco = 0
+	msgtemp = ""
+	return
+
+*com_politics_chart
+	listmax = 0
+	page = 0
+	pagesize = 13
+	cs = 0
+	cc = CHARA_PLAYER
+	cs_bk = -1
+	snd SOUNDLIST_CHAT
+	curmenu = 0
+	redraw 0
+	gsel BUFFER_INF
+	pos 960, 96
+	picload_ exedir + "graphic\\deco_politics.bmp", 1
+	gsel BUFFER_SCREEN
+	fillbg 3, 960, 96, 128, 128
+	gosub *screen_drawStatus
+	windowshadow = 1
+	city = areaEconomy(gArea )
+	lv = 0
+	redraw 0
+	cs_bk = -1
+	listmax = 0
+	repeat 100
+		list(0, cnt) = -1
+	loop
+	repeat 100
+		if ( podata(0, cnt) != gArea  ) {
+			continue
+		}
+		list(0, listmax) = cnt
+		listmax++
+	loop
+	pagemax = (listmax - 1) / pagesize
+
+*com_politics_chart_loop
+	cs_bk = -1
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+	redraw 0
+	s = lang("ポストチャート", "City Chart"), strhint3b
+	display_window (windoww - 580) / 2 + inf_screenx, winposy(400), 580, 400
+	keyrange = 0
+	j = 0
+	n = 0
+	color 0, 0, 0
+	cs_listbk
+	if ( areaEconomy(gArea ) == 0 | gLevel  != 1 ) {
+		font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+		pos wx + 40, wy + 50
+		mes lang("この場所には経済活動がない。", "There's no economy running in this area.")
+	}
+	else {
+		display_topic lang("渡すアイテム", "Give Item"), wx + 40, wy + 34
+		display_topic lang("受け取るアイテム", "Take Item"), wx + 220, wy + 34
+		display_topic lang("手数料", "Tax"), wx + 380, wy + 34
+		listmax = 0
+		repeat 13
+			if ( list(0, cnt + page * 13) == (-1) ) {
+				continue
+			}
+			y = wy + 70 + n * 20
+			x = wx + 40
+			list(1, cnt) = list(0, cnt + page * 13)
+			key_list(cnt) = key_select(cnt)
+			keyrange++
+			display_key x, y, cnt
+			font lang(cfg_font1, cfg_font2), 12 + sizefix - en * 2, 0
+			pos x - 2, y + jp * 2
+			color 0, 0, 0
+			font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+			item_find podata(1, cnt + page * 13), ITEM_FIND_MODE_DBID, ITEM_FIND_LOCATION_CHARAS
+			if ( stat != (-1) ) {
+				p = iNum(stat)
+			}
+			else {
+				p = 0
+			}
+			if ( jp ) {
+				s = ioriginalnameref(podata(1, list(0, cnt + page * 13)))
+			}
+			else {
+				s = ioriginalnameref(podata(1, list(0, cnt + page * 13))) + ioriginalnameref2(podata(1, list(0, cnt + page * 13)))
+			}
+			cs_list s, x + 30, y, 19
+			pos x + 210 - 2, y + jp * 2
+			if ( podata(2, list(0, cnt + page * 13)) == 55 ) {
+				if ( jp ) {
+					s = ioriginalnameref(podata(2, list(0, cnt + page * 13))) + "x" + podata(3, list(0, cnt + page * 13))
+				}
+				else {
+					s = ioriginalnameref(podata(2, list(0, cnt + page * 13))) + ioriginalnameref2(podata(2, list(0, cnt + page * 13))) + "x" + podata(3, list(0, cnt + page * 13))
+				}
+			}
+			else {
+				if ( jp ) {
+					s = ioriginalnameref(podata(2, list(0, cnt + page * 13)))
+				}
+				else {
+					s = ioriginalnameref(podata(2, list(0, cnt + page * 13))) + ioriginalnameref2(podata(2, list(0, cnt + page * 13)))
+				}
+			}
+			mes s
+			pos x + 370 - 2, y + jp * 2
+			if ( podata(2, list(0, cnt + page * 13)) == 55 ) {
+				s = "======="
+			}
+			else {
+				s = "" + podata(3, list(0, cnt + page * 13)) + "gp"
+			}
+			mes s
+			n++
+		loop
+		if ( keyrange != 0 ) {
+			cs_bk = cs
+		}
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			p = list(1, cnt)
+			break
+		}
+	loop
+	if ( p != (-1) ) {
+		item_find podata(1, p), ITEM_FIND_MODE_DBID, ITEM_FIND_LOCATION_CHARAS
+		if ( stat != (-1) ) {
+			ti = iNum(stat)
+		}
+		else {
+			ti = 0
+		}
+		if ( ti <= 0 ) {
+			snd SOUNDLIST_FAIL1
+			txt -1, lang("交換に必要なアイテムが足りない。", "Not enough items for exchange.")
+			goto *com_politics_chart_loop
+		}
+		if ( podata(2, p) == 55 ) {
+			snd SOUNDLIST_PAYGOLD1
+			item_find podata(1, p), ITEM_FIND_MODE_DBID, ITEM_FIND_LOCATION_CHARAS
+			iNum(stat) -= 1
+			addplat 0, podata(3, p)
+			txt -1, lang("プラチナ硬貨を交換した。", "platinum coin were exchanged.")
+			goto *com_politics_chart_loop
+		}
+		ti = inv_getfreeid(CHARA_PLAYER)
+		if ( ti == (-1) ) {
+			snd SOUNDLIST_FAIL1
+			txt -1, lang("これ以上持てない。", "Your inventory is full.")
+			goto *com_politics_chart_loop
+		}
+		if ( cGold(CHARA_PLAYER) < podata(3, p) & ncgGoldOverflow == 0 ) {
+			txt -1, lang("お金が足りない…", "You don't have enough money...")
+			goto *com_politics_chart_loop
+		}
+		snd SOUNDLIST_PAYGOLD1
+		cGold(CHARA_PLAYER) -= podata(3, p)
+		gosub *label_0422
+		item_find podata(1, p), ITEM_FIND_MODE_DBID, ITEM_FIND_LOCATION_CHARAS
+		iNum(stat) -= 1
+		flt
+		itemcreate CHARA_PLAYER, podata(2, p), -1, -1, 0
+		iStatus(ci) = ITEM_STATUS_NORMAL
+		snd SOUNDLIST_PAYGOLD1
+		txt -1, lang(itemname(ci, 1) + "を交換した。", itemname(ci, 1) + " were exchanged.")
+		item_stack CHARA_PLAYER, ci
+	}
+	if ( key == key_pageup ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page++
+			goto *com_politics_chart_loop
+		}
+	}
+	if ( key == key_pagedown ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page--
+			goto *com_politics_chart_loop
+		}
+	}
+	if ( key == key_cancel ) {
+		gosub *screen_draw
+		return
+	}
+	goto *com_politics_chart_loop
+	goto *com_politics_economy
+
+#deffunc showeconomy int showeconomy_arg1, int showeconomy_arg2, str showeconomy_prm2, int showeconomy_prm3, int showeconomy_prm4
+	pos showeconomy_arg1, showeconomy_arg2
+	color 0, 0, 0
+	mes showeconomy_prm2
+	pos showeconomy_arg1 + 130, showeconomy_arg2
+	mes "" + showeconomy_prm3
+	locvar_showeconomy_p = showeconomy_prm3 - showeconomy_prm4
+	if ( locvar_showeconomy_p >= 0 ) {
+		color 0, 0, 150
+	}
+	else {
+		color 150, 0, 0
+	}
+	pos showeconomy_arg1 + 130 + ginfo(14) + 12, showeconomy_arg2
+	mes "(" + locvar_showeconomy_p + ")"
+	return
+
+*com_politics_economy
+	curmenu = 1
+	key_list(0) = key_enter
+	keyrange = 0
+	pagesize = 1
+	listmax = 2
+	redraw 0
+	gsel BUFFER_INF
+	pos 960, 96
+	picload_ exedir + "graphic\\deco_politics.bmp", 1
+	gsel BUFFER_SCREEN
+	fillbg 3, 960, 96, 128, 128
+	gosub *screen_drawStatus
+	gsel BUFFER_PIC
+	pos 0, 0
+	picload_ exedir + "graphic\\ie_scroll.bmp"
+	gsel BUFFER_SCREEN
+	windowshadow = 1
+	snd SOUNDLIST_SCROLL
+	drawmenu 3
+	city = 1
+	ww = 540
+	wh = 440
+	wx = (windoww - ww) / 2 + inf_screenx
+	wy = winposy(wh)
+
+*label_3872
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+
+*label_3873
+	redraw 0
+	s = strhint2 + strhint3b
+	showscroll wx, wy, ww, wh
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	color 0, 0, 0
+	if ( areaEconomy(gArea ) == 0 | gLevel  != 1 ) {
+		pos wx + 40, wy + 60
+		mes lang("この場所には経済活動がない。", "There's no economy running in this area.")
+	}
+	else {
+		if ( page == 0 ) {
+			display_topic lang("街の概要", "Town Information"), wx + 65, wy + 50
+			display_topic lang("街の財政", "Town Finance"), wx + 65, wy + 150
+			font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+			color 0, 0, 0
+			x = wx + 50
+			y = wy + 80
+			showeconomy x, y, lang("人口", "Population"), podata(100, city), podata(101, city)
+			x = wx + 50
+			y = wy + 180
+			showeconomy x, y, lang("基本税", "Basic Tax") + " (" + gBasicTax + "%)", podata(102, city), podata(103, city)
+			showeconomy x, y + 16, lang("消費税", "Excise Tax") + " (" + podata(150, city) + "%)", podata(104, city), podata(105, city)
+		}
+		if ( page == 1 ) {
+			display_topic lang("人口推移の詳細", "Population Detail"), wx + 65, wy + 50
+			display_topic lang("収支の詳細", "Finance Detail"), wx + 65, wy + 200
+			font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+			color 0, 0, 0
+		}
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	if ( menucycle == 1 ) {
+		if ( key == key_next | key == key_prev ) {
+			p = curmenu
+			if ( key == key_next ) {
+				curmenu++
+				if ( curmenu > 2 ) {
+					curmenu = 0
+				}
+			}
+			if ( key == key_prev ) {
+				curmenu--
+				if ( curmenu < 0 ) {
+					curmenu = 2
+				}
+			}
+			key = ""
+			if ( p != curmenu ) {
+				screenupdate = -1
+				gosub *screen_draw
+				if ( curmenu == 0 ) {
+					goto *com_politics_chart
+				}
+				if ( curmenu == 1 ) {
+					goto *com_politics_economy
+				}
+				if ( curmenu == 2 ) {
+					goto *com_politics_rule
+				}
+			}
+		}
+	}
+	if ( key == key_pageup ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page++
+			goto *label_3872
+		}
+	}
+	if ( key == key_pagedown ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page--
+			goto *label_3872
+		}
+	}
+	if ( key != "" ) {
+		gosub *screen_draw
+		return
+	}
+	goto *label_3873
+
+*com_politics_rule
+	listmax = 0
+	page = 0
+	pagesize = 13
+	cs = 0
+	cs_bk = -1
+	curmenu = 2
+	city = areaEconomy(gArea )
+	list(0, listmax) = 1
+	listn(0, listmax) = lang("この国の首都は" + mapname(gCapital) + "だ。", "The capital of this country is " + mapname(gCapital) + ".")
+	listmax++
+	if ( mType != MAP_TYPE_TOWN ) {
+		goto *skip_rule
+	}
+	list(0, listmax) = 0
+	listn(0, listmax) = lang("この街の消費税は" + podata(150, city) + "%だ。", "The consumption tax in this city is " + podata(150, city) + "%.")
+	listmax++
+	p = rnd(1000)
+	list(0, listmax) = 0
+	listn(0, listmax) = lang("この街の井戸水の汚染は深刻だ(死者" + p + "人）。", "The well is polluted. (" + p + " people have died.)")
+	listmax++
+	list(0, listmax) = 0
+	listn(0, listmax) = lang("この街では殺人が許される。", "Murder is allowed in this city.")
+	listmax++
+
+*skip_rule
+	redraw 0
+	gsel BUFFER_INF
+	pos 960, 96
+	picload_ exedir + "graphic\\deco_politics.bmp", 1
+	gsel BUFFER_SCREEN
+	fillbg 3, 960, 96, 128, 128
+	gosub *screen_drawStatus
+	gsel BUFFER_PIC
+	pos 0, 0
+	picload_ exedir + "graphic\\ie_scroll.bmp"
+	gsel BUFFER_SCREEN
+	windowshadow = 1
+	snd SOUNDLIST_SCROLL
+	drawmenu 3
+	city = 1
+	ww = 480
+	wh = 400
+	wx = (windoww - ww) / 2 + inf_screenx
+	wy = winposy(wh)
+
+*com_politics_rule_loop_pgchk
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+
+*com_politics_rule_loop
+	redraw 0
+	s = strhint2 + strhint3b
+	showscroll wx, wy, ww, wh
+	display_topic lang("法律", "Law"), wx + 65, wy + 45
+	font lang(cfg_font1, cfg_font2), 12 + sizefix - en * 2, 0
+	color 0, 0, 0
+	pos wx + 185, wy + 52
+	mes lang("国法", "Global")
+	if ( mType == MAP_TYPE_TOWN ) {
+		pos wx + 285, wy + 52
+		mes lang("" + mapname(gArea ) + "の法", "Law of " + mapname(gArea ))
+	}
+	pos wx + 155, wy + 46
+	gmode 2
+	gcopy BUFFER_INF, 312, 360, 24, 24
+	pos wx + 255, wy + 46
+	gmode 2
+	gcopy BUFFER_INF, 288, 360, 24, 24
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	color 0, 0, 0
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+		if ( cnt \ 2 == 0 ) {
+			pos wx + 74, wy + 76 + cnt * 19
+			gfini 365, 18
+			gfdec2 12, 14, 16
+		}
+		display_key wx + 72, wy + 76 + cnt * 19 - 2, cnt
+	loop
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	cs_listbk
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		i = list(0, p)
+		s = listn(0, p)
+		cs_list s, wx + 100, wy + 76 + cnt * 19 - 1, 19, 0, 0
+		pos wx + 42, wy + 68 + cnt * 19 + 2
+		gmode 2
+		gcopy BUFFER_INF, 288 + list(0, p) * 24, 360, 24, 24
+	loop
+	if ( keyrange != 0 ) {
+		cs_bk = cs
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			p = list(0, pagesize * page + cnt)
+			break
+		}
+	loop
+	if ( menucycle == 1 ) {
+		if ( key == key_next | key == key_prev ) {
+			p = curmenu
+			if ( key == key_next ) {
+				curmenu++
+				if ( curmenu > 2 ) {
+					curmenu = 0
+				}
+			}
+			if ( key == key_prev ) {
+				curmenu--
+				if ( curmenu < 0 ) {
+					curmenu = 2
+				}
+			}
+			key = ""
+			if ( p != curmenu ) {
+				screenupdate = -1
+				gosub *screen_draw
+				if ( curmenu == 0 ) {
+					goto *com_politics_chart
+				}
+				if ( curmenu == 1 ) {
+					goto *com_politics_economy
+				}
+				if ( curmenu == 2 ) {
+					goto *com_politics_rule
+				}
+			}
+		}
+	}
+	if ( key == key_pageup ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page++
+			goto *com_politics_rule_loop_pgchk
+		}
+	}
+	if ( key == key_pagedown ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page--
+			goto *com_politics_rule_loop_pgchk
+		}
+	}
+	if ( key == key_cancel ) {
+		gosub *screen_draw
+		return
+	}
+	goto *com_politics_rule_loop
+	area = bkdata2
+	city = areaEconomy(area)
+	tlocx = areaX(area)
+	tlocy = areaY(area)
+	tlocinitx = tlocx
+	tlocinity = tlocy
+	scposval = 1
+	cityfov = 3
+	citybuilding = 3
+
+*label_3882
+	redraw 0
+	sxfix = 0
+	syfix = 0
+	gosub *label_1530
+	val = cityfov
+	gosub *los_Loc
+	gosub *los_draw
+	gosub *screen_drawStatus
+	dx = (tlocx - scx) * inf_tiles + inf_screenx
+	dy = (tlocy - scy) * inf_tiles + inf_screeny
+	if ( dy + inf_tiles <= windowh - inf_verh ) {
+		pos dx, dy * (dy > 0)
+		gfini inf_tiles - (dx + inf_tiles > windoww) * (dx + inf_tiles - windoww), inf_tiles + (dy < 0) * inf_screeny - (dy + inf_tiles > windowh - inf_verh) * (dy + inf_tiles - windowh + inf_verh)
+		gfinc 50, 50, 100
+	}
+	txttargetnpc tlocx, tlocy, 1
+	gosub *draw_budget
+	redraw 1
+	key_direction
+	if ( stat == 1 ) {
+		x = tlocx + kdx
+		y = tlocy + kdy
+		if ( x >= 0 & y >= 0 & x < mWidth & y < mHeight ) {
+			tlocx += kdx
+			tlocy += kdy
+		}
+	}
+	await cfg_wait1
+	key_check
+	if ( key == key_enter ) {
+		p = 0
+		repeat 10
+			if ( bddata(0, city, cnt) != 0 ) {
+				p++
+			}
+			else {
+				cbd = cnt
+				break
+			}
+		loop
+		if ( p >= citybuilding ) {
+			txtnew
+			snd SOUNDLIST_FAIL1
+			txt -1, lang("この街はこれ以上の施設を所有できない。", "The city can't hold any more building.")
+			goto *label_3884
+		}
+		cell_featread tlocx, tlocy
+		if ( featPic != 0 ) {
+			txtnew
+			snd SOUNDLIST_FAIL1
+			txt -1, lang("その場所には建てられない。", "You can't build here.")
+			goto *label_3884
+		}
+		if ( dist(tlocx, tlocy, tlocinitx, tlocinity) < cityfov ) {
+			gosub *com_select_building
+		}
+		else {
+			txtnew
+			snd SOUNDLIST_FAIL1
+			txt -1, lang("その場所は街から離れすぎている。", "This location is too far from the town.")
+		}
+		goto *label_3884
+	}
+	if ( key == key_cancel ) {
+		goto *label_3885
+	}
+
+*label_3884
+	goto *label_3882
+
+*label_3885
+	scposval = 0
+	return
+
+*com_select_building
+	snd SOUNDLIST_CHAT
+	listmax = 0
+	page = 0
+	pagesize = 4
+	cs = 0
+	cc = CHARA_PLAYER
+	cs_bk = -1
+	repeat 7
+		if ( cnt == 0 ) {
+			continue
+		}
+		list(0, listmax) = cnt, 1
+		listmax++
+	loop
+	gosub *sort_list
+	windowshadow = 1
+
+*com_select_building_loop
+	redraw 0
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+	txtnew
+	txt -1, lang("どの設備を建設する？", "What do you want to build?")
+
+*com_select_building_loop_WHILE1
+	redraw 0
+	s = lang("設備一覧", "Building List"), strhint2 + strhint3
+	display_window (windoww - 500) / 2 + inf_screenx, winposy(400), 500, 400
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+		y = wy + 60 + cnt * 70
+		pos wx + 100, y
+		gfini 350, 18
+		gfdec2 12, 14, 16
+		display_key wx + 88, y, cnt
+	loop
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	cs_listbk
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		p = list(0, p)
+		y = wy + 60 + cnt * 70
+		pos wx + 20, y
+		gmode 2
+		gcopy BUFFER_MAP, bdref(0, p) * inf_tiles, 528, inf_tiles, inf_tiles
+		cs_list bdrefn(p), wx + 114, y, 19
+		color 0, 0, 0
+		pos wx + 360, y + 2
+		mes "" + bdref(1, p) + "k gp"
+	loop
+	if ( keyrange != 0 ) {
+		cs_bk = cs
+	}
+	gosub *draw_budget
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			p = list(0, pagesize * page + cnt)
+			break
+		}
+	loop
+	if ( p != (-1) ) {
+		if ( podata(200, city) < bdref(1, p) ) {
+			snd SOUNDLIST_FAIL1
+			txtnew
+			txt -1, lang("予算が足りない…", "Your city can't afford it...")
+			goto *com_select_building_loop_WHILE1_CONTINUE
+		}
+		podata(200, city) -= bdref(1, p)
+		snd SOUNDLIST_BUILD1
+		txtnew
+		txt -1, lang(bdrefn(p) + "を建設した！", "You have built a " + bdrefn(p) + "!")
+		bddata(0, city, cbd) = p, tlocx, tlocy, bdref(0, p) + 363
+		gosub *label_2358
+		return p
+	}
+	if ( key == key_pageup ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page++
+			goto *com_select_building_loop
+		}
+	}
+	if ( key == key_pagedown ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page--
+			goto *com_select_building_loop
+		}
+	}
+	if ( key == key_cancel ) {
+		return -1
+	}
+
+*com_select_building_loop_WHILE1_CONTINUE
+	goto *com_select_building_loop_WHILE1
+	tlocinitx = 0
+	tlocinity = 0
+	return
+
+*draw_budget
+	x = windoww - 200
+	y = 10
+	window2 x, y, 190, 26
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	color 0, 0, 0
+	gmode 2
+	pos x - 28, y + 2
+	gcopy BUFFER_INF, 0, 392, 24, 24
+	pos x + 12, y + 7 - en * 2
+	mes lang("予算:", "Budget:") + " " + podata(200, city) + "k gp"
+	return
+
+*label_3896
+	repeat length(racenamecsv)
+		if ( cnRace(r1) == racenamecsv(cnt, 1) ) {
+			cRaceId(r1) = raceid2(cnt)
+			break
+		}
+	loop
+	return
+
+*db_setFilterRace
+	dim racebit, 10, 78
+	return
+
+*cm_race
+	if ( dbmode == DBMODE_FIND ) {
+		listmax = 0
+		repeat length(racenamecsv)
+			if ( raceplayable(cnt) ) {
+				listn(1, listmax) = racenamecsv(cnt, 1)
+				list(0, listmax) = 1 - raceplayable(cnt)
+				listmax++
+			}
+		loop
+		if ( cfg_extrarace ) {
+			repeat length(racenamecsv)
+				if ( raceplayable(cnt) == 0 ) {
+					listn(1, listmax) = racenamecsv(cnt, 1)
+					list(0, listmax) = 1 - raceplayable(cnt)
+					listmax++
+				}
+			loop
+		}
+		return
+	}
+	racename = "なし"
+	rtval = 0
+	repeat length(racenamecsv)
+		if ( dbidn == racenamecsv(cnt, 1) ) {
+			cnt2 = cnt
+			if ( dbmode == DBMODE_REF_SPEC ) {
+				if ( dbspec == 7 ) {
+					rtval = raceblood(cnt2)
+				}
+				if ( dbspec == 9 ) {
+					rtval = racebreeder(cnt2)
+				}
+				break
+			}
+			if ( dbmode == DBMODE_REF ) {
+				racename = racenamecsv(cnt2, 0)
+				cpicref = racepic(cnt2)
+				break
+			}
+			if ( dbmode == DBMODE_REF_CM ) {
+				buff = lang(racedescriptioncsv(cnt2, 0), racedescriptioncsv(cnt2, 1))
+				ref1 = racepic(cnt2)
+				if ( racepic2(cnt2) ) {
+					ref2 = racepic2(cnt2)
+				}
+				else {
+					ref2 = racepic(cnt2)
+				}
+				break
+			}
+			if ( dbmode == DBMODE_REF_PLAYABLE ) {
+				rtval = raceplayable(cnt2)
+				break
+			}
+			if ( dbmode == DBMODE_SET ) {
+				cnRace(rc) = racenamecsv(cnt2, 1)
+				cRaceId(rc) = raceid2(cnt2)
+				cMeleeStyle(rc) = racemeleestyle(cnt2)
+				cCastStyle(rc) = racecaststyle(cnt2)
+				cAge(rc) = gYear  - (rnd(raceagernd(cnt2) + 1) + raceage(cnt2))
+				cHeight(rc) = raceheight(cnt2)
+				cbitmod CHARA_BIT_STONE_BLOOD, rc, raceblood(cnt2)
+				if ( rnd(100) < racesex(cnt2) ) {
+					cSex(rc) = 0
+				}
+				else {
+					cSex(rc) = 1
+				}
+				if ( mode == MODELIST_CHARA_CREATION ) {
+					cSex(rc) = cmsex
+				}
+				cPic(rc) = racepic(cnt2)
+				if ( cSex(rc) == 1 ) {
+					if ( racepic2(cnt2) ) {
+						cPic(rc) = racepic2(cnt2)
+					}
+				}
+				if ( raceresist(cnt2) == 1 ) {
+					sResNether(rc) = 500
+					sResChaos(rc) = 500
+					sResPoison(rc) = 500
+					sResFire(rc) = 80
+				}
+				if ( raceresist(cnt2) == 2 ) {
+					sResMagic(rc) = 200
+					sResNether(rc) = 200
+					sResChaos(rc) = 200
+					sResPoison(rc) = 200
+					sResDarkness(rc) = 200
+					sResSound(rc) = 200
+					sResNerve(rc) = 200
+				}
+				if ( raceresist(cnt2) == 3 ) {
+					sResMagic(rc) = 500
+				}
+				cDvFix(rc) = racedv(cnt2)
+				cPvFix(rc) = racepv(cnt2)
+				skillinit SKILL_ATTR_LIFE, rc, racehp(cnt2)
+				skillinit SKILL_ATTR_MANA, rc, racemp(cnt2)
+				skillinit SKILL_ATTR_STR, rc, racestr(cnt2)
+				skillinit SKILL_ATTR_CON, rc, raceend(cnt2)
+				skillinit SKILL_ATTR_DEX, rc, racedex(cnt2)
+				skillinit SKILL_ATTR_PER, rc, raceper(cnt2)
+				skillinit SKILL_ATTR_LER, rc, raceler(cnt2)
+				skillinit SKILL_ATTR_WIL, rc, racewil(cnt2)
+				skillinit SKILL_ATTR_MAG, rc, racemag(cnt2)
+				skillinit SKILL_ATTR_CHA, rc, racechr(cnt2)
+				skillinit SKILL_ATTR_SPD, rc, racespd(cnt2)
+				repeat 30
+					if ( raceskillcsv(cnt2, cnt) == 0 ) {
+						break
+					}
+					skillinit raceskillcsv(cnt2, cnt) / 10000, rc, raceskillcsv(cnt2, cnt) \ 10000
+				loop
+				s(1) = racefigurecsv(cnt2)
+				gosub *label_1703
+				break
+			}
+		}
+	loop
+	return rtval
+
+*cm_race_loop
+	if ( dbmode == DBMODE_SET ) {
+		if ( norandomclass == 0 ) {
+			if ( fixlv < FIX_QUALITY_UNIQUE ) {
+				if ( difficulty() > 5 ) {
+					if ( rnd(200) == 0 ) {
+						guild = 0
+						repeat length(classnamecsv)
+							if ( dbidn == classnamecsv(cnt, 1) ) {
+								guild = classguild(cnt)
+								break
+							}
+						loop
+						if ( guild ) {
+							olistmax = 0
+							repeat length(classnamecsv)
+								if ( classguild(cnt) != guild ) {
+									continue
+								}
+								if ( dbidn == classnamecsv(cnt, 1) ) {
+									continue
+								}
+								listn(1, olistmax) = classnamecsv(cnt, 1)
+								olistmax++
+							loop
+							if ( olistmax ) {
+								dbidn = listn(1, rnd(olistmax))
+							}
+						}
+					}
+				}
+			}
+		}
+		else {
+			norandomclass = 0
+		}
+	}
+	if ( dbmode == DBMODE_FIND ) {
+		listmax = 0
+		repeat length(classnamecsv)
+			if ( classplayable(cnt) ) {
+				listn(1, listmax) = classnamecsv(cnt, 1)
+				listmax++
+			}
+		loop
+		return
+	}
+	classname = lang("なし", "unemployed")
+	if ( dbidn == "" ) {
+		cequipment = 0
+		return
+	}
+	rtval = 0
+	if ( dbmode == DBMODE_REF_CM ) {
+		buff = ""
+	}
+	repeat length(classnamecsv)
+		if ( dbidn == classnamecsv(cnt, 1) ) {
+			cnt2 = cnt
+			if ( dbmode == DBMODE_REF_SPEC ) {
+				if ( dbspec == 4 ) {
+					rtval = classequip(cnt2)
+				}
+				break
+			}
+			if ( dbmode == DBMODE_REF ) {
+				classname = classnamecsv(cnt2, 0)
+				break
+			}
+			if ( dbmode == DBMODE_REF_CM ) {
+				classname = classnamecsv(cnt2, 0)
+				buff = lang(classdescriptioncsv(cnt2, 0), classdescriptioncsv(cnt2, 1))
+				p(0) = classstr(cnt2)
+				p(1) = classend(cnt2)
+				p(2) = classdex(cnt2)
+				p(3) = classper(cnt2)
+				p(4) = classler(cnt2)
+				p(5) = classwil(cnt2)
+				p(6) = classmag(cnt2)
+				p(7) = classchr(cnt2)
+				p(8) = classspd(cnt2)
+				break
+			}
+			if ( dbmode == DBMODE_REF_PLAYABLE ) {
+				rtval = classplayable(cnt2)
+				break
+			}
+			if ( dbmode == DBMODE_SET ) {
+				cnClass(rc) = classnamecsv(cnt2, 1)
+				cequipment = classequip(cnt2)
+				skillinit SKILL_ATTR_STR, rc, classstr(cnt2)
+				skillinit SKILL_ATTR_CON, rc, classend(cnt2)
+				skillinit SKILL_ATTR_DEX, rc, classdex(cnt2)
+				skillinit SKILL_ATTR_PER, rc, classper(cnt2)
+				skillinit SKILL_ATTR_LER, rc, classler(cnt2)
+				skillinit SKILL_ATTR_WIL, rc, classwil(cnt2)
+				skillinit SKILL_ATTR_MAG, rc, classmag(cnt2)
+				skillinit SKILL_ATTR_CHA, rc, classchr(cnt2)
+				skillinit SKILL_ATTR_SPD, rc, classspd(cnt2)
+				repeat 30
+					if ( classskillcsv(cnt2, cnt) == 0 ) {
+						break
+					}
+					skillinit classskillcsv(cnt2, cnt) / 10000, rc, classskillcsv(cnt2, cnt) \ 10000
+				loop
+				break
+			}
+		}
+	loop
+	return rtval
+
+*cm_race_loop_WHILE1
+	if ( gettrait(0, 184) < 0 ) {
+		txt -1, lang("仲間はこれ以上増やせない。", "Your party is full.")
+		return -1
+	}
+
+*label_3911
+	f = get_freeally()
+	if ( f == 0 ) {
+		txt -1, lang("仲間の最大数に達しているため、仲間にできなかった…", "Your party is already full. You can't invite someone anymore.")
+		return -1
+	}
+	relocate_chara rc, f
+	oc = stat
+	cRelation(rc) = RELATION_ALLY
+	cFame(rc) = 0
+	cOrgRelation(rc) = RELATION_ALLY
+	cRole(rc) = ROLE_NONE
+	if ( ocAiCalm(rc) ) {
+		cAiCalm(rc) = ocAiCalm(rc)
+	}
+	cbitmod CHARA_BIT_QUEST_TARGET, rc, FALSE
+	cbitmod CHARA_BIT_NO_TARGET, rc, FALSE
+	cbitmod CHARA_BIT_SANDBAG, rc, FALSE
+	cbitmod CHARA_BIT_SUMMONED, rc, FALSE
+	cbitmod CHARA_BIT_FESTIVAL, rc, FALSE
+	resetfaction rc
+	rmfaction rc, "pet"
+	addfaction rc, "pet,0"
+	snd SOUNDLIST_PRAY1
+	txtef COLOR_YELLOW
+	txt -1, lang(cnName(rc) + "が仲間に加わった！", cnName(rc) + " join" + _s(rc) + " your party!")
+	ctalk rc, 1377, 0, rc
+	throwsstpevent "JoinParty", rc, "", 0
+	return 1
+
+*label_3912
+	if ( geneuse != "" ) {
+		if ( takeover(6) == 0 ) {
+			repeat 15, 1
+				cnt2 = cnt
+				if ( cbit(CHARA_BIT_PCC, cnt2) == TRUE | cnName(cnt2) == "" ) {
+					del_chara cnt2
+					continue
+				}
+				if ( cExist(cnt2) == CHAR_STATE_ALIVE ) {
+					memcpy sdata(SKILL_NONE, 15 + cnt2), sdata(SKILL_NONE, cnt2), 600 * 4 * 2
+					memcpy sdataex(0, 15 + cnt2), sdataex(0, cnt2), 600 * 4
+					memcpy cExist(15 + cnt2), cExist(cnt2), 500 * 4
+					memcpy ocAIStrategy(15 + cnt2), ocAIStrategy(cnt2), 250 * 4
+					if ( cAiSub(15 + cnt2) == 101 ) {
+						cAiSub(15 + cnt2) = 20
+					}
+					repeat 10
+						cdatan(cnt, 15 + cnt2) = cdatan(cnt, cnt2)
+					loop
+					repeat 30, 100
+						cdata(cnt, 15 + cnt2) = cdata(cnt, 15 + cnt2) / EXT_EQUIP_SLOTS * 10000
+					loop
+					faction(15 + cnt2) = faction(cnt2)
+					rmfaction 15 + cnt2, "pet"
+					rmfaction 15 + cnt2, "align"
+					addfaction 15 + cnt2, "align,neutral"
+					addfaction 15 + cnt2, "formerpet"
+					cbitmod CHARA_BIT_MARRIED, 15 + cnt2, FALSE
+					cbitmod CHARA_BIT_STETHOSCOPE, 15 + cnt2, FALSE
+					cbitmod CHARA_BIT_LEASHED, 15 + cnt2, FALSE
+					cbitmod CHARA_BIT_RIDE, 15 + cnt2, FALSE
+					cRelation(15 + cnt2) = RELATION_NEUTRAL
+					cOrgRelation(15 + cnt2) = RELATION_NEUTRAL
+					cAiInt(15 + cnt2) = 100
+					cExist(15 + cnt2) = CHAR_STATE_ADV
+					cnAka(15 + cnt2) = random_title()
+					cRole(15 + cnt2) = ROLE_ADVENTURER
+					cFame(15 + cnt2) = limit(cLevel(15 + cnt2) * cLevel(15 + cnt2) * 30 + rndex(cLevel(15 + cnt2) * 1000 + 100) + rnd(500), 1, 1000000)
+					cType(15 + cnt2) = 4, 1
+					cImpression(15 + cnt2) = limit(cImpression(cnt2) * 2 / 3, 50, 300)
+					ocAdvJourneyTurns(15 + cnt2) = limit(cImpression(15 + cnt2) / 100, 1, 3)
+					cFriendship(15 + cnt2) = 0
+					cAge(15 + cnt2) -= genetemp(GDATA_YEAR) - gYear 
+					del_chara cnt2
+				}
+			loop
+		}
+	}
+	repeat 40 - 1, 16
+		if ( cExist(cnt) == CHAR_STATE_ADV ) {
+			continue
+		}
+		rc = cnt
+		gosub *label_3917
+	loop
+	return
+
+*label_3917
+	flt 0, FIX_QUALITY_MIRACLE
+	novoidlv = 1
+	initlv = rnd(60 + difficulty()) + 1
+	p = 75, 41, 160
+	characreate rc, p(rnd(3)), -1, -1
+	cRelation(rc) = RELATION_NEUTRAL
+	cOrgRelation(rc) = RELATION_NEUTRAL
+	cAiInt(rc) = 100
+	cExist(rc) = CHAR_STATE_ADV
+	cPic(rc) = rnd(33) * 2 + 1 + cSex(rc)
+	cnName(rc) = randomname()
+	cnAka(rc) = random_title()
+	cRole(rc) = ROLE_ADVENTURER
+	p = rnd(450)
+	if ( areaId(p) == AREA_NONE | areaId(p) == AREA_HOME | areaType(p) == MAP_TYPE_QUEST ) {
+		p = 4
+	}
+	if ( rnd(4) == 0 ) {
+		p = 5
+	}
+	if ( rnd(4) == 0 ) {
+		p = 11
+	}
+	if ( rnd(6) == 0 ) {
+		p = 12
+	}
+	cType(rc) = p, 1
+	cFame(rc) = limit(cLevel(rc) * cLevel(rc) * 30 + rndex(cLevel(rc) * 200 + 100) + rnd(500), 1, 1000000)
+	return
+
+*adv_action
+	repeat 15, 1
+		rc = cnt
+		if ( cHireDate(rc) != 0 ) {
+			if ( cHireDate(rc) < getgametime() ) {
+				if ( cRole(rc) == 20001 ) {
+					txt -1, lang(cnName(rc) + "との契約期間が切れた。", "The period of contract with " + cnName(rc) + " has been expired.")
+					if ( cExist(rc) == CHAR_STATE_ALIVE ) {
+						mapChara(cX(rc), cY(rc)) = 0
+					}
+					del_chara rc
+					if ( cfg_nc_contractarart == 1 ) {
+						snd 200
+					}
+				}
+			}
+		}
+		if ( ocPetJobSkill(rc) == 159 ) {
+			if ( cExist(rc) != CHAR_STATE_ALLY_WORK ) {
+				continue
+			}
+			if ( rnd(60) == 0 | areaId(cType(rc)) == AREA_HOME ) {
+				repeat 10
+					if ( rnd(4) == 0 ) {
+						p = rnd(500 - 450) + 450
+					}
+					else {
+						p = rnd(300)
+					}
+					if ( areaId(p) == AREA_NONE | p == 7 | areaType(p) == MAP_TYPE_QUEST | p == 9 ) {
+						p = 4
+					}
+					if ( cnt < 5 ) {
+						if ( areaType(p) != MAP_TYPE_TOWN ) {
+							continue
+						}
+					}
+					break
+				loop
+				cType(rc) = p, 1
+			}
+		}
+	loop
+	repeat 40 - 1, 16
+		rc = cnt
+		cc = rc
+		if ( cHireDate(rc) != 0 ) {
+			if ( cHireDate(rc) < getgametime() ) {
+				cHireDate(rc) = 0
+				cbitmod CHARA_BIT_HIRED, rc, FALSE
+				cRelation(rc) = RELATION_NEUTRAL
+				txt -1, lang(cnName(rc) + "との契約期間が切れた。", "The period of contract with " + cnName(rc) + " has been expired.")
+				if ( cfg_nc_contractarart == 1 ) {
+					snd 200
+				}
+			}
+		}
+		if ( cType(rc) == gArea  ) {
+			continue
+		}
+		if ( cExist(rc) == CHAR_STATE_ADV_DEAD ) {
+			gosub *label_3917
+			continue
+		}
+		if ( cExist(rc) == CHAR_STATE_ADV_HOSPITAL ) {
+			if ( getgametime() >= cRespawn(rc) ) {
+				locvar_addnews_f = 0
+				if ( rnd(3) | ocFormerPet(rc) == 20000 | eqfaction(rc, "formerpet") ) {
+					locvar_addnews_f = 1
+				}
+				else {
+					if ( ocAdvJourneyTurns(rc) ) {
+						locvar_addnews_f = 1
+						ocAdvJourneyTurns(rc)--
+					}
+				}
+				if ( locvar_addnews_f == 1 ) {
+					addnews 3, rc
+					cExist(rc) = CHAR_STATE_ADV
+					if ( ocFormerPet(rc) == 20000 ) {
+						p = rnd(5) + 1
+						repeat p
+							r1 = rc
+							r2 = 1
+							gosub *label_1588
+						loop
+					}
+				}
+				else {
+					addnews 5, rc
+					del_chara rc
+					gosub *label_3917
+				}
+				continue
+			}
+		}
+		if ( ocAdvParty(rc) != 0 ) {
+			if ( rnd(100) == 0 ) {
+				leaveparty ocdata, rc
+			}
+		}
+		else {
+			if ( rnd(60) == 0 ) {
+				repeat 1000
+					p = rnd(39) + 16
+					if ( ocAdvParty(p) == 0 | ocAdvParty(p) == p ) {
+						if ( cbit(CHARA_BIT_HIRED, p) == FALSE ) {
+							ocAdvParty(rc) = p
+							ocAdvParty(p) = p
+							cType(rc) = cType(p)
+							break
+						}
+					}
+				loop
+			}
+		}
+		if ( ocAdvParty(rc) == 0 | ocAdvParty(rc) == rc ) {
+			if ( rnd(60) == 0 ) {
+				repeat 10
+					if ( rnd(4) == 0 ) {
+						p = rnd(500 - 450) + 450
+					}
+					else {
+						p = rnd(300)
+					}
+					if ( areaId(p) == AREA_NONE ) {
+						continue cnt
+					}
+					if ( p == 7 | areaType(p) == MAP_TYPE_QUEST | p == 9 ) {
+						p = 4
+					}
+					if ( cnt < 5 ) {
+						if ( areaType(p) != MAP_TYPE_TOWN ) {
+							continue
+						}
+					}
+					break
+				loop
+				if ( ogDungeonStayersTotal > 10 ) {
+					if ( rnd(50) == 0 ) {
+						repeat 450 - 300, 300
+							if ( areaId(cnt) == AREA_DUNGEON ) {
+								p = cnt
+								break
+							}
+						loop
+					}
+				}
+				cType(rc) = p, 1
+				if ( ocAdvParty(rc) == rc ) {
+					repeat 40 - 1, 16
+						if ( ocAdvParty(cnt) == rc ) {
+							cType(cnt) = p, 1
+						}
+					loop
+				}
+			}
+		}
+		if ( rnd(200) == 0 ) {
+			if ( areaType(cType(rc)) != MAP_TYPE_TOWN & areaId(cType(rc)) != AREA_DUNGEON ) {
+				gosub *adv_gainItem
+			}
+		}
+		if ( rnd(20) == 0 ) {
+			val = rndex(limit(cLevel(rc), 1, 1000) * limit(cLevel(rc), 1, 1000) / 40 + 5) - rndex(limit(cLevel(rc), 1, 1000) * limit(cLevel(rc), 1, 1000) / 50 + 5)
+			incfame rc, val
+			if ( val > 0 ) {
+				addplat rc, rndex(val)
+			}
+		}
+		if ( rnd(2000) == 0 ) {
+			val = rndex(limit(cLevel(rc), 1, 1000) * limit(cLevel(rc), 1, 1000) / 20 + 10) + 10
+			addplat rc, val / 2 + rndex(val / 2 + 1)
+			incfame rc, val
+			addnews 4, rc
+			gosub *adv_gainItem
+		}
+		if ( cExp(rc) >= cExpToNext(rc) ) {
+			r1 = rc
+			r2 = 0
+			gosub *label_1588
+		}
+	loop
+	notesel newsbuff
+	if ( noteinfo(0) > 195 ) {
+		repeat noteinfo(0) - 195
+			notedel 0
+		loop
+	}
+	return
+
+*label_3928
+	repeat 40 - 1, 16
+		rc = cnt
+		cc = rc
+		if ( cExist(rc) != CHAR_STATE_ADV ) {
+			continue
+		}
+		if ( rnd(20) == 0 ) {
+			advfavoriteskill rc
+			csskill = rtval(rnd(stat))
+			if ( sorg(csskill, rc) == 0 ) {
+				skillgain rc, csskill
+			}
+			skillexp2 csskill, rc, limit(cLevel(rc), 1, 1000) * 50
+			repeat 2
+				csskill = rnd(400 - 100) + 100
+				if ( sorg(csskill, rc) == 0 ) {
+					continue cnt
+				}
+				skillexp2 csskill, rc, limit(cLevel(rc), 1, 1000) * 20
+			loop
+		}
+		if ( rnd(20) == 0 ) {
+			advfavoritestat rc
+			csskill = stat
+			modgrowth2 rc, csskill, 10
+			repeat 2
+				csskill = 10 + rnd(8)
+				modgrowth2 rc, csskill, 2
+			loop
+		}
+		if ( rnd(200) < cPlat(rc) ) {
+			advfavoriteskill rc
+			csskill = rtval(rnd(stat))
+			if ( sorg(csskill, rc) == 0 ) {
+				skillgain rc, csskill
+			}
+			if ( sdata(600 + csskill, rc) \ 1000 < 400 ) {
+				if ( cPlat(rc) >= calctraincost(cnt, rc) ) {
+					cPlat(rc) -= calctraincost(csskill, rc)
+					p(40) = 15 * (100 + calctraitgrowthrate(rc, csskill)) / 100
+					modgrowth rc, csskill, limit(p(40) - sgrowth(csskill, rc) / 15, 2, p(40) - (csskill < 18) * 10)
+				}
+			}
+			olistmax = 0
+			repeat 400 - 100, 100
+				if ( sorg(cnt, rc) == 0 ) {
+					continue
+				}
+				if ( sdata(600 + cnt, rc) \ 1000 == 400 ) {
+					continue
+				}
+				if ( cPlat(rc) < calctraincost(cnt, rc) ) {
+					continue
+				}
+				olist(olistmax) = cnt
+				olistmax++
+			loop
+			if ( olistmax > 0 ) {
+				repeat 20
+					csskill = olist(rnd(olistmax))
+					if ( cPlat(rc) < calctraincost(csskill, rc) ) {
+						break
+					}
+					cPlat(rc) -= calctraincost(csskill, rc)
+					p(40) = 15 * (100 + calctraitgrowthrate(rc, csskill)) / 100
+					modgrowth rc, csskill, limit(p(40) - sgrowth(csskill, rc) / 15, 2, p(40) - (csskill < 18) * 10)
+				loop
+			}
+		}
+		if ( rnd(2000) < cPlat(rc) ) {
+			olistmax = 0
+			val = 0
+			repeat 400 - 100, 100
+				if ( skillUse(cnt) == SKILL_NONE ) {
+					continue
+				}
+				if ( sorg(cnt, rc) != 0 ) {
+					val++
+					continue
+				}
+				olist(olistmax) = cnt
+				olistmax++
+			loop
+			if ( olistmax > 0 ) {
+				val = limitmin(val - length(mainskill), 0)
+				if ( cPlat(rc) >= 15 + 3 * val ) {
+					csskill = olist(rnd(olistmax))
+					cPlat(rc) -= 15 + 3 * val
+					skillgain rc, csskill
+				}
+			}
+		}
+		if ( rnd(2000) == 0 ) {
+			olistmax = 0
+			repeat 224
+				traitmode = 0
+				tid = cnt
+				if ( tid == 96 ) {
+					continue
+				}
+				r1 = rc
+				gosub *trait_ref
+				if ( stat == 1 ) {
+					if ( traitref == 0 ) {
+						if ( traitref(1) >= 0 ) {
+							if ( traitref(2) > gettrait(rc, tid) ) {
+								olist(0, olistmax) = cnt, cnt + 1
+								olistmax++
+							}
+						}
+					}
+				}
+			loop
+			if ( olistmax > 0 ) {
+				tid = olist(TRAIT_NORMAL_OTHER_MUTANT, rnd(olistmax))
+				traitmode = 0
+				r1 = rc
+				gosub *trait_ref
+				addtrait rc, tid, 1
+				r1 = rc
+				gosub *charaRefresh
+			}
+		}
+		if ( rnd(2000) == 0 ) {
+			skillmod SKILL_ATTR_SPD, rc, 1000 * 3
+		}
+	loop
+	return
+
+*label_3936
+	if ( ocPetBeingRiddenIdx(rc) != 0 | rc == gRider ) {
+		return
+	}
+	a = refitem(iID(ci), DBSPEC_TYPE, ci)
+	if ( a == 57000 | a == 52000 | a == 53000 ) {
+		cAiItem(rc) = ci
+	}
+	return
+
+*adv_gainItem
+	f = 0
+	inv_getheader rc
+	repeat 10
+		ci = invhead + rnd(invrange)
+		if ( iNum(ci) == 0 ) {
+			f = 1
+			break
+		}
+		if ( iEquip(ci) != 0 ) {
+			continue
+		}
+		if ( iNum(ci) != 0 ) {
+			if ( cAiItem(rc) == ci ) {
+				cAiItem(rc) = 0
+			}
+			iNum(ci) = 0
+			f = 1
+			break
+		}
+	loop
+	if ( f == 0 ) {
+		return 0
+	}
+	flt cLevel(rc), FIX_QUALITY_MIRACLE
+	dbid = 0
+	if ( rnd(3) == 0 ) {
+		flttypemajor = fsetwear(rnd(length(fsetwear)))
+	}
+	else {
+		flttypemajor = fsetitem(rnd(length(fsetitem)))
+	}
+	if ( flttypemajor == FILTER_WEAPON | flttypemajor == FILTER_RANGE ) {
+		if ( ocFormerPet(rc) == 20000 ) {
+			if ( flttypemajor == FILTER_WEAPON ) {
+				if ( rnd(2) ) {
+					if ( finditemid("rapier") ) {
+						inititemid = stat
+						dbid = 743
+					}
+				}
+			}
+		}
+		if ( rnd(50) == 0 ) {
+			weaponjasei = 1
+			fixlv = FIX_QUALITY_GODLY
+		}
+	}
+	itemcreate rc, dbid, -1, -1, 0
+	if ( stat == 0 ) {
+		return 0
+	}
+	iKnown(ci) = ITEM_KNOWN_FULL
+	if ( iQuality(ci) >= FIX_QUALITY_MIRACLE ) {
+		if ( refitem(iID(ci), DBSPEC_TYPE, ci) < FILTER_ITEM_MIN ) {
+			valn = itemname(ci)
+			addnews 1, rc
+		}
+	}
+	gosub *chara_equip
+	return
+
+*chara_adjustInv
+	p = inv_getfreeid(tc)
+	if ( p != (-1) ) {
+		return p
+	}
+	repeat 100
+		p = rnd(invrange) + invhead
+		if ( iEquip(p) == 0 ) {
+			iNum(p) = 0
+			if ( cAiItem(tc) == p ) {
+				cAiItem(tc) = 0
+			}
+			break
+		}
+	loop
+	return p
+
+*label_3941
+	if ( cfg_petequip == 1 & (rc > CHARA_PLAYER & rc < MAX_CHARA_FOLLOWER) ) {
+		return
+	}
+	inv_getheader rc
+	repeat invrange, invhead
+		ci = cnt
+		if ( iNum(cnt) == 0 | iEquip(cnt) != 0 ) {
+			continue
+		}
+		gosub *chara_equip
+	loop
+	return
+
+*chara_equip
+	i = iequiploc(ci)
+	if ( i != 0 ) {
+		if ( i == 10 ) {
+			calcweaponfix iID(ci), ci
+			if ( iSkillRef(ci) != SKILL_WEAPON_THROWING & iSkillRef(ci) != SKILL_WEAPON_BOW ) {
+				if ( rangemap_pow(0) * 2 > rangemap_pow(1) + rangemap_pow(2) ) {
+					i = 5
+				}
+			}
+		}
+		r1 = rc
+		eqdup = 0
+		repeat 30, 100
+			if ( cdata(cnt, rc) / EXT_EQUIP_SLOTS == i ) {
+				bodylist(eqdup) = cnt
+				eqdup++
+			}
+		loop
+		if ( eqdup == 0 ) {
+			return
+		}
+		repeat eqdup
+			body = bodylist(cnt)
+			i = cdata(body, rc) \ EXT_EQUIP_SLOTS
+			if ( i == 0 ) {
+				gosub *label_3590
+				break
+			}
+			i--
+			f = 0
+			if ( iValue(ci) >= iValue(i) ) {
+				f = 1
+			}
+			if ( eqdup > cnt + 1 ) {
+				if ( cdata(bodylist(cnt + 1), rc) \ EXT_EQUIP_SLOTS == 0 ) {
+					f = 0
+				}
+				else {
+					if ( iValue(i) >= iValue(cdata(bodylist(cnt + 1), rc) \ EXT_EQUIP_SLOTS - 1) ) {
+						f = 0
+					}
+				}
+			}
+			if ( f == 1 ) {
+				cibk = ci
+				gosub *label_3591
+				ci = cibk
+				gosub *label_3590
+				break
+			}
+		loop
+	}
+	return
+
+*supplyEquip
+	haveweapon = FALSE
+	repeat 100
+		f = 0
+		inv_getheader rc
+		repeat 4
+			ci = invhead + rnd(invrange)
+			if ( iNum(ci) == 0 ) {
+				f = 1
+				break
+			}
+			if ( iEquip(ci) != 0 ) {
+				continue
+			}
+			if ( ibit(ITEM_BIT_DROP, ci) ) {
+				continue
+			}
+			if ( iNum(ci) != 0 ) {
+				iNum(ci) = 0
+				f = 1
+				break
+			}
+		loop
+		if ( f == 0 ) {
+			ci = invhead + invrange - 1
+		}
+		if ( cRole(rc) == ROLE_ADVENTURER ) {
+			flt cLevel(rc), FIX_QUALITY_GREAT
+		}
+		else {
+			flt cLevel(rc), calcfixlv(FIX_QUALITY_GOOD)
+		}
+		mustequip = 0
+		repeat 30, 100
+			p = cdata(cnt, rc) / EXT_EQUIP_SLOTS
+			if ( p == 0 ) {
+				break
+			}
+			if ( cdata(cnt, rc) \ EXT_EQUIP_SLOTS != 0 ) {
+				if ( p == 5 ) {
+					if ( haveweapon == FALSE ) {
+						if ( refitem(iID(cdata(cnt, rc) \ EXT_EQUIP_SLOTS - 1), DBSPEC_TYPE, cdata(cnt, rc) \ EXT_EQUIP_SLOTS - 1) == FILTER_WEAPON ) {
+							haveweapon = TRUE
+						}
+					}
+				}
+				continue
+			}
+			if ( p == 5 ) {
+				if ( haveweapon == FALSE ) {
+					flttypemajor = FILTER_WEAPON
+					mustequip = 1
+					break
+				}
+			}
+			if ( p == 1 ) {
+				flttypemajor = FILTER_HELM
+				mustequip = 1
+				break
+			}
+			if ( p == 4 ) {
+				flttypemajor = FILTER_ARMOR
+				mustequip = 1
+				break
+			}
+			if ( p == 10 ) {
+				flttypeminor = FILTER_RANGE_SHORTBOW
+				mustequip = 1
+				break
+			}
+			if ( p == 11 ) {
+				flttypeminor = FILTER_AMMO_ARROW
+				mustequip = 1
+				break
+			}
+		loop
+		if ( mustequip == 0 ) {
+			break
+		}
+		dbid = 0
+		if ( flttypemajor == FILTER_WEAPON ) {
+			if ( ocFormerPet(rc) == 20000 ) {
+				if ( rnd(2) ) {
+					if ( finditemid("rapier") ) {
+						inititemid = stat
+						dbid = 743
+					}
+				}
+			}
+		}
+		itemcreate rc, dbid, -1, -1, 0
+		if ( stat == 0 ) {
+			break
+		}
+		iKnown(ci) = ITEM_KNOWN_FULL
+		if ( iQuality(ci) >= FIX_QUALITY_MIRACLE ) {
+			if ( refitem(iID(ci), DBSPEC_TYPE, ci) < FILTER_ITEM_MIN ) {
+				if ( cRole(rc) == ROLE_ADVENTURER ) {
+					valn = itemname(ci)
+					addnews 1, rc
+				}
+			}
+		}
+		gosub *chara_equip
+		if ( cRole(rc) != ROLE_ADVENTURER ) {
+			if ( rnd(3) ) {
+				break
+			}
+		}
+	loop
+	return
+
+*label_3950
+	repeat 188, 57
+		if ( cExist(cnt) == CHAR_STATE_DEAD ) {
+			continue
+		}
+		if ( cRole(cnt) == ROLE_NONE ) {
+			continue
+		}
+		if ( cQuality(cnt) == FIX_QUALITY_UNIQUE ) {
+			continue
+		}
+		if ( cRole(cnt) == ROLE_SPECIAL ) {
+			continue
+		}
+		i = -1
+		repeat 500
+			if ( qClient(cnt) == 0 ) {
+				i = cnt
+				break
+			}
+		loop
+		cnt2 = cnt
+		repeat 500
+			if ( qClient(cnt) == cnt2 ) {
+				if ( qMap(cnt) == gArea  ) {
+					i = -1
+					break
+				}
+			}
+		loop
+		if ( i == (-1) ) {
+			break
+		}
+		qClient(i) = cnt
+		qMap(i) = gArea 
+		qname(i) = cnName(cnt)
+		cQuestNpc(cnt) = i + 1
+		gClient = i + 1
+	loop
+	return
+	qReward(rq) = ((qLevel(rq) + 3) * 100 + rnd(qLevel(rq) * 30 + 200) + 400) * rewardfix / 100
+	qReward(rq) = qReward(rq) * 100 / (100 + qLevel(rq) * 2 / 3)
+	if ( qType(rq) == QUEST_SUBTYPE_SUPPLY | qType(rq) == QUEST_SUBTYPE_DELIVER ) {
+		return
+	}
+	if ( qExist(rq) == QUEST_TYPE_HUNT ) {
+		if ( oqdata(0, rq) ) {
+			qReward(rq) = qReward(rq) * (100 + isetfamily(0, oqdata(0, rq))) / 100
+		}
+	}
+	else {
+		if ( qExist(rq) == QUEST_TYPE_CONQUER | qExist(rq) == QUEST_TYPE_HUNTEX ) {
+			i = 0
+			if ( qParam1(rq) != 343 ) {
+				i = refchara(qParam1(rq), 10)
+			}
+			else {
+				if ( qParam2(rq) != usernpcmax ) {
+					i = userdata(2, qParam2(rq))
+				}
+			}
+			qReward(rq) = qReward(rq) * (100 + limit(i / 5 * 25, 0, 400)) / 100
+		}
+	}
+	return
+	qExist(rq) = QUEST_TYPE_NONE
+	qType(rq) = QUEST_TYPE_NONE
+	qStatus(rq) = QUEST_STATE_NONE
+	qRenew(rq) = (rnd(3) + 1) * 24 + getgametime()
+	qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+	if ( rnd(3) == 0 ) {
+		return
+	}
+	if ( rnd(14) == 0 ) {
+		i = -1
+		repeat 300
+			n = rnd(245 - 57) + 57
+			if ( n == qClient(rq) ) {
+				continue
+			}
+			if ( cExist(n) != CHAR_STATE_ALIVE ) {
+				continue
+			}
+			if ( cRelation(n) != RELATION_NEUTRAL | (cRole(n) != ROLE_CITIZEN & cRole(n) != ROLE_GUARD) ) {
+				continue
+			}
+			flt 40, FIX_QUALITY_GOOD
+			flttypemajor = fsetcollect(rnd(length(fsetcollect)))
+			itemcreate n, ITEM_ID_DUMMY, -1, -1, 0
+			if ( stat != 0 ) {
+				inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), ci) = rq
+				i = n, iID(ci)
+				ibitmod ITEM_BIT_DROP, ci, TRUE
+				break
+			}
+			else {
+				i = -1
+				break
+			}
+		loop
+		if ( i != (-1) ) {
+			qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq) = i
+			qDestItem(rq) = i(1)
+			qMap(rq) = gArea 
+			rewardfix = 60
+			qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+			qExist(rq) = QUEST_TYPE_COLLECT
+			qType(rq) = QUEST_SUBTYPE_SUPPLY
+			qVar(rq) = 0
+			qDeadline(rq) = rnd(3) + 2
+			qLevel(rq) = cLevel(i) / 3
+		}
+		return
+	}
+	if ( cFame(CHARA_PLAYER) >= 30000 ) {
+		if ( rnd(13) == 0 ) {
+			qLevel(rq) = rnd(difficulty() + 1)
+			qLevel(rq) = roundmargin(qLevel(rq), cLevel(CHARA_PLAYER))
+			minlevel = limit(qLevel(rq) / 7, 5, 30)
+			if ( rnd(30) == 0 | seasonal_check(SEASON_YOUNGER_SISTERS_DAY, FALSE) ) {
+				flt qLevel(rq), FIX_QUALITY_GOOD
+				characreate MAX_CHARA_NC, CREATURE_ID_YOUNGER_SISTER, -3, 0
+			}
+			else {
+				repeat 50
+					flt qLevel(rq), FIX_QUALITY_GOOD
+					characreate MAX_CHARA_NC, CREATURE_ID_BUG, -3, 0
+					if ( cmshade ) {
+						continue
+					}
+					if ( cLevel(rc) < minlevel ) {
+						continue
+					}
+					break
+				loop
+			}
+			qParam1(rq) = cId(MAX_CHARA_NC)
+			if ( cId(MAX_CHARA_NC) == CREATURE_ID_USER ) {
+				qParam2(rq) = cUNID(MAX_CHARA_NC)
+				qQuestTarget(rq) = createserialno(userdatan(0, cUNID(MAX_CHARA_NC)))
+			}
+			qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+			qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+			qExist(rq) = QUEST_TYPE_HUNTEX
+			qType(rq) = QUEST_SUBTYPE_ELIMINATE
+			qVar(rq) = 0
+			qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+			qDeadline(rq) = -1
+			rewardfix = 140
+			chara_vanquish MAX_CHARA_NC
+			return
+		}
+	}
+	if ( cFame(CHARA_PLAYER) >= 50000 ) {
+		if ( rnd(20) == 0 ) {
+			qLevel(rq) = rnd(difficulty() + 1)
+			qLevel(rq) = roundmargin(qLevel(rq), cLevel(CHARA_PLAYER))
+			minlevel = limit(qLevel(rq) / 4, 5, 30)
+			if ( rnd(30) == 0 | seasonal_check(SEASON_YOUNGER_SISTERS_DAY, FALSE) ) {
+				flt qLevel(rq), FIX_QUALITY_GOOD
+				characreate MAX_CHARA_NC, CREATURE_ID_YOUNGER_SISTER, -3, 0
+			}
+			else {
+				repeat 50
+					flt qLevel(rq), FIX_QUALITY_GOOD
+					characreate MAX_CHARA_NC, CREATURE_ID_BUG, -3, 0
+					if ( cmshade ) {
+						continue
+					}
+					if ( cLevel(rc) < minlevel ) {
+						continue
+					}
+					break
+				loop
+			}
+			qParam1(rq) = cId(MAX_CHARA_NC)
+			if ( cId(MAX_CHARA_NC) == CREATURE_ID_USER ) {
+				qParam2(rq) = cUNID(MAX_CHARA_NC)
+				qQuestTarget(rq) = createserialno(userdatan(0, cUNID(MAX_CHARA_NC)))
+			}
+			qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+			qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+			qExist(rq) = QUEST_TYPE_CONQUER
+			qType(rq) = QUEST_SUBTYPE_CONQUER
+			qVar(rq) = 0
+			qRewardItem(rq) = (1 /*!!!@[FILTER_RACE_GOBLIN @@@ QUEST_REWARD_WEAR]@!!! */)
+			qDeadline(rq) = -1
+			rewardfix = 175
+			chara_vanquish MAX_CHARA_NC
+			return
+		}
+	}
+	if ( rnd(11) == 0 ) {
+		qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+		qExist(rq) = QUEST_TYPE_ESCORT
+		qType(rq) = QUEST_SUBTYPE_GUARD
+		qVar(rq) = rnd(3)
+		qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq) = 0
+		qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+		repeat
+			qParam1(rq) = asettown(rnd(length(asettown)))
+			if ( qParam1(rq) != gArea  ) {
+				break
+			}
+		loop
+		p = qMap(qParam1(rq))
+		if ( qVar(rq) == 0 ) {
+			rewardfix = 140 + dist(areaX(gArea ), areaY(gArea ), areaX(p), areaY(p)) * 2
+			qDeadline(rq) = rnd(8) + 6
+			qLevel(rq) = limit(rnd(difficulty() * 5 + 1) + 1, 1, 80)
+		}
+		if ( qVar(rq) == 1 ) {
+			rewardfix = 130 + dist(areaX(gArea ), areaY(gArea ), areaX(p), areaY(p)) * 2
+			qDeadline(rq) = rnd(5) + 2
+			qLevel(rq) = limit(rewardfix / 10 + 1, 1, 40)
+		}
+		if ( qVar(rq) == 2 ) {
+			rewardfix = 80 + dist(areaX(gArea ), areaY(gArea ), areaX(p), areaY(p)) * 2
+			qDeadline(rq) = rnd(8) + 6
+			qLevel(rq) = limit(rewardfix / 20 + 1, 1, 40)
+		}
+		if ( qParam1(rq) == 33 | gArea  == AREA_NOYEL ) {
+			rewardfix = rewardfix * 180 / 100
+		}
+		return
+	}
+	if ( rnd(23 - (ogTitleTheBaby == 2) * 10) == 0 | (gArea  == AREA_PALMIA & rnd(8) == 0) ) {
+		qLevel(rq) = limit(rnd(sPerform(CHARA_PLAYER) + 10), int(1.5 * sqrt(sPerform(CHARA_PLAYER))) + 1, cFame(CHARA_PLAYER) / 1000 + 10)
+		qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+		qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+		qExist(rq) = QUEST_TYPE_PARTY
+		qType(rq) = QUEST_SUBTYPE_PERFORM
+		qVar(rq) = 0
+		qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+		qParam1(rq) = limit(qLevel(rq) * 10 + rnd(50), 50, 6000)
+		qParam2(rq) = 0
+		qDeadline(rq) = -1
+		rewardfix = 0
+		return
+	}
+	if ( rnd(30) == 0 | (gArea  == AREA_YOWYN & rnd(2) == 0) ) {
+		qLevel(rq) = limit(rnd(difficulty() * 3 + 1) + 1, 1, 50)
+		qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+		qExist(rq) = QUEST_TYPE_HARVEST
+		qType(rq) = QUEST_SUBTYPE_CARRY
+		qVar(rq) = 0
+		qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+		qDeadline(rq) = -1
+		qParam1(rq) = limit(15000 + qLevel(rq) * 2500, 15000, 200000)
+		qParam2(rq) = 0
+		rewardfix = 60 + qLevel(rq) * 2
+		return
+	}
+	if ( rnd(8) == 0 ) {
+		qLevel(rq) = limit(rnd(difficulty() * 5 + 1) + 1, 1, 80)
+		qLevel(rq) = roundmargin(qLevel(rq), cLevel(CHARA_PLAYER))
+		qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+		qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+		qExist(rq) = QUEST_TYPE_HUNT
+		qType(rq) = QUEST_SUBTYPE_ELIMINATE
+		qVar(rq) = 0
+		qRewardItem(rq) = (1 /*!!!@[FILTER_RACE_GOBLIN @@@ QUEST_REWARD_WEAR]@!!! */)
+		qDeadline(rq) = -1
+		flt calcobjlv(qLevel(rq) + 1), FIX_QUALITY_BAD
+		characreate MAX_CHARA_NC, CREATURE_ID_BUG, -3, 0
+		sdim factionref, 10, 3
+		getfactionvalues rc, "family", factionref
+		i = stat
+		if ( i ) {
+			s = factionref(rnd(i))
+			repeat length2(csetfamily) - 1, 1
+				if ( csetfamily(0, cnt) == s ) {
+					oqdata(0, rq) = cnt
+					break
+				}
+			loop
+		}
+		chara_vanquish MAX_CHARA_NC
+		rewardfix = 135
+		return
+	}
+	if ( rnd(6) == 0 ) {
+		i = -1
+		repeat gClient
+			p = rnd(gClient)
+			repeat gClient
+				if ( qExist(cnt) == QUEST_TYPE_DELIVER ) {
+					if ( qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), cnt) == p ) {
+						p = -1
+						break
+					}
+				}
+			loop
+			if ( p == (-1) ) {
+				continue
+			}
+			if ( qClient(p) != 0 ) {
+				if ( qMap(p) != gArea  | 0 ) {
+					i = p
+					break
+				}
+			}
+		loop
+		if ( i != (-1) ) {
+			p = qMap(i)
+			rewardfix = 70 + dist(areaX(gArea ), areaY(gArea ), areaX(p), areaY(p)) * 2
+			if ( p == 33 | gArea  == AREA_NOYEL ) {
+				rewardfix = rewardfix * 175 / 100
+			}
+			qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq) = i
+			repeat
+				flt
+				dbmode = DBMODE_FIND
+				flttypemajor = fsetdeliver(rnd(length(fsetdeliver)))
+				gosub *db_item
+				if ( dbid == 743 ) {
+					continue
+				}
+				break
+			loop
+			qParam1(rq) = flttypemajor
+			qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+			if ( flttypemajor == FILTER_ITEM_SPELLBOOK ) {
+				qRewardItem(rq) = (2 /*!!!@[FILTER_RACE_ORC @@@ QUEST_REWARD_MAGIC]@!!! */)
+			}
+			if ( flttypemajor == FILTER_ORE ) {
+				qRewardItem(rq) = (3 /*!!!@[FILTER_RACE_SLIME @@@ QUEST_REWARD_ARMOR]@!!! */)
+			}
+			if ( flttypemajor == FILTER_JUNK ) {
+				qRewardItem(rq) = FILTER_ORE
+			}
+			if ( flttypemajor == FILTER_FURNITURE ) {
+				qRewardItem(rq) = FILTER_FURNITURE
+			}
+			qDestItem(rq) = dbid
+			qExist(rq) = QUEST_TYPE_DELIVER
+			qType(rq) = QUEST_SUBTYPE_DELIVER
+			qVar(rq) = 0
+			qDeadline(rq) = rnd(12) + 3
+			qLevel(rq) = limit(rewardfix / 20 + 1, 1, 25)
+		}
+		return
+	}
+	if ( rnd(6) == 0 ) {
+		qExist(rq) = QUEST_TYPE_COOK
+		qType(rq) = QUEST_SUBTYPE_SUPPLY
+		qDeadline(rq) = rnd(6) + 2
+		qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+		qParam1(rq) = rnd(9 - 1) + 1
+		if ( qParam1(rq) == 4 ) {
+			qRewardItem(rq) = FILTER_ITEM_POTION
+		}
+		if ( qParam1(rq) == 6 ) {
+			qRewardItem(rq) = FILTER_AMMO
+		}
+		if ( qParam1(rq) == 1 ) {
+			qRewardItem(rq) = FILTER_AMMO
+		}
+		if ( qParam1(rq) == 5 ) {
+			qRewardItem(rq) = FILTER_ITEM_POTION
+		}
+		if ( qParam1(rq) == 7 ) {
+			qRewardItem(rq) = FILTER_ORE
+		}
+		if ( qParam1(rq) == 2 ) {
+			qRewardItem(rq) = FILTER_ITEM_ROD
+		}
+		if ( qParam1(rq) == 3 ) {
+			qRewardItem(rq) = FILTER_ITEM_SCROLL
+		}
+		qParam2(rq) = rnd(10 - 3) + 3
+		qLevel(rq) = qParam2(rq) * 3
+		rewardfix = 60 + qLevel(rq)
+		return
+	}
+	if ( rnd(5) == 0 ) {
+		qExist(rq) = QUEST_TYPE_SUPPLY
+		qType(rq) = QUEST_SUBTYPE_SUPPLY
+		qDeadline(rq) = rnd(6) + 2
+		repeat
+			flt
+			dbmode = DBMODE_FIND
+			flttypemajor = fsetsupply(rnd(length(fsetsupply)))
+			gosub *db_item
+			if ( dbid == 743 ) {
+				continue
+			}
+			break
+		loop
+		qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+		qDestItem(rq) = dbid
+		qLevel(rq) = limit(rnd(difficulty() + 5) + 1, 1, 30)
+		rewardfix = 65 + qLevel(rq)
+		return
+	}
+	return 1
+
+*label_3965
+	repeat gClient
+		if ( qExist(cnt) == QUEST_TYPE_NONE ) {
+			continue
+		}
+		if ( qStatus(cnt) != QUEST_STATE_ONGOING ) {
+			continue
+		}
+		if ( qDeadline(cnt) < 0 ) {
+			continue
+		}
+		rq = cnt
+		qDeadline(rq)--
+		if ( qDeadline(rq) == 0 ) {
+			val = qExist(rq)
+			gosub *quest_fail
+		}
+	loop
+	return
+
+*event
+	if ( gQuest == QUEST_TYPE_HARVEST ) {
+		inv_getheader 0
+		repeat invrange, invhead
+			if ( iProperty(cnt) == PROP_QUEST ) {
+				iNum(cnt) = 0
+			}
+		loop
+		gosub *label_1681
+	}
+	if ( gQuestStatus != QUEST_STATE_SUCCESS ) {
+		if ( gQuest >= STARTING_QUEST_TYPE ) {
+			rq = gQuestRef
+		}
+		if ( gQuest == QUEST_TYPE_ESCORT ) {
+			if ( qStatus(rq) == QUEST_STATE_NONE ) {
+				gQuest = QUEST_TYPE_NONE, 0, 0, 0
+				return
+			}
+			else {
+				txt -1, lang("あなたはクライアントを置き去りにした。", "You left your client.")
+			}
+		}
+		if ( gQuest == QUEST_TYPE_PARTY & qParam1(gQuestRef) <= qParam2(gQuestRef) ) {
+			txt -1, lang("パーティーは終了した。", "The party is over.")
+			calcpartyscore2
+			txt -1, lang("最終得点は" + qParam2(gQuestRef) + "ポイントだった！", "Your final score is " + qParam2(gQuestRef) + " points!")
+			gQuestStatus = QUEST_STATE_SUCCESS
+			qStatus(gQuestRef) = QUEST_STATE_SUCCESS
+			txtef COLOR_GREEN
+			txt -1, lang("パーティーは大盛況だった！", "People had a hell of a good time!")
+			gosub *com_txtAdvQuit
+			ogExtravagantParty = 0
+		}
+		else {
+			if ( gQuest == QUEST_TYPE_HARVEST & qParam1(gQuestRef) < qParam2(gQuestRef) ) {
+				gQuestStatus = QUEST_STATE_SUCCESS
+				qStatus(gQuestRef) = QUEST_STATE_SUCCESS
+				txtef COLOR_GREEN
+				txt -1, lang("無事に納入を終えた！", "You complete the task!")
+				msg_halt
+			}
+			else {
+				if ( gQuest == 1020 & qParam1(gQuestRef) <= qParam2(gQuestRef) ) {
+					txt -1, lang("もてなしは終了した。", "The hospitality was over.")
+					txt -1, lang("あなたは" + qParam2(gQuestRef) + "人の客を取った！", "You could have entertained " + qParam2(gQuestRef) + " people!")
+					gQuestStatus = QUEST_STATE_SUCCESS
+					qStatus(gQuestRef) = QUEST_STATE_SUCCESS
+					txtef COLOR_GREEN
+					txt -1, lang("無事に依頼を終えた！", "People had a hell of a good time!")
+					msg_halt
+				}
+				else {
+					val = gQuest
+					gosub *quest_fail
+					msg_halt
+				}
+			}
+		}
+	}
+	gQuest = QUEST_TYPE_NONE, 0, 0, 0
+	return
+
+*event_SWEND1
+	rc = CHARA_PLAYER
+	gosub *chara_respawn
+	skillexp2 SKILL_ATTR_CHA, CHARA_PLAYER, -500
+	skillexp2 SKILL_ATTR_WIL, CHARA_PLAYER, -500
+	levelexitby = MAP_EXIT_NORMAL
+	gLevel  = 0
+	goto *map_exit
+
+*quest_fail
+	if ( val == 1 ) {
+		areaArenaWin(gReturnArea) = 0
+		txt -1, lang("あなたは敗北した。", "You were defeated.")
+		modrank 0, -100
+	}
+	if ( val >= 1000 ) {
+		txt -1, lang(qname(rq) + "から受けた依頼は失敗に終わった。", "You have failed the quest taken from " + qname(rq) + ".")
+		if ( qExist(rq) == QUEST_TYPE_DELIVER ) {
+			qQuestTarget(qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq))--
+			txtef COLOR_PURPLE
+			txt -1, lang("あなたは重大な罪を犯した!", "You commit a serious crime!")
+			modkarma 0, -20
+		}
+		if ( qExist(rq) == QUEST_TYPE_ESCORT ) {
+			txtef COLOR_PURPLE
+			txt -1, lang("あなたは護衛の任務を果たせなかった。", "You have failed to protect the client.")
+			repeat 16
+				if ( cnt != 0 ) {
+					if ( cbit(CHARA_BIT_BODYGUARD, cnt) == TRUE ) {
+						if ( qParam2(rq) == cId(cnt) ) {
+							tc = cnt
+							cbitmod CHARA_BIT_BODYGUARD, cnt, FALSE
+							if ( cExist(tc) == CHAR_STATE_ALIVE ) {
+								if ( qVar(rq) == 0 ) {
+									s = lang("「おい、暗殺者が私の後ろにいるぞ」", cnvtalk("Hey, the assassins are killing me."))
+									p = -11
+								}
+								if ( qVar(rq) == 1 ) {
+									s = lang("「毒が、毒がー！」", cnvtalk("Poison! P-P-Poison in my vein!!"))
+									p = -4
+								}
+								if ( qVar(rq) == 2 ) {
+									s = lang("「時間切れだ。こうなったら…」" + name(tc) + "は火をかぶった。", cnvtalk("I missed the deadline. I don't have a right to live anymore.") + " " + name(tc) + " pours a bottole of molotov cocktail over " + him(tc) + "self.")
+									addmef cX(CHARA_PLAYER), cY(CHARA_PLAYER), MEF_TYPE_FIRE, xy2pic(24, 0), rnd(15) + 25, efp, CHARA_PLAYER
+									mapitem_fire cX(tc), cY(tc)
+									p = -9
+								}
+								txtef COLOR_SKY_BLUE
+								txt -1, s
+								dmghp tc, 999999, p
+							}
+							cExist(tc) = CHAR_STATE_DEAD
+							break
+						}
+					}
+				}
+			loop
+			modkarma 0, -10
+		}
+		if ( qExist(rq) == QUEST_TYPE_PARTY ) {
+			ogExtravagantParty = 0
+		}
+		qExist(rq) = QUEST_TYPE_NONE
+		qStatus(rq) = QUEST_STATE_NONE
+	}
+	decfame CHARA_PLAYER, 40
+	p = stat
+	txtef COLOR_RED
+	txt -1, lang("名声値を" + p + "失った。", "You lose " + p + " fame.")
+	return
+
+*quest_petArenaWin
+	repeat 16
+		if ( followerin(cnt) == 0 ) {
+			continue
+		}
+		if ( cHP(cnt) < cMHP(cnt) / 2 ) {
+			cHP(cnt) = cMHP(cnt) / 2
+		}
+		cSP(cnt) = cMSP(cnt)
+		refreshspeed cnt
+	loop
+	snd SOUNDLIST_CHEER
+	if ( gArea  == 49 ) {
+		txtef COLOR_GREEN
+		if ( horseracewin(0) != 0 ) {
+			txt -1, lang("1着:", "1st:") + cnName(horseracewin(0)) + " "
+		}
+		if ( horseracewin(1) > 0 ) {
+			txtef COLOR_RED
+			txt -1, lang("2着:", "2nd:") + cnName(horseracewin(1)) + " "
+		}
+		if ( horseracewin(2) > 0 ) {
+			txtef COLOR_BLUE
+			txt -1, lang("3着:", "3rd:") + cnName(horseracewin(2)) + " "
+		}
+		if ( petarenawin == 1 ) {
+			txtef COLOR_GREEN
+			txt -1, lang("あなたのチームは勝利した！", "Your team is victorious!")
+			if ( nc_horse_002 != 2 & nc_horse_002 != 3 ) {
+				txtef COLOR_GREEN
+				txt -1, lang("" + gQuestFame + "の名声値を手に入れた。", "You gain " + gQuestFame + " fame.")
+				incfame 0, gQuestFame
+				modrank 9, 100, 2
+				areaPetArenaWin(gReturnArea)++
+				if ( areaPetArenaWin(gReturnArea) \ 20 == 0 ) {
+					matgetmain MATERIAL_FINE_STONE, 1
+				}
+				else {
+					if ( areaPetArenaWin(gReturnArea) \ 5 == 0 ) {
+						matgetmain MATERIAL_CHAOS_STONE, 1
+					}
+				}
+			}
+			if ( nc_horse_002 == 2 ) {
+				music = MUSICLIST_MCFANFARE
+				musicloop = 1
+				gosub *music_play
+				repeat 16
+					if ( followerin(cnt) == 0 ) {
+						continue
+					}
+					nc_intb_002 = cnt
+					nc_intb_003 = 0
+					repeat 26
+						if ( horse_getskill(nc_intb_002, cnt) > 0 ) {
+							nc_intb_003++
+						}
+					loop
+					if ( nc_intb_003 >= 3 ) {
+						txtef COLOR_GREEN
+						txt -1, lang("あなたの馬はこれ以上新しいスキルを習得できない。", "No more new skills to learn.")
+						break
+					}
+					repeat
+						nc_intb_001 = rnd(12)
+						if ( horse_getskill(nc_intb_002, nc_intb_001) > 0 ) {
+							continue
+						}
+						addfaction nc_intb_002, "horskill" + nc_intb_001 + "," + 1
+						break
+					loop
+					txtef COLOR_GREEN
+					txt -1, lang("あなたの馬は新しいスキルを習得した！", "Your horse has learned a new skill!")
+					break
+				loop
+			}
+			else {
+				if ( nc_horse_002 == 3 ) {
+					music = MUSICLIST_MCFANFARE
+					musicloop = 1
+					gosub *music_play
+					repeat 16
+						if ( followerin(cnt) == 0 ) {
+							continue
+						}
+						nc_intb_002 = cnt
+						nc_intb_003 = 0
+						repeat 26
+							if ( horse_getskill(nc_intb_002, cnt) > 0 ) {
+								nc_intb_003++
+							}
+						loop
+						if ( nc_intb_003 >= 3 ) {
+							txtef COLOR_GREEN
+							txt -1, lang("あなたの馬はこれ以上新しいスキルを習得できない。", "No more new skills to learn.")
+							break
+						}
+						repeat
+							nc_intb_001 = rnd(27)
+							if ( nc_intb_001 > 11 & nc_intb_001 < 21 ) {
+								continue
+							}
+							if ( nc_intb_001 >= 21 & rnd(2) ) {
+								continue
+							}
+							if ( horse_getskill(nc_intb_002, nc_intb_001) > 0 ) {
+								continue
+							}
+							addfaction nc_intb_002, "horskill" + nc_intb_001 + "," + (rnd(3) + 3)
+							break
+						loop
+						txtef COLOR_GREEN
+						txt -1, lang("あなたの馬は新しいスキルを習得した！", "Your horse has learned a new skill!")
+						break
+					loop
+				}
+				else {
+					if ( rnd(10) == 0 ) {
+						music = MUSICLIST_MCFANFARE
+						musicloop = 1
+						gosub *music_play
+						repeat 16
+							if ( followerin(cnt) == 0 ) {
+								continue
+							}
+							nc_intb_002 = cnt
+							nc_intb_003 = 0
+							repeat 26
+								if ( horse_getskill(nc_intb_002, cnt) > 0 ) {
+									nc_intb_003++
+								}
+							loop
+							if ( nc_intb_003 >= 3 ) {
+								txtef COLOR_GREEN
+								txt -1, lang("あなたの馬はこれ以上新しいスキルを習得できない。", "No more new skills to learn.")
+								break
+							}
+							repeat
+								nc_intb_001 = rnd(27)
+								if ( nc_intb_001 > 11 & nc_intb_001 < 21 ) {
+									continue
+								}
+								if ( nc_intb_001 >= 21 & rnd(2) ) {
+									continue
+								}
+								if ( horse_getskill(nc_intb_002, nc_intb_001) > 0 ) {
+									continue
+								}
+								nc_intb_003 = rnd(limitmax((100 - gdata(129) / 100) / 25, 2) + 1) + 1
+								addfaction nc_intb_002, "horskill" + nc_intb_001 + "," + nc_intb_003
+								break
+							loop
+							txtef COLOR_GREEN
+							txt -1, lang("あなたの馬は新しいスキルを習得した！", "Your horse has learned a new skill!")
+							break
+						loop
+					}
+				}
+			}
+		}
+		else {
+			txtef COLOR_PURPLE
+			txt -1, lang("あなたのチームは敗北した。", "Your team is defeated.")
+			if ( nc_horse_002 != 2 & nc_horse_002 != 3 ) {
+				areaPetArenaWin(gReturnArea) = 0
+				modrank 9, -100
+				decfame CHARA_PLAYER, 60
+				p = stat
+				txtef COLOR_RED
+				txt -1, lang("名声値を" + p + "失った。", "You lose " + p + " fame.")
+			}
+		}
+		return
+	}
+	if ( petarenawin == 1 ) {
+		txtef COLOR_GREEN
+		txt -1, lang("あなたのチームは勝利した！", "Your team is victorious!")
+		txtef COLOR_GREEN
+		txt -1, lang("" + gQuestFame + "の名声値を手に入れた。", "You gain " + gQuestFame + " fame.")
+		if ( arenaimport == 1 ) {
+			gExBattleWin++
+			if ( enemylv > gExBattleMaxLv ) {
+				txt -1, lang("EXバトルの撃破相手LVの記録を更新した(Lv" + gExBattleMaxLv + " → " + enemylv + " )", "You've made a new record. (Lv" + gExBattleMaxLv + " to " + enemylv + " )")
+				gExBattleMaxLv = enemylv
+			}
+		}
+		else {
+			incfame 0, gQuestFame
+			modrank 1, 100, 2
+		}
+		areaPetArenaWin(gReturnArea)++
+		if ( areaPetArenaWin(gReturnArea) \ 20 == 0 ) {
+			matgetmain MATERIAL_FINE_STONE, 1
+		}
+		else {
+			if ( areaPetArenaWin(gReturnArea) \ 5 == 0 ) {
+				matgetmain MATERIAL_CHAOS_STONE, 1
+			}
+		}
+	}
+	else {
+		txtef COLOR_PURPLE
+		txt -1, lang("あなたのチームは敗北した。", "Your team is defeated.")
+		areaPetArenaWin(gReturnArea) = 0
+		modrank 1, -100
+		decfame CHARA_PLAYER, 60
+		p = stat
+		if ( arenaop == 0 ) {
+			txtef COLOR_RED
+			txt -1, lang("名声値を" + p + "失った。", "You lose " + p + " fame.")
+		}
+	}
+	return
+
+*label_3983
+	music = MUSICLIST_MCFANFARE
+	musicloop = 1
+	gosub *music_play
+	gQuestStatus = QUEST_STATE_SUCCESS
+	if ( gQuest == QUEST_SUBTYPE_ELIMINATE ) {
+		snd SOUNDLIST_CHEER
+		txtef COLOR_GREEN
+		txt -1, lang("あなたは勝利した！", "You are victorious!")
+		txtef COLOR_GREEN
+		txt -1, lang("" + gQuestFame + "の名声値を手に入れた。", "You gain " + gQuestFame + " fame.")
+		modrank 0, 100, 2
+		incfame 0, gQuestFame
+		ncgArenaWinCount += 1
+		if ( ogTitleCarly == 0 ) {
+			if ( ncgArenaWinCount >= 1000 ) {
+				f = 1
+				ogTitleCarly = 1
+			}
+		}
+		if ( f == 1 ) {
+			snd SOUNDLIST_WRITE1
+			txtef COLOR_GREEN
+			txt -1, lang("新しい称号を獲得した！", "Earned a new title!")
+		}
+		txt -1, lang("外への階段が現れた。", "Stairs appear.")
+		map_placeupstairs mWidth / 2, mHeight / 2
+		areaArenaWin(gReturnArea)++
+		if ( areaArenaWin(gReturnArea) \ 20 == 0 ) {
+			matgetmain MATERIAL_FINE_STONE, 1
+		}
+		else {
+			if ( areaArenaWin(gReturnArea) \ 5 == 0 ) {
+				matgetmain MATERIAL_CHAOS_STONE, 1
+			}
+		}
+		rc = CHARA_PLAYER
+		repeat 188, 57
+			if ( cRole(cnt) == 20000 | ocFormerPet(cnt) == 20000 ) {
+				rc = cnt
+				break
+			}
+		loop
+		if ( rc ) {
+			if ( ogYoungLadySeed == (-1) ) {
+				cbitmod CHARA_BIT_PRECIOUS, rc, FALSE
+			}
+			else {
+				txt -1, lang(cnName(rc) + "は修行の旅に出るつもりだ。　見送る？ ", cnName(rc) + " is about to undergo a journey to train. See her off?")
+				promptl(0, 0) = stryes, "y", "0"
+				promptl(0, 1) = strno, "n", "1"
+				promptmax = 2
+				val = promptx, prompty, 160, 1
+				gosub *prompt_key
+				if ( rtval == 0 ) {
+					txt -1, lang(cnName(rc) + "は旅に出た！", cnName(rc) + " departs on her journey!")
+					repeat 50
+						tc = rnd(39) + 16
+						if ( ocAdvJourneyTurns(tc) ) {
+							if ( rnd(cImpression(tc) / 100 + 1) == 0 ) {
+								ocAdvJourneyTurns(tc)--
+							}
+							continue
+						}
+						else {
+							if ( eqfaction(tc, "formerpet") ) {
+								continue
+							}
+							break
+						}
+						if ( cnt == 49 ) {
+							tc = rnd(39) + 16
+						}
+					loop
+					addnews 5, tc
+					del_chara tc
+					cbitmod CHARA_BIT_STETHOSCOPE, rc, FALSE
+					cbitmod CHARA_BIT_LEASHED, rc, FALSE
+					relocate_chara rc, tc
+					cRelation(rc) = RELATION_NEUTRAL
+					cOrgRelation(rc) = RELATION_NEUTRAL
+					cAiInt(rc) = 100
+					cExist(rc) = CHAR_STATE_ADV_HOSPITAL
+					cRespawn(rc) = getgametime() + 24 + rnd(24 / 2)
+					if ( jp ) {
+						cnAka(rc) = strmid(cnName(rc), 0, instr(cnName(rc), 0, "『"))
+						cnName(rc) = strmid(cnName(rc), instr(cnName(rc), 0, "『"), instr(cnName(rc), 0, "』"))
+					}
+					else {
+						cnAka(rc) = strmid(cnName(rc), instr(cnName(rc), 0, "> the ") + 6, 40)
+					}
+					cRole(rc) = ROLE_ADVENTURER
+					ocFormerPet(rc) = 20000
+					cFame(rc) = limit(cLevel(rc) * cLevel(rc) * 30 + rndex(cLevel(rc) * 200 + 100) + rnd(500), 1, 1000000)
+					mapChara(cX(rc), cY(rc)) = 0
+					ogYoungLadySeed = -1
+				}
+			}
+		}
+	}
+	if ( gQuest == QUEST_TYPE_HUNT | gQuest == QUEST_TYPE_HUNTEX | gQuest == 1021 ) {
+		qStatus(gQuestRef) = QUEST_STATE_SUCCESS
+		txtef COLOR_GREEN
+		txt -1, lang("エリアを制圧した！", "The area is secured!")
+	}
+	if ( gQuest == QUEST_TYPE_ESCORT ) {
+		txtef COLOR_GREEN
+		txt -1, lang("エリアを制圧した！", "The area is secured!")
+	}
+	if ( gQuest == QUEST_TYPE_CONQUER ) {
+		gTimelimit = 0
+		qStatus(gQuestRef) = QUEST_STATE_SUCCESS
+		txtef COLOR_GREEN
+		txt -1, lang("討伐に成功した！", "You successfully slay the target.")
+	}
+	return
+
+*label_3986
+	snd SOUNDLIST_COMPLETE1
+	p = qReward(rq)
+	if ( qExist(rq) == QUEST_TYPE_HARVEST ) {
+		if ( qParam1(rq) != 0 ) {
+			if ( qParam1(rq) * 125 / 100 < qParam2(rq) ) {
+				p = limit(p * qParam2(rq) / qParam1(rq), p, p * 3)
+				if ( ogTitleLetItGo == 2 ) {
+					p *= 2
+				}
+			}
+		}
+	}
+	if ( qExist(rq) == 1021 ) {
+		if ( qParam2(rq) == 0 ) {
+			p = int(p * (qParam1(rq) * 0.5 + 1.0))
+			if ( ogTitleLetItGo == 2 ) {
+				p *= 2
+			}
+		}
+	}
+	nc_intb_001 = 0
+	if ( p != 0 ) {
+		nc_intb_001 = p
+		flt
+		itemcreate -1, ITEM_ID_GOLD_PIECE, cX(CHARA_PLAYER), cY(CHARA_PLAYER), p
+	}
+	if ( qExist(rq) == QUEST_TYPE_DELIVER ) {
+		p = rnd(2) + 1 + nc_intb_001 / 7500
+	}
+	else {
+		p = 1 + nc_intb_001 / 7500
+	}
+	if ( qExist(rq) == QUEST_TYPE_CONQUER | qExist(rq) == QUEST_TYPE_HUNTEX ) {
+		p = 2 + (rnd(100) < rnd(cFame(CHARA_PLAYER) / 5000 + 1)) + nc_intb_001 / 7500
+	}
+	flt
+	itemcreate -1, ITEM_ID_PLATINUM_COIN, cX(CHARA_PLAYER), cY(CHARA_PLAYER), p
+	if ( qExist(rq) == QUEST_TYPE_PARTY ) {
+		if ( qParam1(rq) * 150 / 100 < qParam2(rq) ) {
+			flt
+			itemcreate -1, ITEM_ID_MUSIC_TICKET, cX(CHARA_PLAYER), cY(CHARA_PLAYER), 1 + qParam2(rq) / 10
+		}
+	}
+	if ( qExist(rq) == 1020 ) {
+		eggench = 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017
+		flt
+		if ( qParam1(rq) + 2 < qParam2(rq) ) {
+			itemcreate -1, ITEM_ID_EGG, cX(CHARA_PLAYER), cY(CHARA_PLAYER), (qParam2(rq) - qParam1(rq)) / 2 + 1
+			iStatus(ci) = ITEM_STATUS_NORMAL
+			iSubName(ci) = 250
+			ibitmod ITEM_BIT_PRECIOUS, ci, TRUE
+			inv(STARTING_INV_ITEM_ENCHANT + 0 * 2, ci) = eggench(rnd(length(eggench)))
+			inv(STARTING_INV_ITEM_ENCHANT_POWER + 0 * 2, ci) = 500
+			inv(STARTING_INV_ITEM_ENCHANT + 1 * 2, ci) = inv(STARTING_INV_ITEM_ENCHANT + 0 * 2, ci) + 50000
+			inv(STARTING_INV_ITEM_ENCHANT_POWER + 1 * 2, ci) = 450
+			iParam4(ci) = 0
+			ibitmod ITEM_BIT_REMAKE, ci, FALSE
+		}
+		else {
+			itemcreate -1, ITEM_ID_EGG, cX(CHARA_PLAYER), cY(CHARA_PLAYER), 1
+			iStatus(ci) = ITEM_STATUS_NORMAL
+			iSubName(ci) = 250
+			ibitmod ITEM_BIT_PRECIOUS, ci, TRUE
+			inv(STARTING_INV_ITEM_ENCHANT + 0 * 2, ci) = eggench(rnd(length(eggench)))
+			inv(STARTING_INV_ITEM_ENCHANT_POWER + 0 * 2, ci) = 500
+			inv(STARTING_INV_ITEM_ENCHANT + 1 * 2, ci) = inv(STARTING_INV_ITEM_ENCHANT + 0 * 2, ci) + 50000
+			inv(STARTING_INV_ITEM_ENCHANT_POWER + 1 * 2, ci) = 450
+			iParam4(ci) = 0
+			ibitmod ITEM_BIT_REMAKE, ci, FALSE
+		}
+	}
+	if ( qRewardItem(rq) != (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */) ) {
+		p = rnd(rnd(4) + 1) + 1
+		if ( qExist(rq) == QUEST_TYPE_CONQUER | qExist(rq) == QUEST_TYPE_HUNTEX | qExist(rq) == 1021 ) {
+			p += 2
+		}
+		repeat p
+			fixlv = FIX_QUALITY_GOOD
+			if ( rnd(2) ) {
+				fixlv = FIX_QUALITY_GREAT
+				if ( rnd(12) == 0 ) {
+					fixlv = FIX_QUALITY_MIRACLE
+				}
+			}
+			flt qLevel(rq) / 2 + 1, calcfixlv(fixlv)
+			if ( qRewardItem(rq) < FILTER_WEAPON ) {
+				if ( qRewardItem(rq) == (1 /*!!!@[FILTER_RACE_GOBLIN @@@ QUEST_REWARD_WEAR]@!!! */) ) {
+					flttypemajor = fsetwear(rnd(length(fsetwear)))
+				}
+				if ( qRewardItem(rq) == (2 /*!!!@[FILTER_RACE_ORC @@@ QUEST_REWARD_MAGIC]@!!! */) ) {
+					flttypemajor = fsetmagic(rnd(length(fsetmagic)))
+				}
+				if ( qRewardItem(rq) == (3 /*!!!@[FILTER_RACE_SLIME @@@ QUEST_REWARD_ARMOR]@!!! */) ) {
+					flttypemajor = fsetarmor(rnd(length(fsetarmor)))
+				}
+				if ( qRewardItem(rq) == (4 /*!!!@[FILTER_RACE_ELEA @@@ QUEST_REWARD_WEAPON]@!!! */) ) {
+					flttypemajor = fsetweapon(rnd(length(fsetweapon)))
+				}
+				if ( qRewardItem(rq) == (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */) ) {
+					flttypemajor = fsetrewardsupply(rnd(length(fsetrewardsupply)))
+				}
+			}
+			else {
+				flttypemajor = qRewardItem(rq)
+			}
+			itemcreate -1, ITEM_ID_DUMMY, cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+		loop
+	}
+	modkarma 0, 1
+	ncgTotalQuestsCompleted++
+	gQuestFame = calcfame(CHARA_PLAYER, qLevel(rq) * 3 + 10)
+	txtef COLOR_GREEN
+	txt -1, lang(qname(rq) + "から受けた依頼を完了した。", "You have completed the quest taken from " + qname(rq) + ".")
+	txtef COLOR_GREEN
+	txt -1, lang("" + gQuestFame + "の名声値を手に入れた。", "You gain " + gQuestFame + " fame.")
+	incfame 0, gQuestFame
+	txt -1, lang("何かが足元に転がってきた。", "Something is put on the ground.")
+	if ( qExist(rq) == QUEST_TYPE_DELIVER ) {
+		qQuestTarget(qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq))--
+	}
+	qExist(rq) = QUEST_TYPE_NONE
+	qStatus(rq) = QUEST_STATE_NONE
+	autosave = 1 * (gArea  != AREA_SHOW_HOUSE)
+	if ( cfg_noautosave > 2 & gettrait(0, 190) == 0 ) {
+		autosave = 0
+	}
+	return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

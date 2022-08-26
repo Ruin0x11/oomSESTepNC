@@ -1,0 +1,37 @@
+#deffunc attack_weakguard
+	if ( tc == CHARA_PLAYER | petcheck(tc) ) {
+		dim locvar_randskill_olist, 15
+		locvar_randskill_olistmax = 0
+		repeat 15
+			if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+				continue
+			}
+			if ( cc == cnt ) {
+				continue
+			}
+			if ( tc == cnt ) {
+				continue
+			}
+			if ( cnt == 0 & gArea  == AREA_PET_ARENA ) {
+				continue
+			}
+			if ( dist(cX(cnt), cY(cnt), cX(tc), cY(tc)) >= 8 ) {
+				continue
+			}
+			if ( fov_los(cX(cnt), cY(cnt), cX(tc), cY(tc)) == 0 ) {
+				continue
+			}
+			if ( findbuff(cnt, 98) != (-1) ) {
+				locvar_randskill_olist(locvar_randskill_olistmax) = cnt
+				locvar_randskill_olistmax++
+			}
+		loop
+		if ( locvar_randskill_olistmax ) {
+			locvar_randskill_p = locvar_randskill_olist(rnd(locvar_randskill_olistmax))
+			txt -1, lang(name(locvar_randskill_p) + "ÇÕ" + name(tc) + "ÇÇ©ÇŒÇ¡ÇΩÅI", name(locvar_randskill_p) + " protect" + _s(locvar_randskill_p) + " " + name(tc) + "!")
+			tc = locvar_randskill_p
+		}
+	}
+	return
+
+

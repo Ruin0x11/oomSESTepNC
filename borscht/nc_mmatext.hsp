@@ -1,0 +1,1406 @@
+#defcfunc sgodname str sgodname_godname
+	_switch_val = sgodname_godname
+	if ( 0 ) {
+		_switch_sw++
+	}
+	if ( _switch_val == "mani" | _switch_sw ) {
+		_switch_sw = 0
+		namet = lang("マニ", "Mani")
+		goto *MMA_sgodname_found
+	}
+	if ( _switch_val == "lulwy" | _switch_sw ) {
+		_switch_sw = 0
+		namet = lang("ルルウィ", "Lulwy")
+		goto *MMA_sgodname_found
+	}
+	if ( _switch_val == "itzpalt" | _switch_sw ) {
+		_switch_sw = 0
+		namet = lang("イツパロトル", "Itzpalt")
+		goto *MMA_sgodname_found
+	}
+	if ( _switch_val == "ehekatl" | _switch_sw ) {
+		_switch_sw = 0
+		namet = lang("エヘカトル", "Ehekatl")
+		goto *MMA_sgodname_found
+	}
+	if ( _switch_val == "opatos" | _switch_sw ) {
+		_switch_sw = 0
+		namet = lang("オパートス", "Opatos")
+		goto *MMA_sgodname_found
+	}
+	if ( _switch_val == "jure" | _switch_sw ) {
+		_switch_sw = 0
+		namet = lang("ジュア", "Jure")
+		goto *MMA_sgodname_found
+	}
+	if ( _switch_val == "kumiromi" | _switch_sw ) {
+		_switch_sw = 0
+		namet = lang("クミロミ", "Kumiromi")
+		goto *MMA_sgodname_found
+	}
+	if ( _switch_val == "elder brother" | _switch_sw ) {
+		_switch_sw = 0
+		namet = _onii(cSex(CHARA_PLAYER)) + lang("ちゃん", "")
+		goto *MMA_sgodname_found
+	}
+	if ( 1 ) {
+		namet = lang("エイス", "Eyth")
+	}
+
+*MMA_sgodname_found
+	if ( findcgodno(sgodname_godname) != (-1) ) {
+		god_no = stat
+		namet = lang(usergoddatan(3, god_no), cnven(usergoddatan(2, god_no)))
+	}
+	return namet
+
+#deffunc adventothergod str adventothergod_prm0
+	if ( adventothergod_prm0 == godcheck() ) {
+		return
+	}
+	enemygod = adventothergod_prm0
+	if ( goddomaincheck(adventothergod_prm0, godcheck()) == 1 ) {
+		if ( gGodTalk ) {
+			txtgod godcheck(), 2402
+		}
+		enemygod = ""
+		return
+	}
+	if ( gGodTalk ) {
+		txtgod godcheck(), 2401
+	}
+	enemygod = ""
+	return
+
+#defcfunc iftxtcheck var iftxtcheck_prm0, int iftxtcheck_prm1, int iftxtcheck_prm2, int iftxtcheck_prm3
+	iftokentxt = "," + lang("JP", "EN") + ","
+	iftokenpos = instr(iftxtcheck_prm0, 0, iftokentxt)
+	if ( iftokenpos == (-1) ) {
+		return -1
+	}
+	iftokenpos += strlen(iftokentxt)
+	ifstr = strmid(iftxtcheck_prm0, iftokenpos, strlen(iftxtcheck_prm0) - iftokenpos)
+	sdim iflist, 50, 10
+	split ifstr, ",", iflist
+	ifcnt = stat
+	if ( ifcnt <= 0 ) {
+		return -1
+	}
+	ifcheck = 0
+	repeat ifcnt
+		ifstrn = iflist(cnt)
+		ifwordexist = 0
+		ifstrpos = 0
+		cval = 0
+		iscvaldup = 0
+		isivaldup = 0
+		repeat 10
+			if ( strmid(ifstrn, 0, 8) == "cdatan" + cnt + ":" ) {
+				ifwordexist = 1
+				ifcheck = 0
+				if ( strmid(ifstrn, 8, strlen(ifstrn) - 8) == cdatan(cnt, CHARA_PLAYER) ) {
+					ifcheck = 1
+				}
+				break
+			}
+			if ( strmid(ifstrn, 0, 9) == "ccdatan" + cnt + ":" ) {
+				ifwordexist = 1
+				ifcheck = 0
+				if ( strmid(ifstrn, 9, strlen(ifstrn) - 9) == cdatan(cnt, iftxtcheck_prm1) ) {
+					ifcheck = 1
+				}
+				break
+			}
+			if ( strmid(ifstrn, 0, 9) == "tcdatan" + cnt + ":" ) {
+				ifwordexist = 1
+				ifcheck = 0
+				if ( strmid(ifstrn, 9, strlen(ifstrn) - 9) == cdatan(cnt, iftxtcheck_prm2) ) {
+					ifcheck = 1
+				}
+				break
+			}
+		loop
+		if ( strmid(ifstrn, 0, 6) == "faith:" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			if ( strmid(ifstrn, 6, strlen(ifstrn) - 6) == godcheck(0) ) {
+				ifcheck = 1
+			}
+		}
+		if ( strmid(ifstrn, 0, 7) == "cfaith:" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			if ( strmid(ifstrn, 7, strlen(ifstrn) - 7) == godcheck(iftxtcheck_prm1) ) {
+				ifcheck = 1
+			}
+		}
+		if ( strmid(ifstrn, 0, 7) == "tfaith:" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			if ( strmid(ifstrn, 7, strlen(ifstrn) - 7) == godcheck(iftxtcheck_prm2) ) {
+				ifcheck = 1
+			}
+		}
+		if ( strmid(ifstrn, 0, 7) == "domain:" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			godno = findcgodno(godcheck(0))
+			if ( godno != (-1) ) {
+				if ( strmid(ifstrn, 7, strlen(ifstrn) - 7) == usergoddatanm(0, godno) ) {
+					ifcheck = 1
+				}
+			}
+		}
+		if ( strmid(ifstrn, 0, 8) == "cdomain:" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			godno = findcgodno(godcheck(iftxtcheck_prm1))
+			if ( godno != (-1) ) {
+				if ( strmid(ifstrn, 8, strlen(ifstrn) - 8) == usergoddatanm(0, godno) ) {
+					ifcheck = 1
+				}
+			}
+		}
+		if ( strmid(ifstrn, 0, 8) == "tdomain:" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			godno = findcgodno(godcheck(iftxtcheck_prm2))
+			if ( godno != (-1) ) {
+				if ( strmid(ifstrn, 8, strlen(ifstrn) - 8) == usergoddatanm(0, godno) ) {
+					ifcheck = 1
+				}
+			}
+		}
+		if ( strmid(ifstrn, 0, 9) == "ccfilter:" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			sfilter = refcharac(iftxtcheck_prm1, 8, 1)
+			sfilter(1) = strmid(ifstrn, 9, strlen(ifstrn) - 9)
+			if ( instr(sfilter, 0, sfilter(1)) != (-1) ) {
+				ifcheck = 1
+			}
+		}
+		if ( strmid(ifstrn, 0, 9) == "tcfilter:" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			sfilter = refcharac(iftxtcheck_prm2, 8, 1)
+			sfilter(1) = strmid(ifstrn, 9, strlen(ifstrn) - 9)
+			if ( instr(sfilter, 0, sfilter(1)) != (-1) ) {
+				ifcheck = 1
+			}
+		}
+		if ( strmid(ifstrn, 0, 7) == "ccitem:" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			if ( ci != (-1) ) {
+				if ( iID(ci) == ITEM_ID_CARNEADES_PLANK ) {
+					if ( equalsitem(ci, strmid(ifstrn, 7, strlen(ifstrn))) ) {
+						ifcheck = 1
+					}
+				}
+			}
+		}
+		if ( strmid(ifstrn, 0, 7) == "tcitem:" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			if ( ti != (-1) ) {
+				if ( iID(ti) == ITEM_ID_CARNEADES_PLANK ) {
+					if ( equalsitem(ti, strmid(ifstrn, 7, strlen(ifstrn))) ) {
+						ifcheck = 1
+					}
+				}
+			}
+		}
+		if ( strmid(ifstrn, 0, 4) == "apsh" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			onum = int(strmid(ifstrn, 4, strlen(ifstrn) - 4))
+			if ( onum >= 0 & onum < length(cmgbuff) ) {
+				cope = instr(ifstrn, 0, ":")
+				if ( cope != (-1) & strlen(ifstrn) > cope + 1 ) {
+					kstr = strmid(ifstrn, cope + 1, strlen(ifstrn) - (cope + 1))
+					cmgbuff(onum) = int(get_addtvar(kstr))
+					ifcheck = 1
+				}
+			}
+		}
+		if ( strmid(ifstrn, 0, 4) == "apop" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			onum = int(strmid(ifstrn, 4, strlen(ifstrn) - 4))
+			if ( onum >= 0 & onum < length(cmgbuff) ) {
+				cope = instr(ifstrn, 0, ":")
+				if ( cope != (-1) & strlen(ifstrn) > cope + 1 ) {
+					kstr = strmid(ifstrn, cope + 1, strlen(ifstrn) - (cope + 1))
+					set_addtvar kstr, str(cmgbuff(onum))
+					term_addtvar
+					ifcheck = 1
+				}
+			}
+		}
+		if ( strmid(ifstrn, 0, 4) == "gpsh" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			onum = int(strmid(ifstrn, 4, strlen(ifstrn) - 4))
+			if ( onum >= 0 & onum < length(cmgbuff) ) {
+				cope = instr(ifstrn, 0, ":")
+				if ( cope != (-1) & strlen(ifstrn) > cope + 1 ) {
+					kstr = strmid(ifstrn, cope + 1, strlen(ifstrn) - (cope + 1))
+					cmgbuff(onum) = int(get_globaladdtvar(kstr))
+					ifcheck = 1
+				}
+			}
+		}
+		if ( strmid(ifstrn, 0, 4) == "gpop" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			onum = int(strmid(ifstrn, 4, strlen(ifstrn) - 4))
+			if ( onum >= 0 & onum < length(cmgbuff) ) {
+				cope = instr(ifstrn, 0, ":")
+				if ( cope != (-1) & strlen(ifstrn) > cope + 1 ) {
+					kstr = strmid(ifstrn, cope + 1, strlen(ifstrn) - (cope + 1))
+					set_globaladdtvar kstr, str(cmgbuff(onum))
+					term_addtvar
+					ifcheck = 1
+				}
+			}
+		}
+		if ( strmid(ifstrn, 0, 10) == "csynccheck" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			if ( synccheck(iftxtcheck_prm1, -1) ) {
+				ifcheck = 1
+			}
+		}
+		if ( strmid(ifstrn, 0, 10) == "tsynccheck" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			if ( synccheck(iftxtcheck_prm2, -1) ) {
+				ifcheck = 1
+			}
+		}
+		if ( strmid(ifstrn, 0, 6) == "fovlos" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			if ( fov_los(cX(iftxtcheck_prm1), cY(iftxtcheck_prm1), cX(iftxtcheck_prm2), cY(iftxtcheck_prm2)) != 0 ) {
+				ifcheck = 1
+			}
+		}
+		if ( strmid(ifstrn, 0, 7) == "cfovlos" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			if ( fov_los(cX(CHARA_PLAYER), cY(CHARA_PLAYER), cX(iftxtcheck_prm1), cY(iftxtcheck_prm1)) != 0 ) {
+				ifcheck = 1
+			}
+		}
+		if ( strmid(ifstrn, 0, 7) == "tfovlos" ) {
+			ifwordexist = 1
+			ifcheck = 0
+			if ( fov_los(cX(CHARA_PLAYER), cY(CHARA_PLAYER), cX(iftxtcheck_prm2), cY(iftxtcheck_prm2)) != 0 ) {
+				ifcheck = 1
+			}
+		}
+		if ( ifwordexist != 0 ) {
+			if ( ifcheck == 0 ) {
+				break
+			}
+			continue
+		}
+		if ( strmid(ifstrn, 0, 5) == "gdata" ) {
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 | cnum >= length(gdata) ) {
+				continue
+			}
+			cval = gdata(cnum)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "mgdata" ) {
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= length(cmgdata) ) {
+				continue
+			}
+			cval = cmgdata(cnum, gArea )
+			if ( cRole(iftxtcheck_prm3) != ROLE_USER ) {
+				dup cvaldup, cmgdata(cnum, gArea )
+				iscvaldup = 1
+			}
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "wgdata" ) {
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= length(cmgdata) ) {
+				continue
+			}
+			cval = cmgdata(cnum, gWorld)
+			if ( cRole(iftxtcheck_prm3) != ROLE_USER ) {
+				dup cvaldup, cmgdata(cnum, gWorld)
+				iscvaldup = 1
+			}
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "cgdata" ) {
+			cgdatatarget = iftxtcheck_prm3
+			if ( cId(cgdatatarget) != CREATURE_ID_USER | cUNID(cgdatatarget) >= usernpcmax ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= length(usergdata) ) {
+				continue
+			}
+			cval = usergdata(cnum, cUNID(cgdatatarget))
+			if ( cRole(iftxtcheck_prm3) != ROLE_USER ) {
+				dup cvaldup, usergdata(cnum, cUNID(cgdatatarget))
+				iscvaldup = 1
+			}
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "mdata" ) {
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 | cnum >= length(mdata) ) {
+				continue
+			}
+			cval = mdata(cnum)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "madata" ) {
+			cnum = int(strmid(ifstrn, 6, 3))
+			if ( cnum < 0 | cnum >= length(adata) ) {
+				continue
+			}
+			cval = adata(cnum, gArea )
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "wadata" ) {
+			cnum = int(strmid(ifstrn, 6, 3))
+			if ( cnum < 0 | cnum >= length(adata) ) {
+				continue
+			}
+			cval = adata(cnum, gWorld)
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "cdata" ) {
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 | cnum >= length(cdata) ) {
+				continue
+			}
+			cval = cdata(cnum, CHARA_PLAYER)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "ccdata" ) {
+			if ( iftxtcheck_prm1 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= length(cdata) ) {
+				continue
+			}
+			cval = cdata(cnum, iftxtcheck_prm1)
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "tcdata" ) {
+			if ( iftxtcheck_prm2 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= length(cdata) ) {
+				continue
+			}
+			cval = cdata(cnum, iftxtcheck_prm2)
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "cidata" ) {
+			if ( iftxtcheck_prm1 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= length(inv) ) {
+				continue
+			}
+			cval = inv(cnum, ci)
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "tidata" ) {
+			if ( iftxtcheck_prm2 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= length(inv) ) {
+				continue
+			}
+			cval = inv(cnum, ti)
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "cbit" ) {
+			cnum = int(strmid(ifstrn, 4, 4))
+			if ( cnum < 0 | cnum >= 50 * 32 ) {
+				continue
+			}
+			cval = cbit(cnum, CHARA_PLAYER)
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "ccbit" ) {
+			if ( iftxtcheck_prm1 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 | cnum >= 50 * 32 ) {
+				continue
+			}
+			cval = cbit(cnum, iftxtcheck_prm1)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "tcbit" ) {
+			if ( iftxtcheck_prm2 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 | cnum >= 50 * 32 ) {
+				continue
+			}
+			cval = cbit(cnum, iftxtcheck_prm2)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "sdata" ) {
+			cnum = int(strmid(ifstrn, 5, 5))
+			if ( cnum < 0 | cnum >= length(sdata) ) {
+				continue
+			}
+			cval = sdata(cnum, CHARA_PLAYER)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "csdata" ) {
+			if ( iftxtcheck_prm1 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 6, 5))
+			if ( cnum < 0 | cnum >= length(sdata) ) {
+				continue
+			}
+			cval = sdata(cnum, iftxtcheck_prm1)
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "tsdata" ) {
+			if ( iftxtcheck_prm2 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 6, 5))
+			if ( cnum < 0 | cnum >= length(sdata) ) {
+				continue
+			}
+			cval = sdata(cnum, iftxtcheck_prm2)
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "sorg" ) {
+			cnum = int(strmid(ifstrn, 4, 4))
+			if ( cnum < 0 | cnum >= length(sdata) ) {
+				continue
+			}
+			cval = sorg(cnum, CHARA_PLAYER)
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "csorg" ) {
+			if ( iftxtcheck_prm1 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 | cnum >= length(sdata) ) {
+				continue
+			}
+			cval = sorg(cnum, iftxtcheck_prm1)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "tsorg" ) {
+			if ( iftxtcheck_prm2 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 | cnum >= length(sdata) ) {
+				continue
+			}
+			cval = sorg(cnum, iftxtcheck_prm2)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "cinv" ) {
+			if ( ci == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 4, 3))
+			if ( cnum < 0 | cnum >= length(inv) ) {
+				continue
+			}
+			cval = inv(cnum, ci)
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "tinv" ) {
+			if ( ti == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 4, 3))
+			if ( cnum < 0 | cnum >= length(inv) ) {
+				continue
+			}
+			cval = inv(cnum, ti)
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "winv" ) {
+			if ( cw == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 4, 3))
+			if ( cnum < 0 | cnum >= length(inv) ) {
+				continue
+			}
+			cval = inv(cnum, cw)
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "ainv" ) {
+			if ( ammo == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 4, 3))
+			if ( cnum < 0 | cnum >= length(inv) ) {
+				continue
+			}
+			cval = inv(cnum, ammo)
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "cibit" ) {
+			if ( ci == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 5, 3))
+			if ( cnum < 0 | cnum >= 5 * 32 ) {
+				continue
+			}
+			cval = ibit(cnum, ci)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "tibit" ) {
+			if ( ti == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 5, 3))
+			if ( cnum < 0 | cnum >= 5 * 32 ) {
+				continue
+			}
+			cval = ibit(cnum, ti)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "wibit" ) {
+			if ( cw == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 5, 3))
+			if ( cnum < 0 | cnum >= 5 * 32 ) {
+				continue
+			}
+			cval = ibit(cnum, cw)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "aibit" ) {
+			if ( ammo == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 5, 3))
+			if ( cnum < 0 | cnum >= 5 * 32 ) {
+				continue
+			}
+			cval = ibit(cnum, ammo)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "kill" ) {
+			cnum = int(strmid(ifstrn, 4, 4))
+			if ( cnum < 0 | cnum >= length(sdata) ) {
+				continue
+			}
+			cval = npcmemory(0, cnum)
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "item" ) {
+			cnum = int(strmid(ifstrn, 4, 4))
+			if ( cnum < 0 ) {
+				continue
+			}
+			cval = itemcount(0, cnum, "")
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "citem" ) {
+			if ( iftxtcheck_prm1 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 ) {
+				continue
+			}
+			cval = itemcount(iftxtcheck_prm1, cnum, "")
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "titem" ) {
+			if ( iftxtcheck_prm2 == (-1) ) {
+				continue
+			}
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 ) {
+				continue
+			}
+			cval = itemcount(iftxtcheck_prm2, cnum, "")
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "fitem" ) {
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 ) {
+				continue
+			}
+			cval = itemcount(-1, cnum, "")
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "char" ) {
+			cnum = int(strmid(ifstrn, 4, 4))
+			if ( cnum < 0 ) {
+				continue
+			}
+			cval = charcount(cnum, "")
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "enemy" ) {
+			cnum = int(strmid(ifstrn, 5, 3))
+			if ( cnum < 0 ) {
+				continue
+			}
+			cval = enemycount(tc, cnum)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "dchar" ) {
+			cnum = int(strmid(ifstrn, 5, 3))
+			if ( cnum < 0 ) {
+				continue
+			}
+			cval = dcharcount(tc, cnum)
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "dist" ) {
+			cnum = int(strmid(ifstrn, 4, 10))
+			cval = dist(cX(iftxtcheck_prm1), cY(iftxtcheck_prm1), cX(iftxtcheck_prm2), cY(iftxtcheck_prm2))
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "cdist" ) {
+			cnum = int(strmid(ifstrn, 5, 10))
+			cval = dist(cX(CHARA_PLAYER), cY(CHARA_PLAYER), cX(iftxtcheck_prm1), cY(iftxtcheck_prm1))
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "tdist" ) {
+			cnum = int(strmid(ifstrn, 5, 10))
+			cval = dist(cX(CHARA_PLAYER), cY(CHARA_PLAYER), cX(iftxtcheck_prm2), cY(iftxtcheck_prm2))
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 4) == "time" ) {
+			cnum = int(strmid(ifstrn, 4, 4))
+			if ( cnum < 0 | cnum > 7 ) {
+				continue
+			}
+			cval = gettime(cnum)
+			dup cvaldup, cmgbuff(cnum)
+			iscvaldup = 1
+			ifwordexist = 1
+			ifstrpos += 4 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "gpdata" ) {
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= length(nc_cmgbuff) ) {
+				continue
+			}
+			cval = nc_cmgbuff(cnum)
+			dup cvaldup, nc_cmgbuff(cnum)
+			iscvaldup = 1
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "pdata" ) {
+			cnum = int(strmid(ifstrn, 5, 4))
+			if ( cnum < 0 | cnum >= length(cmgbuff) ) {
+				continue
+			}
+			cval = cmgbuff(cnum)
+			dup cvaldup, cmgbuff(cnum)
+			iscvaldup = 1
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "plbuff" ) {
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= 10 ) {
+				continue
+			}
+			cval = ocdata(cnum + 130, 0)
+			dup cvaldup, ocdata(cnum + 130, 0)
+			iscvaldup = 1
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "clbuff" ) {
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= 10 ) {
+				continue
+			}
+			cval = ocdata(cnum + 130, iftxtcheck_prm1)
+			dup cvaldup, ocdata(cnum + 130, iftxtcheck_prm1)
+			iscvaldup = 1
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 6) == "tlbuff" ) {
+			cnum = int(strmid(ifstrn, 6, 4))
+			if ( cnum < 0 | cnum >= 10 ) {
+				continue
+			}
+			cval = ocdata(cnum + 130, iftxtcheck_prm2)
+			dup cvaldup, ocdata(cnum + 130, iftxtcheck_prm2)
+			iscvaldup = 1
+			ifwordexist = 1
+			ifstrpos += 6 + strlen(str(cnum))
+		}
+		if ( strmid(ifstrn, 0, 5) == "value" ) {
+			cnum = int(strmid(ifstrn, 5, 10))
+			cval = cnum
+			ifwordexist = 1
+			ifstrpos += 5 + strlen(str(cnum))
+		}
+		if ( ifwordexist == 0 ) {
+			ifcheck = 0
+			break
+		}
+		ifvalexist = 0
+		if ( iscvaldup ) {
+			if ( strmid(ifstrn, ifstrpos, 3) == "add" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				cvaldup += inum
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "sub" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				cvaldup -= inum
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "mpl" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				cvaldup *= inum
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "div" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				if ( inum != 0 ) {
+					cvaldup /= inum
+				}
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "mod" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				if ( inum != 0 ) {
+					cvaldup \= inum
+				}
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "set" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				cvaldup = inum
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "rnd" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				cvaldup = 0
+				if ( inum > 0 ) {
+					cvaldup = rnd(inum) + 1
+				}
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "pop" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				if ( inum < 0 | inum >= length(cmgbuff) ) {
+					continue
+				}
+				cvaldup = cmgbuff(inum)
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "pad" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				if ( inum < 0 | inum >= length(cmgbuff) ) {
+					continue
+				}
+				cvaldup += cmgbuff(inum)
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "psb" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				if ( inum < 0 | inum >= length(cmgbuff) ) {
+					continue
+				}
+				cvaldup -= cmgbuff(inum)
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "pmp" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				if ( inum < 0 | inum >= length(cmgbuff) ) {
+					continue
+				}
+				cvaldup *= cmgbuff(inum)
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "pdv" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				if ( inum < 0 | inum >= length(cmgbuff) ) {
+					continue
+				}
+				if ( cmgbuff(onum) != 0 ) {
+					cvaldup /= cmgbuff(inum)
+				}
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "pmd" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				if ( inum < 0 | inum >= length(cmgbuff) ) {
+					continue
+				}
+				if ( cmgbuff(onum) != 0 ) {
+					cvaldup \= cmgbuff(inum)
+				}
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 3) == "prd" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				if ( inum < 0 | inum >= length(cmgbuff) ) {
+					continue
+				}
+				cvaldup = 0
+				if ( cmgbuff(onum) > 0 ) {
+					cvaldup = rnd(cmgbuff(inum)) + 1
+				}
+				ifvalexist = 1
+				ifcheck = 1
+				continue
+			}
+		}
+		if ( strmid(ifstrn, ifstrpos, 3) == "psh" ) {
+			inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+			if ( inum < 0 | inum >= length(cmgbuff) ) {
+				continue
+			}
+			cmgbuff(inum) = cval
+			ifvalexist = 1
+			ifcheck = 1
+			continue
+		}
+		if ( strmid(ifstrn, ifstrpos + 2, 1) == "v" ) {
+			ival = int(strmid(ifstrn, ifstrpos + 3, 10))
+			ifvalexist = 1
+		}
+		if ( strmid(ifstrn, ifstrpos + 2, 1) == "m" ) {
+			inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+			if ( inum < 0 | inum >= length(cmgdata) ) {
+				continue
+			}
+			ival = cmgdata(inum, gArea )
+			if ( cRole(iftxtcheck_prm3) == ROLE_USER ) {
+				dup ivaldup, cmgdata(inum, gArea )
+				isivaldup = 1
+			}
+			ifvalexist = 1
+		}
+		if ( strmid(ifstrn, ifstrpos + 2, 1) == "w" ) {
+			inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+			if ( inum < 0 | inum >= length(cmgdata) ) {
+				continue
+			}
+			ival = cmgdata(inum, gWorld)
+			if ( cRole(iftxtcheck_prm3) == ROLE_USER ) {
+				dup ivaldup, cmgdata(inum, gWorld)
+				isivaldup = 1
+			}
+			ifvalexist = 1
+		}
+		if ( strmid(ifstrn, ifstrpos + 2, 1) == "c" ) {
+			inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+			cgdatatarget = iftxtcheck_prm3
+			if ( cId(cgdatatarget) != CREATURE_ID_USER | cUNID(cgdatatarget) >= usernpcmax ) {
+				continue
+			}
+			if ( inum < 0 | inum >= length(usergdata) ) {
+				continue
+			}
+			ival = usergdata(inum, cUNID(cgdatatarget))
+			if ( cRole(iftxtcheck_prm3) == ROLE_USER ) {
+				dup ivaldup, usergdata(inum, cUNID(cgdatatarget))
+				isivaldup = 1
+			}
+			ifvalexist = 1
+		}
+		if ( strmid(ifstrn, ifstrpos + 2, 1) == "p" | strmid(ifstrn, ifstrpos + 2, 1) == "n" ) {
+			inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+			if ( inum < 0 | inum >= length(cmgbuff) ) {
+				continue
+			}
+			ival = cmgbuff(inum)
+			dup ivaldup, cmgbuff(inum)
+			isivaldup = 1
+			ifvalexist = 1
+		}
+		if ( ifvalexist == 0 ) {
+			ifcheck = 0
+			break
+		}
+		if ( strmid(ifstrn, ifstrpos, 2) == "eq" ) {
+			if ( ival == cval ) {
+				ifcheck = 1
+				continue
+			}
+		}
+		if ( strmid(ifstrn, ifstrpos, 2) == "nt" ) {
+			if ( ival != cval ) {
+				ifcheck = 1
+				continue
+			}
+		}
+		if ( strmid(ifstrn, ifstrpos, 2) == "eu" ) {
+			if ( ival <= cval ) {
+				ifcheck = 1
+				continue
+			}
+		}
+		if ( strmid(ifstrn, ifstrpos, 2) == "el" ) {
+			if ( ival >= cval ) {
+				ifcheck = 1
+				continue
+			}
+		}
+		if ( strmid(ifstrn, ifstrpos, 2) == "up" ) {
+			if ( ival < cval ) {
+				ifcheck = 1
+				continue
+			}
+		}
+		if ( strmid(ifstrn, ifstrpos, 2) == "lw" ) {
+			if ( ival > cval ) {
+				ifcheck = 1
+				continue
+			}
+		}
+		if ( isivaldup ) {
+			if ( strmid(ifstrn, ifstrpos, 2) == "st" ) {
+				ivaldup = cval
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 2) == "rd" ) {
+				inum = int(strmid(ifstrn, ifstrpos + 3, 10))
+				ivaldup = 0
+				if ( cval > 0 ) {
+					ivaldup = rnd(cval) + 1
+				}
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 2) == "ad" ) {
+				ivaldup += cval
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 2) == "sb" ) {
+				ivaldup -= cval
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 2) == "mp" ) {
+				ivaldup *= cval
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 2) == "dv" ) {
+				if ( cval != 0 ) {
+					ivaldup /= cval
+				}
+				ifcheck = 1
+				continue
+			}
+			if ( strmid(ifstrn, ifstrpos, 2) == "md" ) {
+				if ( cval != 0 ) {
+					ivaldup \= cval
+				}
+				ifcheck = 1
+				continue
+			}
+		}
+		ifcheck = 0
+		break
+	loop
+	return ifcheck
+
+#defcfunc iftxtsearch var iftxtsearch_prm0, int iftxtsearch_prm1, str iftxtsearch_prm2, int iftxtsearch_prm3, int iftxtsearch_prm4, int iftxtsearch_prm5
+	searchtxt = iftxtsearch_prm2 + "," + lang("JP", "EN")
+	if ( strmid(searchtxt, 0, 4) != "%txt" ) {
+		sreplace searchtxt, searchtxt, "%", "%[NC]"
+	}
+	else {
+		sreplace searchtxt, searchtxt, "%txt", "%txt[NC]"
+	}
+	ifpos = iftxtsearch_prm1
+	ifpos1 = ifpos
+	resulttxt = ""
+	repeat
+		ifpos = ifpos1
+		ifpos0 = instr(iftxtsearch_prm0, ifpos, searchtxt)
+		if ( ifpos0 == (-1) ) {
+			break
+		}
+		ifpos0 += ifpos
+		iftxtstr = strmid(iftxtsearch_prm0, ifpos0, instr(iftxtsearch_prm0, ifpos0, "\n"))
+		if ( iftxtcheck(iftxtstr, iftxtsearch_prm3, iftxtsearch_prm4, iftxtsearch_prm5) ) {
+			resulttxt = iftxtstr + "\n"
+			break
+		}
+		ifpos1 = ifpos0 + strlen(iftxtstr)
+	loop
+	if ( resulttxt != "" ) {
+		return resulttxt
+	}
+	searchtxt = iftxtsearch_prm2 + "," + lang("JP", "EN")
+	if ( strmid(searchtxt, 0, 4) != "%txt" ) {
+		sreplace searchtxt, searchtxt, "%", "%[MMA]"
+	}
+	else {
+		sreplace searchtxt, searchtxt, "%txt", "%txt[MMA]"
+	}
+	ifpos = iftxtsearch_prm1
+	ifpos1 = ifpos
+	resulttxt = ""
+	repeat
+		ifpos = ifpos1
+		ifpos0 = instr(iftxtsearch_prm0, ifpos, searchtxt)
+		if ( ifpos0 == (-1) ) {
+			break
+		}
+		ifpos0 += ifpos
+		iftxtstr = strmid(iftxtsearch_prm0, ifpos0, instr(iftxtsearch_prm0, ifpos0, "\n"))
+		if ( iftxtcheck(iftxtstr, iftxtsearch_prm3, iftxtsearch_prm4, iftxtsearch_prm5) ) {
+			resulttxt = iftxtstr + "\n"
+			break
+		}
+		ifpos1 = ifpos0 + strlen(iftxtstr)
+	loop
+	if ( resulttxt != "" ) {
+		return resulttxt
+	}
+	searchtxt = iftxtsearch_prm2 + "," + lang("JP", "EN")
+	ifpos = iftxtsearch_prm1
+	ifpos1 = ifpos
+	resulttxt = ""
+	repeat
+		ifpos = ifpos1
+		ifpos0 = instr(iftxtsearch_prm0, ifpos, searchtxt)
+		if ( ifpos0 == (-1) ) {
+			break
+		}
+		ifpos0 += ifpos
+		iftxtstr = strmid(iftxtsearch_prm0, ifpos0, instr(iftxtsearch_prm0, ifpos0, "\n"))
+		if ( iftxtcheck(iftxtstr, iftxtsearch_prm3, iftxtsearch_prm4, iftxtsearch_prm5) ) {
+			resulttxt = iftxtstr + "\n"
+			break
+		}
+		ifpos1 = ifpos0 + strlen(iftxtstr)
+	loop
+	return resulttxt
+
+#deffunc init_addtvar int init_addtvar_prm0
+	cmapface = 0
+	portrait_pass_t = ""
+	speaker_id_t = init_addtvar_prm0
+	repeat length(key_t)
+		key_t(cnt) = ""
+		value_t(cnt) = ""
+	loop
+	split addtvar(speaker_id_t), ";", cookie_t
+	var_number_t = stat
+	repeat var_number_t
+		if ( instr(cookie_t(cnt), 0, ",") != (-1) ) {
+			split cookie_t(cnt), ",", key_t(cnt), value_t(cnt)
+		}
+	loop
+	return
+
+#deffunc term_addtvar
+	addtvar(speaker_id_t) = ""
+	repeat length(key_t)
+		if ( key_t(cnt) == "" ) {
+			continue
+		}
+		if ( cnt ) {
+			addtvar(speaker_id_t) += ";"
+		}
+		addtvar(speaker_id_t) += key_t(cnt) + "," + value_t(cnt)
+	loop
+	return
+
+#deffunc set_addtvar str set_addtvar_prm0, str set_addtvar_prm1
+	keyindex = -1
+	repeat length(key_t)
+		if ( key_t(cnt) == set_addtvar_prm0 | key_t(cnt) == "" ) {
+			key_t(cnt) = set_addtvar_prm0
+			value_t(cnt) = set_addtvar_prm1
+			keyindex = cnt
+			break
+		}
+	loop
+	if ( keyindex == (-1) ) {
+		keyindex = length(key_t)
+		key_t(keyindex) = set_addtvar_prm0
+		value_t(keyindex) = set_addtvar_prm1
+	}
+	return keyindex
+
+#defcfunc get_addtvar str get_addtvar_prm0
+	keyvar = ""
+	repeat length(key_t)
+		if ( key_t(cnt) == get_addtvar_prm0 ) {
+			keyvar = value_t(cnt)
+		}
+	loop
+	return keyvar
+
+#deffunc delete_addtvar str delete_addtvar_prm0
+	repeat length(key_t)
+		if ( key_t(cnt) == delete_addtvar_prm0 ) {
+			repeat length(key_t) - (cnt + 1), cnt
+				if ( cnt != length(key_t) - 1 ) {
+					key_t(cnt) = key_t(cnt + 1)
+					value_t(cnt) = value_t(cnt + 1)
+				}
+				else {
+					key_t(cnt) = ""
+					value_t(cnt) = ""
+				}
+			loop
+			break
+		}
+	loop
+	return
+
+#deffunc set_globaladdtvar str set_globaladdtvar_prm0, str set_globaladdtvar_prm1
+	keyindex = -1
+	repeat length(global_key_t)
+		if ( global_key_t(cnt) == set_globaladdtvar_prm0 | global_key_t(cnt) == "" ) {
+			global_key_t(cnt) = set_globaladdtvar_prm0
+			global_value_t(cnt) = set_globaladdtvar_prm1
+			keyindex = cnt
+			if ( global_var_number_t <= keyindex ) {
+				global_var_number_t++
+			}
+			break
+		}
+	loop
+	if ( keyindex == (-1) ) {
+		keyindex = length(global_key_t)
+		global_key_t(keyindex) = set_globaladdtvar_prm0
+		global_value_t(keyindex) = set_globaladdtvar_prm1
+		global_var_number_t++
+	}
+	return keyindex
+
+#defcfunc get_globaladdtvar str get_globaladdtvar_prm0
+	keyvar = ""
+	repeat length(global_key_t)
+		if ( global_key_t(cnt) == get_globaladdtvar_prm0 ) {
+			keyvar = global_value_t(cnt)
+		}
+	loop
+	return keyvar
+
+#deffunc delete_globaladdtvar str delete_globaladdtvar_prm0
+	repeat length(global_key_t)
+		if ( global_key_t(cnt) == delete_globaladdtvar_prm0 ) {
+			repeat length(global_key_t) - (cnt + 1), cnt
+				if ( cnt != length(global_key_t) - 1 ) {
+					global_key_t(cnt) = global_key_t(cnt + 1)
+					global_value_t(cnt) = global_value_t(cnt + 1)
+				}
+				else {
+					global_key_t(cnt) = ""
+					global_value_t(cnt) = ""
+				}
+			loop
+			global_var_number_t--
+			break
+		}
+	loop
+	return
+
+#defcfunc mma_dcharcount int mma_dcharcount_prm0, int mma_dcharcount_prm1
+	charcnt = 0
+	if ( mma_dcharcount_prm0 == (-1) ) {
+		return 0
+	}
+	repeat 245 - 16, 16
+		if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+			continue
+		}
+		if ( cId(mma_dcharcount_prm0) != cId(cnt) ) {
+			continue
+		}
+		if ( cId(mma_dcharcount_prm0) == CREATURE_ID_USER & cUNID(mma_dcharcount_prm0) != cUNID(cnt) ) {
+			continue
+		}
+		if ( mma_dcharcount_prm0 >= 0 & mma_dcharcount_prm1 > 0 ) {
+			if ( dist(cX(mma_dcharcount_prm0), cY(mma_dcharcount_prm0), cX(cnt), cY(cnt)) <= mma_dcharcount_prm1 ) {
+				charcnt++
+			}
+		}
+		else {
+			charcnt++
+		}
+	loop
+	return charcnt
+
+#defcfunc mma_itemcount int mma_itemcount_prm0, int mma_itemcount_prm1, str mma_itemcount_prm2
+	unid = -1
+	if ( mma_itemcount_prm2 != "" ) {
+		unid = finditemid(mma_itemcount_prm2) - 1
+	}
+	itemcnt = 0
+	inv_getheader mma_itemcount_prm0
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			continue
+		}
+		if ( iID(cnt) == ITEM_ID_CARNEADES_PLANK & unid != (-1) ) {
+			if ( iCItemIdx(cnt) != unid ) {
+				continue
+			}
+		}
+		if ( iID(cnt) == mma_itemcount_prm1 ) {
+			itemcnt += iNum(cnt)
+		}
+	loop
+	return itemcnt
+
+#defcfunc mma_charcount int mma_charcount_prm0, str mma_charcount_prm1
+	unid = -1
+	if ( mma_charcount_prm1 != "" ) {
+		unid = findunid(mma_charcount_prm1) - 1
+	}
+	charcnt = 0
+	repeat 245 - 16, 16
+		if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+			continue
+		}
+		if ( cId(cnt) == CREATURE_ID_USER & unid != (-1) ) {
+			if ( cUNID(cnt) != unid ) {
+				continue
+			}
+		}
+		if ( cId(cnt) == mma_charcount_prm0 ) {
+			charcnt++
+		}
+	loop
+	return charcnt
+
+#defcfunc mma_enemycount int mma_enemycount_prm0, int mma_enemycount_prm1
+	charcnt = 0
+	repeat 245 - 16, 16
+		if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+			continue
+		}
+		if ( mma_enemycount_prm0 >= 0 & mma_enemycount_prm1 > 0 ) {
+			if ( dist(cX(mma_enemycount_prm0), cY(mma_enemycount_prm0), cX(cnt), cY(cnt)) <= mma_enemycount_prm1 ) {
+				if ( cRelation(cnt) <= RELATION_ENEMY | cOrgRelation(cnt) <= RELATION_ENEMY ) {
+					charcnt++
+				}
+			}
+		}
+		else {
+			if ( cRelation(cnt) <= RELATION_ENEMY | cOrgRelation(cnt) <= RELATION_ENEMY ) {
+				charcnt++
+			}
+		}
+	loop
+	return charcnt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

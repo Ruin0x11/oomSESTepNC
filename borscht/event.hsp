@@ -1,0 +1,1758 @@
+*random_event
+	procid = (procid + 1) \ 10
+	proclist(procid) = "Random event" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	id = 0, 0
+	if ( gspd < 10 ) {
+		return 0
+	}
+	if ( dbg_skipevent ) {
+		return
+	}
+	if ( mode == MODELIST_RP ) {
+		return
+	}
+	if ( mode == MODELIST_TXT_ADV ) {
+		if ( godcheck() != "eyth" ) {
+			if ( rnd(12) == 0 ) {
+				id = 18
+			}
+		}
+		if ( rnd(80) == 0 ) {
+			id = 4, 120
+		}
+		if ( rnd(20) == 0 ) {
+			id = 3
+		}
+		if ( rnd(25) == 0 ) {
+			id = 2
+		}
+		if ( rnd(100) == 0 ) {
+			id = 5, 65
+		}
+		if ( rnd(20) == 0 ) {
+			id = 6
+		}
+		if ( rnd(20) == 0 ) {
+			id = 7
+		}
+		if ( rnd(250) == 0 ) {
+			if ( inv_getfreeid(CHARA_PLAYER) != (-1) ) {
+				id = 19
+			}
+		}
+		if ( rnd(10000) <= 0 + (godcheck() == "ehekatl") * limit(cPiety(CHARA_PLAYER) / 40000 - 1, 1, 4) ) {
+			if ( inv_getfreeid(CHARA_PLAYER) != (-1) ) {
+				id = 21
+			}
+		}
+		if ( rnd(70) == 0 ) {
+			id = 8, 40
+		}
+		if ( rnd(200) == 0 ) {
+			id = 20
+		}
+		if ( rnd(50) == 0 ) {
+			id = 23
+		}
+		if ( rnd(300) == 0 ) {
+			id = 24
+		}
+		if ( rnd(90) == 0 ) {
+			id = 22, 70
+		}
+		goto *random_eventProc
+	}
+	if ( mType != MAP_TYPE_WORLD ) {
+		if ( cRowAct(CHARA_PLAYER) != ACTION_NONE ) {
+			return
+		}
+	}
+	if ( mType == MAP_TYPE_HOME ) {
+		return
+	}
+	if ( gArea  == AREA_SHOW_HOUSE ) {
+		return
+	}
+	if ( rnd(30) == 0 ) {
+		id = 17
+	}
+	if ( rnd(25) == 0 ) {
+		id = 16
+	}
+	if ( rnd(25) == 0 ) {
+		id = 12
+	}
+	if ( rnd(50) == 0 ) {
+		id = 9
+	}
+	if ( rnd(80) == 0 ) {
+		id = 14
+	}
+	if ( rnd(50) == 0 ) {
+		id = 8, 40
+	}
+	if ( rnd(80) == 0 ) {
+		id = 13, 45
+	}
+	if ( mType == MAP_TYPE_TOWN ) {
+		if ( rnd(25) == 0 ) {
+			id = 15, 80
+		}
+		goto *random_eventProc
+	}
+	if ( mType == MAP_TYPE_WORLD ) {
+		if ( rnd(40) ) {
+			return 0
+		}
+		goto *random_eventProc
+	}
+	if ( rnd(25) == 0 ) {
+		id = 10
+	}
+	if ( rnd(25) == 0 ) {
+		id = 11
+	}
+
+*random_eventProc
+	procid = (procid + 1) \ 10
+	proclist(procid) = "random_eventProc:" + id + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	if ( id == 0 ) {
+		return 0
+	}
+	cc = CHARA_PLAYER
+	tc = CHARA_PLAYER
+	listmax = 0
+	if ( id(1) != 0 ) {
+		if ( rnd(sLUC(CHARA_PLAYER) + 1) > id(1) ) {
+			id = 1
+		}
+		if ( mode == MODELIST_TXT_ADV ) {
+			if ( cItemUsing(CHARA_PLAYER) != (-1) ) {
+				if ( iNum(cItemUsing(CHARA_PLAYER)) != 0 & iID(cItemUsing(CHARA_PLAYER)) == ITEM_ID_HAPPY_BED ) {
+					if ( rnd(sLUC(CHARA_PLAYER) + 1) > id(1) ) {
+						id = 1
+					}
+				}
+			}
+		}
+	}
+	_switch_val = id
+	if ( _switch_val == 15 | _switch_sw ) {
+		_switch_sw = 0
+		repeat 20
+			p = rnd(gCrowd + 1) + 57
+			if ( p >= 245 ) {
+				continue cnt
+			}
+			if ( cExist(p) == CHAR_STATE_ALIVE ) {
+				txt -1, lang(name(p) + "「ぎゃぁーー！」", name(p) + " screams, " + cnvtalk("Ahhhhhhh!"))
+				if ( cQuality(p) < FIX_QUALITY_UNIQUE ) {
+					cHP(p) = -1
+				}
+				dmghp p, 99999, DAMAGE_FROM_UNSEEN
+				break
+			}
+		loop
+		s = lang("殺人鬼", "Murderer")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_murderer1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_murderer1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_murderer2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_murderer2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_murderer3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_murderer3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_murderer4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_murderer4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_murderer5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_murderer5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re9"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("街のどこかで悲鳴があがった。あなたはガードが慌しく走っていくのを目撃した。「人殺し、人殺しだ！！」", "Suddenly, a painful shriek rises from somewhere in the town. You see several guards hastily run by.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("なむ…", "Sorry for you.")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 14 | _switch_sw ) {
+		_switch_sw = 0
+		s = lang("謎のご馳走", "Strange Feast")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_feast1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_feast1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_feast2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_feast2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_feast3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_feast3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_feast4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_feast4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_feast5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_feast5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re10"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("あなたは目の前にご馳走をみつけた。", "You come across a strange feast.")
+		if ( cfg_randomeventreplace ) {
+			list(0, listmax) = 2
+			listn(0, listmax) = lang("立ち去る", "(Leave)")
+			listmax++
+			list(0, listmax) = 1
+			listn(0, listmax) = lang("食べる", "(Eat)")
+			listmax++
+		}
+		else {
+			list(0, listmax) = 1
+			listn(0, listmax) = lang("食べる", "(Eat)")
+			listmax++
+			list(0, listmax) = 2
+			listn(0, listmax) = lang("立ち去る", "(Leave)")
+			listmax++
+		}
+		gosub *label_2485
+		if ( rtval == 1 ) {
+			if ( gettrait(0, 191) == 0 ) {
+				cHunger(CHARA_PLAYER) = 15000
+				txt -1, lang("なかなか美味しかった。", "It was tasty."), lang("悪くない。", "Not bad at all."), lang("あなたは舌鼓をうった。", "You smack your lips.")
+				gosub *eat_finish
+				chara_anorexia 0
+			}
+			else {
+				txt -1, lang("しかし、効果はなかった。", "But it produces no effect.")
+			}
+		}
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 13 | _switch_sw ) {
+		_switch_sw = 0
+		s = lang("ご馳走の匂い", "Smell of Food")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_smell1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_smell1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_smell2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_smell2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_smell3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_smell3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_smell4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_smell4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_smell5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_smell5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re10"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("どこからともなく漂うご馳走の匂いで、あなたの胃は不満を叫び始めた。", "A sweet smell of food floats from nowhere. Your stomach growls but you can't find out where it comes from.")
+		cHunger(CHARA_PLAYER) -= 5000
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("腹減った…", "I'm hungry now!")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 1 | _switch_sw ) {
+		_switch_sw = 0
+		s = lang("不運の回避", "Avoiding Misfortune")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_avoiding1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_avoiding1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_avoiding2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_avoiding2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_avoiding3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_avoiding3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_avoiding4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_avoiding4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_avoiding5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_avoiding5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re8"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("あなたは一瞬嫌な予感がしたが、それはやがて消えた。", "You sense a bad feeling for a moment but it fades away quickly.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("よし", "Good.")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 24 | _switch_sw ) {
+		_switch_sw = 0
+		efid = SKILL_EFFECT_POTION_POTENTIAL
+		tc = CHARA_PLAYER
+		gosub *label_3383
+		s = lang("才能の開花", "Your Potential")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_potential1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_potential1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_potential2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_potential2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_potential3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_potential3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_potential4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_potential4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_potential5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_potential5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re4"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("突然あなたの才能は開花した！", "Suddenly you develop your gift!")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("ワァオー", "Woohoo!")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 18 | _switch_sw ) {
+		_switch_sw = 0
+		if ( trophycheck(TROPHY_BAD COMMUNICATION) == 2 ) {
+			skillexp2 SKILL_NORMAL_FAITH, CHARA_PLAYER, 2000, 6, 2000
+		}
+		else {
+			skillexp2 SKILL_NORMAL_FAITH, CHARA_PLAYER, 1000, 6, 1000
+		}
+		txtgod godcheck(), 2403
+		s = lang("信仰の深まり", "Gaining Faith")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_faith1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_faith1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_faith2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_faith2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_faith3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_faith3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_faith4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_faith4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_faith5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_faith5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re12"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("夢の中で、あなたは偉大なる者の穏やかな威光に触れた。", "In your dream, a saint comes out and blesses you.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("神よ", "Great.")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 12 | _switch_sw ) {
+		_switch_sw = 0
+		s = lang("マテリアルの発見", "Small Luck")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_material1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_material1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_material2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_material2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_material3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_material3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_material4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_material4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_material5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_material5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re3"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("石ころにつまずいて転んだ拍子に、あなたは幾つかのマテリアルを見つけた。", "You stumble over a stone and find some materials on the ground. ")
+		efid = SKILL_EFFECT_CREATE_MATERIAL
+		efp = 100
+		tc = CHARA_PLAYER
+		oom_material = 1
+		gosub *label_3383
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("よし", "Nice.")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 23 | _switch_sw ) {
+		_switch_sw = 0
+		efid = SKILL_EFFECT_CREATE_MATERIAL
+		efp = 200
+		tc = CHARA_PLAYER
+		gosub *label_3383
+		s = lang("夢の中の収穫", "Dream Harvest")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_harvest1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_harvest1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_harvest2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_harvest2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_harvest3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_harvest3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_harvest4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_harvest4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_harvest5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_harvest5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re3"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("夢の中で、あなたはのんきにマテリアルを採取していた", "In your dream, you harvest materials peacefully.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("るん♪", "Sweet.")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10 | _switch_sw ) {
+		_switch_sw = 0
+		s = lang("野営跡の発見", "Camping Site")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_camping1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_camping1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_camping2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_camping2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_camping3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_camping3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_camping4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_camping4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_camping5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_camping5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re3"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("あなたは何者かが野営した跡を見つけた。辺りには食べ残しやがらくたが散らばっている。もしかしたら、何か役に立つものがあるかもしれない。", "You discover a camping site someone left behind. Chunks of leftovers and junks remain here. You may possibly find some useful items.")
+		if ( cfg_randomeventreplace ) {
+			list(0, listmax) = 2
+			listn(0, listmax) = lang("立ち去る", "(Leave)")
+			listmax++
+			list(0, listmax) = 1
+			listn(0, listmax) = lang("調べる", "(Search)")
+			listmax++
+		}
+		else {
+			list(0, listmax) = 1
+			listn(0, listmax) = lang("調べる", "(Search)")
+			listmax++
+			list(0, listmax) = 2
+			listn(0, listmax) = lang("立ち去る", "(Leave)")
+			listmax++
+		}
+		gosub *label_2485
+		if ( rtval == 1 ) {
+			repeat 1 + rnd(4)
+				flt
+				flttypemajor = fsetremain(rnd(length(fsetremain)))
+				itemcreate -1, ITEM_ID_DUMMY, cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+			loop
+			txt -1, lang("何かが足元に転がってきた。", "Something is put on the ground.")
+		}
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 4 | _switch_sw ) {
+		_switch_sw = 0
+		snd SOUNDLIST_CURSE2
+		efid = SKILL_EFFECT_DECREASE_RESIST
+		efp = 100
+		tc = CHARA_PLAYER
+		gosub *label_3383
+		s = lang("不気味な夢", "Creepy Dream")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_creepy1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_creepy1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_creepy2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_creepy2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_creepy3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_creepy3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_creepy4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_creepy4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_creepy5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_creepy5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re5"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("あなたは不気味な夢をみた。陰気な幾つもの瞳があなたを凝視し、どこからともなく笑い声がこだました。「ケラケラケラ…ミツケタヨ…ケラケラ」あなたが二度寝返りをうった後、その夢は終わった。", "In your dreams, several pairs of gloomy eyes stare at you and laughter seemingly from nowhere echoes around you.  \"Keh-la keh-la keh-la I found you...I found you.. keh-la keh-la keh-la\" After tossing around a couple times, the dream is gone.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("おかしな夢だ", "Strange...")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 22 | _switch_sw ) {
+		_switch_sw = 0
+		snd SOUNDLIST_CURSE2
+		efid = SKILL_SPELL_MUTATION
+		efp = 100
+		tc = CHARA_PLAYER
+		gosub *label_3383
+		s = lang("怪物の夢", "Monster Dream")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_monster1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_monster1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_monster2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_monster2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_monster3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_monster3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_monster4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_monster4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_monster5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_monster5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re2"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("あなたは怪物と戦っていた。醜い化け物に斬りかかろうとした時、怪物は悲鳴をあげた。「オレハオマエダ！オマエハオレダ！」あなたは自分の呻き声に起こされた。", "You are fighting an ugly monster. You are about to thrust a dagger into the neck of the monster. And the monster screams. \"You are me! I am you!\" You are awakened by your own low moan.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("ううぅん…", "Urrgh..hh..")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 19 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate CHARA_PLAYER, ITEM_ID_TREASURE_MAP, -1, -1, 0
+		txt -1, lang(itemname(ci, 1) + "をバックパックに入れた。", "You put " + itemname(ci, 1) + " in your backpack.")
+		s = lang("宝を埋める夢", "Treasure of Dream")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_treasure1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_treasure1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_treasure2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_treasure2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_treasure3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_treasure3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_treasure4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_treasure4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_treasure5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_treasure5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re15"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("あなたは夢の中で宝を埋めた。あなたはすぐに飛び起き、その場所を紙に書き留めた", "You buried treasure in your dream. You quickly get up and write down the location.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("ワァオー", "Woohoo!")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 20 | _switch_sw ) {
+		_switch_sw = 0
+		addbuff tc, BUFF_LUCK, 777, 1500
+		s = lang("幸運の日", "Lucky Day")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_lucky1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_lucky1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_lucky2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_lucky2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_lucky3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_lucky3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_lucky4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_lucky4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_lucky5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_lucky5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re12"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("うみみゃぁ！", "Mewmewmew!")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("ワァオー", "Woohoo!")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 21 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate CHARA_PLAYER, ITEM_ID_STATUE_EHEKATL, -1, -1, 0
+		txt -1, lang(itemname(ci, 1) + "をバックパックに入れた。", "You put " + itemname(ci, 1) + " in your backpack.")
+		s = lang("運命の気まぐれ", "Quirk of Fate")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_quirk1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_quirk1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_quirk2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_quirk2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_quirk3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_quirk3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_quirk4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_quirk4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_quirk5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_quirk5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re15"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("うみみゃっ、見つけたね！", "Mewmew? You've found me!")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("ワァオー", "Woohoo!")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 5 | _switch_sw ) {
+		_switch_sw = 0
+		if ( gettrait(0, 42) ) {
+			txt -1, lang("あなたは祈祷を捧げ呪いのつぶやきを無効にした。", "Your prayer nullifies the curse.")
+		}
+		else {
+			if ( rnd(2) & ogTitleBornInATemple == 2 ) {
+				txt -1, lang("「破ぁ！！」あなたは気合いを込めて呪いのつぶやきを吹き飛ばした。", "\"HA!!\" You yelled and nullified the curse by fight.")
+			}
+			else {
+				f = 0
+				tc = CHARA_PLAYER
+				repeat 30, 100
+					if ( cdata(cnt, tc) \ EXT_EQUIP_SLOTS == 0 ) {
+						continue
+					}
+					else {
+						f = 1
+					}
+				loop
+				if ( f ) {
+					efid = SKILL_EFFECT_CURSE
+					efp = 200
+					gosub *label_3383
+				}
+				else {
+					if ( evid() == (-1) ) {
+						evadd EVENT_SLEEP_AMBUSH
+					}
+				}
+			}
+		}
+		s = lang("呪いのつぶやき", "Cursed Whispering")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_cursed1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_cursed1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_cursed2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_cursed2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_cursed3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_cursed3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_cursed4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_cursed4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_cursed5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_cursed5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re5"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("どこからともなく聞こえる呪いのつぶやきが、あなたの眠りを妨げた。", "Your sleep is disturbed by a harshly whispering that comes from nowhere.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("眠れない…", "Can't...sleep...")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 8 | _switch_sw ) {
+		_switch_sw = 0
+		p = rndex(cGold(CHARA_PLAYER) / 8 + 1)
+		if ( cbit(CHARA_BIT_RES_STEAL, CHARA_PLAYER) ) {
+			p = 0
+		}
+		if ( p > 0 ) {
+			txt -1, lang("金貨" + p + "枚を失った。", "You lose " + p + " gold pieces.")
+			cGold(CHARA_PLAYER) -= p
+		}
+		else {
+			txt -1, lang("損害はなかった。", "The thief fails to steal money from you.")
+		}
+		s = lang("悪意ある手", "Malicious Hand")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_malicious1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_malicious1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_malicious2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_malicious2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_malicious3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_malicious3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_malicious4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_malicious4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_malicious5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_malicious5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re9"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("悪意のある手が忍び寄り、あなたが気付かない間に金貨を奪って逃げた。", "A malicious hand slips and steals your money.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("盗人め…", "Bloody thieves...")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 11 | _switch_sw ) {
+		_switch_sw = 0
+		s = lang("冒険者の遺骸", "Corpse")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_corpse1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_corpse1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_corpse2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_corpse2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_corpse3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_corpse3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_corpse4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_corpse4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_corpse5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_corpse5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re7"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("この場所で力尽きた冒険者の遺骸を見つけた。既に朽ちかけている骨と、身に着けていたと思われる幾つかの装備が散らばっている。", "You find a corpse of an adventurer. There're bones and equipment scatters on the ground waiting to decay.")
+		if ( cfg_randomeventreplace ) {
+			list(0, listmax) = 2
+			listn(0, listmax) = lang("埋葬する", "(Bury)")
+			listmax++
+			list(0, listmax) = 1
+			listn(0, listmax) = lang("あさる", "(Loot)")
+			listmax++
+		}
+		else {
+			list(0, listmax) = 1
+			listn(0, listmax) = lang("あさる", "(Loot)")
+			listmax++
+			list(0, listmax) = 2
+			listn(0, listmax) = lang("埋葬する", "(Bury)")
+			listmax++
+		}
+		gosub *label_2485
+		if ( rtval == 1 ) {
+			txt -1, lang("あなたは遺留品をあさった。", "You loot the remains.")
+			modkarma 0, -2
+			repeat 1 + rnd(3)
+				flt 0, calcfixlv(FIX_QUALITY_GREAT)
+				if ( rnd(3) == 0 ) {
+					flttypemajor = fsetwear(rnd(length(fsetwear)))
+				}
+				else {
+					flttypemajor = fsetremain(rnd(length(fsetremain)))
+				}
+				itemcreate -1, ITEM_ID_DUMMY, cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+			loop
+			txt -1, lang("何かが足元に転がってきた。", "Something is put on the ground.")
+		}
+		else {
+			txt -1, lang("あなたは骨と遺留品を埋葬した。", "You bury the corpse with respect.")
+			modkarma 0, 5
+		}
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 2 | _switch_sw ) {
+		_switch_sw = 0
+		efid = SKILL_EFFECT_GAIN_SPELL
+		efp = 100
+		tc = CHARA_PLAYER
+		gosub *label_3383
+		s = lang("魔法使いの夢", "Wizard's Dream")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_wizard1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_wizard1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_wizard2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_wizard2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_wizard3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_wizard3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_wizard4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_wizard4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_wizard5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_wizard5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re6"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("夢の中であなたは赤い髪の魔術師に出会った。「誰じゃ、お主は？ふむ、間違った者の夢に現れてしまったようじゃ。すまぬな。お詫びといってはなんじゃが…」魔法使いは指をくるりと回した。あなたは軽い頭痛を覚えた。", "In your dream, you meet a wizard with a red mustache. \"Who are you? Hmm, I guess I picked up the wrong man's dream. My apology for disturbing your sleep. To make up for this...\" The wizard draws a circle in the air and vanishes. You feel the effects of a faint headache.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("おかしな夢だ", "A weird dream.")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 3 | _switch_sw ) {
+		_switch_sw = 0
+		efid = SKILL_EFFECT_GAIN_GROWTH
+		efp = 100
+		tc = CHARA_PLAYER
+		gosub *label_3383
+		s = lang("成長のきざし", "Development")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_development1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_development1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_development2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_development2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_development3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_development3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_development4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_development4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_development5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_development5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re4"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("長年の鍛錬の成果が実ったようだ。なかなか眠りにつけず考えごとをしていたあなたは、ふと、自らの技術に関する新しいアイデアを思いついた。", "You lie awake, sunk deep into thought. As memories of your journey flow from one into another, you chance upon a new theory to improve one of your skills.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("よし！", "Good!")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 6 | _switch_sw ) {
+		_switch_sw = 0
+		skillexp2 SKILL_NORMAL_HEALING, CHARA_PLAYER, 1000
+		s = lang("自然治癒力の向上", "Regeneration")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_regeneration1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_regeneration1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_regeneration2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_regeneration2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_regeneration3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_regeneration3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_regeneration4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_regeneration4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_regeneration5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_regeneration5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re4"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("身体が妙に火照ってあなたは目を覚ました。気がつくと、腕にあった傷跡が完全に消えていた。", "Your entire body flushes. When you wake up, a scar in your arm is gone.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("よし", "Good.")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 7 | _switch_sw ) {
+		_switch_sw = 0
+		skillexp2 SKILL_NORMAL_MEDITATION, CHARA_PLAYER, 1000
+		s = lang("瞑想力の向上", "Meditation")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_meditation1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_meditation1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_meditation2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_meditation2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_meditation3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_meditation3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_meditation4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_meditation4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_meditation5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_meditation5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re4"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("あなたは、夢の中でも驚くほど理性を保っていた。まるで瞑想を行っている時のように、あなたは心の平和を感じた。", "In your dream, you meditate and feel inner peace.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("よし", "Good.")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 9 | _switch_sw ) {
+		_switch_sw = 0
+		addplat 0, 1
+		s = lang("路上に転がる幸運", "Great Luck")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_platinum1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_platinum1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_platinum2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_platinum2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_platinum3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_platinum3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_platinum4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_platinum4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_platinum5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_platinum5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re1"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("下を向いて歩いていると、幸運にもプラチナ硬貨を見つけた。", "You stumble over a stone and find a platinum coin.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("ラッキー！", "What a luck!")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 16 | _switch_sw ) {
+		_switch_sw = 0
+		p = rndex(cGold(CHARA_PLAYER) / 10 + 1000) + 1
+		se_moneymod 0, p
+		txt -1, lang("金貨" + p + "枚を手に入れた。", "You pick up " + p + " gold pieces.")
+		s = lang("発狂した金持ち", "Mad Millionaire")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_millionaire1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_millionaire1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_millionaire2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_millionaire2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_millionaire3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_millionaire3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_millionaire4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_millionaire4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_millionaire5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_millionaire5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re1"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("発狂した金持ちが、何か叫びながら金貨をばらまいている…", "A rich mad man is scattering his money all over the ground.")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("ラッキー！", "What a luck!")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 17 | _switch_sw ) {
+		_switch_sw = 0
+		priest_spells = 451, 402, 439, 407
+		efid = priest_spells(rnd(length(priest_spells)))
+		if ( efid == SKILL_SPELL_RESTORE_BODY ) {
+			efp = 800
+			tc = CHARA_PLAYER
+			gosub *label_3383
+			efid = SKILL_SPELL_RESTORE_SPIRIT
+			efp = 800
+			tc = CHARA_PLAYER
+			gosub *label_3383
+		}
+		else {
+			efp = 800
+			tc = CHARA_PLAYER
+			gosub *label_3383
+		}
+		s = lang("辻プリースト", "Wandering Priest")
+		p = 0
+		sdim bg_file, 30, 5
+		exist exedir + "user\\graphic\\bg_priest1.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_priest1"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_priest2.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_priest2"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_priest3.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_priest3"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_priest4.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_priest4"
+			p++
+		}
+		exist exedir + "user\\graphic\\bg_priest5.bmp"
+		if ( strsize != (-1) ) {
+			bg_file(p) = "bg_priest5"
+			p++
+		}
+		if ( p != 0 ) {
+			file = bg_file(rnd(p))
+			bg_exist = 1
+		}
+		else {
+			file = "bg_re11"
+		}
+		throwsstpevent "RandomEvent", 0, s, 0
+		buff = lang("突然、向かいからやって来た一人の神官が、すれ違いざまにあなたに魔法をかけた。「ノープロブレム」", "A priest comes up to you and casts a spell on you. \"No problem.\"")
+		list(0, listmax) = 1
+		listn(0, listmax) = lang("ありがとう", "Thanks.")
+		listmax++
+		gosub *label_2485
+		goto *random_eventProc_SWEND1
+	}
+
+*random_eventProc_SWEND1
+	cc = CHARA_PLAYER
+	gosub *autoTurn_pic
+	return 1
+
+*label_2485
+	procid = (procid + 1) \ 10
+	proclist(procid) = "re_select" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	if ( cfg_skiprandevents ) {
+		if ( listmax <= 1 ) {
+			snd SOUNDLIST_POP4
+			txt -1, "" + buff
+			txt -1, lang("「", "\"") + listn(0, 0) + lang("」", "\"")
+			rtval = -1
+			bg_exist = 0
+			return rtval
+		}
+	}
+	keyhalt = 1
+	cs = 0
+	page = 0
+	pagemax = 0
+	pagesize = 16
+	cs_bk = -1
+	key = ""
+	objprm 0, ""
+	keylog = ""
+	if ( listmax <= 1 ) {
+		chatesc = 0
+	}
+	else {
+		chatesc = -1
+	}
+	gsel BUFFER_PIC
+	gmode 0
+	pos 0, 0
+	if ( bg_exist == 1 ) {
+		picload_ exedir + "user\\graphic\\" + file + ".bmp", 0
+		bg_exist = 0
+	}
+	else {
+		picload_ exedir + "\\graphic\\" + file + ".bmp", 0
+	}
+	tx = ginfo(12)
+	ty = ginfo(13)
+	gsel BUFFER_SCREEN
+	snd SOUNDLIST_POP4
+	dx = tx + 36
+	talk_conv buff, (dx - 80) / (7 - en) - en * 4
+	notesel buff
+	dy = ty + noteinfo(0) * 15 + 80 + listmax * 20
+
+*label_2486
+	redraw 0
+	gmode 2
+	window (windoww - dx) / 2 + inf_screenx + 4, winposy(dy) - 12, dx, dy, 0, -1
+	window (windoww - dx) / 2 + inf_screenx, winposy(dy) - 16, dx, dy
+	wx = (windoww - dx) / 2 + inf_screenx
+	wy = winposy(dy)
+	gmode 0
+	pos wx + 12, wy + 6
+	gcopy BUFFER_PIC, 0, 0, tx, ty
+	gmode 2
+	color 240, 230, 220
+	boxl wx + 12, wy + 6, wx + tx + 12, wy + ty + 6
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	q = lang("《 " + s + " 》", " < " + s + " > ")
+	pos wx + 40, wy + 16
+	color 30, 20, 10
+	bmes q, 245, 235, 225
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	color 30, 30, 30
+	pos wx + 24, wy + ty + 20
+	mes buff
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+	loop
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	cs_listbk
+	repeat listmax
+		p = cnt
+		i = list(0, p)
+		display_key wx + 30, wy + dy + cnt * 20 - listmax * 20 - 52, cnt
+		q = listn(0, p)
+		cs_list q, wx + 60, wy + dy + cnt * 20 - listmax * 20 - 52, 19
+	loop
+	if ( keyrange != 0 ) {
+		cs_bk = cs
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	rtval = -1
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			rtval = list(0, pagesize * page + cnt)
+			snd SOUNDLIST_CLICK1
+			break
+		}
+	loop
+	if ( chatesc != (-1) ) {
+		if ( key == key_cancel ) {
+			snd SOUNDLIST_CLICK1
+			rtval = chatesc
+		}
+	}
+	if ( rtval != (-1) ) {
+		goto *label_2490
+	}
+	goto *label_2486
+
+*label_2490
+	key = ""
+	return rtval
+
+#defcfunc calcincome int calcincome_arg1
+	locvar_calcincome_p = 100 - gdata(STARTING_GDATA_RANK + calcincome_arg1) / 100
+	if ( locvar_calcincome_p == 99 ) {
+		locvar_calcincome_p = locvar_calcincome_p * 70
+	}
+	else {
+		locvar_calcincome_p = locvar_calcincome_p * 50
+	}
+	if ( calcincome_arg1 == 2 ) {
+		locvar_calcincome_p = locvar_calcincome_p * 120 / 100
+	}
+	if ( calcincome_arg1 == 4 ) {
+		locvar_calcincome_p = locvar_calcincome_p * 60 / 100
+	}
+	if ( calcincome_arg1 == 0 ) {
+		locvar_calcincome_p = locvar_calcincome_p * 80 / 100
+	}
+	if ( calcincome_arg1 == 1 ) {
+		locvar_calcincome_p = locvar_calcincome_p * 70 / 100
+	}
+	if ( calcincome_arg1 == 6 ) {
+		locvar_calcincome_p = locvar_calcincome_p * 25 / 100
+	}
+	if ( calcincome_arg1 == 5 ) {
+		locvar_calcincome_p = locvar_calcincome_p * 20 / 100
+	}
+	if ( calcincome_arg1 == 8 ) {
+		locvar_calcincome_p = locvar_calcincome_p * 15 / 100
+	}
+	if ( calcincome_arg1 == 9 ) {
+		locvar_calcincome_p = locvar_calcincome_p * 1500 / 100
+	}
+	return locvar_calcincome_p
+
+*event_income
+	invfile = 4
+	file = "shoptmp.s2"
+	ctrlfile 4
+	file = "shop" + 4 + ".s2"
+	tmpload "" + file
+	exist exedir + "tmp\\" + file
+	if ( strsize != (-1) ) {
+		ctrlfile 3
+	}
+	else {
+		inv_getheader -1
+		repeat invrange, invhead
+			iNum(cnt) = 0
+		loop
+	}
+	mode = MODELIST_SHOP
+	income = 0, 0
+	repeat 10
+		if ( gdata(STARTING_GDATA_RANK + cnt) >= 10000 ) {
+			continue
+		}
+		p = calcincome(cnt) + rnd(calcincome(cnt) / 3 + 1) - rnd(calcincome(cnt) / 3 + 1)
+		income += p
+		flt
+		itemcreate -1, ITEM_ID_GOLD_PIECE, -1, -1, p
+		if ( cnt == 5 | cnt == 6 ) {
+			continue
+		}
+		if ( cnt == 5 | cnt == 6 | cnt == 3 ) {
+			continue
+		}
+		p = rnd(rnd(3) + 1) + 1
+		cnt2 = cnt
+		repeat p
+			dbid = 0
+			flt calcobjlv((100 - gdata(STARTING_GDATA_RANK + cnt2) / 100) / 2 + 1), calcfixlv(3 + (rnd(12) < gettrait(0, 39)))
+			flttypemajor = fsetincome(rnd(length(fsetincome)))
+			if ( rnd(5) == 0 ) {
+				flttypemajor = fsetwear(rnd(length(fsetwear)))
+			}
+			if ( rnd(100 + gdata(STARTING_GDATA_RANK + cnt2) / 5) < 2 ) {
+				dbid = 559
+			}
+			itemcreate -1, dbid, -1, -1, 0
+			income(1)++
+		loop
+	loop
+	if ( cFame(CHARA_PLAYER) > 0 ) {
+		p = limit(cFame(CHARA_PLAYER) / 10, 100, 25000)
+		if ( cFame(CHARA_PLAYER) >= 25000 ) {
+			p += (cFame(CHARA_PLAYER) - 25000) / 100
+		}
+		income += p
+		flt
+		itemcreate -1, ITEM_ID_GOLD_PIECE, -1, -1, p
+	}
+	s = "" + income + lang("gold", " gold pieces")
+	if ( income(1) != 0 ) {
+		s += lang("と" + income(1) + "個のアイテム", " and " + income(1) + " items")
+	}
+	if ( income != 0 | income(1) != 0 ) {
+		snd SOUNDLIST_DING2
+		txtef COLOR_YELLOW
+		txt -1, lang(s + "が給料として振り込まれた。", "As a salary, " + s + " have been sent to your house.")
+		autosave = 1 * (gArea  != AREA_SHOW_HOUSE)
+		if ( cfg_noautosave > 0 & gettrait(0, 190) == 0 ) {
+			autosave = 0
+		}
+	}
+	if ( gDay  == 1 ) {
+		ncgReceivedGiftThisMonth = 0
+		if ( cFame(CHARA_PLAYER) > 1000 ) {
+			autosave = 1 * (gArea  != AREA_SHOW_HOUSE)
+			if ( cfg_noautosave > 0 & gettrait(0, 190) == 0 ) {
+				autosave = 0
+			}
+			inv_getheader -1
+			p = -1
+			repeat invrange, invhead
+				if ( iNum(cnt) == 0 ) {
+					p = cnt
+					break
+				}
+			loop
+			if ( p == (-1) ) {
+				item_compress 10
+			}
+			flt
+			itemcreate -1, ITEM_ID_BILL, -1, -1, 0
+			iSubName(ci) = gCostHire + calccostbuilding() + calccosttax()
+			iSubName(ci) = iSubName(ci) * (100 + rnd(20)) / 100
+			mode = MODELIST_MAIN
+			gBill++
+			txt -1, lang("請求書が送られてきた。", "A bill has been sent to your house.")
+			if ( gBill > 1 ) {
+				if ( gBill <= 4 ) {
+					txtef COLOR_RED
+					if ( gBill > 3 ) {
+						s = lang("警告！！", "Warning!! "), lang("早急にパルミア大使館まで行き、税金を納めなければならない。", "You have to go to the Embassy of Palmia and pay tax at once. ")
+					}
+					else {
+						s = lang("注意！", "Caution! "), ""
+					}
+					txt -1, s + lang("税金を" + (gBill - 1) + "ヶ月分滞納している。", "You are in arrears with your tax for " + (gBill - 1) + " months.") + s(1)
+				}
+			}
+			if ( gBill > 4 ) {
+				txtef COLOR_RED
+				txt -1, lang("あなたは税金を" + (gBill - 1) + "ヶ月滞納した罪で訴えられた。", "You have been accused for being in arrears with your tax for" + (gBill - 1) + " months.")
+				decfame CHARA_PLAYER, 50
+				p = stat
+				txtef COLOR_RED
+				txt -1, lang("名声値を" + p + "失った。", "You lose " + p + " fame.")
+				modkarma 0, (-30) * 2
+			}
+		}
+		else {
+			txt -1, lang("名声が1000に達していないので納税の義務はない。", "There is no need to pay tax until you reach at least 1000 fame.")
+		}
+	}
+	if ( gWeather == WEATHER_ETHER & gLastEther != gMonth  ) {
+		gWeather = WEATHER_CLEAR
+		txt -1, lang("エーテルの風は止んだ。", "The Ether Wind dissipates.")
+		if ( gettrait(0, 222) != 0 ) {
+			gWeather = WEATHER_SNOW
+		}
+	}
+	file = "shop" + invfile + ".s2"
+	ctrlfile 4
+	file = "shoptmp.s2"
+	ctrlfile 3
+	mode = MODELIST_MAIN
+	if ( cfg_extrahelp ) {
+		if ( gdata(STARTING_GDATA_HELP + 16) == 0 ) {
+			if ( mode == MODELIST_MAIN ) {
+				if ( cActionPeriod(CHARA_PLAYER) == 0 ) {
+					gdata(STARTING_GDATA_HELP + 16) = 1
+					ghelp = 16
+					gosub *elona_help
+				}
+			}
+		}
+	}
+	return
+
+
+
+
+
+
+
+
+

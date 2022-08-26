@@ -1,0 +1,1415 @@
+*pet_openStrategyMenu
+	if ( cc == CHARA_PLAYER ) {
+		repeat 11
+			ocdata(cnt, cc) = -1
+		loop
+	}
+	if ( getfactionvalue(cc, "AI_read") != "" ) {
+		frequency_read = int(refstr)
+	}
+	else {
+		frequency_read = 10
+	}
+	sdim choice, 40, 20
+	sdim choice2, 40, 20
+	listmax = 0
+	page = 0
+	pagesize = 12
+	cs = 0
+	cs_bk = -1
+	cs = commark(0) \ 1000
+	page = commark(0) / 1000
+	page_bk = 0
+	cs_bk2 = 0
+	gsel BUFFER_BUF
+	repeat 8
+		pos cnt \ 4 * 180, cnt / 4 * 300
+		picload_ exedir + "\\graphic\\g" + (cnt + 1) + ".bmp", 1
+	loop
+	gsel BUFFER_SCREEN
+	screenupdate = -1
+	gosub *screen_draw
+	windowshadow = 1
+
+*pet_openStrategyMenu_pgchk
+	listmax = 0
+	if ( jp ) {
+		q = "作戦"
+		s = "攻撃行動", "回復行動", "ドアについて", "自動拾い", "拾い食い", "自動食事", "歌唱", "種族スキル", "職業スキル", "特殊弾", "陣形", "詳細な作戦", "適正距離", "移動率", "特殊行動率", "魔法書の使用率", ""
+	}
+	else {
+		q = "Strategy"
+		s = "Attack behavior", "Healing behavior", "Doors", "Pickup ores", "Eat from ground", "Auto eat", "Singing", "Race skills", "Class skills", "Special ammo", "Formation", "Detailed strategy", "AI distance", "AI move rate", "AI special acts rate", "AI spellbook rate", ""
+	}
+	if ( cc == CHARA_PLAYER ) {
+		s(11) = "", "", "", "", ""
+	}
+	inhact = ""
+	inhact2 = ""
+	if ( cId(cc) == CREATURE_ID_ZOMBIE ) {
+		inhact = lang("感染", "Infection")
+		choice = lang("いい", "Yes"), lang("だめ", "No")
+	}
+	if ( cId(cc) == CREATURE_ID_YOUNGER_SISTER | cId(cc) == CREATURE_ID_YOUNGER_SISTER2 ) {
+		inhact = lang("呼び方", "Call me")
+		choice = lang("いつも通り", "As usual"), _onii2(1, cSex(CHARA_PLAYER)), _onii2(2, cSex(CHARA_PLAYER)), _onii2(3, cSex(CHARA_PLAYER)), _onii2(4, cSex(CHARA_PLAYER)), _onii2(5, cSex(CHARA_PLAYER)), _onii2(6, cSex(CHARA_PLAYER)), _onii2(7, cSex(CHARA_PLAYER)), _onii2(8, cSex(CHARA_PLAYER)), _onii2(9, cSex(CHARA_PLAYER)), _onii2(10, cSex(CHARA_PLAYER)), _onii2(11, cSex(CHARA_PLAYER)), _onii2(12, cSex(CHARA_PLAYER)), _onii2(13, cSex(CHARA_PLAYER))
+	}
+	if ( cId(cc) == CREATURE_ID_BLACK_CAT ) {
+		inhact = lang("ぺろぺろ", "*lick* *lick*")
+		choice = lang("いい", "Yes"), lang("だめ", "No")
+	}
+	if ( cId(cc) == CREATURE_ID_EXILE | cId(cc) == CREATURE_ID_REVLUS_THE_MAGE_GUILDMASTER | cId(cc) == CREATURE_ID_LEXUS_THE_MAGE_WATCHMAN ) {
+		inhact = lang("連続魔法", "Rapid magic")
+		choice = lang("いい", "Yes"), lang("だめ", "No")
+	}
+	if ( cId(cc) == CREATURE_ID_BLUE_BUBBLE | cId(cc) == CREATURE_ID_BUBBLE | cId(cc) == CREATURE_ID_MASS_MONSTER | cId(cc) == CREATURE_ID_CUBE ) {
+		inhact = lang("分裂", "Split")
+		choice = lang("いい", "Yes"), lang("だめ", "No")
+	}
+	if ( cId(cc) == CREATURE_ID_BARD ) {
+		inhact = lang("ベイベー", "Baby")
+		choice = lang("ベイベー！", "Baby!"), lang("だめ", "No")
+	}
+	if ( cId(cc) == CREATURE_ID_STRAY_CAT ) {
+		inhact = lang("調子にのっちゃ", "Don't get carried away")
+		choice = lang("だめー", "No"), lang("だめー", "No")
+	}
+	if ( cId(cc) == CREATURE_ID_PROSTITUTE | cId(cc) == CREATURE_ID_SILVIA_THE_PRINCESS | (inhact == "" & eqfaction(cc, "whole")) ) {
+		inhact = lang("一晩の夢", "Allow prostitution")
+		choice = lang("いい", "Yes"), lang("だめ", "No")
+	}
+	if ( cId(cc) == CREATURE_ID_USER ) {
+		if ( userspact(cUNID(cc), 0) > 0 ) {
+			inhact = lang("特殊技能", "Special actions")
+			choice = lang("いい", "Yes"), lang("だめ", "No")
+		}
+	}
+	if ( cId(cc) == CREATURE_ID_ANDROID & ocdata((54 /*!!!@[OCDATA_CARD_CREATURE_ID @@@ OCDATA_CARD_CUSTOM_CREATURE_ID]@!!! */), cc) == 343 ) {
+		if ( userspact(ocdata(55, cc) - 1, 0) > 0 ) {
+			inhact = lang("特殊技能", "Special actions")
+			choice = lang("いい", "Yes"), lang("だめ", "No")
+		}
+	}
+	if ( ocbit(0, cc) == 0 ) {
+		if ( cId(cc) == CREATURE_ID_YOUNG_LADY ) {
+			inhact = lang("ポーション投げ", "Throw potion")
+			choice = lang("いい", "Yes"), lang("だめ", "No")
+			inhact2 = lang("火炎瓶", "Molotov")
+			choice2 = lang("ぽいぽい", "Somewhat"), lang("ぽいぽいぽい", "A lot"), lang("だめ", "No")
+		}
+		if ( cId(cc) == CREATURE_ID_CACY_THE_CAT_TAMER ) {
+			inhact = lang("猫召喚", "Summon cats")
+			choice = lang("いい", "Yes"), lang("だめ", "No")
+		}
+		if ( cId(cc) == CREATURE_ID_KAMIKAZE_YEEK | cId(cc) == CREATURE_ID_KAMIKAZE_SAMURAI | cId(cc) == CREATURE_ID_BOMB_ROCK | cId(cc) == CREATURE_ID_HARD_GAY ) {
+			inhact = lang("自爆", "Suicide")
+			choice = lang("いい", "Yes"), lang("だめ", "No")
+		}
+		if ( cId(cc) == CREATURE_ID_YOUNGER_SISTER2 ) {
+			inhact2 = lang("妹召喚", "Summon younger sisters")
+			choice = lang("いい", "Yes"), lang("だめ", "No")
+		}
+		if ( cId(cc) == CREATURE_ID_CLEANER ) {
+			inhact = lang("食塩水投げ", "Throw solution of salt")
+			choice = lang("いい", "Yes"), lang("だめ", "No")
+		}
+		if ( cId(cc) == CREATURE_ID_EHEKATL | cId(cc) == CREATURE_ID_GOD_INSIDE_EHEKATL ) {
+			inhact = lang("うみみゃあ", "Mewmewmew!")
+			choice = lang("うみみゃあ！", "Mewmewmew!"), lang("うみみゃっ", "Mewmew")
+		}
+		if ( cId(cc) == CREATURE_ID_ALIEN ) {
+			inhact = lang("寄生", "Pregnant")
+			choice = lang("いい", "Yes"), lang("だめ", "No")
+		}
+		if ( cId(cc) == CREATURE_ID_MINE_DOG ) {
+			inhact = lang("重力", "Gravity")
+			choice = lang("いい", "Yes"), lang("だめ", "No")
+		}
+		if ( cId(cc) == CREATURE_ID_SILVER_EYED_WITCH ) {
+			inhact = lang("覚醒", "Awaken")
+			choice = lang("いい", "Yes"), lang("だめ", "No")
+		}
+	}
+	dx = 440
+	dy = 400
+	repeat 30
+		if ( s(cnt) == "" ) {
+			f = cnt
+			break
+		}
+		list(0, listmax) = cnt
+		listn(0, listmax) = s(cnt)
+		listmax++
+	loop
+	if ( inhact != "" ) {
+		list(0, listmax) = f
+		listn(0, listmax) = inhact
+		listmax++
+	}
+	if ( cId(cc) != CREATURE_ID_YOUNG_LADY | ocAISpecialAction1(cc) == 0 ) {
+		if ( inhact2 != "" ) {
+			list(0, listmax) = f + 1
+			listn(0, listmax) = inhact2
+			listmax++
+		}
+	}
+	if ( cc != CHARA_PLAYER ) {
+		if ( inhact == "" ) {
+			list(0, listmax) = f
+			listn(0, listmax) = lang("通常の作戦", "Normal strategy")
+			listmax++
+		}
+		else {
+			if ( inhact2 == "" ) {
+				list(0, listmax) = f + 1
+				listn(0, listmax) = lang("通常の作戦", "Normal strategy")
+				listmax++
+			}
+			else {
+				list(0, listmax) = f + 2
+				listn(0, listmax) = lang("通常の作戦", "Normal strategy")
+				listmax++
+			}
+		}
+	}
+	redraw 0
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+
+*talk_quest
+	redraw 0
+	s = q, lang("左右キー [変更]  ｷｬﾝｾﾙ [閉じる]", "Right,left [Change]  Shift,Esc [Close]")
+	display_window (windoww - dx) / 2 + inf_screenx, winposy(dy) - 12, dx, dy
+	display_topic lang("項目", "Category"), wx + 34, wy + 36
+	x = ww / 5 * 3
+	y = wh - 80
+	gmode 4, 180, 300, 50
+	pos wx + ww / 3, wy + wh / 2
+	grotate BUFFER_BUF, cmbg / 4 \ 4 * 180, cmbg / 4 / 4 \ 2 * 300, 0, x, y
+	gmode 2
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		key_list(cnt) = key_enter
+		keyrange++
+	loop
+	keyrange = 0
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	cs_listbk
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		i = list(0, p)
+		s = listn(0, p)
+		x = 0
+		cs_list s, wx + 56 + x, wy + 66 + cnt * 19 - 1, 19, 0
+		if ( p != 11 & p != listmax - 1 | cc == CHARA_PLAYER ) {
+			pos wx + 200, wy + 66 + cnt * 19 - 5
+			gcopy BUFFER_INF, 312, 336, 24, 24
+			pos wx + 370, wy + 66 + cnt * 19 - 5
+			gcopy BUFFER_INF, 336, 336, 24, 24
+		}
+		pos wx + 230, wy + 66 + cnt * 19
+		color 0, 0, 0
+		if ( p == 0 ) {
+			if ( jp ) {
+				s = "自由行動", "ガンガンいこうぜ", "手近な敵を攻撃しろ", "主人を守れ", "手を出すな", "仲間にまかせろ"
+			}
+			else {
+				s = "Act freely", "Rush in", "Nearby enemies", "Defend me", "Don't attack", "Let your allies go"
+			}
+			keyrange++
+			if ( ocAIStrategy(cc) < AI_STRATEGY_ACT_FREELY ) {
+				mes "-------------------"
+			}
+			else {
+				mes s(ocAIStrategy(cc))
+			}
+		}
+		if ( p == 1 ) {
+			s = lang("自由回復", "Heal as needed"), lang("早めに回復", "Heal immediately")
+			keyrange++
+			if ( ocAIHealingBehavior(cc) < 0 ) {
+				mes "-------------------"
+			}
+			else {
+				mes s(ocAIHealingBehavior(cc))
+			}
+		}
+		if ( p == 2 ) {
+			s = lang("開けていい", "Open as needed"), lang("開けるな", "Don't open")
+			keyrange++
+			if ( ocAIDoors(cc) < 0 ) {
+				mes "-------------------"
+			}
+			else {
+				mes s(ocAIDoors(cc))
+			}
+		}
+		if ( p == 3 ) {
+			s = lang("鉱石だけ", "Ore only"), lang("だめ", "No"), lang("設定通り", "Yes")
+			keyrange++
+			if ( ocAIPickupOres(cc) < 0 ) {
+				mes "-------------------"
+			}
+			else {
+				mes s(ocAIPickupOres(cc))
+			}
+		}
+		if ( p == 4 ) {
+			s = lang("いい", "Yes"), lang("だめ", "No")
+			keyrange++
+			if ( ocAIEatFromGround(cc) < 0 ) {
+				mes "-------------------"
+			}
+			else {
+				mes s(ocAIEatFromGround(cc))
+			}
+		}
+		if ( p == 5 ) {
+			s = lang("いい", "Yes"), lang("だめ", "No")
+			keyrange++
+			if ( ocAIAutoEat(cc) < 0 ) {
+				mes "-------------------"
+			}
+			else {
+				mes s(ocAIAutoEat(cc))
+			}
+		}
+		if ( p == 6 ) {
+			s = lang("いい", "Yes"), lang("だめ", "No")
+			keyrange++
+			if ( ocAISinging(cc) < 0 ) {
+				mes "-------------------"
+			}
+			else {
+				if ( sPerform(cc) == 0 & cc != CHARA_PLAYER ) {
+					mes lang("演奏スキル未習得", "Requires Performer skill")
+				}
+				else {
+					mes s(ocAISinging(cc))
+				}
+			}
+		}
+		if ( p == 7 ) {
+			s = lang("いい", "Yes"), lang("だめ", "No")
+			keyrange++
+			if ( ocAIRaceSkills(cc) < 0 ) {
+				mes "-------------------"
+			}
+			else {
+				mes s(ocAIRaceSkills(cc))
+			}
+		}
+		if ( p == 8 ) {
+			s = lang("いい", "Yes"), lang("だめ", "No")
+			keyrange++
+			if ( ocAIClassSkills(cc) < 0 ) {
+				mes "-------------------"
+			}
+			else {
+				mes s(ocAIClassSkills(cc))
+			}
+		}
+		if ( p == 9 ) {
+			s = lang("通常弾", "Normal ammo")
+			repeat length(ammoname)
+				s(cnt + 1) = cnven(ammoname(cnt))
+			loop
+			keyrange++
+			if ( ocAISpecialAmmo(cc) < AI_SPECIAL_AMMO_NORMAL ) {
+				mes "-------------------"
+			}
+			else {
+				gosub *label_4654
+				if ( ammo == (-1) & cc != CHARA_PLAYER ) {
+					mes lang("使用不可", "Unavailable")
+				}
+				else {
+					mes s(ocAISpecialAmmo(cc))
+				}
+			}
+		}
+		if ( p == 10 ) {
+			s = lang("後衛", "Back"), lang("前衛", "Front")
+			keyrange++
+			if ( ocAIDistance(cc) < 0 ) {
+				mes "-------------------"
+			}
+			else {
+				mes s(ocAIDistance(cc))
+			}
+		}
+		if ( cc != CHARA_PLAYER ) {
+			if ( p == 11 ) {
+				keyrange++
+				mes ""
+			}
+			if ( p == 12 ) {
+				keyrange++
+				mes "" + cAiDistance(cc)
+			}
+			if ( p == 13 ) {
+				keyrange++
+				mes "" + cAiMoveFreq(cc) + " [%]"
+			}
+			if ( p == 14 ) {
+				keyrange++
+				if ( cAiSub(cc) == 101 ) {
+					mes lang("カスタムAI", "Custom AI")
+				}
+				else {
+					mes "" + cAiSub(cc) + " [%]"
+				}
+			}
+			if ( p == 15 ) {
+				keyrange++
+				if ( frequency_read == 10 ) {
+					mes lang("" + frequency_read + " [%] (通常)", "" + frequency_read + " [%] (default)")
+				}
+				else {
+					mes "" + frequency_read + " [%]"
+				}
+			}
+			if ( inhact != "" ) {
+				if ( p == f ) {
+					repeat checksdim(choice)
+						s(cnt) = choice(cnt)
+					loop
+					keyrange++
+					mes s(ocAISpecialAction1(cc))
+				}
+			}
+			if ( inhact2 != "" ) {
+				if ( p == f + 1 ) {
+					repeat checksdim(choice2)
+						s(cnt) = choice2(cnt)
+					loop
+					keyrange++
+					mes s(ocAISpecialAction2(cc))
+				}
+			}
+			if ( p == listmax - 1 ) {
+				keyrange++
+				mes ""
+			}
+		}
+	loop
+	if ( keyrange != 0 ) {
+		cs_bk = cs
+	}
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	commark(0) = page * 1000 + cs
+	if ( key == key_pageup | key == key_pagedown | key == key_southwest | key == key_southeast | key == key_northwest | key == key_northeast ) {
+		if ( key == key_pageup ) {
+			p = 1
+		}
+		if ( key == key_pagedown ) {
+			p = -1
+		}
+		if ( key == key_southwest ) {
+			p = -10
+		}
+		if ( key == key_southeast ) {
+			p = 10
+		}
+		if ( key == key_northwest ) {
+			p = -100
+		}
+		if ( key == key_northeast ) {
+			p = 100
+		}
+		if ( pagesize * page + cs == 0 ) {
+			ocAIStrategy(cc) += p
+			if ( ocAIStrategy(cc) > AI_STRATEGY_LET_YOUR_ALLIES_GO ) {
+				ocAIStrategy(cc) = AI_STRATEGY_LET_YOUR_ALLIES_GO
+			}
+			else {
+				if ( ocAIStrategy(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAIStrategy(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( pagesize * page + cs == 1 ) {
+			ocAIHealingBehavior(cc) += p
+			if ( ocAIHealingBehavior(cc) > 1 ) {
+				ocAIHealingBehavior(cc) = 1
+			}
+			else {
+				if ( ocAIHealingBehavior(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAIHealingBehavior(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( pagesize * page + cs == 2 ) {
+			ocAIDoors(cc) += p
+			if ( ocAIDoors(cc) > 1 ) {
+				ocAIDoors(cc) = 1
+			}
+			else {
+				if ( ocAIDoors(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAIDoors(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( pagesize * page + cs == 3 ) {
+			ocAIPickupOres(cc) += p
+			if ( ocAIPickupOres(cc) > 2 ) {
+				ocAIPickupOres(cc) = 2
+			}
+			else {
+				if ( ocAIPickupOres(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAIPickupOres(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( pagesize * page + cs == 4 ) {
+			ocAIEatFromGround(cc) += p
+			if ( ocAIEatFromGround(cc) > 1 ) {
+				ocAIEatFromGround(cc) = 1
+			}
+			else {
+				if ( ocAIEatFromGround(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAIEatFromGround(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( pagesize * page + cs == 5 ) {
+			ocAIAutoEat(cc) += p
+			if ( ocAIAutoEat(cc) > 1 ) {
+				ocAIAutoEat(cc) = 1
+			}
+			else {
+				if ( ocAIAutoEat(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAIAutoEat(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( pagesize * page + cs == 6 ) {
+			ocAISinging(cc) += p
+			if ( ocAISinging(cc) > 1 ) {
+				ocAISinging(cc) = 1
+			}
+			else {
+				if ( ocAISinging(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAISinging(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( pagesize * page + cs == 7 ) {
+			ocAIRaceSkills(cc) += p
+			if ( ocAIRaceSkills(cc) > 1 ) {
+				ocAIRaceSkills(cc) = 1
+			}
+			else {
+				if ( ocAIRaceSkills(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAIRaceSkills(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( pagesize * page + cs == 8 ) {
+			ocAIClassSkills(cc) += p
+			if ( ocAIClassSkills(cc) > 1 ) {
+				ocAIClassSkills(cc) = 1
+			}
+			else {
+				if ( ocAIClassSkills(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAIClassSkills(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( pagesize * page + cs == 9 ) {
+			ocAISpecialAmmo(cc) += p
+			if ( ocAISpecialAmmo(cc) > length(ammoname) ) {
+				ocAISpecialAmmo(cc) = length(ammoname)
+			}
+			else {
+				if ( ocAISpecialAmmo(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAISpecialAmmo(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( pagesize * page + cs == 10 ) {
+			ocAIDistance(cc) += p
+			if ( ocAIDistance(cc) > 1 ) {
+				ocAIDistance(cc) = 1
+			}
+			else {
+				if ( ocAIDistance(cc) < 0 - (cc == CHARA_PLAYER) ) {
+					ocAIDistance(cc) = 0 - (cc == CHARA_PLAYER)
+				}
+			}
+			snd SOUNDLIST_OK1
+			goto *pet_openStrategyMenu_pgchk
+		}
+		if ( cc != CHARA_PLAYER ) {
+			if ( pagesize * page + cs == 12 ) {
+				cAiDistance(cc) += p
+				if ( cAiDistance(cc) > 6 ) {
+					cAiDistance(cc) = 6
+				}
+				if ( cAiDistance(cc) < 1 ) {
+					cAiDistance(cc) = 1
+				}
+				snd SOUNDLIST_OK1
+				goto *pet_openStrategyMenu_pgchk
+			}
+			if ( pagesize * page + cs == 13 ) {
+				cAiMoveFreq(cc) += p
+				if ( cAiMoveFreq(cc) > 100 ) {
+					cAiMoveFreq(cc) = 100
+				}
+				if ( cAiMoveFreq(cc) < 0 ) {
+					cAiMoveFreq(cc) = 0
+				}
+				snd SOUNDLIST_OK1
+				goto *pet_openStrategyMenu_pgchk
+			}
+			if ( pagesize * page + cs == 14 ) {
+				cAiSub(cc) += p
+				if ( cAiSub(cc) > 101 ) {
+					cAiSub(cc) = 101
+				}
+				if ( cAiSub(cc) < 0 ) {
+					cAiSub(cc) = 0
+				}
+				snd SOUNDLIST_OK1
+				goto *pet_openStrategyMenu_pgchk
+			}
+			if ( pagesize * page + cs == 15 ) {
+				frequency_read += p
+				if ( frequency_read > 100 ) {
+					frequency_read = 100
+				}
+				if ( frequency_read < 0 ) {
+					frequency_read = 0
+				}
+				snd SOUNDLIST_OK1
+				goto *pet_openStrategyMenu_pgchk
+			}
+			if ( inhact != "" ) {
+				if ( pagesize * page + cs == f ) {
+					ocAISpecialAction1(cc) += p
+					if ( ocAISpecialAction1(cc) > checksdim(choice) - 1 ) {
+						ocAISpecialAction1(cc) = checksdim(choice) - 1
+					}
+					else {
+						if ( ocAISpecialAction1(cc) < 0 ) {
+							ocAISpecialAction1(cc) = 0
+						}
+					}
+					snd SOUNDLIST_OK1
+					goto *pet_openStrategyMenu_pgchk
+				}
+			}
+			if ( inhact2 != "" ) {
+				if ( pagesize * page + cs == f + 1 ) {
+					ocAISpecialAction2(cc) += p
+					if ( ocAISpecialAction2(cc) > checksdim(choice2) - 1 ) {
+						ocAISpecialAction2(cc) = checksdim(choice2) - 1
+					}
+					else {
+						if ( ocAISpecialAction2(cc) < 0 ) {
+							ocAISpecialAction2(cc) = 0
+						}
+					}
+					snd SOUNDLIST_OK1
+					goto *pet_openStrategyMenu_pgchk
+				}
+			}
+		}
+	}
+	if ( key == key_enter ) {
+		if ( inhact == "" ) {
+			locvar_matdelmain_f = f
+		}
+		else {
+			if ( inhact2 == "" ) {
+				locvar_matdelmain_f = f + 1
+			}
+			else {
+				locvar_matdelmain_f = f + 2
+			}
+		}
+		if ( page == 0 & cs == 11 | (page == 1 & pagesize + cs == locvar_matdelmain_f) ) {
+			if ( pagemax != 0 ) {
+				snd SOUNDLIST_POP1
+				if ( cs == 11 ) {
+					page++
+				}
+				else {
+					page--
+					cs = 11
+				}
+				goto *pet_openStrategyMenu_pgchk
+			}
+		}
+	}
+	if ( key == key_cancel ) {
+		if ( pagemax != 0 ) {
+			if ( page != 0 ) {
+				snd SOUNDLIST_POP1
+				page--
+				goto *pet_openStrategyMenu_pgchk
+			}
+		}
+		rmfaction cc, "AI_read"
+		if ( frequency_read != 10 ) {
+			addfaction cc, "AI_read," + frequency_read
+		}
+		if ( inhact != "" ) {
+			rewriteai cc
+		}
+		if ( cc == CHARA_PLAYER ) {
+			repeat 11
+				cnt2 = cnt
+				repeat 16 - 1, 1
+					if ( ocdata(cnt2, cc) != (-1) ) {
+						if ( cExist(cnt) == CHAR_STATE_ALIVE ) {
+							ocdata(cnt2, cnt) = ocdata(cnt2, cc)
+						}
+					}
+				loop
+				ocdata(cnt2, cc) = 0
+			loop
+			repeat 16 - 1, 1
+				if ( cAiSub(cnt) == 101 ) {
+					ocbitmod 0, cnt, 1
+				}
+			loop
+		}
+		else {
+			if ( cAiSub(cc) == 101 ) {
+				ocbitmod 0, cc, 1
+			}
+		}
+		return
+	}
+	goto *talk_quest
+	randomize qClient(rq) + 1
+	s(6) = ""
+	s(5) = lang("金貨" + qReward(rq) + "枚", "" + qReward(rq) + " gold pieces")
+	if ( qRewardItem(rq) != (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */) ) {
+		if ( qRewardItem(rq) < FILTER_WEAPON ) {
+			s(5) += lang("と", " and ") + _reward(qRewardItem(rq))
+		}
+		else {
+			s(5) += lang("と", " and ") + fltname(qRewardItem(rq))
+		}
+	}
+	if ( qDeadline(rq) == (-1) ) {
+		nquestdate = lang("即時", "-")
+	}
+	else {
+		nquestdate = "" + qDeadline(rq) + lang("日", "d")
+	}
+	if ( qExist(rq) == QUEST_TYPE_HARVEST ) {
+		s = "%HARVEST"
+		gosub *talk_quest_load
+		s(10) = "" + cnvweight(qParam1(rq))
+		s(11) = mapname(qMap(rq))
+		s(4) = lang("" + s(10) + "の作物の納入", "Gather harvests weight " + s(10) + ".")
+		if ( gQuestRef == rq ) {
+			s(4) += lang("(現在", " (Now ") + cnvweight(qParam2(rq)) + ")"
+		}
+		s(6) = s(4)
+	}
+	if ( qExist(rq) == QUEST_TYPE_PARTY ) {
+		s = "%PARTY"
+		gosub *talk_quest_load
+		s(10) = "" + qParam1(rq) + lang("ポイント", " points")
+		s(11) = mapname(qMap(rq))
+		s(4) = lang("" + s(10) + "の獲得", "Gather " + s(10) + ".")
+		if ( gQuestRef == rq ) {
+			s(4) += lang("(現在", " (Now ") + qParam2(rq) + ")"
+		}
+		s(6) = s(4)
+	}
+	if ( qExist(rq) == QUEST_TYPE_ESCORT ) {
+		s = "%ESCORT," + qVar(rq)
+		gosub *talk_quest_load
+		s(11) = "" + mapname(qParam1(rq))
+		s(4) = lang("クライアントを" + s(11), "Escort the client to " + s(11) + ".")
+		s(6) = s(4) + lang("まで護衛", "")
+	}
+	if ( qExist(rq) == QUEST_TYPE_HUNT ) {
+		s = "%HUNT"
+		gosub *talk_quest_load
+		if ( qParam1(rq) ) {
+			if ( jp ) {
+				s(4) = csetfamily(2, oqdata(0, rq))
+			}
+			else {
+				s(4) = csetfamily(0, oqdata(0, rq))
+			}
+		}
+		else {
+			s(4) = ""
+		}
+		s(6) = lang("全ての敵の殲滅", "Eliminate monsters.")
+	}
+	if ( qExist(rq) == QUEST_TYPE_SUPPLY ) {
+		s = "%SUPPLY"
+		gosub *talk_quest_load
+		s(4) = cnvarticle(cnvitemname(qDestItem(rq)))
+		s(6) = lang(s(4) + "の納入", "Give " + s(4) + " to the client.")
+	}
+	if ( qExist(rq) == QUEST_TYPE_DELIVER ) {
+		s = "%DELIVER," + qParam1(rq)
+		gosub *talk_quest_load
+		s(10) = cnvarticle(cnvitemname(qDestItem(rq)))
+		s(11) = "" + mapname(qMap(qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq)))
+		s(12) = "" + qname(qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq))
+		if ( iorgweight(qDestItem(rq)) > 50000 ) {
+			s(10) += lang("(凄く重い)", "(Heavy!)")
+		}
+		s(4) = lang("" + s(11) + "に住む" + s(12) + "に" + s(10), "Deliver " + s(10) + " to " + s(12) + " who lives in " + s(11) + ".")
+		s(6) = s(4) + lang("を配達", "")
+	}
+	if ( qExist(rq) == QUEST_TYPE_COOK ) {
+		s = "%COOK," + qParam1(rq)
+		if ( rnd(6) == 0 ) {
+			s = "%COOK,GENERAL"
+		}
+		gosub *talk_quest_load
+		s(4) = cnvarticle(foodname(qParam1(rq), "", qParam2(rq)))
+		s(6) = lang(s(4) + "の納入", "Give " + s(4) + " to the client.")
+	}
+	if ( qExist(rq) == QUEST_TYPE_CONQUER ) {
+		s = "%CONQUER"
+		gosub *talk_quest_load
+		if ( qParam1(rq) == 343 ) {
+			if ( qParam2(rq) != usernpcmax ) {
+				s(4) = userdatan(1, qParam2(rq))
+			}
+			else {
+				s(4) = lang("残りカス", "garbage")
+			}
+		}
+		else {
+			s(4) = refchara(qParam1(rq), DBSPEC_CHARA_NAME_ORG, 1)
+		}
+		s(10) = "" + qLevel(rq) * 10 / 6
+		s(6) = lang(s(4) + "の討伐", "Slay " + s(4) + ".")
+	}
+	if ( qExist(rq) == QUEST_TYPE_HUNTEX ) {
+		s = "%HUNTEX"
+		gosub *talk_quest_load
+		if ( qParam1(rq) == 343 ) {
+			if ( qParam2(rq) != usernpcmax ) {
+				s(4) = userdatan(1, qParam2(rq))
+			}
+			else {
+				s(4) = lang("残りカス", "garbage")
+			}
+		}
+		else {
+			s(4) = refchara(qParam1(rq), DBSPEC_CHARA_NAME_ORG, 1)
+		}
+		s(10) = "" + qLevel(rq) * 3 / 2
+		s(6) = lang("全ての敵の殲滅", "Eliminate monsters")
+	}
+	if ( qExist(rq) == QUEST_TYPE_COLLECT ) {
+		s = "%COLLECT"
+		gosub *talk_quest_load
+		s(10) = cnvarticle(cnvitemname(qDestItem(rq)))
+		s(11) = "" + mapname(qMap(rq))
+		if ( gArea  == qMap(rq) & gLevel  == 1 ) {
+			s(12) = "" + cnName(qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq))
+		}
+		else {
+			s(12) = lang(s(11) + "に住む人物", "the target in " + s(11))
+		}
+		if ( iorgweight(qDestItem(rq)) > 50000 ) {
+			s(10) += lang("(凄く重い)", "(Heavy!)")
+		}
+		s(4) = lang("依頼人のために" + s(12) + "から" + s(10), "Acquire " + s(10) + " from " + s(12) + " for the client.")
+		s(6) = s(4) + lang("を調達", "")
+	}
+	gosub *talktxt_conv
+	if ( qExist(rq) == QUEST_TYPE_HUNT ) {
+		gosub *label_4685
+	}
+	if ( val == 1 ) {
+		buff = lang(_kimi(3) + "に頼みたいことがある" + _nda(), "") + buff
+		if ( qDeadline(rq) != (-1) ) {
+			buff += lang("期限は残り" + qDeadline(rq) + "日" + _da(), " You have " + qDeadline(rq) + " days to perform the task. ")
+		}
+		buff += lang("依頼を受けてくれるの" + _kana(1), "How about it?")
+	}
+	if ( val == 2 ) {
+		if ( qStatus(rq) == QUEST_STATE_SUCCESS ) {
+			buff += "@QC[" + lang("依頼 完了", "Complete") + "]" + s(3) + "\n"
+		}
+		else {
+			buff += "@QL[" + lang("依頼", "Job") + "] " + s(3) + "\n"
+		}
+		buff += lang("依頼: ", "Client  : ") + qname(rq) + "\n"
+		buff += lang("場所: ", "Location: ") + mapname(qMap(rq)) + "\n"
+		buff += lang("期限: ", "Deadline: ")
+		if ( qDeadline(rq) != (-1) ) {
+			buff += lang("残り", "")
+		}
+		buff += nquestdate + "\n"
+		s(5) = lang("報酬: ", "Reward  : ") + s(5)
+		talk_conv s(5), 40 - en * 10
+		buff += s(5) + "\n"
+		if ( qStatus(rq) == QUEST_STATE_SUCCESS ) {
+			s(4) = lang("内容: あとは報告するだけだ。", "Detail  : Report to the client.")
+		}
+		else {
+			s(4) = lang("内容: ", "Detail  : ") + s(6)
+		}
+		talk_conv s(4), 40 - en * 10
+		buff += s(4) + "\n"
+	}
+	if ( val == 3 ) {
+		buff = lang("依頼を無事終わらせたよう" + _dana() + _thanks(2), "You've done well. Thanks. Here's your reward.")
+		if ( int(s(5)) != 0 ) {
+			txt -1, lang("報酬の" + s(5) + "を受けとって" + _kure(), "")
+		}
+		if ( qExist(rq) == QUEST_TYPE_HARVEST ) {
+			if ( qParam1(rq) * 125 / 100 < qParam2(rq) ) {
+				buff += lang("予想以上にいい働きだったから、幾らか色を付けておいた" + _yo(), "I've added some extra coins since you worked really hard.")
+			}
+		}
+		if ( qExist(rq) == QUEST_TYPE_PARTY ) {
+			if ( qParam1(rq) * 150 / 100 < qParam2(rq) ) {
+				buff += lang("予想以上の盛り上がりだったから、おまけをあげる" + _yo(), "The party was terrific! I'll give you these tickets as an extra bonus.")
+			}
+		}
+	}
+	randomize
+	return
+
+*label_0234
+	repeat 245 - 57, 57
+		if ( cExist(cnt) == CHAR_STATE_DEAD ) {
+			continue
+		}
+		if ( cRole(cnt) == ROLE_NONE ) {
+			continue
+		}
+		if ( cQuality(cnt) == FIX_QUALITY_UNIQUE ) {
+			continue
+		}
+		if ( cRole(cnt) == ROLE_SPECIAL ) {
+			continue
+		}
+		i = -1
+		repeat 500
+			if ( qClient(cnt) == 0 ) {
+				i = cnt
+				break
+			}
+		loop
+		cnt2 = cnt
+		repeat 500
+			if ( qClient(cnt) == cnt2 ) {
+				if ( qMap(cnt) == gArea  ) {
+					i = -1
+					break
+				}
+			}
+		loop
+		if ( i == (-1) ) {
+			break
+		}
+		qClient(i) = cnt
+		qMap(i) = gArea 
+		qname(i) = cnName(cnt)
+		cQuestNpc(cnt) = i + 1
+		gClient = i + 1
+	loop
+	return
+
+*label_0238
+	repeat gClient
+		if ( qClient(cnt) == 0 ) {
+			continue
+		}
+		if ( qMap(cnt) != gArea  ) {
+			continue
+		}
+		rc = qClient(cnt)
+		if ( qStatus(cnt) == QUEST_STATE_NONE ) {
+			if ( qRenew(cnt) < getgametime() ) {
+				rq = cnt
+				gosub *label_0240
+				gosub *label_0249
+			}
+		}
+	loop
+	return
+
+*label_0240
+	qExist(rq) = QUEST_TYPE_NONE
+	qType(rq) = QUEST_TYPE_NONE
+	qStatus(rq) = QUEST_STATE_NONE
+	qRenew(rq) = (rnd(3) + 1) * 24 + getgametime()
+	qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+	if ( rnd(3) == 0 ) {
+		return
+	}
+	if ( rnd(14) == 0 ) {
+		i = -1
+		repeat 300
+			n = rnd(245 - 57) + 57
+			if ( n == qClient(rq) ) {
+				continue
+			}
+			if ( cExist(n) != CHAR_STATE_ALIVE ) {
+				continue
+			}
+			if ( cRelation(n) != RELATION_NEUTRAL | (cRole(n) != ROLE_CITIZEN & cRole(n) != ROLE_GUARD) ) {
+				continue
+			}
+			flt 40, FIX_QUALITY_GOOD
+			flttypemajor = fsetcollect(rnd(length(fsetcollect)))
+			itemcreate n, ITEM_ID_DUMMY, -1, -1, 0
+			if ( stat != 0 ) {
+				inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), ci) = rq
+				i = n, iID(ci)
+				ibitmod ITEM_BIT_DROP, ci, TRUE
+				break
+			}
+			else {
+				i = -1
+				break
+			}
+		loop
+		if ( i != (-1) ) {
+			qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq) = i
+			qDestItem(rq) = i(1)
+			qMap(rq) = gArea 
+			rewardfix = 60
+			qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+			qExist(rq) = QUEST_TYPE_COLLECT
+			qType(rq) = QUEST_SUBTYPE_SUPPLY
+			qVar(rq) = 0
+			qDeadline(rq) = rnd(3) + 2
+			qLevel(rq) = cLevel(i) / 3
+		}
+		return
+	}
+	if ( cFame(CHARA_PLAYER) >= 30000 ) {
+		if ( rnd(13) == 0 ) {
+			qLevel(rq) = rnd(difficulty() + 1)
+			qLevel(rq) = roundmargin(qLevel(rq), cLevel(CHARA_PLAYER))
+			minlevel = limit(qLevel(rq) / 7, 5, 30)
+			if ( rnd(30) == 0 | seasonal_check(SEASON_YOUNGER_SISTERS_DAY, FALSE) ) {
+				flt qLevel(rq), FIX_QUALITY_GOOD
+				characreate MAX_CHARA_NC, CREATURE_ID_YOUNGER_SISTER, -3, 0
+			}
+			else {
+				repeat 2000
+					flt qLevel(rq), FIX_QUALITY_GOOD
+					characreate MAX_CHARA_NC, CREATURE_ID_BUG, -3, 0
+					if ( cmshade ) {
+						continue
+					}
+					if ( cLevel(rc) < minlevel ) {
+						continue
+					}
+					break
+				loop
+			}
+			qParam1(rq) = cId(MAX_CHARA_NC)
+			if ( cId(MAX_CHARA_NC) == CREATURE_ID_USER ) {
+				qParam2(rq) = cUNID(MAX_CHARA_NC)
+				qQuestTarget(rq) = createserialno(userdatan(0, cUNID(MAX_CHARA_NC)))
+			}
+			qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+			qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+			qExist(rq) = QUEST_TYPE_HUNTEX
+			qType(rq) = QUEST_SUBTYPE_ELIMINATE
+			qVar(rq) = 0
+			qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+			qDeadline(rq) = -1
+			rewardfix = 140
+			chara_vanquish MAX_CHARA_NC
+			return
+		}
+	}
+	if ( cFame(CHARA_PLAYER) >= 50000 ) {
+		if ( rnd(20) == 0 ) {
+			qLevel(rq) = rnd(difficulty() + 1)
+			qLevel(rq) = roundmargin(qLevel(rq), cLevel(CHARA_PLAYER))
+			minlevel = limit(qLevel(rq) / 4, 5, 30)
+			if ( rnd(30) == 0 | seasonal_check(SEASON_YOUNGER_SISTERS_DAY, FALSE) ) {
+				flt qLevel(rq), FIX_QUALITY_GOOD
+				characreate MAX_CHARA_NC, CREATURE_ID_YOUNGER_SISTER, -3, 0
+			}
+			else {
+				repeat 2000
+					flt qLevel(rq), FIX_QUALITY_GOOD
+					characreate MAX_CHARA_NC, CREATURE_ID_BUG, -3, 0
+					if ( cmshade ) {
+						continue
+					}
+					if ( cLevel(rc) < minlevel ) {
+						continue
+					}
+					break
+				loop
+			}
+			qParam1(rq) = cId(MAX_CHARA_NC)
+			if ( cId(MAX_CHARA_NC) == CREATURE_ID_USER ) {
+				qParam2(rq) = cUNID(MAX_CHARA_NC)
+				qQuestTarget(rq) = createserialno(userdatan(0, cUNID(MAX_CHARA_NC)))
+			}
+			qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+			qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+			qExist(rq) = QUEST_TYPE_CONQUER
+			qType(rq) = QUEST_SUBTYPE_CONQUER
+			qVar(rq) = 0
+			qRewardItem(rq) = (1 /*!!!@[FILTER_RACE_GOBLIN @@@ QUEST_REWARD_WEAR]@!!! */)
+			qDeadline(rq) = -1
+			rewardfix = 175
+			chara_vanquish MAX_CHARA_NC
+			return
+		}
+	}
+	if ( guildcheck(0) == "prostitute" ) {
+		if ( gArea  == 51 & rnd(10) == 0 | rnd(20) == 0 ) {
+			qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+			qExist(rq) = 1020
+			qLevel(rq) = limit(rnd(difficulty() * 3 + 1) + 1, 1, 50)
+			qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+			qDeadline(rq) = -1
+			qParam1(rq) = limitmax(rnd(qLevel(rq) / 10 + 1) + 2, 10)
+			qParam2(rq) = 0
+			qType(rq) = QUEST_SUBTYPE_CONQUER
+			rewardfix = 0
+			return
+		}
+	}
+	if ( gArea  == 52 | gArea  == AREA_YOWYN & rnd(11) == 0 ) {
+		qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+		qExist(rq) = 1021
+		qLevel(rq) = limit(rnd(difficulty() * 5 + 1) + 1, 1, 80)
+		if ( rnd(2) ) {
+			qRewardItem(rq) = FILTER_FURNITURE
+		}
+		else {
+			qRewardItem(rq) = FILTER_ITEM_ROD
+		}
+		qDeadline(rq) = -1
+		qParam1(rq) = 5
+		qParam2(rq) = 0
+		qType(rq) = QUEST_SUBTYPE_COLLECT
+		rewardfix = 150
+		return
+	}
+	if ( rnd(11) == 0 ) {
+		qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+		qExist(rq) = QUEST_TYPE_ESCORT
+		qType(rq) = QUEST_SUBTYPE_GUARD
+		qVar(rq) = rnd(3)
+		qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq) = 0
+		qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+		locvar_matdelmain_currentcontinent = map_getcontinent(gArea )
+		if ( rnd(4) == 0 ) {
+			locvar_matdelmain_destinationcontinent = 1 - locvar_matdelmain_currentcontinent
+		}
+		else {
+			locvar_matdelmain_destinationcontinent = locvar_matdelmain_currentcontinent
+		}
+		qParam1(rq) = quest_getescortmapid(gArea , locvar_matdelmain_destinationcontinent)
+		p = qParam1(rq)
+		if ( qVar(rq) == 0 ) {
+			rewardfix = 140 + map_distance(gArea , p) * 2
+			qDeadline(rq) = rnd(8) + 6
+			qLevel(rq) = limit(rnd(difficulty() * 5 + 1) + 1, 1, 80)
+		}
+		if ( qVar(rq) == 1 ) {
+			rewardfix = 130 + map_distance(gArea , p) * 2
+			qDeadline(rq) = rnd(5) + 2
+			qLevel(rq) = limit(rewardfix / 10 + 1, 1, 40)
+		}
+		if ( qVar(rq) == 2 ) {
+			rewardfix = 80 + map_distance(gArea , p) * 2
+			qDeadline(rq) = rnd(8) + 6
+			qLevel(rq) = limit(rewardfix / 20 + 1, 1, 40)
+		}
+		if ( locvar_matdelmain_currentcontinent != locvar_matdelmain_destinationcontinent ) {
+			qDeadline(rq) += 2 + rnd(3)
+			if ( areaParent(gArea ) == AREA_SOUTH_TYRIS ) {
+				rewardfix = map_distance(gArea , 45) * 4 + map_distance(p, 43) * 4 + 200
+			}
+			else {
+				rewardfix = map_distance(p, 45) * 4 + map_distance(gArea , 43) * 4 + 200
+			}
+			if ( qVar(rq) == 0 ) {
+				rewardfix += 100
+			}
+			if ( qVar(rq) == 1 ) {
+				rewardfix += 50
+			}
+		}
+		if ( qParam1(rq) == 33 | gArea  == AREA_NOYEL ) {
+			rewardfix = rewardfix * 180 / 100
+		}
+		return
+	}
+	if ( rnd(23 - (ogTitleTheBaby == 2) * 10) == 0 | (gArea  == AREA_PALMIA & rnd(8) == 0) ) {
+		qLevel(rq) = limit(rnd(sPerform(CHARA_PLAYER) + 10), int(1.5 * sqrt(sPerform(CHARA_PLAYER))) + 1, cFame(CHARA_PLAYER) / 1000 + 10)
+		qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+		qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+		qExist(rq) = QUEST_TYPE_PARTY
+		qType(rq) = QUEST_SUBTYPE_PERFORM
+		qVar(rq) = 0
+		qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+		qParam1(rq) = limitmax(qLevel(rq) * 10 + rnd(50), 6000)
+		qParam2(rq) = 0
+		qDeadline(rq) = -1
+		rewardfix = 0
+		return
+	}
+	if ( rnd(30) == 0 | (gArea  == AREA_YOWYN & rnd(2) == 0) ) {
+		qLevel(rq) = limit(rnd(difficulty() * 3 + 1) + 1, 1, 50)
+		qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+		qExist(rq) = QUEST_TYPE_HARVEST
+		qType(rq) = QUEST_SUBTYPE_CARRY
+		qVar(rq) = 0
+		qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+		qDeadline(rq) = -1
+		qParam1(rq) = limitmax(15000 + qLevel(rq) * 2500, 200000)
+		qParam2(rq) = 0
+		rewardfix = 60 + qLevel(rq) * 2
+		return
+	}
+	if ( rnd(8) == 0 ) {
+		qLevel(rq) = limit(rnd(difficulty() * 5 + 1) + 1, 1, 80)
+		qLevel(rq) = roundmargin(qLevel(rq), cLevel(CHARA_PLAYER))
+		qRenew(rq) = (rnd(6) + 2) * 24 + getgametime()
+		qRewardItem(rq) = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ QUEST_REWARD_NONE]@!!! */)
+		qExist(rq) = QUEST_TYPE_HUNT
+		qType(rq) = QUEST_SUBTYPE_ELIMINATE
+		qVar(rq) = 0
+		qRewardItem(rq) = (1 /*!!!@[FILTER_RACE_GOBLIN @@@ QUEST_REWARD_WEAR]@!!! */)
+		qDeadline(rq) = -1
+		flt calcobjlv(qLevel(rq) + 1), FIX_QUALITY_BAD
+		characreate MAX_CHARA_NC, CREATURE_ID_BUG, -3, 0
+		sdim factionref, 10, 3
+		getfactionvalues rc, "family", factionref
+		i = stat
+		if ( i ) {
+			s = factionref(rnd(i))
+			repeat length2(csetfamily) - 1, 1
+				if ( csetfamily(0, cnt) == s ) {
+					oqdata(0, rq) = cnt
+					break
+				}
+			loop
+		}
+		chara_vanquish MAX_CHARA_NC
+		rewardfix = 135
+		return
+	}
+	if ( rnd(6) == 0 ) {
+		i = -1
+		repeat gClient
+			p = rnd(gClient)
+			repeat gClient
+				if ( qExist(cnt) == QUEST_TYPE_DELIVER ) {
+					if ( qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), cnt) == p ) {
+						p = -1
+						break
+					}
+				}
+			loop
+			if ( p == (-1) ) {
+				continue
+			}
+			if ( qClient(p) != 0 ) {
+				if ( qMap(p) != gArea  | 0 ) {
+					i = p
+					break
+				}
+			}
+		loop
+		if ( i != (-1) ) {
+			p = qMap(i)
+			rewardfix = 70 + map_distance(gArea , p) * 2
+			if ( areaParent(gArea ) != areaParent(p) ) {
+				qDeadline(rq) += 2 + rnd(3)
+				if ( areaParent(gArea ) == AREA_SOUTH_TYRIS ) {
+					rewardfix = map_distance(gArea , 45) * 4 + map_distance(p, 43) * 4 + 200
+				}
+				else {
+					rewardfix = map_distance(p, 45) * 4 + map_distance(gArea , 43) * 4 + 200
+				}
+			}
+			if ( p == 33 | gArea  == AREA_NOYEL ) {
+				rewardfix = rewardfix * 175 / 100
+			}
+			qdata((10 /*!!!@[QDATA_DEST_CLIENT @@@ QDATA_ENCOUNTER]@!!! */), rq) = i
+			repeat
+				flt
+				dbmode = DBMODE_FIND
+				flttypemajor = fsetdeliver(rnd(length(fsetdeliver)))
+				gosub *db_item
+				if ( dbid == 743 ) {
+					continue
+				}
+				break
+			loop
+			qParam1(rq) = flttypemajor
+			qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+			if ( flttypemajor == FILTER_ITEM_SPELLBOOK ) {
+				qRewardItem(rq) = (2 /*!!!@[FILTER_RACE_ORC @@@ QUEST_REWARD_MAGIC]@!!! */)
+			}
+			if ( flttypemajor == FILTER_ORE ) {
+				qRewardItem(rq) = (3 /*!!!@[FILTER_RACE_SLIME @@@ QUEST_REWARD_ARMOR]@!!! */)
+			}
+			if ( flttypemajor == FILTER_JUNK ) {
+				qRewardItem(rq) = FILTER_ORE
+			}
+			if ( flttypemajor == FILTER_FURNITURE ) {
+				qRewardItem(rq) = FILTER_FURNITURE
+			}
+			qDestItem(rq) = dbid
+			qExist(rq) = QUEST_TYPE_DELIVER
+			qType(rq) = QUEST_SUBTYPE_DELIVER
+			qVar(rq) = 0
+			qDeadline(rq) = rnd(12) + 3
+			qLevel(rq) = limit(rewardfix / 20 + 1, 1, 25)
+		}
+		return
+	}
+	if ( rnd(6) == 0 ) {
+		qExist(rq) = QUEST_TYPE_COOK
+		qType(rq) = QUEST_SUBTYPE_SUPPLY
+		qDeadline(rq) = rnd(6) + 2
+		qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+		qParam1(rq) = rnd(9 - 1) + 1
+		if ( qParam1(rq) == 4 ) {
+			qRewardItem(rq) = FILTER_ITEM_POTION
+		}
+		if ( qParam1(rq) == 6 ) {
+			qRewardItem(rq) = FILTER_AMMO
+		}
+		if ( qParam1(rq) == 1 ) {
+			qRewardItem(rq) = FILTER_AMMO
+		}
+		if ( qParam1(rq) == 5 ) {
+			qRewardItem(rq) = FILTER_ITEM_POTION
+		}
+		if ( qParam1(rq) == 7 ) {
+			qRewardItem(rq) = FILTER_ORE
+		}
+		if ( qParam1(rq) == 2 ) {
+			qRewardItem(rq) = FILTER_ITEM_ROD
+		}
+		if ( qParam1(rq) == 3 ) {
+			qRewardItem(rq) = FILTER_ITEM_SCROLL
+		}
+		qParam2(rq) = rnd(10 - 3) + 3
+		qLevel(rq) = qParam2(rq) * 3
+		rewardfix = 60 + qLevel(rq)
+		return
+	}
+	if ( rnd(5) == 0 ) {
+		qExist(rq) = QUEST_TYPE_SUPPLY
+		qType(rq) = QUEST_SUBTYPE_SUPPLY
+		qDeadline(rq) = rnd(6) + 2
+		repeat
+			flt
+			dbmode = DBMODE_FIND
+			flttypemajor = fsetsupply(rnd(length(fsetsupply)))
+			gosub *db_item
+			if ( dbid == 743 ) {
+				continue
+			}
+			break
+		loop
+		qRewardItem(rq) = (5 /*!!!@[FILTER_RACE_KOBOLT @@@ QUEST_REWARD_SUPPLY]@!!! */)
+		qDestItem(rq) = dbid
+		qLevel(rq) = limit(rnd(difficulty() + 5) + 1, 1, 30)
+		rewardfix = 65 + qLevel(rq)
+		return
+	}
+	return
+
+*label_0249
+	qReward(rq) = ((qLevel(rq) + 3) * 100 + rnd(qLevel(rq) * 30 + 200) + 400) * rewardfix / 100
+	qReward(rq) = qReward(rq) * 100 / (100 + qLevel(rq) * 2 / 3)
+	if ( qType(rq) == QUEST_SUBTYPE_SUPPLY | qType(rq) == QUEST_SUBTYPE_DELIVER ) {
+		return
+	}
+	if ( qExist(rq) == QUEST_TYPE_HUNT ) {
+		if ( oqdata(0, rq) ) {
+			qReward(rq) = qReward(rq) * (100 + isetfamily(0, oqdata(0, rq))) / 100
+		}
+	}
+	else {
+		if ( qExist(rq) == QUEST_TYPE_CONQUER | qExist(rq) == QUEST_TYPE_HUNTEX ) {
+			i = 0
+			if ( qParam1(rq) != 343 ) {
+				i = refchara(qParam1(rq), 10)
+			}
+			else {
+				if ( qParam2(rq) != usernpcmax ) {
+					i = userdata(2, qParam2(rq))
+				}
+			}
+			qReward(rq) = qReward(rq) * (100 + limit(i / 5 * 25, 0, 400)) / 100
+		}
+	}
+	return
+
+#defcfunc quest_getescortmapid int quest_getescortmapid_prm0, int quest_getescortmapid_prm1
+	locvar_matdelmain_i = -1
+	repeat
+		locvar_matdelmain_i = asettown(rnd(length(asettown)), quest_getescortmapid_prm1)
+		if ( locvar_matdelmain_i != quest_getescortmapid_prm0 ) {
+			break
+		}
+	loop
+	return locvar_matdelmain_i
+
+
+
+
+
+
+
+
+

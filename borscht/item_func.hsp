@@ -1,0 +1,2277 @@
+#deffunc itemcreate int itemcreate_charid, int itemcreate_dbid, int itemcreate_x, int itemcreate_y, int itemcreate_num
+	itemcreatehack = -1
+	if ( flttypeminor != (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING]@!!! */) ) {
+		flttypemajor = (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING]@!!! */)
+	}
+	if ( itemcreate_dbid == ITEM_ID_DUMMY ) {
+		dbid = -1
+	}
+	else {
+		dbid = itemcreate_dbid
+	}
+	if ( itemcreate_num != 0 ) {
+		initnum = itemcreate_num
+	}
+	else {
+		initnum = 0
+	}
+	val = itemcreate_charid, itemcreate_x, itemcreate_y
+	gosub *item_init
+	if ( stat ) {
+		if ( ci == 5480 ) {
+			iNum(ci) = 0
+			itemmemory(1, dbid)--
+		}
+		else {
+			if ( ogTitleItemMaster == 2 ) {
+				iKnown(ci) = ITEM_KNOWN_FULL
+			}
+		}
+	}
+	itemcreatehack = 0
+	encpfix = 0
+	encbmboost = 0
+	if ( mode != MODELIST_SHOP ) {
+		if ( ci >= 0 ) {
+			if ( iID(ci) == ITEM_ID_GOLD_PIECE | iID(ci) == ITEM_ID_PLATINUM_COIN | iID(ci) == ITEM_ID_MUSIC_TICKET | iID(ci) == ITEM_ID_TOKEN_FRIENDSHIP ) {
+				itemmemory(0, iID(ci)) = 1
+			}
+			if ( cfg_nc_directmoney == 1 ) {
+				if ( ci != 5480 ) {
+					if ( iID(ci) == ITEM_ID_PLATINUM_COIN | iID(ci) == ITEM_ID_GOLD_PIECE ) {
+						if ( inv_getowner(ci) == (-1) ) {
+							if ( iX(ci) == cX(CHARA_PLAYER) & iY(ci) == cY(CHARA_PLAYER) ) {
+								if ( iID(ci) == ITEM_ID_PLATINUM_COIN & godcheck() == "krula" ) {
+									return stat
+								}
+								snd SOUNDLIST_GETGOLD1
+								ti = ci
+								in = iNum(ci)
+								iNum(ci) = 0
+								msgkeep = 1
+								txt -1, lang(itemname(ti, in) + "を手に入れた。", "Get " + itemname(ti, in) + ".")
+								cell_refresh iX(ci), iY(ci)
+								mapItemsMemory(iX(ci), iY(ci)) = mapItems(iX(ci), iY(ci))
+								if ( iID(ci) == ITEM_ID_GOLD_PIECE ) {
+									se_moneymod 0, in
+								}
+								else {
+									addplat 0, in
+								}
+								return 0
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return stat
+
+#deffunc inv_getheader int inv_getheader_arg1
+	if ( inv_getheader_arg1 == 0 ) {
+		invhead = 0
+		invrange = SIZE_INV1
+		if ( nc_intb_nightmare ) {
+			invrange = 50
+		}
+		return
+	}
+	if ( inv_getheader_arg1 == (-1) ) {
+		invhead = RANGE_INV2
+		invrange = MAX_INV_DATA - RANGE_INV2
+		return
+	}
+	invhead = SIZE_INV1 + SIZE_INV2 * (inv_getheader_arg1 - 1)
+	invrange = SIZE_INV2
+	return
+
+#defcfunc inv_getowner int inv_getowner_itemid
+	if ( inv_getowner_itemid < SIZE_INV1 ) {
+		return 0
+	}
+	if ( inv_getowner_itemid >= RANGE_INV2 ) {
+		return -1
+	}
+	return (inv_getowner_itemid - 200) / 20 + 1
+
+#deffunc inv_find int inv_find_item_dbid, int inv_find_invid
+	locvar_inv_find_f = -1
+	inv_getheader inv_find_invid
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			continue
+		}
+		if ( iID(cnt) == inv_find_item_dbid ) {
+			locvar_inv_find_f = cnt
+			break
+		}
+	loop
+	return locvar_inv_find_f
+
+#deffunc inv_find_ex int inv_find_ex_prm0, int inv_find_ex_prm1, int inv_find_ex_prm2
+	locvar_inv_find_f = -1
+	inv_getheader inv_find_ex_prm1
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			continue
+		}
+		if ( iID(cnt) == inv_find_ex_prm0 ) {
+			if ( refitem(iID(cnt), DBSPEC_TYPE, cnt) == FILTER_ITEM_FOOD ) {
+				if ( stgdata(56 + sc) != iParam2(cnt) ) {
+					continue
+				}
+			}
+			if ( iStatus(cnt) == inv_find_ex_prm2 & iKnown(cnt) == ITEM_KNOWN_FULL | (stgdata(36 + sc) == (-3) & iKnown(cnt) < ITEM_KNOWN_FULL) | cfg_st_shortcut == 0 ) {
+				locvar_inv_find_f = cnt
+				break
+			}
+		}
+	loop
+	return locvar_inv_find_f
+
+#deffunc item_find int item_find_query, int item_find_mode, int item_find_inv
+	locvar_item_find_p = -1, -1
+	repeat 2
+		if ( cnt == 0 ) {
+			if ( item_find_inv < ITEM_FIND_LOCATION_GROUND_AND_CHARAS ) {
+				continue
+			}
+			inv_getheader 0
+		}
+		else {
+			if ( item_find_inv > ITEM_FIND_LOCATION_GROUND_AND_CHARAS ) {
+				continue
+			}
+			inv_getheader -1
+		}
+		locvar_item_find_p(2) = cnt
+		repeat invrange, invhead
+			if ( iNum(cnt) == 0 ) {
+				continue
+			}
+			if ( locvar_item_find_p(2) == 1 ) {
+				if ( iX(cnt) != cX(CHARA_PLAYER) | iY(cnt) != cY(CHARA_PLAYER) ) {
+					continue
+				}
+			}
+			if ( item_find_mode == ITEM_FIND_MODE_TYPE ) {
+				if ( refitem(iID(cnt), DBSPEC_TYPE, cnt) == item_find_query ) {
+					locvar_item_find_p = cnt
+				}
+			}
+			if ( item_find_mode == ITEM_FIND_MODE_SKILL_REF ) {
+				if ( iSkillRef(cnt) == item_find_query ) {
+					if ( locvar_item_find_p(1) < iParam1(cnt) ) {
+						locvar_item_find_p = cnt, iParam1(cnt)
+					}
+				}
+			}
+			if ( item_find_mode == ITEM_FIND_MODE_TYPE_MINOR ) {
+				if ( refitem(iID(cnt), DBSPEC_TYPE_MINOR, cnt) == item_find_query ) {
+					locvar_item_find_p = cnt
+				}
+			}
+			if ( item_find_mode == ITEM_FIND_MODE_DBID ) {
+				if ( iID(cnt) == item_find_query ) {
+					locvar_item_find_p = cnt
+				}
+			}
+			if ( item_find_mode == 4 ) {
+				if ( iEffect(cnt) == item_find_query ) {
+					locvar_item_find_p = cnt
+				}
+			}
+		loop
+	loop
+	return locvar_item_find_p
+
+#defcfunc encfind int encfind_charid, int encfind_encid
+	locvar_encfind_f = sppfind(encfind_charid, encfind_encid)
+	repeat 30, 100
+		if ( cdata(cnt, encfind_charid) \ EXT_EQUIP_SLOTS == 0 ) {
+			continue
+		}
+		locvar_encfind_i = cdata(cnt, encfind_charid) \ EXT_EQUIP_SLOTS - 1
+		repeat 15
+			if ( inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, locvar_encfind_i) == 0 ) {
+				break
+			}
+			if ( inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, locvar_encfind_i) == encfind_encid ) {
+				if ( inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, locvar_encfind_i) > locvar_encfind_f ) {
+					locvar_encfind_f = inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, locvar_encfind_i)
+					break
+				}
+			}
+		loop
+	loop
+	return locvar_encfind_f
+
+#defcfunc encfindspec int encfindspec_itemid, int encfindspec_encid
+	locvar_encfind_f = -1
+	repeat 15
+		if ( inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, encfindspec_itemid) == 0 ) {
+			break
+		}
+		if ( inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, encfindspec_itemid) == encfindspec_encid ) {
+			locvar_encfind_f = 1
+			break
+		}
+	loop
+	return locvar_encfind_f
+
+#deffunc itemlist int itemlist_inv, int itemlist_item_dbid
+	inv_getheader itemlist_inv
+	listmax = 0
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			continue
+		}
+		if ( iID(cnt) == itemlist_item_dbid ) {
+			list(0, listmax) = cnt
+			listmax++
+		}
+	loop
+	return
+
+#defcfunc itemusingfind int itemusingfind_itemid, int itemusingfind_arg2
+	locvar_itemusingfind_f = -1
+	repeat 245
+		dup roopbuf, cRowAct(cnt)
+		if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+			continue
+		}
+		if ( roopbuf != 0 & roopbuf != 11 & roopbuf != 10006 ) {
+			if ( cActionPeriod(cnt) > 0 ) {
+				if ( cItemUsing(cnt) == itemusingfind_itemid ) {
+					if ( itemusingfind_arg2 == FALSE | (itemusingfind_arg2 == TRUE & cnt != 0) ) {
+						locvar_itemusingfind_f = cnt
+						break
+					}
+				}
+			}
+		}
+	loop
+	return locvar_itemusingfind_f
+
+#defcfunc itemfind int itemfind_x, int itemfind_y, int itemfind_item_dbid
+	inv_getheader itemfind_x
+	locvar_itemusingfind_f = -1
+	if ( itemfind_item_dbid == ITEM_ID_DUMMY ) {
+		repeat invrange, invhead
+			if ( iNum(cnt) == 0 ) {
+				continue
+			}
+			if ( iID(cnt) == itemfind_y ) {
+				locvar_itemusingfind_f = cnt
+				break
+			}
+		loop
+		return locvar_itemusingfind_f
+	}
+	if ( itemfind_item_dbid == ITEM_ID_LONG_SWORD ) {
+		repeat invrange, invhead
+			if ( iNum(cnt) == 0 ) {
+				continue
+			}
+			if ( refitem(iID(cnt), DBSPEC_TYPE_MINOR, cnt) == itemfind_y ) {
+				locvar_itemusingfind_f = cnt
+				break
+			}
+		loop
+		return locvar_itemusingfind_f
+	}
+
+#defcfunc itemfind_dragonskin int itemfind_dragonskin_prm0
+	inv_getheader itemfind_dragonskin_prm0
+	locvar_itemusingfind_f = -1
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			continue
+		}
+		if ( iID(cnt) == ITEM_ID_SKIN ) {
+			s = refchara(iSubName(cnt), DBSPEC_CHARA_FILTER, 1)
+			if ( instr(s, 0, "/dragon/") != (-1) ) {
+				locvar_itemusingfind_f = cnt
+				break
+			}
+		}
+	loop
+	return locvar_itemusingfind_f
+
+#defcfunc mapitemfind int mapitemfind_x, int mapitemfind_y, int mapitemfind_itemid
+	inv_getheader -1
+	locvar_itemusingfind_f = -1
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			continue
+		}
+		if ( iID(cnt) == mapitemfind_itemid ) {
+			if ( iX(cnt) == mapitemfind_x ) {
+				if ( iY(cnt) == mapitemfind_y ) {
+					locvar_itemusingfind_f = cnt
+					break
+				}
+			}
+		}
+	loop
+	return locvar_itemusingfind_f
+
+#defcfunc bititemfind int bititemfind_prm0, int bititemfind_prm1, int bititemfind_prm2
+	inv_getheader bititemfind_prm0
+	locvar_mapitemfind_itemno = -1
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			continue
+		}
+		if ( bititemfind_prm2 & iEquip(cnt) == 0 ) {
+			continue
+		}
+		if ( ibit(bititemfind_prm1, cnt) ) {
+			locvar_mapitemfind_itemno = cnt
+			break
+		}
+	loop
+	return locvar_mapitemfind_itemno
+
+#defcfunc customitemfind int customitemfind_prm0, str customitemfind_prm1
+	inv_getheader customitemfind_prm0
+	locvar_mapitemfind_citemno = -1
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			continue
+		}
+		if ( equalsitem(cnt, customitemfind_prm1) ) {
+			locvar_mapitemfind_citemno = cnt
+			break
+		}
+	loop
+	return locvar_mapitemfind_citemno
+
+#deffunc cell_refresh int cell_refresh_x, int cell_refresh_y
+	if ( mode == MODELIST_SHOP | mode == MODELIST_TXT_ADV ) {
+		return
+	}
+	if ( cell_refresh_x < 0 | cell_refresh_y < 0 | cell_refresh_x >= mWidth | cell_refresh_y >= mHeight ) {
+		return
+	}
+	locvar_cell_refresh_p = 0
+	mapItems(cell_refresh_x, cell_refresh_y) = 0
+	mapLight(cell_refresh_x, cell_refresh_y) = 0
+	mapinv(cell_refresh_x, cell_refresh_y) = 0
+	inv_getheader -1
+	repeat invrange, invhead
+		if ( iNum(cnt) > 0 ) {
+			if ( iX(cnt) == cell_refresh_x & iY(cnt) == cell_refresh_y ) {
+				floorstack(locvar_cell_refresh_p) = cnt
+				locvar_cell_refresh_p++
+				wpoke mapItems(cell_refresh_x, cell_refresh_y), 0, iPic(cnt)
+				wpoke mapItems(cell_refresh_x, cell_refresh_y), 2, iCol(cnt)
+				mapinv(cell_refresh_x, cell_refresh_y) = cnt + 1
+				if ( iID(cnt) == ITEM_ID_CARNEADES_PLANK ) {
+					if ( useritemdata(13, iCItemIdx(cnt)) != 0 ) {
+						mapLight(cell_refresh_x, cell_refresh_y) = useritemdata(13, iCItemIdx(cnt))
+					}
+				}
+				else {
+					if ( ilight(iID(cnt)) != LIGHT_TYPE_NONE ) {
+						mapLight(cell_refresh_x, cell_refresh_y) = ilight(iID(cnt))
+					}
+				}
+			}
+		}
+	loop
+	if ( locvar_cell_refresh_p > 3 ) {
+		if ( cfg_stacksymbol == 1 & areaId(gArea ) == AREA_STORAGE_HOUSE ) {
+			locvar_cell_refresh_p = 3
+		}
+		else {
+			wpoke mapItems(cell_refresh_x, cell_refresh_y), 0, 363
+			wpoke mapItems(cell_refresh_x, cell_refresh_y), 2, 0
+			mapinv(cell_refresh_x, cell_refresh_y) = -1
+			return
+		}
+	}
+	if ( locvar_cell_refresh_p > 1 ) {
+		locvar_cell_refresh_n(2) = 0
+		repeat locvar_cell_refresh_p
+			locvar_cell_refresh_cnt2 = cnt
+			locvar_cell_refresh_i = -1
+			repeat locvar_cell_refresh_p
+				if ( locvar_cell_refresh_cnt2 == 1 ) {
+					if ( cnt == locvar_cell_refresh_n(0) ) {
+						continue
+					}
+				}
+				if ( locvar_cell_refresh_cnt2 == 2 ) {
+					if ( cnt == locvar_cell_refresh_n(0) | cnt == locvar_cell_refresh_n(1) ) {
+						continue
+					}
+				}
+				if ( iTurn(floorstack(cnt)) > locvar_cell_refresh_i ) {
+					locvar_cell_refresh_n(locvar_cell_refresh_cnt2) = cnt
+					locvar_cell_refresh_i = iTurn(floorstack(cnt))
+				}
+			loop
+		loop
+		mapItems(cell_refresh_x, cell_refresh_y) = floorstack(locvar_cell_refresh_n(0)) - 5080
+		mapItems(cell_refresh_x, cell_refresh_y) += (floorstack(locvar_cell_refresh_n(1)) - 5080) * 1000
+		if ( locvar_cell_refresh_p > 2 ) {
+			mapItems(cell_refresh_x, cell_refresh_y) += (floorstack(locvar_cell_refresh_n(2)) - 5080) * 1000000
+		}
+		else {
+			mapItems(cell_refresh_x, cell_refresh_y) += 999 * 1000000
+		}
+		mapItems(cell_refresh_x, cell_refresh_y) *= -1
+		mapinv(cell_refresh_x, cell_refresh_y) = -1
+	}
+	return
+
+#deffunc itemturn int itemturn_itemid
+	if ( gItemTurn < 0 ) {
+		gItemTurn = 0
+	}
+	gItemTurn++
+	iTurn(itemturn_itemid) = gItemTurn
+	return
+
+#deffunc removeitem int removeitem_itemid, int removeitem_amount
+	locvar_removeitem_n = removeitem_amount
+	if ( locvar_removeitem_n == 0 ) {
+		locvar_removeitem_n = 1
+	}
+	iNum(removeitem_itemid) -= locvar_removeitem_n
+	if ( removeitem_itemid < SIZE_INV1 ) {
+		gosub *label_1681
+	}
+	if ( iNum(removeitem_itemid) <= 0 ) {
+		iNum(removeitem_itemid) = 0
+		if ( mode != MODELIST_SHOP ) {
+			if ( removeitem_itemid >= RANGE_INV2 ) {
+				cell_refresh iX(removeitem_itemid), iY(removeitem_itemid)
+			}
+		}
+	}
+	return
+
+#deffunc item_copy int item_copy_src, int item_copy_dst
+	if ( item_copy_src < 0 | item_copy_dst < 0 ) {
+		return
+	}
+	memcpy iNum(item_copy_dst), iNum(item_copy_src), 70 * 4
+	return
+
+#deffunc item_exchange int item_exchange_itemid1, int item_exchange_itemid2
+	repeat 70
+		locvar_item_exchange_p = inv(cnt, item_exchange_itemid2)
+		inv(cnt, item_exchange_itemid2) = inv(cnt, item_exchange_itemid1)
+		inv(cnt, item_exchange_itemid1) = locvar_item_exchange_p
+	loop
+	return
+
+#deffunc item_delete int item_delete_itemid
+	memset iNum(item_delete_itemid), 0, 70 * 4
+	return
+
+#defcfunc inv_getspace int inv_getspace_charid
+	inv_getheader inv_getspace_charid
+	locvar_item_exchange_p = 0
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			locvar_item_exchange_p++
+			break
+		}
+	loop
+	return locvar_item_exchange_p
+
+#defcfunc inv_sum int inv_sum_charid
+	inv_getheader inv_sum_charid
+	locvar_item_exchange_p = 0
+	repeat invrange, invhead
+		if ( iNum(cnt) != 0 ) {
+			locvar_item_exchange_p++
+		}
+	loop
+	return locvar_item_exchange_p
+
+#deffunc item_compress int item_compress_arg0
+	locvar_item_exchange_p = 0
+	repeat 100
+		locvar_item_exchange_p(1) = 200 * (cnt * cnt + 1)
+		repeat invrange, invhead
+			if ( iNum(cnt) == 0 ) {
+				continue
+			}
+			if ( ibit(ITEM_BIT_PRECIOUS, cnt) ) {
+				continue
+			}
+			if ( iValue(cnt) >= locvar_item_exchange_p(1) ) {
+				continue
+			}
+			if ( iID(cnt) == ITEM_ID_TRASH_CAN ) {
+				continue
+			}
+			if ( mode != MODELIST_SHOP ) {
+				trash_push cnt
+			}
+			iNum(cnt) = 0
+			locvar_item_exchange_p++
+			if ( iX(cnt) >= 0 & iX(cnt) < mWidth & iY(cnt) >= 0 & iY(cnt) < mHeight ) {
+				cell_refresh iX(cnt), iY(cnt)
+			}
+			if ( locvar_item_exchange_p > item_compress_arg0 ) {
+				break
+			}
+		loop
+		if ( locvar_item_exchange_p > item_compress_arg0 ) {
+			break
+		}
+	loop
+	locvar_item_exchange_p = -1
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			locvar_item_exchange_p = cnt
+			break
+		}
+	loop
+	if ( locvar_item_exchange_p == (-1) ) {
+		locvar_item_exchange_p = invhead + rnd(invrange)
+		if ( iNum(locvar_item_exchange_p) != 0 ) {
+			if ( mode != MODELIST_SHOP ) {
+				trash_push locvar_item_exchange_p
+			}
+			iNum(locvar_item_exchange_p) = 0
+			if ( mode != MODELIST_SHOP ) {
+				if ( iX(locvar_item_exchange_p) >= 0 & iX(locvar_item_exchange_p) < mWidth & iY(locvar_item_exchange_p) >= 0 & iY(locvar_item_exchange_p) < mHeight ) {
+					cell_refresh iX(locvar_item_exchange_p), iY(locvar_item_exchange_p)
+				}
+			}
+		}
+	}
+	return
+
+#defcfunc inv_getfreeid int inv_getfreeid_charid
+	inv_getheader inv_getfreeid_charid
+	locvar_item_exchange_p = -1
+	repeat invrange, invhead
+		if ( iNum(cnt) == 0 ) {
+			locvar_item_exchange_p = cnt
+			break
+		}
+	loop
+	if ( locvar_item_exchange_p == (-1) ) {
+		if ( inv_getfreeid_charid == (-1) ) {
+			if ( mode != MODELIST_SHOP ) {
+				locvar_inv_getfreeid_f = 0
+				repeat 246, -1
+					if ( cnt != (-1) ) {
+						if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+							continue
+						}
+					}
+					inv_getheader cnt
+					repeat invrange, invhead
+						if ( iNum(cnt) > 0 ) {
+							if ( iID(cnt) == ITEM_ID_TRASH_CAN ) {
+								locvar_inv_getfreeid_f = 1
+								break
+							}
+						}
+					loop
+					if ( locvar_inv_getfreeid_f ) {
+						break
+					}
+				loop
+				inv_getheader inv_getfreeid_charid
+				if ( locvar_inv_getfreeid_f ) {
+					txt -1, lang("アイテム情報が多すぎる！幾つかのアイテムがゴミ箱に放り込まれた。", "Too many item data! Some items in this area are thrown for trash.")
+					item_compress 25
+					trash_throw
+				}
+				else {
+					txt -1, lang("アイテム情報が多すぎる！幾つかのアイテムは破壊された。", "Too many item data! Some items in this area are destroyed.")
+					item_compress 10
+					trash_reset
+				}
+			}
+		}
+	}
+	return locvar_item_exchange_p
+
+#defcfunc inv_weight int inv_weight_charid
+	locvar_randskill_p = 0.0
+	inv_getheader inv_weight_charid
+	if ( inv_weight_charid == CHARA_PLAYER ) {
+		gCargoWeight = 0
+		ogCargoValue = 0
+	}
+	repeat invrange, invhead
+		if ( iNum(cnt) != 0 ) {
+			if ( iWeight(cnt) >= 0 ) {
+				locvar_randskill_p += double(iWeight(cnt)) * iNum(cnt)
+			}
+			else {
+				if ( inv_weight_charid == CHARA_PLAYER ) {
+					gCargoWeight += limit(iWeight(cnt) * iNum(cnt) * (-1), 0, 10000000)
+					ogCargoValue += limit(iValue(cnt) * iNum(cnt), 0, 10000000)
+				}
+			}
+		}
+	loop
+	return locvar_randskill_p
+
+#deffunc item_num int item_num_itemid, int item_num_amount
+	iNum(item_num_itemid) += item_num_amount
+	if ( iNum(item_num_itemid) < 0 ) {
+		iNum(item_num_itemid) = 0
+	}
+	if ( item_num_itemid >= RANGE_INV2 ) {
+		cell_refresh iX(item_num_itemid), iY(item_num_itemid)
+	}
+	else {
+		gosub *label_1681
+	}
+	return
+
+#deffunc item_separate var item_separate_itemid
+	if ( iNum(item_separate_itemid) <= 1 ) {
+		return item_separate_itemid
+	}
+	locvar_item_separate_ti = inv_getfreeid(inv_getowner(item_separate_itemid))
+	if ( locvar_item_separate_ti == (-1) ) {
+		locvar_item_separate_ti = inv_getfreeid(-1)
+		if ( locvar_item_separate_ti == (-1) ) {
+			iNum(item_separate_itemid) = 1
+			txt -1, lang("何かが地面に落ちて消えた…", "Something falls to the ground and disappear...")
+			return item_separate_itemid
+		}
+	}
+	item_copy item_separate_itemid, locvar_item_separate_ti
+	iNum(locvar_item_separate_ti) = iNum(item_separate_itemid) - 1
+	iNum(item_separate_itemid) = 1
+	if ( inv_getowner(locvar_item_separate_ti) == (-1) ) {
+		if ( mode != MODELIST_SHOP ) {
+			if ( inv_getowner(item_separate_itemid) != (-1) ) {
+				iX(item_separate_itemid) = cX(inv_getowner(item_separate_itemid))
+				iY(item_separate_itemid) = cY(inv_getowner(item_separate_itemid))
+			}
+			iX(locvar_item_separate_ti) = iX(item_separate_itemid)
+			iY(locvar_item_separate_ti) = iY(item_separate_itemid)
+			itemturn locvar_item_separate_ti
+			cell_refresh iX(locvar_item_separate_ti), iY(locvar_item_separate_ti)
+			if ( inv_getowner(item_separate_itemid) != (-1) ) {
+				txt -1, lang("何かが地面に落ちた。", "Something falls to the ground from your backpack.")
+			}
+			gosub *label_1681
+		}
+	}
+	return locvar_item_separate_ti
+
+#deffunc chara_unequip int chara_unequip_itemid
+	if ( iEquip(chara_unequip_itemid) == 0 ) {
+		return 0
+	}
+	locvar_chara_unequip_p = iEquip(chara_unequip_itemid)
+	locvar_chara_unequip_c = inv_getowner(chara_unequip_itemid)
+	if ( locvar_chara_unequip_c == (-1) ) {
+		return 0
+	}
+	cdata(locvar_chara_unequip_p, locvar_chara_unequip_c) = cdata(locvar_chara_unequip_p, locvar_chara_unequip_c) / EXT_EQUIP_SLOTS * 10000
+	iEquip(chara_unequip_itemid) = 0
+	return 1
+
+#deffunc item_identify int item_identify_itemid, int item_identify_idlevel, int item_identify_power
+	locvar_item_identify_idlv = item_identify_idlevel
+	if ( item_identify_power ) {
+		if ( item_identify_power >= iIdtLevel(item_identify_itemid) ) {
+			locvar_item_identify_idlv = 3
+		}
+	}
+	if ( locvar_item_identify_idlv >= 2 ) {
+		if ( refitem(iID(item_identify_itemid), DBSPEC_TYPE, item_identify_itemid) >= FILTER_ITEM_MIN ) {
+			locvar_item_identify_idlv = 3
+		}
+	}
+	if ( locvar_item_identify_idlv == (-1) | iKnown(item_identify_itemid) >= locvar_item_identify_idlv ) {
+		idtresult = 0
+		return 0
+	}
+	iKnown(item_identify_itemid) = locvar_item_identify_idlv
+	if ( iKnown(item_identify_itemid) >= ITEM_KNOWN_NAME ) {
+		itemmemory(0, iID(item_identify_itemid)) = 1
+	}
+	idtresult = locvar_item_identify_idlv
+	return idtresult
+
+#deffunc item_checkknown int item_checkknown_itemid
+	if ( iKnown(item_checkknown_itemid) >= ITEM_KNOWN_FULL ) {
+		iKnown(item_checkknown_itemid) = ITEM_KNOWN_FULL
+	}
+	if ( oabit(1, gArea ) ) {
+		return
+	}
+	if ( iID(item_checkknown_itemid) != ITEM_ID_CARNEADES_PLANK ) {
+		if ( itemmemory(0, iID(item_checkknown_itemid)) ) {
+			if ( iKnown(item_checkknown_itemid) == ITEM_KNOWN_NONE ) {
+				item_identify item_checkknown_itemid, ITEM_KNOWN_NAME
+			}
+		}
+	}
+	return
+
+#defcfunc rpname int rpname_arg1
+	locvar_rpname_s = "?????"
+	if ( rpdatan(rpname_arg1) != "" ) {
+		return rpdatan(rpname_arg1)
+	}
+	if ( rpname_arg1 >= 400 ) {
+		return ioriginalnameref(rpname_arg1 - 400)
+	}
+	return locvar_rpname_s
+
+#defcfunc itemname int itemname_itemid, int itemname_arg2, int itemname_arg3, int itemname_prm3
+	itemnamehack = iID(itemname_itemid) + 1
+	if ( iID(itemname_itemid) >= maxitemid - 2 | iID(itemname_itemid) > length(ioriginalnameref) ) {
+		itemnamehack = 0
+		return lang("未知のアイテム(バージョン非互換)", "unknown item (incompatible version)")
+	}
+	if ( iQuality(itemname_itemid) >= FIX_QUALITY_GODLY ) {
+		locvar_itemname_iqiality(itemname_itemid) = 5
+	}
+	item_checkknown itemname_itemid
+	if ( itemname_arg2 == 0 ) {
+		locvar_itemname_num2 = iNum(itemname_itemid)
+	}
+	else {
+		locvar_itemname_num2 = itemname_arg2
+	}
+	locvar_itemname_a = refitem(iID(itemname_itemid), DBSPEC_TYPE, itemname_itemid)
+	if ( jp ) {
+		if ( locvar_itemname_num2 > 1 ) {
+			locvar_itemname_s2 = "個の"
+			if ( locvar_itemname_a == 16000 ) {
+				locvar_itemname_s2 = "着の"
+			}
+			if ( locvar_itemname_a == 54000 | locvar_itemname_a == 55000 ) {
+				if ( iID(itemname_itemid) == ITEM_ID_RECIPE ) {
+					locvar_itemname_s2 = "枚の"
+				}
+				else {
+					locvar_itemname_s2 = "冊の"
+				}
+			}
+			if ( locvar_itemname_a == 10000 ) {
+				locvar_itemname_s2 = "本の"
+			}
+			if ( locvar_itemname_a == 52000 & (iID(itemname_itemid) == ITEM_ID_BOTTLE_MILK & iParam2(itemname_itemid) != 0) == 0 & (refitem(iID(itemname_itemid), DBSPEC_TYPE_MINOR, itemname_itemid) == FILTER_ITEM_FOOD_HERB & iParam2(itemname_itemid) > 1 & iID(itemname_itemid) != ITEM_ID_INFIEA) == 0 ) {
+				locvar_itemname_s2 = "服の"
+			}
+			if ( locvar_itemname_a == 53000 ) {
+				locvar_itemname_s2 = "巻の"
+			}
+			if ( locvar_itemname_a == 22000 | locvar_itemname_a == 18000 ) {
+				locvar_itemname_s2 = "対の"
+			}
+			if ( locvar_itemname_a == 68000 | locvar_itemname_a == 69000 | iID(itemname_itemid) == ITEM_ID_SMALL_MEDAL | iID(itemname_itemid) == ITEM_ID_MUSIC_TICKET | iID(itemname_itemid) == ITEM_ID_TOKEN_FRIENDSHIP ) {
+				locvar_itemname_s2 = "枚の"
+			}
+			if ( iID(itemname_itemid) == ITEM_ID_FISH ) {
+				locvar_itemname_s2 = "匹の"
+			}
+			if ( locvar_itemname_a == 68000 | locvar_itemname_a == 69000 ) {
+				locvar_itemname_s = thousandsep(str(locvar_itemname_num2)) + locvar_itemname_s2
+			}
+			else {
+				locvar_itemname_s = oomsest_insertseparater(str(locvar_itemname_num2)) + locvar_itemname_s2
+			}
+		}
+		else {
+			locvar_itemname_s = ""
+		}
+		if ( iKnown(itemname_itemid) >= ITEM_KNOWN_FULL ) {
+			if ( iStatus(itemname_itemid) == ITEM_STATUS_BLESSED ) {
+				if ( locvar_itemname_a == 57000 | iID(itemname_itemid) == ITEM_ID_SCROLL_FAITH | iID(itemname_itemid) == ITEM_ID_BOTTLE_MILK & itemname_prm3 == 0 ) {
+					if ( ibit(ITEM_BIT_REMAKE, itemname_itemid) ) {
+						godindext = getgodindex(iParam4(itemname_itemid))
+						if ( godindext != (-1) ) {
+							locvar_itemname_s2 = cnven(usergoddatan(3, godindext))
+						}
+						else {
+							locvar_itemname_s2 = godshortname(godno2godid(iParam4(itemname_itemid)))
+						}
+						locvar_itemname_s += locvar_itemname_s2 + "に"
+					}
+				}
+				locvar_itemname_s += strblessed
+			}
+			if ( iStatus(itemname_itemid) == ITEM_STATUS_CURSED ) {
+				locvar_itemname_s += strcursed
+			}
+			if ( iStatus(itemname_itemid) == ITEM_STATUS_DOOMED ) {
+				locvar_itemname_s += strdoomed
+			}
+		}
+	}
+	else {
+		locvar_itemname_s = ""
+		if ( iKnown(itemname_itemid) >= ITEM_KNOWN_FULL ) {
+			if ( iStatus(itemname_itemid) == ITEM_STATUS_BLESSED ) {
+				locvar_itemname_s = ""
+				if ( locvar_itemname_a == 57000 | iID(itemname_itemid) == ITEM_ID_SCROLL_FAITH | iID(itemname_itemid) == ITEM_ID_BOTTLE_MILK ) {
+					if ( ibit(ITEM_BIT_REMAKE, itemname_itemid) ) {
+						godindext = getgodindex(iParam4(itemname_itemid))
+						if ( godindext != (-1) ) {
+							locvar_itemname_s2 = cnven(usergoddatan(3, godindext))
+						}
+						else {
+							locvar_itemname_s2 = godshortname(godno2godid(iParam4(itemname_itemid)))
+						}
+						locvar_itemname_s = locvar_itemname_s2 + "-"
+					}
+				}
+				locvar_itemname_s += strblessed + " "
+			}
+			if ( iStatus(itemname_itemid) == ITEM_STATUS_CURSED ) {
+				locvar_itemname_s = strcursed + " "
+			}
+			if ( iStatus(itemname_itemid) == ITEM_STATUS_DOOMED ) {
+				locvar_itemname_s = strdoomed + " "
+			}
+		}
+		if ( irandomname(iID(itemname_itemid)) == 1 & iKnown(itemname_itemid) < ITEM_KNOWN_NAME ) {
+			locvar_itemname_s2 = ""
+		}
+		else {
+			locvar_itemname_s2 = "" + ioriginalname2cnv(itemname_itemid)
+			if ( instr(ioriginalnameref(iID(itemname_itemid)), 0, "with") != (-1) ) {
+				locvar_itemname_s3 = "with"
+			}
+			else {
+				locvar_itemname_s3 = "of"
+			}
+			if ( iKnown(itemname_itemid) != ITEM_KNOWN_NONE ) {
+				if ( locvar_itemname_s2 == "" ) {
+					if ( iWeight(itemname_itemid) < 0 ) {
+						locvar_itemname_s2 = "cargo"
+					}
+					if ( locvar_itemname_a == 22000 | locvar_itemname_a == 18000 ) {
+						locvar_itemname_s2 = "pair"
+					}
+				}
+			}
+			if ( locvar_itemname_a == 57000 | iID(itemname_itemid) == ITEM_ID_BOTTLE_MILK ) {
+				if ( iParam1(itemname_itemid) != 0 ) {
+					if ( iParam2(itemname_itemid) != 0 ) {
+						locvar_itemname_s2 = "dish"
+					}
+				}
+			}
+		}
+		if ( locvar_itemname_s2 != "" & iID(itemname_itemid) != ITEM_ID_FISH ) {
+			if ( locvar_itemname_num2 > 1 ) {
+				locvar_itemname_s = "" + locvar_itemname_num2 + " " + locvar_itemname_s + locvar_itemname_s2 + "s " + locvar_itemname_s3 + " "
+			}
+			else {
+				locvar_itemname_s = locvar_itemname_s + locvar_itemname_s2 + " " + locvar_itemname_s3 + " "
+			}
+		}
+		else {
+			if ( locvar_itemname_num2 > 1 ) {
+				locvar_itemname_s = "" + locvar_itemname_num2 + " " + locvar_itemname_s
+			}
+		}
+	}
+	if ( locvar_itemname_a < 50000 & iParam3(itemname_itemid) > 0 & iID(itemname_itemid) != ITEM_ID_CARNEADES_PLANK & itemname_prm3 == 0 ) {
+		locvar_itemname_s += cnamelist(iParam3(itemname_itemid) - 1)
+		return locvar_itemname_s
+	}
+	if ( iMaterial(itemname_itemid) == ITEM_MATERIAL_RAW & locvar_itemname_a == 57000 ) {
+		if ( iParam3(itemname_itemid) < 0 | (mode == MODELIST_SHOP & invctrl(1) == 14 & iParam3(itemname_itemid) <= getgametime()) ) {
+			if ( jp ) {
+				locvar_itemname_s += "腐った"
+			}
+			else {
+				locvar_itemname_s += "rotten "
+			}
+		}
+	}
+	if ( en ) {
+		if ( locvar_itemname_a == 57000 | iID(itemname_itemid) == ITEM_ID_BOTTLE_MILK ) {
+			if ( iParam1(itemname_itemid) != 0 ) {
+				if ( iParam2(itemname_itemid) != 0 ) {
+					locvar_itemname_skip = 1
+				}
+			}
+		}
+		if ( iSubName(itemname_itemid) != 0 ) {
+			if ( locvar_itemname_a == 60000 | locvar_itemname_a == 77000 ) {
+				if ( iSubName(itemname_itemid) >= 12 ) {
+					iSubName(itemname_itemid) = 0
+				}
+				else {
+					locvar_itemname_s += _furniture(iSubName(itemname_itemid)) + " "
+				}
+			}
+		}
+		if ( iID(itemname_itemid) == ITEM_ID_ANCIENT_BOOK ) {
+			if ( iParam2(itemname_itemid) != 0 ) {
+				locvar_itemname_s += "undecoded "
+			}
+		}
+		if ( iID(itemname_itemid) == ITEM_ID_RECIPE ) {
+			if ( iSubName(itemname_itemid) == 0 ) {
+				locvar_itemname_s += "custom "
+			}
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_CARNEADES_PLANK ) {
+		if ( useritemdata(65, iCItemIdx(itemname_itemid)) ) {
+			if ( iKnown(itemname_itemid) < ITEM_KNOWN_FULL ) {
+				if ( iQuality(itemname_itemid) < FIX_QUALITY_MIRACLE | locvar_itemname_a >= 50000 ) {
+					locvar_itemname_s += ioriginalnamecnv(itemname_itemid)
+				}
+				else {
+					locvar_itemname_s += iknownnamecnv(itemname_itemid)
+				}
+			}
+			else {
+				locvar_itemname_s += ioriginalnamecnv(itemname_itemid)
+			}
+			goto *skipName
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_MATERIAL_KIT ) {
+		locvar_itemname_s += "" + mtname(0, iMaterial(itemname_itemid)) + lang("製の", " ")
+	}
+	if ( jp ) {
+		gosub *itemNameSub
+	}
+	if ( locvar_itemname_a == 60000 ) {
+		if ( iMaterial(itemname_itemid) != ITEM_MATERIAL_SAND & ibit(21, itemname_itemid) == FALSE ) {
+			if ( jp ) {
+				locvar_itemname_s += "" + mtname(0, iMaterial(itemname_itemid)) + "細工の"
+			}
+			else {
+				locvar_itemname_s += "" + mtname(0, iMaterial(itemname_itemid)) + "work "
+			}
+		}
+		else {
+			if ( iMaterial(itemname_itemid) != ITEM_MATERIAL_SAND & ibit(21, itemname_itemid) != FALSE ) {
+				if ( iParam2(itemname_itemid) == 343 ) {
+					if ( iCNpcId(itemname_itemid) != usernpcmax ) {
+						locvar_itemname_s += lang("" + userdatan(1, iCNpcId(itemname_itemid)), "" + userdatan(1, iCNpcId(itemname_itemid)))
+					}
+					else {
+						locvar_itemname_s += "" + lang("残りカス", "garbage")
+					}
+				}
+				else {
+					if ( iParam2(itemname_itemid) == 999 ) {
+						locvar_itemname_s += "" + cnName(CHARA_PLAYER)
+					}
+					else {
+						locvar_itemname_s += "" + refchara(iParam2(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1)
+					}
+				}
+				if ( jp ) {
+					locvar_itemname_s += "の" + mtname(0, iMaterial(itemname_itemid)) + "製の"
+				}
+				else {
+					locvar_itemname_s += " " + mtname(0, iMaterial(itemname_itemid)) + " "
+				}
+			}
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_GIFT ) {
+		locvar_itemname_s += "" + giftn(iParam4(itemname_itemid)) + lang("", " ")
+	}
+	if ( locvar_itemname_skip == 1 ) {
+		goto *skipName
+	}
+	locvar_itemname_alpha = 0
+	if ( iID(itemname_itemid) == ITEM_ID_CORPSE | iID(itemname_itemid) == ITEM_ID_EGG | iID(itemname_itemid) == ITEM_ID_BOTTLE_MILK | iID(itemname_itemid) == ITEM_ID_BOTTLE_DIRTY_WATER | iID(itemname_itemid) == ITEM_ID_SHIT ) {
+		if ( ibit(ITEM_BIT_PRECIOUS, itemname_itemid) == TRUE & iSubName(itemname_itemid) == 0 ) {
+			locvar_itemname_s += "" + cnName(CHARA_PLAYER) + lang("の", " ")
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_EGG & iKnown(itemname_itemid) == ITEM_KNOWN_FULL ) {
+		if ( inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) > 0 ) {
+			locvar_itemname_s += lang("", " into ")
+			if ( inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) == 343 ) {
+				if ( iDV(itemname_itemid) != usernpcmax ) {
+					locvar_itemname_s += lang(userdatan(1, iDV(itemname_itemid)), userdatan(0, iDV(itemname_itemid)))
+				}
+				else {
+					locvar_itemname_s += lang("残りカス", "garbage")
+				}
+			}
+			else {
+				locvar_itemname_s += refchara(inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1)
+			}
+			if ( jp ) {
+				locvar_itemname_s += "が宿った"
+			}
+		}
+	}
+	if ( iKnown(itemname_itemid) >= ITEM_KNOWN_FULL ) {
+		if ( locvar_itemname_a < 50000 ) {
+			if ( ibit(ITEM_BIT_ULTIMATE, itemname_itemid) ) {
+				locvar_itemname_alpha = 1
+				locvar_itemname_s += lang("エターナルフォース", "eternal force") + strblank
+			}
+			else {
+				if ( iSubName(itemname_itemid) >= 10000 ) {
+					if ( iSubName(itemname_itemid) < 20000 ) {
+						if ( jp ) {
+							locvar_itemname_s += egoname(iSubName(itemname_itemid) - 10000) + strblank
+						}
+					}
+					else {
+						if ( iSubName(itemname_itemid) < 40000 ) {
+							locvar_itemname_s += egominorn(iSubName(itemname_itemid) - 20000) + strblank
+						}
+					}
+				}
+				if ( iQuality(itemname_itemid) != FIX_QUALITY_UNIQUE & (iID(itemname_itemid) != ITEM_ID_ENGAGEMENT_RING | ibit(ITEM_BIT_PRECIOUS, itemname_itemid) == FALSE) ) {
+					if ( iQuality(itemname_itemid) >= FIX_QUALITY_MIRACLE ) {
+						locvar_itemname_s += mtname(1, iMaterial(itemname_itemid)) + strblank
+					}
+					else {
+						locvar_itemname_s += mtname(0, iMaterial(itemname_itemid)) + strblank
+						if ( jp ) {
+							if ( peek(mtname(0, iMaterial(itemname_itemid))) == 131 ) {
+								locvar_itemname_alpha = 1
+							}
+							else {
+								locvar_itemname_s += "の"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	if ( ibit(19, itemname_itemid) ) {
+		locvar_itemname_alpha = 1
+	}
+	if ( iKnown(itemname_itemid) == ITEM_KNOWN_NONE ) {
+		locvar_itemname_s += iknownnamecnv(itemname_itemid)
+	}
+	else {
+		if ( iKnown(itemname_itemid) < ITEM_KNOWN_FULL ) {
+			if ( iQuality(itemname_itemid) < FIX_QUALITY_MIRACLE | locvar_itemname_a >= 50000 ) {
+				locvar_itemname_s += ioriginalnamecnv(itemname_itemid)
+			}
+			else {
+				locvar_itemname_s += iknownnamecnv(itemname_itemid)
+			}
+		}
+		else {
+			if ( iQuality(itemname_itemid) == FIX_QUALITY_UNIQUE | ibit(ITEM_BIT_PRECIOUS, itemname_itemid) == TRUE ) {
+				if ( iMaterial(itemname_itemid) != ITEM_MATERIAL_SAND & ibit(21, itemname_itemid) != FALSE ) {
+					if ( iParam2(itemname_itemid) == 343 ) {
+						if ( iCNpcId(itemname_itemid) != usernpcmax ) {
+							locvar_itemname_s += lang(userdatan(1, iCNpcId(itemname_itemid)) + "の", userdatan(1, iCNpcId(itemname_itemid)))
+						}
+						else {
+							locvar_itemname_s += "" + lang("残りカス", "garbage")
+						}
+					}
+					else {
+						if ( iParam2(itemname_itemid) == 999 ) {
+							locvar_itemname_s += cnName(CHARA_PLAYER) + lang("の", " ")
+						}
+						else {
+							locvar_itemname_s += refchara(iParam2(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1) + lang("の", " ")
+						}
+					}
+				}
+				if ( jp ) {
+					locvar_itemname_s = "★" + locvar_itemname_s + ioriginalnamecnv(itemname_itemid)
+				}
+				else {
+					locvar_itemname_s += ioriginalnamecnv(itemname_itemid)
+				}
+			}
+			else {
+				if ( iQuality(itemname_itemid) >= FIX_QUALITY_MIRACLE ) {
+					if ( jp ) {
+						locvar_itemname_s = "☆" + locvar_itemname_s
+					}
+				}
+				if ( ibit(18, itemname_itemid) ) {
+					if ( locvar_itemname_alpha == 1 & jp ) {
+						if ( iStatus(itemname_itemid) >= ITEM_STATUS_BLESSED ) {
+							locvar_itemname_s += lang("ジャスティス", "justice ")
+						}
+						else {
+							if ( iStatus(itemname_itemid) <= ITEM_STATUS_DOOMED ) {
+								locvar_itemname_s += lang("イビル", "evil ")
+							}
+							else {
+								if ( ibit(ITEM_BIT_ALIVE, itemname_itemid) == FALSE ) {
+									locvar_itemname_s += lang("ヒーローズ", "hero's ")
+								}
+							}
+						}
+					}
+					else {
+						if ( iStatus(itemname_itemid) >= ITEM_STATUS_BLESSED ) {
+							locvar_itemname_s += lang("聖", "justice ")
+						}
+						else {
+							if ( iStatus(itemname_itemid) <= ITEM_STATUS_DOOMED ) {
+								locvar_itemname_s += lang("邪", "evil ")
+							}
+							else {
+								if ( ibit(ITEM_BIT_ALIVE, itemname_itemid) == FALSE ) {
+									locvar_itemname_s += lang("英雄の", "hero's ")
+								}
+							}
+						}
+					}
+				}
+				if ( iMaterial(itemname_itemid) != ITEM_MATERIAL_SAND & ibit(21, itemname_itemid) != FALSE & locvar_itemname_a != 60000 ) {
+					if ( iParam2(itemname_itemid) == 343 ) {
+						if ( iCNpcId(itemname_itemid) != usernpcmax ) {
+							locvar_itemname_s += lang(userdatan(1, iCNpcId(itemname_itemid)) + "の", userdatan(1, iCNpcId(itemname_itemid)))
+						}
+						else {
+							locvar_itemname_s += "" + lang("残りカス", "garbage")
+						}
+					}
+					else {
+						if ( ibit(ITEM_BIT_ALIVE, itemname_itemid) == FALSE ) {
+							if ( iParam2(itemname_itemid) == 999 ) {
+								locvar_itemname_s += cnName(CHARA_PLAYER) + lang("の", " ")
+							}
+							else {
+								locvar_itemname_s += refchara(iParam2(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1) + lang("の", " ")
+							}
+						}
+					}
+				}
+				if ( locvar_itemname_alpha == 1 & jp ) {
+					locvar_itemname_s += ialphanamecnv(itemname_itemid)
+				}
+				else {
+					locvar_itemname_s += ioriginalnamecnv(itemname_itemid)
+				}
+				if ( en ) {
+					if ( locvar_itemname_a < 50000 ) {
+						if ( iSubName(itemname_itemid) >= 10000 ) {
+							if ( iSubName(itemname_itemid) < 20000 ) {
+								locvar_itemname_s += " " + egoname(iSubName(itemname_itemid) - 10000)
+							}
+						}
+					}
+				}
+				if ( iSubName(itemname_itemid) >= 40000 ) {
+					randomize iSubName(itemname_itemid) - 40000
+					if ( iQuality(itemname_itemid) == FIX_QUALITY_MIRACLE ) {
+						locvar_itemname_s += lang("『", " <") + random_title(1) + lang("』", ">")
+					}
+					else {
+						locvar_itemname_s += lang("《", " {") + random_title(1) + lang("》", "}")
+					}
+					randomize
+				}
+			}
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_FISH ) {
+		if ( iSubName(itemname_itemid) >= 37 ) {
+			if ( iKnown(itemname_itemid) == ITEM_KNOWN_FULL ) {
+				if ( iParam2(itemname_itemid) == 0 ) {
+					randomize iParam1(itemname_itemid)
+					locvar_itemname_s += lang("《", " {") + random_title(1) + lang("》", "}")
+					randomize
+				}
+			}
+		}
+	}
+
+*skipName
+	if ( en ) {
+		if ( itemname_arg3 == 0 ) {
+			if ( iKnown(itemname_itemid) >= ITEM_KNOWN_FULL & (iQuality(itemname_itemid) >= FIX_QUALITY_MIRACLE & locvar_itemname_a < 50000) ) {
+				locvar_itemname_s = "the " + locvar_itemname_s
+			}
+			else {
+				if ( locvar_itemname_num2 == 1 ) {
+					locvar_itemname_s4 = strmid(locvar_itemname_s, 0, 1)
+					if ( locvar_itemname_s4 == "a" | locvar_itemname_s4 == "o" | locvar_itemname_s4 == "i" | locvar_itemname_s4 == "u" | locvar_itemname_s4 == "e" ) {
+						locvar_itemname_s = "an " + locvar_itemname_s
+					}
+					else {
+						locvar_itemname_s = "a " + locvar_itemname_s
+					}
+				}
+			}
+		}
+		if ( locvar_itemname_s2 == "" ) {
+			if ( iID(itemname_itemid) != ITEM_ID_FISH ) {
+				if ( locvar_itemname_num2 > 1 ) {
+					locvar_itemname_s += "s"
+				}
+			}
+		}
+		gosub *itemNameSub
+	}
+	if ( iKnown(itemname_itemid) >= ITEM_KNOWN_FULL ) {
+		if ( iLevel(itemname_itemid) != 0 ) {
+			locvar_itemname_s += "" + cnvfix(iLevel(itemname_itemid)) + " "
+		}
+		if ( ibit(ITEM_BIT_CHARGE_ITEM, itemname_itemid) == TRUE & itemname_prm3 == 0 ) {
+			locvar_itemname_s += lang("(残り" + inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) + "回)", "(Charges: " + inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) + ")")
+		}
+		if ( iDice1(itemname_itemid) != 0 | iAtk(itemname_itemid) != 0 | iDmg(itemname_itemid) != 0 & itemname_prm3 == 0 ) {
+			locvar_itemname_s += " ("
+			if ( iDice1(itemname_itemid) != 0 ) {
+				locvar_itemname_s += "" + iDice1(itemname_itemid) + "d" + iDice2(itemname_itemid)
+				if ( iDmg(itemname_itemid) != 0 ) {
+					if ( iDmg(itemname_itemid) > 0 ) {
+						locvar_itemname_s += "+" + iDmg(itemname_itemid)
+					}
+					else {
+						locvar_itemname_s += "" + iDmg(itemname_itemid)
+					}
+				}
+				locvar_itemname_s += ")"
+				if ( iAtk(itemname_itemid) != 0 ) {
+					locvar_itemname_s += "(" + iAtk(itemname_itemid) + ")"
+				}
+			}
+			else {
+				locvar_itemname_s += "" + iAtk(itemname_itemid) + "," + iDmg(itemname_itemid) + ")"
+			}
+		}
+		if ( iDV(itemname_itemid) != 0 | iPV(itemname_itemid) != 0 & itemname_prm3 == 0 & iID(itemname_itemid) != ITEM_ID_EGG ) {
+			locvar_itemname_s += " [" + iDV(itemname_itemid) + "," + iPV(itemname_itemid) + "]"
+		}
+		if ( iID(itemname_itemid) == ITEM_ID_ANCIENT_BOOK ) {
+			if ( iParam2(itemname_itemid) != 0 ) {
+				locvar_itemname_s += "(" + (iParam1(itemname_itemid) + 1) + "GP)"
+			}
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_SKIN | iID(itemname_itemid) == ITEM_ID_BLOOD | iID(itemname_itemid) == ITEM_ID_EYE | iID(itemname_itemid) == ITEM_ID_HEART | iID(itemname_itemid) == ITEM_ID_BONE ) {
+		if ( iValue(itemname_itemid) >= 640 ) {
+			locvar_itemname_s += "(Lv:" + (iValue(itemname_itemid) - 600) / 40 + ")"
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_EGG & iKnown(itemname_itemid) == ITEM_KNOWN_FULL ) {
+		if ( inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) > 0 ) {
+			locvar_itemname_s += "(Lv:" + iPV(itemname_itemid) + ")"
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_SCROLL_GAIN_ATTRIBUTE ) {
+		if ( ibit(ITEM_BIT_PRECIOUS, itemname_itemid) ) {
+			locvar_itemname_s += "(" + nc_horskilln(iParam1(itemname_itemid)) + " Lv:" + iParam2(itemname_itemid) + ")"
+		}
+	}
+	if ( en ) {
+		if ( iID(itemname_itemid) == ITEM_ID_WALLET | iID(itemname_itemid) == ITEM_ID_SUITCASE ) {
+			locvar_itemname_s += "(Lost property)"
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_FISHING_POLE ) {
+		if ( inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) != 0 ) {
+			locvar_itemname_s += lang("(" + biten(iParam4(itemname_itemid)) + "残り" + inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) + "匹)", "(" + inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) + " " + biten(iParam4(itemname_itemid)) + ")")
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_MONSTER_BALL ) {
+		if ( iSubName(itemname_itemid) == 0 ) {
+			if ( ibit(ITEM_BIT_PRECIOUS, itemname_itemid) ) {
+				locvar_itemname_s += lang(" (空)", "(Empty)")
+			}
+			else {
+				locvar_itemname_s += lang(" Lv", " Level ") + iParam2(itemname_itemid) + lang(" (空)", "(Empty)")
+			}
+		}
+		else {
+			if ( iSubName(itemname_itemid) == 343 ) {
+				if ( iCNpcId(itemname_itemid) != usernpcmax ) {
+					locvar_itemname_s += " (" + userdatan(1, iCNpcId(itemname_itemid)) + " "
+				}
+				else {
+					locvar_itemname_s += " (" + lang("残りカス", "garbage") + " "
+				}
+			}
+			else {
+				locvar_itemname_s += " (" + refchara(iSubName(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1) + " "
+			}
+		}
+		if ( iSubName(itemname_itemid) != 0 ) {
+			locvar_itemname_s += "Lv:" + iParam3(itemname_itemid) + ")"
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_SMALL_GAMBLE_CHEST ) {
+		locvar_itemname_s += lang(" Lv", " Level ") + iParam2(itemname_itemid)
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_BOOK_BOKONON ) {
+		if ( iKnown(itemname_itemid) == ITEM_KNOWN_FULL ) {
+			if ( iParam2(itemname_itemid) == 505 ) {
+				locvar_itemname_s += lang(" (妹/", " (younger sister/")
+			}
+			else {
+				if ( iParam2(itemname_itemid) == 619 ) {
+					locvar_itemname_s += lang(" (エロ本/", " (pornbook/")
+				}
+				else {
+					locvar_itemname_s += " (" + ioriginalnameref(iParam2(itemname_itemid)) + "/"
+				}
+			}
+			locvar_itemname_s += lang("成長速度:", "SPEED:") + iSkillRef(itemname_itemid) + "/"
+			locvar_itemname_s += lang("成長限界:", "Limit:") + iParam3(itemname_itemid) + ")"
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_TREE_FRUIT ) {
+		if ( iKnown(itemname_itemid) == ITEM_KNOWN_FULL ) {
+			if ( iParam2(itemname_itemid) == 505 ) {
+				locvar_itemname_s += lang(" (妹)", " (younger sister)")
+			}
+			else {
+				locvar_itemname_s += " (" + ioriginalnameref(iParam2(itemname_itemid)) + ")"
+			}
+		}
+	}
+	if ( iKnown(itemname_itemid) == ITEM_KNOWN_QUALITY ) {
+		if ( locvar_itemname_a < 50000 ) {
+			locvar_itemname_s += " (" + cnven(_quality(iQuality(itemname_itemid))) + ")"
+			if ( jp ) {
+				locvar_itemname_s += "[" + mtname(0, iMaterial(itemname_itemid)) + "製]"
+			}
+			else {
+				locvar_itemname_s += "[" + cnven(mtname(0, iMaterial(itemname_itemid))) + "]"
+			}
+			if ( iStatus(itemname_itemid) == ITEM_STATUS_CURSED ) {
+				locvar_itemname_s += lang("(恐ろしい)", "(Scary)")
+			}
+			if ( iStatus(itemname_itemid) == ITEM_STATUS_DOOMED ) {
+				locvar_itemname_s += lang("(禍々しい)", "(Dreadful)")
+			}
+		}
+	}
+	if ( locvar_itemname_a == 72000 ) {
+		if ( iID(itemname_itemid) == ITEM_ID_SHOPKEEPERS_TRUNK ) {
+			locvar_itemname_s += lang("(移動時消滅)", "(Temporal)")
+		}
+		else {
+			if ( inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) == 0 ) {
+				if ( iParam1(itemname_itemid) == 0 ) {
+					locvar_itemname_s += lang("(空っぽ)", "(Empty)")
+				}
+			}
+		}
+	}
+	if ( locvar_itemname_a == 92000 ) {
+		if ( iParam2(itemname_itemid) != 0 ) {
+			locvar_itemname_s += lang("(仕入れ値 " + iParam2(itemname_itemid) + "g)", "(Buying price: " + iParam2(itemname_itemid) + ")")
+		}
+	}
+	if ( ibit(ITEM_BIT_LOVE_BLEND, itemname_itemid) == TRUE ) {
+		locvar_itemname_s += lang("(媚薬混入)", "(Aphrodisiac)")
+	}
+	if ( ibit(ITEM_BIT_POISON_BLEND, itemname_itemid) == TRUE ) {
+		locvar_itemname_s += lang("(毒物混入)", "(Poisoned)")
+	}
+	if ( ibit(ITEM_BIT_PERIOD, itemname_itemid) == TRUE ) {
+		if ( getgametime() < inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) ) {
+			locvar_itemname_s += lang("(" + (inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) - getgametime()) + "時間)", "(Next: " + (inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) - getgametime()) + "h.)")
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_SHELTER ) {
+		if ( inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) != 0 ) {
+			locvar_itemname_s += lang(" シリアルNo.", " serial no.") + inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid)
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_DISC ) {
+		locvar_itemname_s += " <BGM" + iParam1(itemname_itemid) + ">"
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_BOTTLE_DYE ) {
+		locvar_itemname_s += "(" + text_dyecolor2str(iCol(itemname_itemid)) + ")"
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_TREASURE_MAP ) {
+		if ( iParam3(itemname_itemid) != 0 ) {
+			locvar_itemname_s += "(" + mapname(areaId(iParam3(itemname_itemid))) + ")"
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_CORPSE ) {
+		if ( ibit(ITEM_BIT_PRECIOUS, itemname_itemid) == TRUE ) {
+			if ( iParam2(itemname_itemid) > 0 & iKnown(itemname_itemid) == ITEM_KNOWN_FULL ) {
+				sreplace locvar_itemname_s, locvar_itemname_s, lang("動物", "beast"), cnName(CHARA_PLAYER)
+				locvar_itemname_s = lang("★", "") + locvar_itemname_s
+			}
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_EGG ) {
+		if ( ibit(ITEM_BIT_PRECIOUS, itemname_itemid) == TRUE ) {
+			if ( iParam2(itemname_itemid) > 0 & iKnown(itemname_itemid) == ITEM_KNOWN_FULL ) {
+				sreplace locvar_itemname_s, locvar_itemname_s, lang("鳥", "animal"), cnName(CHARA_PLAYER)
+				locvar_itemname_s = lang("★", "") + locvar_itemname_s
+			}
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_BOTTLE_MILK ) {
+		if ( ibit(ITEM_BIT_PRECIOUS, itemname_itemid) == TRUE ) {
+			if ( iParam2(itemname_itemid) > 0 & iKnown(itemname_itemid) == ITEM_KNOWN_FULL ) {
+				locvar_itemname_s = lang("★", "") + locvar_itemname_s
+			}
+		}
+	}
+	if ( gWizard ) {
+		locvar_itemname_s = "(" + itemname_itemid + ")" + locvar_itemname_s
+	}
+	if ( strlen(locvar_itemname_s) > 66 ) {
+		locvar_itemname_len = zentohan(locvar_itemname_s, locvar_itemname_buf, 0)
+		sdim locvar_itemname_buf, locvar_itemname_len
+		locvar_itemname_ret = zentohan(locvar_itemname_s, locvar_itemname_s, locvar_itemname_len)
+	}
+	locvar_itemname_skip = 0
+	itemnamehack = 0
+	return locvar_itemname_s
+
+*itemNameSub
+	if ( iID(itemname_itemid) == ITEM_ID_KITTY_BANK ) {
+		locvar_itemname_s += lang("" + moneyboxn(iParam2(itemname_itemid)), "(" + moneyboxn(iParam2(itemname_itemid)) + ")")
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_BAIT ) {
+		locvar_itemname_s += lang("" + biten(iParam1(itemname_itemid)), " <" + biten(iParam1(itemname_itemid)) + ">")
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_ANCIENT_BOOK ) {
+		if ( jp ) {
+			if ( iParam2(itemname_itemid) != 0 ) {
+				locvar_itemname_s += "解読済みの"
+			}
+		}
+		if ( iKnown(itemname_itemid) >= ITEM_KNOWN_FULL ) {
+			locvar_itemname_s += lang("《" + magebookn(iParam1(itemname_itemid)) + "》という題名の", " titled <" + magebookn(iParam1(itemname_itemid)) + ">")
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_RECIPE ) {
+		if ( iParam1(itemname_itemid) == 0 ) {
+			locvar_itemname_s += lang("もう使えない", " which cannot be used anymore")
+		}
+		else {
+			if ( iSubName(itemname_itemid) == 0 ) {
+				locvar_itemname_s += lang("カスタム", "blank ")
+			}
+			else {
+				locvar_itemname_s += lang("《" + rpname(iSubName(itemname_itemid)) + "》の", " of <" + rpname(iSubName(itemname_itemid)) + ">")
+			}
+		}
+	}
+	if ( locvar_itemname_a == 55000 ) {
+		if ( iID(itemname_itemid) == ITEM_ID_SKILLBOOK ) {
+			locvar_itemname_s += lang("《" + skillname(iParam1(itemname_itemid)) + "》という題名の", " titled <Art of " + skillname(iParam1(itemname_itemid)) + ">")
+		}
+		else {
+			if ( iID(itemname_itemid) == ITEM_ID_BOOK_RACHEL ) {
+				locvar_itemname_s += lang("第", " of Rachel No.") + iParam2(itemname_itemid) + lang("巻目の", "")
+			}
+			else {
+				if ( iID(itemname_itemid) == ITEM_ID_RED_BOOK ) {
+					locvar_itemname_s += lang("《" + booktitle(iParam1(itemname_itemid)) + "》という題名の", " titled <" + booktitle(iParam1(itemname_itemid)) + ">")
+				}
+			}
+		}
+	}
+	if ( locvar_itemname_a == 60002 ) {
+		if ( iParam1(itemname_itemid) != 0 ) {
+			locvar_itemname_s += lang(godname(godno2godid(iParam1(itemname_itemid))) + "の", " <" + godname(godno2godid(iParam1(itemname_itemid))) + ">")
+		}
+		else {
+			if ( iParam3(itemname_itemid) != 0 ) {
+				if ( usergoddatan(2, iParam2(itemname_itemid)) != "eyth" ) {
+					locvar_itemname_s += lang(godname(usergoddatan(2, iParam2(itemname_itemid))) + "の", " <" + godname(usergoddatan(2, iParam2(itemname_itemid))) + ">")
+				}
+			}
+		}
+	}
+	if ( locvar_itemname_a == 57000 | (iID(itemname_itemid) == ITEM_ID_BOTTLE_MILK & iParam2(itemname_itemid) != 0) ) {
+		if ( iParam1(itemname_itemid) != 0 ) {
+			if ( iParam2(itemname_itemid) != 0 ) {
+				locvar_itemname_skip = 1
+				if ( iID(itemname_itemid) == ITEM_ID_EGG & iKnown(itemname_itemid) == ITEM_KNOWN_FULL ) {
+					if ( inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) > 0 ) {
+						locvar_itemname_s += lang("", "into ")
+						if ( inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid) == 343 ) {
+							if ( iDV(itemname_itemid) != usernpcmax ) {
+								locvar_itemname_s += userdatan(1, iDV(itemname_itemid))
+							}
+							else {
+								locvar_itemname_s += lang("残りカス", "garbage")
+							}
+						}
+						else {
+							locvar_itemname_s += refchara(inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1)
+						}
+						if ( jp ) {
+							locvar_itemname_s += "が宿った"
+						}
+					}
+				}
+				if ( iID(itemname_itemid) == ITEM_ID_CARNEADES_PLANK ) {
+					locvar_itemname_s = locvar_itemname_s + foodname(iParam1(itemname_itemid) / 1000, "" + ioriginalnamecnv(itemname_itemid), iParam2(itemname_itemid), iSubName(itemname_itemid), iCNpcId(itemname_itemid))
+				}
+				else {
+					if ( iID(itemname_itemid) == ITEM_ID_FISH ) {
+						locvar_itemname_s = locvar_itemname_s + foodname(iParam1(itemname_itemid) / 1000, "" + fishdatan(iSubName(itemname_itemid)), iParam2(itemname_itemid), iSubName(itemname_itemid), iCNpcId(itemname_itemid))
+					}
+					else {
+						if ( iID(itemname_itemid) == ITEM_ID_BOTTLE_MILK ) {
+							if ( ibit(ITEM_BIT_PRECIOUS, itemname_itemid) & iSubName(itemname_itemid) == 0 ) {
+								locvar_itemname_s = locvar_itemname_s + foodname(9, cnName(CHARA_PLAYER), iParam2(itemname_itemid), iSubName(itemname_itemid), iCNpcId(itemname_itemid))
+							}
+							else {
+								locvar_itemname_s = locvar_itemname_s + foodname(9, "", iParam2(itemname_itemid), iSubName(itemname_itemid), iCNpcId(itemname_itemid))
+							}
+						}
+						else {
+							if ( iID(itemname_itemid) == ITEM_ID_HERB_SEED ) {
+								return
+							}
+							if ( ibit(ITEM_BIT_PRECIOUS, itemname_itemid) & iSubName(itemname_itemid) == 0 ) {
+								locvar_itemname_s = locvar_itemname_s + foodname(iParam1(itemname_itemid) / 1000, cnName(CHARA_PLAYER), iParam2(itemname_itemid), iSubName(itemname_itemid), iCNpcId(itemname_itemid))
+							}
+							else {
+								if ( iSubName(itemname_itemid) > 0 ) {
+									locvar_itemname_s = locvar_itemname_s + foodname(iParam1(itemname_itemid) / 1000, refchara(iSubName(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1), iParam2(itemname_itemid), iSubName(itemname_itemid), iCNpcId(itemname_itemid))
+								}
+								else {
+									locvar_itemname_s = locvar_itemname_s + foodname(iParam1(itemname_itemid) / 1000, "" + ioriginalnamecnv(itemname_itemid), iParam2(itemname_itemid), iSubName(itemname_itemid), iCNpcId(itemname_itemid))
+								}
+							}
+						}
+					}
+				}
+				return
+			}
+		}
+		if ( iProperty(itemname_itemid) == PROP_QUEST ) {
+			locvar_itemname_s += lang("", " grown ") + _weight(iSubName(itemname_itemid)) + lang("育った", "")
+		}
+	}
+	if ( iSubName(itemname_itemid) != 0 ) {
+		if ( iID(itemname_itemid) == ITEM_ID_FISH | iID(itemname_itemid) == ITEM_ID_FISH_JUNK ) {
+			if ( iSubName(itemname_itemid) < 0 | iSubName(itemname_itemid) >= 100 ) {
+				locvar_itemname_s += "/bugged/"
+				return
+			}
+			if ( iID(itemname_itemid) == ITEM_ID_FISH_JUNK & iSubName(itemname_itemid) == 30 ) {
+				if ( en ) {
+					locvar_itemname_s += "" + fishdatan(iSubName(itemname_itemid))
+				}
+				if ( iParam1(itemname_itemid) != 0 ) {
+					if ( iParam2(itemname_itemid) != 0 ) {
+						if ( iParam1(itemname_itemid) == 343 ) {
+							locvar_itemname_s += lang("", " of ")
+							if ( iCNpcId(itemname_itemid) != usernpcmax ) {
+								locvar_itemname_s += userdatan(1, iCNpcId(itemname_itemid))
+							}
+							else {
+								locvar_itemname_s += lang("残りカス", "garbage")
+							}
+							if ( jp ) {
+								locvar_itemname_s += "×"
+							}
+						}
+						else {
+							if ( iParam1(itemname_itemid) == 999 ) {
+								locvar_itemname_s += lang("", " of ") + cnName(CHARA_PLAYER)
+							}
+							else {
+								locvar_itemname_s += lang("", " of ") + refchara(iParam1(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1)
+							}
+							if ( jp ) {
+								locvar_itemname_s += "×"
+							}
+						}
+						if ( iParam2(itemname_itemid) == 343 ) {
+							locvar_itemname_s += lang("", " of ")
+							if ( iParam3(itemname_itemid) != usernpcmax ) {
+								locvar_itemname_s += userdatan(1, iParam3(itemname_itemid))
+							}
+							else {
+								locvar_itemname_s += lang("残りカス", "garbage")
+							}
+							if ( jp ) {
+								locvar_itemname_s += "の"
+							}
+						}
+						else {
+							if ( iParam2(itemname_itemid) == 999 ) {
+								locvar_itemname_s += lang("", " of ") + cnName(CHARA_PLAYER)
+							}
+							else {
+								locvar_itemname_s += lang("", " of ") + refchara(iParam2(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1)
+							}
+							if ( jp ) {
+								locvar_itemname_s += "の"
+							}
+						}
+					}
+					else {
+						if ( iParam1(itemname_itemid) == 343 ) {
+							locvar_itemname_s += lang("", " of ")
+							if ( iCNpcId(itemname_itemid) != usernpcmax ) {
+								locvar_itemname_s += userdatan(1, iCNpcId(itemname_itemid))
+							}
+							else {
+								locvar_itemname_s += lang("残りカス", "garbage")
+							}
+							if ( jp ) {
+								locvar_itemname_s += "の"
+							}
+						}
+						else {
+							if ( iParam1(itemname_itemid) == 999 ) {
+								locvar_itemname_s += lang("", " of ") + cnName(CHARA_PLAYER)
+							}
+							else {
+								locvar_itemname_s += lang("", " of ") + refchara(iParam1(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1)
+							}
+							if ( jp ) {
+								locvar_itemname_s += "の"
+							}
+						}
+					}
+				}
+				if ( jp ) {
+					locvar_itemname_s += "" + fishdatan(iSubName(itemname_itemid))
+				}
+			}
+			else {
+				locvar_itemname_s += "" + fishdatan(iSubName(itemname_itemid))
+			}
+		}
+		else {
+			if ( locvar_itemname_a == 57000 & iID(itemname_itemid) != ITEM_ID_SISTERS_LOVE_FUELED_LUNCH | locvar_itemname_a == 62000 | iID(itemname_itemid) == ITEM_ID_FIGURINE | iID(itemname_itemid) == ITEM_ID_CARD | iID(itemname_itemid) == ITEM_ID_SHIT | iID(itemname_itemid) == ITEM_ID_BOTTLE_MILK | iID(itemname_itemid) == ITEM_ID_OBJET_HEART ) {
+				if ( iSubName(itemname_itemid) < 0 | iSubName(itemname_itemid) >= 800 ) {
+					locvar_itemname_s += "/bugged/"
+					return
+				}
+				if ( iProperty(itemname_itemid) != PROP_QUEST ) {
+					locvar_itemname_s += lang("", " of ")
+					if ( iSubName(itemname_itemid) == 343 ) {
+						if ( iCNpcId(itemname_itemid) != usernpcmax ) {
+							locvar_itemname_s += userdatan(1, iCNpcId(itemname_itemid))
+						}
+						else {
+							locvar_itemname_s += lang("残りカス", "garbage")
+						}
+					}
+					else {
+						locvar_itemname_s += refchara(iSubName(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1)
+					}
+					if ( jp ) {
+						locvar_itemname_s += "の"
+					}
+				}
+			}
+		}
+		if ( locvar_itemname_a == 60000 | locvar_itemname_a == 77000 ) {
+			if ( jp ) {
+				if ( iSubName(itemname_itemid) >= 12 ) {
+					iSubName(itemname_itemid) = 0
+				}
+				else {
+					locvar_itemname_s += _furniture(iSubName(itemname_itemid))
+				}
+			}
+		}
+		if ( iID(itemname_itemid) == ITEM_ID_DEED ) {
+			locvar_itemname_s += lang("", " of ") + _homename(iParam1(itemname_itemid)) + lang("の", "")
+		}
+		if ( iID(itemname_itemid) == ITEM_ID_BILL ) {
+			locvar_itemname_s += lang("" + iSubName(itemname_itemid) + "goldの", " <" + iSubName(itemname_itemid) + " gp>")
+		}
+		if ( iID(itemname_itemid) == ITEM_ID_VOMIT ) {
+			if ( iSubName(itemname_itemid) < 0 | iSubName(itemname_itemid) >= 800 ) {
+				locvar_itemname_s += "/bugged/"
+				return
+			}
+			if ( iSubName(itemname_itemid) == 343 ) {
+				if ( iCNpcId(itemname_itemid) != usernpcmax ) {
+					locvar_itemname_s += lang("" + userdatan(1, iCNpcId(itemname_itemid)) + "の", " of " + userdatan(1, iCNpcId(itemname_itemid)))
+				}
+				else {
+					locvar_itemname_s += lang("残りカスの", " of garbage")
+				}
+			}
+			else {
+				locvar_itemname_s += lang("" + refchara(iSubName(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1) + "の", " of " + refchara(iSubName(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1))
+			}
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_SECRET_TREASURE ) {
+		if ( iParam1(itemname_itemid) == 169 ) {
+			locvar_itemname_s += lang("善人の", " of saint")
+		}
+		if ( iParam1(itemname_itemid) == 162 ) {
+			locvar_itemname_s += lang("悪人の", " of wicked")
+		}
+		if ( iParam1(itemname_itemid) == 163 ) {
+			locvar_itemname_s += lang("エヘカトルの", " of Ehekatl")
+		}
+		if ( iParam1(itemname_itemid) == 164 ) {
+			locvar_itemname_s += lang("オパートスの", " of Opatos")
+		}
+		if ( iParam1(itemname_itemid) == 165 ) {
+			locvar_itemname_s += lang("イツパロトルの", " of Itzpalt")
+		}
+		if ( iParam1(itemname_itemid) == 166 ) {
+			locvar_itemname_s += lang("ジュアの", " of Jure")
+		}
+	}
+	if ( equalsitem(itemname_itemid, "blacksmith hammer") ) {
+		if ( iParam1(itemname_itemid) <= 10 ) {
+			locvar_itemname_s += lang("ボロボロの", " (Novice)")
+		}
+		else {
+			if ( iParam1(itemname_itemid) <= 20 ) {
+				locvar_itemname_s += lang("丈夫な", " (Apprentice)")
+			}
+			else {
+				if ( iParam1(itemname_itemid) <= 30 ) {
+					locvar_itemname_s += lang("鍛冶師の", " (Journeyman)")
+				}
+				else {
+					if ( iParam1(itemname_itemid) <= 40 ) {
+						locvar_itemname_s += lang("玄人の", " (Expert)")
+					}
+					else {
+						locvar_itemname_s += lang("名工の", " (Master)")
+					}
+				}
+			}
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_RUGYS_HAMMER ) {
+		if ( iParam1(itemname_itemid) == 0 ) {
+			locvar_itemname_s += lang("風化した", "Weathered ")
+		}
+	}
+	if ( iID(itemname_itemid) == ITEM_ID_SISTERS_LOVE_FUELED_LUNCH ) {
+		if ( iSubName(itemname_itemid) != 0 ) {
+			if ( iSubName(itemname_itemid) < 0 | iSubName(itemname_itemid) >= 800 ) {
+				locvar_itemname_s += "/bugged/"
+				return
+			}
+			if ( iSubName(itemname_itemid) == 343 ) {
+				if ( iCNpcId(itemname_itemid) != usernpcmax ) {
+					locvar_itemname_s += userdatan(1, iCNpcId(itemname_itemid))
+				}
+				else {
+					locvar_itemname_s += lang("残りカス", "garbage")
+				}
+			}
+			else {
+				locvar_itemname_s += refchara(iSubName(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1)
+			}
+			if ( jp ) {
+				locvar_itemname_s += "が"
+			}
+			else {
+				locvar_itemname_s += "'s "
+			}
+		}
+		else {
+			if ( jp ) {
+				locvar_itemname_s += "妹が"
+			}
+			else {
+				locvar_itemname_s += "sister's "
+			}
+		}
+	}
+	if ( equalsitem(itemname_itemid, "jewel of love") ) {
+		if ( iSubName(itemname_itemid) != 0 ) {
+			if ( iSubName(itemname_itemid) < 0 | iSubName(itemname_itemid) >= 800 ) {
+				locvar_itemname_s += "/bugged/"
+				return
+			}
+			if ( iSubName(itemname_itemid) == 343 ) {
+				if ( iCNpcId(itemname_itemid) != usernpcmax ) {
+					locvar_itemname_s += userdatan(1, iCNpcId(itemname_itemid))
+				}
+				else {
+					locvar_itemname_s += lang("残りカス", "a garbage")
+				}
+			}
+			else {
+				locvar_itemname_s += refchara(iSubName(itemname_itemid), DBSPEC_CHARA_NAME_ORG, 1)
+			}
+			locvar_itemname_s += lang("の", "'s ")
+		}
+	}
+	return
+
+#deffunc remain_make int remain_make_itemid, int remain_make_arg2
+	iSubName(remain_make_itemid) = cId(remain_make_arg2)
+	if ( iSubName(remain_make_itemid) == 343 ) {
+		iCNpcId(remain_make_itemid) = cUNID(remain_make_arg2)
+		ICNpcSerialNo(remain_make_itemid) = createserialno(userdatan(0, cUNID(remain_make_arg2)))
+	}
+	iCol(remain_make_itemid) = getcharacolor(remain_make_arg2)
+	iWeight(remain_make_itemid) = cWeight(remain_make_arg2)
+	if ( iID(remain_make_itemid) == ITEM_ID_CORPSE ) {
+		iWeight(remain_make_itemid) = 250 * (iWeight(remain_make_itemid) + 100) / 100 + 500
+		iValue(remain_make_itemid) = iWeight(remain_make_itemid) / 5
+	}
+	else {
+		iWeight(remain_make_itemid) = 20 * (iWeight(remain_make_itemid) + 500) / 500
+		iValue(remain_make_itemid) = int(limitf(double(cLevel(remain_make_arg2)) * 40 + 600, 1, 2147483647))
+		if ( refchara(cId(remain_make_arg2), DBSPEC_CHARA_RARE) < 20 ) {
+			if ( cOrgRelation(remain_make_arg2) < RELATION_DISLIKE ) {
+				iValue(remain_make_itemid) = int(limitf(double(iValue(remain_make_itemid)) * limit(4 - refchara(cId(remain_make_arg2), DBSPEC_CHARA_RARE) / 5, 1, 5), 1, 2147483647))
+			}
+		}
+	}
+	return
+
+#deffunc make_dish int make_dish_arg1, int make_dish_arg2
+	if ( iID(make_dish_arg1) == ITEM_ID_BOTTLE_MILK ) {
+		iParam1(make_dish_arg1) = 9000
+	}
+	iPic(make_dish_arg1) = picfood(make_dish_arg2, iParam1(make_dish_arg1) / 1000)
+	iWeight(make_dish_arg1) = 500
+	if ( iMaterial(make_dish_arg1) == ITEM_MATERIAL_RAW ) {
+		if ( iParam3(make_dish_arg1) >= 0 ) {
+			iParam3(make_dish_arg1) = getgametime() + 72
+		}
+	}
+	iParam2(make_dish_arg1) = make_dish_arg2
+	iEffect(make_dish_arg1) = EFFECT_NONE
+	return
+
+#deffunc item_stack int item_stack_charid, int item_stack_itemid, int item_stack_mode
+	if ( iNum(item_stack_itemid) == 2147483647 ) {
+		return 0
+	}
+	if ( iQuality(item_stack_itemid) == FIX_QUALITY_UNIQUE ) {
+		if ( refitem(iID(item_stack_itemid), DBSPEC_TYPE, item_stack_itemid) < FILTER_ITEM_MIN ) {
+			return 0
+		}
+	}
+	locvar_item_stack_didstack = 0
+	inv_getheader item_stack_charid
+	repeat invrange, invhead
+		if ( cnt == item_stack_itemid ) {
+			continue
+		}
+		if ( iNum(cnt) == 0 ) {
+			continue
+		}
+		if ( iID(cnt) != iID(item_stack_itemid) ) {
+			continue
+		}
+		if ( iID(cnt) == ITEM_ID_SMALL_MEDAL ) {
+			if ( item_stack_charid == (-1) & mode != MODELIST_SHOP ) {
+				if ( iX(cnt) != iX(item_stack_itemid) | iY(cnt) != iY(item_stack_itemid) ) {
+					continue
+				}
+			}
+			locvar_item_stack_isalmostsame = 1
+			goto *skip_stack
+		}
+		locvar_item_stack_item = cnt
+		locvar_item_stack_isalmostsame = 1
+		repeat 70
+			if ( cnt == 0 | cnt == 4 | cnt == 30 ) {
+				continue
+			}
+			if ( item_stack_charid != (-1) | mode == MODELIST_SHOP ) {
+				if ( cnt == 5 | cnt == 6 ) {
+					continue
+				}
+			}
+			if ( inv(cnt, locvar_item_stack_item) != inv(cnt, item_stack_itemid) ) {
+				if ( cnt == 35 ) {
+					f = 0
+					repeat 22
+						if ( cnt == 13 | cnt == 22 ) {
+							continue
+						}
+						if ( ibit(cnt, locvar_item_stack_item) != ibit(cnt, item_stack_itemid) ) {
+							f = 1
+							break
+						}
+					loop
+					if ( f == 0 ) {
+						continue
+					}
+				}
+				locvar_item_stack_isalmostsame = 0
+				break
+			}
+		loop
+
+*skip_stack
+		if ( locvar_item_stack_isalmostsame ) {
+			if ( iNum(cnt) == 2147483647 ) {
+				continue
+			}
+			locvar_item_stack_n1 = iNum(cnt)
+			locvar_item_stack_n2 = iNum(item_stack_itemid)
+			locvar_item_stack_n3 = limitaddition(locvar_item_stack_n1, locvar_item_stack_n2)
+			iNum(cnt) = locvar_item_stack_n3
+			iNum(item_stack_itemid) = locvar_item_stack_n1 + locvar_item_stack_n2 - locvar_item_stack_n3
+			locvar_item_stack_didstack = 1
+			ti = cnt
+			break
+		}
+	loop
+	if ( locvar_item_stack_didstack ) {
+		if ( mode != MODELIST_SHOP ) {
+			if ( inv_getowner(item_stack_itemid) == (-1) ) {
+				cell_refresh iX(item_stack_itemid), iY(item_stack_itemid)
+				if ( item_stack_charid == CHARA_PLAYER ) {
+					gosub *label_1681
+				}
+			}
+		}
+		if ( item_stack_mode ) {
+			txt -1, lang(itemname(ti, 1) + "をまとめた(計" + iNum(ti) + "個) ", itemname(ti, 1) + " has been stacked. (Total:" + iNum(ti) + ")")
+		}
+	}
+	return locvar_item_stack_didstack
+
+#deffunc colorres int colorres_arg0
+	color 0, 0, 0
+	if ( locvar_colorres_i == 50 ) {
+		color 150, 0, 0
+	}
+	if ( locvar_colorres_i == 51 ) {
+		color 0, 0, 150
+	}
+	if ( locvar_colorres_i == 52 ) {
+		color 150, 150, 0
+	}
+	if ( locvar_colorres_i == 59 ) {
+		color 150, 0, 150
+	}
+	if ( locvar_colorres_i == 53 ) {
+		color 100, 80, 80
+	}
+	if ( locvar_colorres_i == 55 ) {
+		color 0, 150, 0
+	}
+	if ( locvar_colorres_i == 60 ) {
+		color 150, 100, 100
+	}
+	if ( locvar_colorres_i == 57 ) {
+		color 50, 100, 150
+	}
+	if ( locvar_colorres_i == 58 ) {
+		color 100, 150, 50
+	}
+	if ( locvar_colorres_i == 54 ) {
+		color 150, 100, 50
+	}
+	if ( locvar_colorres_i == 56 ) {
+		color 150, 50, 0
+	}
+	return
+
+#deffunc equipinfo int equipinfo_arg1, int equipinfo_arg2, int equipinfo_arg3
+	if ( iKnown(equipinfo_arg1) < ITEM_KNOWN_FULL ) {
+		return
+	}
+	if ( cfg_equipex == 1 ) {
+		if ( showressub == 0 ) {
+			repeat 15
+				locvar_equipinfo_p = inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, equipinfo_arg1)
+				if ( locvar_equipinfo_p == 0 ) {
+					break
+				}
+				locvar_colorres_i = locvar_equipinfo_p / 10000
+				if ( locvar_colorres_i != 2 ) {
+					continue
+				}
+				locvar_colorres_i = locvar_equipinfo_p \ 10000
+				pos equipinfo_arg2 + (locvar_colorres_i - 50) * 20, equipinfo_arg3
+				locvar_equipinfo_p = abs(inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, equipinfo_arg1) / 2 / 50) + 1
+				if ( locvar_equipinfo_p > 5 ) {
+					locvar_equipinfo_s = "+"
+				}
+				else {
+					locvar_equipinfo_s = "" + locvar_equipinfo_p
+				}
+				if ( jp ) {
+					colorres
+					if ( inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, equipinfo_arg1) >= 0 ) {
+						mes "●"
+					}
+					else {
+						mes "▼"
+					}
+					pos equipinfo_arg2 + (locvar_colorres_i - 50) * 20 + 5, equipinfo_arg3 + 1
+					color 0, 0, 0
+					mes locvar_equipinfo_s
+					pos equipinfo_arg2 + (locvar_colorres_i - 50) * 20 + 4, equipinfo_arg3
+					color 255, 255, 255
+					mes locvar_equipinfo_s
+				}
+				else {
+					color 80, 60, 40
+					pos equipinfo_arg2 + (locvar_colorres_i - 50) * 20 + 5, equipinfo_arg3
+					mes "" + locvar_equipinfo_s
+					colorres
+					pos equipinfo_arg2 + (locvar_colorres_i - 50) * 20 + 4, equipinfo_arg3
+					mes "" + locvar_equipinfo_s
+				}
+			loop
+		}
+		else {
+			if ( showressub == 1 ) {
+				repeat 10, 10
+					oom_cnt = cnt
+					repeat 15
+						locvar_addnews_f = 0
+						locvar_equipinfo_p = inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, equipinfo_arg1)
+						if ( locvar_equipinfo_p == 0 ) {
+							break
+						}
+						locvar_colorres_i = locvar_equipinfo_p / 10000
+						if ( locvar_colorres_i != 6 ) {
+							continue
+						}
+						locvar_colorres_i = locvar_equipinfo_p \ 10000
+						if ( locvar_colorres_i == oom_cnt ) {
+							locvar_addnews_f = 1
+							break
+						}
+					loop
+					if ( locvar_addnews_f == 1 ) {
+						color 0, 100, 100
+						pos equipinfo_arg2 + (oom_cnt - 10) * 20 + en * 4, equipinfo_arg3
+						mes lang("●", "#")
+					}
+					else {
+						color 0, 100, 100
+						pos equipinfo_arg2 + (oom_cnt - 10) * 20 + 4, equipinfo_arg3
+						mes "-"
+					}
+				loop
+				repeat 6, 23
+					oom_cnt = cnt
+					repeat 15
+						locvar_addnews_f = 0
+						locvar_equipinfo_p = inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, equipinfo_arg1)
+						if ( locvar_equipinfo_p == 0 ) {
+							break
+						}
+						locvar_colorres_i = locvar_equipinfo_p / 10000
+						if ( locvar_colorres_i != 0 ) {
+							continue
+						}
+						locvar_colorres_i = locvar_equipinfo_p \ 10000
+						if ( locvar_colorres_i == oom_cnt ) {
+							locvar_addnews_f = 1
+							break
+						}
+					loop
+					if ( locvar_addnews_f == 1 ) {
+						color 100, 32, 0
+						pos equipinfo_arg2 + (oom_cnt - 23) * 20 + 200 + en * 4, equipinfo_arg3
+						mes lang("●", "#")
+					}
+					else {
+						color 100, 32, 0
+						pos equipinfo_arg2 + (oom_cnt - 23) * 20 + 204, equipinfo_arg3
+						mes "-"
+					}
+				loop
+			}
+			else {
+				if ( showressub == 2 ) {
+					_wx = 0
+					getinheritance equipinfo_arg1, inhlist, inhmax
+					if ( equipfilter < 0 ) {
+						repeat 15
+							locvar_equipinfo_p = inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, equipinfo_arg1)
+							if ( locvar_equipinfo_p == 0 ) {
+								break
+							}
+							locvar_addnews_f = 0
+							if ( locvar_equipinfo_p / 10000 == abs(equipfilter) / 10000 ) {
+								locvar_addnews_f = 1
+							}
+							if ( locvar_equipinfo_p / 10000 == 0 ) {
+								if ( equipfilter / 10000 == (-10) ) {
+									locvar_addnews_f = 1
+								}
+							}
+							if ( locvar_addnews_f == 1 ) {
+								locvar_colorres_i = locvar_equipinfo_p \ 10000
+								if ( inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, equipinfo_arg1) >= equipfilterpower ) {
+									cnt2 = cnt
+									color 10, 40, 120
+									if ( oom_inheritance_search == 1 ) {
+										locvar_addnews_f = 0
+										repeat inhmax
+											if ( cnt2 == inhlist(cnt) ) {
+												color 120, 40, 10
+												locvar_addnews_f = 1
+												break
+											}
+										loop
+									}
+									if ( locvar_addnews_f == 1 & oom_inheritance_search == 1 | oom_inheritance_search == 0 ) {
+										pos equipinfo_arg2 + _wx, equipinfo_arg3
+										if ( locvar_equipinfo_p / 10000 == 8 ) {
+											mes skillname(encprocref(ENCPROCREF_SKILL_ID, locvar_colorres_i))
+										}
+										else {
+											if ( locvar_equipinfo_p / 10000 == 9 ) {
+												mes ammoname(locvar_colorres_i)
+											}
+											else {
+												if ( locvar_equipinfo_p / 10000 == 0 ) {
+													repeat 43
+														if ( encetc(cnt) == locvar_colorres_i ) {
+															mes encetcn(1, cnt)
+															break
+														}
+													loop
+												}
+												else {
+													mes skillname(locvar_colorres_i)
+												}
+											}
+										}
+										_wx += ginfo(14) + 10
+									}
+								}
+							}
+						loop
+					}
+				}
+				else {
+					if ( showressub == 3 ) {
+						color 100, 32, 0
+						if ( ibit(ITEM_BIT_FIREPROOF, equipinfo_arg1) ) {
+							pos equipinfo_arg2, equipinfo_arg3
+							mes lang("●", "#")
+						}
+						if ( ibit(ITEM_BIT_ACIDPROOF, equipinfo_arg1) ) {
+							pos equipinfo_arg2 + 20, equipinfo_arg3
+							mes lang("●", "#")
+						}
+						repeat 15
+							locvar_equipinfo_p = inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, equipinfo_arg1)
+							if ( locvar_equipinfo_p == 0 ) {
+								break
+							}
+							if ( locvar_equipinfo_p == 32 ) {
+								pos equipinfo_arg2 + 40, equipinfo_arg3
+								mes lang("●", "#")
+							}
+							if ( locvar_equipinfo_p == 48 ) {
+								pos equipinfo_arg2 + 60, equipinfo_arg3
+								mes lang("●", "#")
+							}
+							if ( locvar_equipinfo_p == 42 ) {
+								pos equipinfo_arg2 + 80, equipinfo_arg3
+								mes lang("●", "#")
+							}
+							if ( locvar_equipinfo_p == 56 ) {
+								pos equipinfo_arg2 + 100, equipinfo_arg3
+								mes lang("●", "#")
+							}
+						loop
+						encicon_draw equipinfo_arg1, equipinfo_arg2 + 40, equipinfo_arg3
+					}
+				}
+			}
+		}
+	}
+	else {
+		repeat 15
+			locvar_equipinfo_p = inv(STARTING_INV_ITEM_ENCHANT + cnt * 2, equipinfo_arg1)
+			if ( locvar_equipinfo_p == 0 ) {
+				break
+			}
+			locvar_colorres_i = locvar_equipinfo_p / 10000
+			if ( locvar_colorres_i != 2 ) {
+				continue
+			}
+			locvar_colorres_i = locvar_equipinfo_p \ 10000
+			pos equipinfo_arg2 + (locvar_colorres_i - 50) * 20, equipinfo_arg3
+			locvar_equipinfo_p = abs(inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, equipinfo_arg1) / 2 / 50) + 1
+			if ( locvar_equipinfo_p > 5 ) {
+				locvar_equipinfo_s = "+"
+			}
+			else {
+				locvar_equipinfo_s = "" + locvar_equipinfo_p
+			}
+			if ( jp ) {
+				colorres
+				if ( inv(STARTING_INV_ITEM_ENCHANT_POWER + cnt * 2, equipinfo_arg1) >= 0 ) {
+					mes "●"
+				}
+				else {
+					mes "▼"
+				}
+				pos equipinfo_arg2 + (locvar_colorres_i - 50) * 20 + 5, equipinfo_arg3 + 1
+				color 0, 0, 0
+				mes locvar_equipinfo_s
+				pos equipinfo_arg2 + (locvar_colorres_i - 50) * 20 + 4, equipinfo_arg3
+				color 255, 255, 255
+				mes locvar_equipinfo_s
+			}
+			else {
+				color 80, 60, 40
+				pos equipinfo_arg2 + (locvar_colorres_i - 50) * 20 + 5, equipinfo_arg3
+				mes "" + locvar_equipinfo_p
+				colorres
+				pos equipinfo_arg2 + (locvar_colorres_i - 50) * 20 + 4, equipinfo_arg3
+				mes "" + locvar_equipinfo_p
+			}
+		loop
+	}
+	return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1558 @@
+*setCellObj
+	tile_trap = xy2pic(3, 7)
+	tile_doorclosed = xy2pic(0, 22)
+	tile_doorclosed1 = 726
+	tile_doorclosed2 = xy2pic(2, 22)
+	tile_doorclosed3 = xy2pic(4, 22)
+	tile_doorclosed4 = xy2pic(7, 22)
+	tile_dooropen = xy2pic(5, 7)
+	tile_dooropen1 = 236
+	tile_dooropen2 = 241
+	tile_dooropen3 = 264
+	tile_dooropen4 = 265
+	tile_downstairs = xy2pic(0, 7)
+	tile_upstairs = xy2pic(1, 7)
+	tile_hidden = xy2pic(0, 0)
+	tile_downlocked = xy2pic(6, 7)
+	tile_re = xy2pic(7, 7)
+	tile_plant = xy2pic(16, 7)
+	tile_board = xy2pic(1, 22)
+	tile_votebox = xy2pic(3, 22)
+	tile_townboard = xy2pic(6, 22)
+	dim cellobjdata, 5, 50
+	maxobjid = 0
+	cellobjdata(0, maxobjid) = 21, tile_doorclosed, 99, tile_doorclosed
+	maxobjid++
+	cellobjdata(0, maxobjid) = 21, tile_doorclosed, 99, tile_doorclosed
+	maxobjid++
+	cellobjdata(0, maxobjid) = 21, tile_doorclosed, 0, tile_doorclosed
+	maxobjid++
+	cellobjdata(0, maxobjid) = 14, tile_trap, 100, 0
+	maxobjid++
+	cellobjdata(0, maxobjid) = 14, tile_trap, 100, 0
+	maxobjid++
+	cellobjdata(0, maxobjid) = 10, tile_upstairs, 0, tile_upstairs
+	maxobjid++
+	cellobjdata(0, maxobjid) = 11, tile_downstairs, 0, tile_downstairs
+	maxobjid++
+	cellobjdata(0, maxobjid) = 21, tile_doorclosed2, 0, tile_doorclosed2
+	maxobjid++
+	cellobjdata(0, maxobjid) = 23, tile_board, 0, tile_board
+	maxobjid++
+	cellobjdata(0, maxobjid) = 31, tile_votebox, 0, tile_votebox
+	maxobjid++
+	cellobjdata(0, maxobjid) = 32, tile_trap, 0, 0
+	maxobjid++
+	cellobjdata(0, maxobjid) = 21, tile_doorclosed3, 0, tile_doorclosed3
+	maxobjid++
+	cellobjdata(0, maxobjid) = 33, tile_townboard, 0, tile_townboard
+	maxobjid++
+	cellobjdata(0, maxobjid) = 21, tile_doorclosed4, 0, tile_doorclosed4
+	maxobjid++
+	return
+
+#deffunc map_converttile
+	repeat mHeight
+		y = cnt
+		repeat mWidth
+			x = cnt
+			if ( mapId(x, y) == xy2pic(0, 0) ) {
+				mapId(x, y) = tile_default + (rnd(tile_default(2)) == 0) * rnd(tile_default(1))
+				continue
+			}
+			if ( mapId(x, y) >= xy2pic(1, 3) ) {
+				mapId(x, y) = tile_tunnel + (rnd(tile_tunnel(2)) == 0) * rnd(tile_tunnel(1))
+				continue
+			}
+			if ( mapId(x, y) == xy2pic(1, 0) ) {
+				mapId(x, y) = tile_wall + (rnd(tile_wall(2)) == 0) * rnd(tile_wall(1))
+				continue
+			}
+			if ( mapId(x, y) == xy2pic(3, 0) ) {
+				mapId(x, y) = tile_room + (rnd(tile_room(2)) == 0) * rnd(tile_room(1))
+				continue
+			}
+			if ( mapId(x, y) == xy2pic(4, 0) ) {
+				mapId(x, y) = tile_default + (rnd(tile_default(2)) == 0) * rnd(tile_default(1))
+				continue
+			}
+		loop
+	loop
+	return
+
+#deffunc map_tileset int map_tileset_arg1
+	procid = (procid + 1) \ 10
+	proclist(procid) = "map_tileSet:Begin" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	tile_doorclosed = xy2pic(0, 22)
+	tile_dooropen = xy2pic(5, 7)
+	tile_trans = xy2pic(9, 30)
+	tile_dungeon = xy2pic(1, 4)
+	tile_battlesite = xy2pic(2, 4)
+	tile_default = xy2pic(0, 12), 1, 1
+	tile_fog = xy2pic(3, 16), 1, 1
+	tile_wall = xy2pic(0, 14), 1, 1
+	tile_room = xy2pic(13, 0), 1, 1
+	tile_board = xy2pic(1, 22)
+	tile_votebox = xy2pic(3, 22)
+	tile_townboard = xy2pic(6, 22)
+	tile_tunnel = xy2pic(0, 1), 1, 1
+	tile_pot = xy2pic(11, 7)
+	tile_roomlen = 1
+	if ( map_tileset_arg1 == MAP_TILESET_JAIL ) {
+		tile_doorclosed = xy2pic(7, 22)
+		tile_dooropen = xy2pic(1, 8)
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_SF ) {
+		tile_doorclosed = xy2pic(2, 22)
+		tile_dooropen = xy2pic(10, 7)
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_EASTERN ) {
+		tile_doorclosed = xy2pic(4, 22)
+		tile_dooropen = xy2pic(0, 8)
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_HOME ) {
+		tile_room = xy2pic(8, 1)
+		tile_tunnel = xy2pic(8, 1)
+		tile_wall = xy2pic(7, 14)
+		tile_fog = tile_wall + 66
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_TOWN ) {
+		tile_wall = xy2pic(0, 14)
+		tile_fog = xy2pic(1, 16)
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_WATER ) {
+		tile_room = xy2pic(0, 5)
+		tile_tunnel = xy2pic(0, 1), 4, 2
+		tile_wall = xy2pic(7, 14)
+		tile_default = xy2pic(7, 14)
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_CASTLE ) {
+		tile_default = xy2pic(3, 14)
+		tile_fog = xy2pic(2, 16)
+		tile_tunnel = xy2pic(14, 6)
+		tile_wall = xy2pic(5, 14)
+		tile_room = xy2pic(5, 6)
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_DUNGEON ) {
+		tile_default = xy2pic(7, 14)
+		tile_fog = xy2pic(1, 16)
+		tile_tunnel = xy2pic(0, 1), 4, 2
+		tile_wall = xy2pic(7, 14)
+		tile_room = xy2pic(0, 1), 4, 2
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_SNOW_UNUSED ) {
+		tile_default = xy2pic(7, 14)
+		tile_fog = xy2pic(1, 16)
+		tile_tunnel = xy2pic(12, 1), 3, 2
+		tile_wall = xy2pic(7, 14)
+		tile_room = xy2pic(0, 1), 6, 3
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_TOWER_OF_FIRE ) {
+		tile_default = xy2pic(12, 14)
+		tile_fog = xy2pic(2, 16)
+		tile_tunnel = 33 * 2 + 2
+		tile_wall = xy2pic(12, 14)
+		tile_room = 33 * 2, 2, 2
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_NEFIA_FOREST ) {
+		tile_default = xy2pic(13, 14)
+		tile_fog = xy2pic(0, 16)
+		tile_tunnel = xy2pic(0, 0)
+		tile_wall = xy2pic(13, 14)
+		tile_room = xy2pic(0, 0), 6, 6
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_NEFIA_TOWER1 ) {
+		tile_default = xy2pic(10, 14)
+		tile_fog = xy2pic(2, 16)
+		tile_tunnel = 33 * 3 + 4
+		tile_wall = xy2pic(11, 14)
+		tile_room = 33 * 4, 3, 2
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_NEFIA_TOWER2 ) {
+		tile_default = xy2pic(15, 14)
+		tile_fog = xy2pic(2, 16)
+		tile_tunnel = 33 * 3 + 1
+		tile_wall = xy2pic(15, 14)
+		tile_room = 33 * 3
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_NEFIA_FORT ) {
+		tile_default = xy2pic(6, 14)
+		tile_fog = xy2pic(3, 16)
+		tile_tunnel = xy2pic(0, 1), 4, 2
+		tile_wall = xy2pic(0, 14)
+		tile_room = xy2pic(20, 3), 4, 2
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_WORLD ) {
+		tile_wall = xy2pic(-1, 0)
+		tile_fog = xy2pic(0, 12), 4, 2
+	}
+	if ( map_tileset_arg1 == MAP_TILESET_WILDERNESS ) {
+		tile_default = xy2pic(0, 0)
+		tile_fog = xy2pic(0, 16)
+		if ( 4 <= gWorldTile & gWorldTile < 9 ) {
+			tile_default = xy2pic(7, 0)
+			tile_fog = xy2pic(0, 16)
+		}
+		if ( 264 <= gWorldTile & gWorldTile < 363 ) {
+			tile_default = xy2pic(12, 0)
+		}
+		if ( 9 <= gWorldTile & gWorldTile < 13 ) {
+			tile_fog = xy2pic(0, 16)
+			tile_default = xy2pic(3, 0)
+		}
+		if ( 13 <= gWorldTile & gWorldTile < 17 ) {
+			tile_fog = xy2pic(3, 16)
+			tile_default = xy2pic(19, 0)
+		}
+		if ( chipm(CHIPM_ROLE, gWorldTile) == MAP_CHIP_ROLE_SNOW ) {
+			tile_fog = xy2pic(4, 16)
+			tile_default = xy2pic(12, 1)
+		}
+	}
+	if ( gArea  == 53 ) {
+		tile_default = xy2pic(1, 16)
+		tile_wall = xy2pic(7, 14)
+		tile_fog = xy2pic(1, 16)
+	}
+	if ( gArea  == 57 ) {
+		tile_default = xy2pic(25, 14)
+		tile_wall = xy2pic(7, 14)
+		tile_fog = xy2pic(1, 16)
+	}
+	procid = (procid + 1) \ 10
+	proclist(procid) = "map_tileSet:End" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	return
+
+#defcfunc dist_town
+	locvar_dist_town_p = 1000
+	repeat mHeight
+		locvar_dist_town_y = cnt
+		repeat mWidth
+			locvar_dist_town_x = cnt
+			cell_featread locvar_dist_town_x, locvar_dist_town_y
+			if ( areaType(featIdSub) == MAP_TYPE_TOWN | (areaId(gArea ) == AREA_TEST_WORLD & areaType(featIdSub) == MAP_TYPE_HOME) ) {
+				locvar_dist_town_i = dist(cX(CHARA_PLAYER), cY(CHARA_PLAYER), locvar_dist_town_x, locvar_dist_town_y)
+				if ( locvar_dist_town_i < locvar_dist_town_p ) {
+					locvar_dist_town_p = locvar_dist_town_i
+				}
+			}
+		loop
+	loop
+	return locvar_dist_town_p
+
+#deffunc map_reload str map_reload_arg1
+	fmapfile = exedir + "map\\" + map_reload_arg1
+	ctrlfile 16
+	repeat mHeight
+		locvar_map_reload_y = cnt
+		repeat mWidth
+			mapMef(cnt, locvar_map_reload_y) = 0
+			mapLight(cnt, locvar_map_reload_y) = 0
+		loop
+	loop
+	repeat 200
+		mefExist(cnt) = MEF_TYPE_NONE
+	loop
+	inv_getheader -1
+	repeat invrange, invhead
+		if ( iNum(cnt) > 0 ) {
+			if ( iProperty(cnt) == PROP_NPC ) {
+				if ( refitem(iID(cnt), DBSPEC_TYPE, cnt) == FILTER_ITEM_FOOD ) {
+					iNum(cnt) = 0
+					cell_refresh iX(cnt), iY(cnt)
+				}
+			}
+		}
+	loop
+	repeat 400
+		if ( cmapdata(0, cnt) == 0 ) {
+			continue
+		}
+		locvar_map_reload_x = cmapdata(1, cnt)
+		locvar_map_reload_y = cmapdata(2, cnt)
+		if ( cmapdata(4, cnt) == 0 ) {
+			if ( mapItems(locvar_map_reload_x, locvar_map_reload_y) == 0 ) {
+				flt
+				itemcreate -1, cmapdata(0, cnt), locvar_map_reload_x, locvar_map_reload_y, 0
+				if ( stat != 0 ) {
+					iProperty(ci) = cmapdata(3, cnt)
+				}
+			}
+			cell_refresh locvar_map_reload_x, locvar_map_reload_y
+		}
+	loop
+	procid = (procid + 1) \ 10
+	proclist(procid) = "map_reload:End" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	return
+
+#deffunc map_initialize
+	if ( rdroomnum >= 30 ) {
+		rdroomnum = 30
+	}
+	repeat 30
+		roomexist(cnt) = 0
+	loop
+	dim map, mWidth, mHeight, 10
+	dim mapsync, mWidth, mHeight
+	dim mef, 9, 200
+	dim mapinv, mWidth, mHeight
+	dim oommap, mWidth, mHeight, 20
+	map_tileset mTileSet
+	procid = (procid + 1) \ 10
+	proclist(procid) = "map_initialize:end" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	return
+
+#deffunc map_placecharaonentrance int map_placecharaonentrance_arg1, int map_placecharaonentrance_arg2, int map_placecharaonentrance_arg3
+	if ( map_placecharaonentrance_arg2 == 1 ) {
+		locvar_map_placecharaonentrance_x = mUpStairPos \ 1000
+		if ( map_placecharaonentrance_arg3 != 0 ) {
+			locvar_map_placecharaonentrance_x += rnd(map_placecharaonentrance_arg3) - rnd(map_placecharaonentrance_arg3)
+		}
+		locvar_map_placecharaonentrance_y = mUpStairPos / 1000
+		if ( map_placecharaonentrance_arg3 != 0 ) {
+			locvar_map_placecharaonentrance_y += rnd(map_placecharaonentrance_arg3) - rnd(map_placecharaonentrance_arg3)
+		}
+	}
+	if ( map_placecharaonentrance_arg2 == 2 ) {
+		locvar_map_placecharaonentrance_x = mDownStairPos \ 1000
+		if ( map_placecharaonentrance_arg3 != 0 ) {
+			locvar_map_placecharaonentrance_x += rnd(map_placecharaonentrance_arg3) - rnd(map_placecharaonentrance_arg3)
+		}
+		locvar_map_placecharaonentrance_y = mDownStairPos / 1000
+		if ( map_placecharaonentrance_arg3 != 0 ) {
+			locvar_map_placecharaonentrance_y += rnd(map_placecharaonentrance_arg3) - rnd(map_placecharaonentrance_arg3)
+		}
+	}
+	if ( map_placecharaonentrance_arg2 == 3 ) {
+		if ( gRunDir == 1 ) {
+			locvar_map_placecharaonentrance_x = mWidth - 2
+			locvar_map_placecharaonentrance_y = mHeight / 2
+			if ( gArea  == AREA_PALMIA ) {
+				locvar_map_placecharaonentrance_y = 22
+			}
+			if ( gArea  == AREA_LUMIEST ) {
+				locvar_map_placecharaonentrance_x = 58
+				locvar_map_placecharaonentrance_y = 21
+			}
+			if ( gArea  == 50 ) {
+				locvar_map_placecharaonentrance_y = 21
+			}
+			if ( gArea  == 51 ) {
+				locvar_map_placecharaonentrance_x = 45
+				locvar_map_placecharaonentrance_y = 45
+			}
+		}
+		if ( gRunDir == 2 ) {
+			locvar_map_placecharaonentrance_x = 1
+			locvar_map_placecharaonentrance_y = mHeight / 2
+			if ( gArea  == AREA_NOYEL ) {
+				locvar_map_placecharaonentrance_y = 3
+			}
+			if ( gArea  == AREA_LUMIEST ) {
+				locvar_map_placecharaonentrance_x = 25
+				locvar_map_placecharaonentrance_y = 1
+			}
+		}
+		if ( gRunDir == 3 ) {
+			locvar_map_placecharaonentrance_x = mWidth / 2
+			locvar_map_placecharaonentrance_y = mHeight - 2
+			if ( gArea  == AREA_PALMIA ) {
+				locvar_map_placecharaonentrance_x = 30
+			}
+			if ( gArea  == AREA_NOYEL ) {
+				locvar_map_placecharaonentrance_x = 28
+			}
+			if ( gArea  == AREA_LUMIEST ) {
+				locvar_map_placecharaonentrance_x = 58
+				locvar_map_placecharaonentrance_y = 21
+			}
+			if ( gArea  == 50 ) {
+				locvar_map_placecharaonentrance_x = 21
+			}
+		}
+		if ( gRunDir == 0 ) {
+			locvar_map_placecharaonentrance_x = mWidth / 2
+			locvar_map_placecharaonentrance_y = 1
+			if ( gArea  == AREA_NOYEL ) {
+				locvar_map_placecharaonentrance_x = 5
+			}
+			if ( gArea  == AREA_LUMIEST ) {
+				locvar_map_placecharaonentrance_x = 25
+				locvar_map_placecharaonentrance_y = 1
+			}
+			if ( gArea  == 51 ) {
+				locvar_map_placecharaonentrance_x = 18
+				locvar_map_placecharaonentrance_y = 0
+			}
+		}
+		if ( gArea  == AREA_LARNA ) {
+			locvar_map_placecharaonentrance_x = 1
+			locvar_map_placecharaonentrance_y = 14
+		}
+		if ( gLastEdgeX != (-1) ) {
+			locvar_map_placecharaonentrance_x = gLastEdgeX
+			locvar_map_placecharaonentrance_y = gLastEdgeY
+		}
+	}
+	if ( map_placecharaonentrance_arg2 == 4 ) {
+		locvar_map_placecharaonentrance_x = mWidth / 2
+		locvar_map_placecharaonentrance_y = mHeight / 2
+	}
+	if ( map_placecharaonentrance_arg2 == 8 ) {
+		locvar_map_placecharaonentrance_x = mWidth / 2
+		locvar_map_placecharaonentrance_y = mHeight - 2
+		if ( gArea  == 54 ) {
+			locvar_map_placecharaonentrance_x = 18
+		}
+		if ( gArea  == 53 ) {
+			locvar_map_placecharaonentrance_x = 26
+			locvar_map_placecharaonentrance_y = 10
+		}
+	}
+	if ( map_placecharaonentrance_arg2 == 5 ) {
+		locvar_map_placecharaonentrance_x = rnd(mWidth - 5) + 2
+		locvar_map_placecharaonentrance_y = rnd(mHeight - 5) + 2
+	}
+	if ( map_placecharaonentrance_arg2 == 6 ) {
+		locvar_map_placecharaonentrance_x = gWorldX + rnd(cnt / 5 + 1)
+		locvar_map_placecharaonentrance_y = gWorldY + rnd(cnt / 5 + 1)
+	}
+	if ( map_placecharaonentrance_arg2 == 7 ) {
+		locvar_map_placecharaonentrance_x = mapstartx
+		locvar_map_placecharaonentrance_y = mapstarty
+	}
+	cxinit = locvar_map_placecharaonentrance_x
+	cyinit = locvar_map_placecharaonentrance_y
+	rc = map_placecharaonentrance_arg1
+	place_chara rc, cxinit, cyinit
+	return
+
+#deffunc map_placearena int map_placearena_arg1, int map_placearena_arg2
+	repeat
+		await
+		x = rnd(7) + 5
+		y = rnd(6) + 6
+		if ( map_placearena_arg2 == 0 ) {
+			x += 8
+		}
+		cxinit = x
+		cyinit = y
+		rc = map_placearena_arg1
+		place_chara rc, cxinit, cyinit
+		if ( map_placearena_arg2 == 0 ) {
+			if ( cX(map_placearena_arg1) >= 13 & cY(map_placearena_arg1) >= 6 & cX(map_placearena_arg1) < 20 & cY(map_placearena_arg1) < 12 ) {
+				break
+			}
+		}
+		else {
+			if ( cX(map_placearena_arg1) >= 5 & cY(map_placearena_arg1) >= 6 & cX(map_placearena_arg1) < 12 & cY(map_placearena_arg1) < 12 ) {
+				break
+			}
+		}
+		mapChara(cX(map_placearena_arg1), cY(map_placearena_arg1)) = 0
+	loop
+	return
+
+#deffunc map_placeplayer
+	if ( mode == MODELIST_MAP ) {
+		return
+	}
+	camera = 0
+	repeat 16
+		if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+			continue
+		}
+		if ( cnt != 0 ) {
+			if ( gRider == cnt ) {
+				cX(gRider) = cX(CHARA_PLAYER)
+				cY(gRider) = cY(CHARA_PLAYER)
+				continue
+			}
+			else {
+				if ( ocPetBeingRiddenIdx(cnt) != 0 ) {
+					continue
+				}
+			}
+		}
+		if ( gArea  == AREA_PET_ARENA ) {
+			if ( followerin(cnt) == 1 ) {
+				if ( camera == 0 ) {
+					camera = cnt
+				}
+				map_placearena cnt, 0
+				continue
+			}
+		}
+		if ( gArea  == 49 ) {
+			if ( followerin(cnt) == 1 ) {
+				if ( camera == 0 ) {
+					camera = cnt
+				}
+				cxinit = 1
+				cyinit = 6
+				place_chara cnt, cxinit, cyinit
+				cXnew(cnt) = cxinit
+				cYnew(cnt) = cyinit
+				continue
+			}
+		}
+		if ( cType(cnt) == gArea  ) {
+			if ( cnt != 0 ) {
+				cxinit = cXorg(cnt)
+				cyinit = cYorg(cnt)
+				rc = cnt
+				place_chara rc, cxinit, cyinit
+				continue
+			}
+		}
+		map_placecharaonentrance cnt, gLevelStartOn
+	loop
+	repeat 15, 1
+		if ( cExist(cnt) != CHAR_STATE_ALIVE ) {
+			continue
+		}
+		if ( ocPetBeingRiddenIdx(cnt) != 0 ) {
+			cX(cnt) = cX(ocPetBeingRiddenIdx(cnt))
+			cY(cnt) = cY(ocPetBeingRiddenIdx(cnt))
+			continue
+		}
+	loop
+	return
+
+#deffunc map_randomtile int map_randomtile_arg1, int map_randomtile_arg2
+	repeat mWidth * mHeight * map_randomtile_arg2 / 100 + 1
+		mapId(rnd(mWidth), rnd(mHeight)) = map_randomtile_arg1
+	loop
+	return
+
+#defcfunc map_digcheck int map_digcheck_arg1, int map_digcheck_arg2
+	if ( map_digcheck_arg1 < 1 | map_digcheck_arg2 < 1 | map_digcheck_arg1 > mWidth - 2 | map_digcheck_arg2 > mHeight - 2 ) {
+		return 0
+	}
+	if ( mapId(map_digcheck_arg1, map_digcheck_arg2) == xy2pic(1, 3) ) {
+		return 100
+	}
+	return mapId(map_digcheck_arg1, map_digcheck_arg2) == xy2pic(0, 0)
+
+#deffunc map_nextdir1 int map_nextdir1_arg1, int map_nextdir1_arg2
+	if ( locvar_map_nextdir1_tx >= map_nextdir1_arg1 - 4 & locvar_map_nextdir1_tx <= map_nextdir1_arg1 + 4 ) {
+		if ( locvar_map_nextdir1_ty >= map_nextdir1_arg2 - 4 & locvar_map_nextdir1_ty <= map_nextdir1_arg2 + 4 ) {
+			if ( locvar_map_nextdir1_tx < map_nextdir1_arg1 ) {
+				locvar_map_nextdir1_dir = 2
+				if ( locvar_map_nextdir1_ty > map_nextdir1_arg2 ) {
+					locvar_map_nextdir1_dest = 3
+				}
+				else {
+					locvar_map_nextdir1_dest = 0
+				}
+			}
+			if ( locvar_map_nextdir1_tx > map_nextdir1_arg1 ) {
+				locvar_map_nextdir1_dir = 1
+				if ( locvar_map_nextdir1_ty > map_nextdir1_arg2 ) {
+					locvar_map_nextdir1_dest = 3
+				}
+				else {
+					locvar_map_nextdir1_dest = 0
+				}
+			}
+			if ( locvar_map_nextdir1_ty < map_nextdir1_arg2 ) {
+				locvar_map_nextdir1_dir = 0
+				if ( locvar_map_nextdir1_tx > map_nextdir1_arg1 ) {
+					locvar_map_nextdir1_dest = 1
+				}
+				else {
+					locvar_map_nextdir1_dest = 2
+				}
+			}
+			if ( locvar_map_nextdir1_ty > map_nextdir1_arg2 ) {
+				locvar_map_nextdir1_dir = 3
+				if ( locvar_map_nextdir1_tx > map_nextdir1_arg1 ) {
+					locvar_map_nextdir1_dest = 1
+				}
+				else {
+					locvar_map_nextdir1_dest = 2
+				}
+			}
+			return
+		}
+	}
+	if ( locvar_map_nextdir1_dir == 1 | locvar_map_nextdir1_dir == 2 ) {
+		if ( locvar_map_nextdir1_ty > map_nextdir1_arg2 ) {
+			locvar_map_nextdir1_dir = 3
+		}
+		else {
+			locvar_map_nextdir1_dir = 0
+		}
+		if ( locvar_map_nextdir1_tx > map_nextdir1_arg1 ) {
+			locvar_map_nextdir1_dest = 1
+		}
+		else {
+			locvar_map_nextdir1_dest = 2
+		}
+		return
+	}
+	if ( locvar_map_nextdir1_dir == 3 | locvar_map_nextdir1_dir == 0 ) {
+		if ( locvar_map_nextdir1_tx > map_nextdir1_arg1 ) {
+			locvar_map_nextdir1_dir = 1
+		}
+		else {
+			locvar_map_nextdir1_dir = 2
+		}
+		if ( locvar_map_nextdir1_ty > map_nextdir1_arg2 ) {
+			locvar_map_nextdir1_dest = 3
+		}
+		else {
+			locvar_map_nextdir1_dest = 0
+		}
+		return
+	}
+
+#deffunc map_nextdir2 int map_nextdir2_arg1, int map_nextdir2_arg2
+	if ( locvar_map_nextdir2_dir2 != (-1) ) {
+		if ( locvar_map_nextdir2_dir2 == 1 ) {
+			if ( map_digcheck(locvar_map_nextdir1_tx - 1, locvar_map_nextdir1_ty) ) {
+				if ( locvar_map_nextdir1_tx == map_nextdir2_arg1 ) {
+					locvar_map_nextdir2_p = locvar_map_nextdir2_dir2
+					locvar_map_nextdir2_dir2 = locvar_map_nextdir1_dir
+					locvar_map_nextdir1_dir = locvar_map_nextdir2_p
+				}
+				else {
+					locvar_map_nextdir1_dir = locvar_map_nextdir2_dir2
+					locvar_map_nextdir2_dir2 = -1
+				}
+			}
+		}
+		if ( locvar_map_nextdir2_dir2 == 2 ) {
+			if ( map_digcheck(locvar_map_nextdir1_tx + 1, locvar_map_nextdir1_ty) ) {
+				if ( locvar_map_nextdir1_tx == map_nextdir2_arg1 ) {
+					locvar_map_nextdir2_p = locvar_map_nextdir2_dir2
+					locvar_map_nextdir2_dir2 = locvar_map_nextdir1_dir
+					locvar_map_nextdir1_dir = locvar_map_nextdir2_p
+				}
+				else {
+					locvar_map_nextdir1_dir = locvar_map_nextdir2_dir2
+					locvar_map_nextdir2_dir2 = -1
+				}
+			}
+		}
+		if ( locvar_map_nextdir2_dir2 == 3 ) {
+			if ( map_digcheck(locvar_map_nextdir1_tx, locvar_map_nextdir1_ty - 1) ) {
+				if ( locvar_map_nextdir1_ty == map_nextdir2_arg2 ) {
+					locvar_map_nextdir2_p = locvar_map_nextdir2_dir2
+					locvar_map_nextdir2_dir2 = locvar_map_nextdir1_dir
+					locvar_map_nextdir1_dir = locvar_map_nextdir2_p
+				}
+				else {
+					locvar_map_nextdir1_dir = locvar_map_nextdir2_dir2
+					locvar_map_nextdir2_dir2 = -1
+				}
+			}
+		}
+		if ( locvar_map_nextdir2_dir2 == 0 ) {
+			if ( map_digcheck(locvar_map_nextdir1_tx, locvar_map_nextdir1_ty + 1) ) {
+				if ( locvar_map_nextdir1_ty == map_nextdir2_arg2 ) {
+					locvar_map_nextdir2_p = locvar_map_nextdir2_dir2
+					locvar_map_nextdir2_dir2 = locvar_map_nextdir1_dir
+					locvar_map_nextdir1_dir = locvar_map_nextdir2_p
+				}
+				else {
+					locvar_map_nextdir1_dir = locvar_map_nextdir2_dir2
+					locvar_map_nextdir2_dir2 = -1
+				}
+			}
+		}
+	}
+	if ( locvar_map_nextdir1_dir == 1 | locvar_map_nextdir1_dir == 2 ) {
+		if ( locvar_map_nextdir1_tx == map_nextdir2_arg1 ) {
+			if ( locvar_map_nextdir1_ty > map_nextdir2_arg2 ) {
+				if ( map_digcheck(locvar_map_nextdir1_tx, locvar_map_nextdir1_ty - 1) ) {
+					locvar_map_nextdir2_dir2 = locvar_map_nextdir1_dir
+					locvar_map_nextdir1_dir = 3
+				}
+			}
+			if ( locvar_map_nextdir1_ty < map_nextdir2_arg2 ) {
+				if ( map_digcheck(locvar_map_nextdir1_tx, locvar_map_nextdir1_ty + 1) ) {
+					locvar_map_nextdir2_dir2 = locvar_map_nextdir1_dir
+					locvar_map_nextdir1_dir = 0
+				}
+			}
+		}
+		return
+	}
+	if ( locvar_map_nextdir1_dir == 3 | locvar_map_nextdir1_dir == 0 ) {
+		if ( locvar_map_nextdir1_ty == map_nextdir2_arg2 ) {
+			if ( locvar_map_nextdir1_tx > map_nextdir2_arg1 ) {
+				if ( map_digcheck(locvar_map_nextdir1_tx - 1, locvar_map_nextdir1_ty) ) {
+					locvar_map_nextdir2_dir2 = locvar_map_nextdir1_dir
+					locvar_map_nextdir1_dir = 1
+				}
+			}
+			if ( locvar_map_nextdir1_tx < map_nextdir2_arg1 ) {
+				if ( map_digcheck(locvar_map_nextdir1_tx + 1, locvar_map_nextdir1_ty) ) {
+					locvar_map_nextdir2_dir2 = locvar_map_nextdir1_dir
+					locvar_map_nextdir1_dir = 2
+				}
+			}
+		}
+		return
+	}
+
+#deffunc map_digtoentrance1 int map_digtoentrance1_arg1, int map_digtoentrance1_arg2, int map_digtoentrance1_arg3, int map_digtoentrance1_arg4, int map_digtoentrance1_arg5
+	locvar_map_nextdir1_tx = map_digtoentrance1_arg1
+	locvar_map_nextdir1_ty = map_digtoentrance1_arg2
+	locvar_map_nextdir1_dest = -1
+	locvar_map_digtoentrance1_f = 0
+	if ( map_digtoentrance1_arg5 == 1 ) {
+		locvar_map_nextdir2_dir2 = -1
+		map_nextdir1 map_digtoentrance1_arg3, map_digtoentrance1_arg4
+	}
+	repeat 2000
+		if ( locvar_map_nextdir1_tx == map_digtoentrance1_arg3 ) {
+			if ( locvar_map_nextdir1_ty + 1 == map_digtoentrance1_arg4 | locvar_map_nextdir1_ty - 1 == map_digtoentrance1_arg4 ) {
+				locvar_map_digtoentrance1_f = 1
+				break
+			}
+		}
+		if ( locvar_map_nextdir1_ty == map_digtoentrance1_arg4 ) {
+			if ( locvar_map_nextdir1_tx + 1 == map_digtoentrance1_arg3 | locvar_map_nextdir1_tx - 1 == map_digtoentrance1_arg3 ) {
+				locvar_map_digtoentrance1_f = 1
+				break
+			}
+		}
+		if ( map_digtoentrance1_arg5 == 1 ) {
+			map_nextdir2 map_digtoentrance1_arg3, map_digtoentrance1_arg4
+		}
+		locvar_map_digtoentrance1_dx = locvar_map_nextdir1_tx
+		locvar_map_digtoentrance1_dy = locvar_map_nextdir1_ty
+		if ( locvar_map_nextdir1_dir == 1 ) {
+			locvar_map_digtoentrance1_dx--
+		}
+		if ( locvar_map_nextdir1_dir == 2 ) {
+			locvar_map_digtoentrance1_dx++
+		}
+		if ( locvar_map_nextdir1_dir == 3 ) {
+			locvar_map_digtoentrance1_dy--
+		}
+		if ( locvar_map_nextdir1_dir == 0 ) {
+			locvar_map_digtoentrance1_dy++
+		}
+		if ( map_digcheck(locvar_map_digtoentrance1_dx, locvar_map_digtoentrance1_dy) ) {
+			locvar_map_nextdir1_tx = locvar_map_digtoentrance1_dx
+			locvar_map_nextdir1_ty = locvar_map_digtoentrance1_dy
+			mapId(locvar_map_digtoentrance1_dx, locvar_map_digtoentrance1_dy) = xy2pic(1, 3)
+			if ( rnd(200) < rdhiddenpath ) {
+				mapId(locvar_map_digtoentrance1_dx, locvar_map_digtoentrance1_dy) = xy2pic(4, 0)
+				cell_featset locvar_map_digtoentrance1_dx, locvar_map_digtoentrance1_dy, 0, CELL_FEATURE_HIDDEN_PATH
+			}
+			if ( map_digtoentrance1_arg5 == 0 ) {
+				if ( rnd(4) == 0 ) {
+					map_nextdir1 map_digtoentrance1_arg3, map_digtoentrance1_arg4
+				}
+			}
+		}
+		else {
+			if ( locvar_map_nextdir1_dest == 1 ) {
+				if ( map_digcheck(locvar_map_nextdir1_tx - 1, locvar_map_nextdir1_ty) ) {
+					locvar_map_nextdir1_dir = 1
+					locvar_map_nextdir1_dest = -2
+				}
+			}
+			if ( locvar_map_nextdir1_dest == 2 ) {
+				if ( map_digcheck(locvar_map_nextdir1_tx + 1, locvar_map_nextdir1_ty) ) {
+					locvar_map_nextdir1_dir = 2
+					locvar_map_nextdir1_dest = -2
+				}
+			}
+			if ( locvar_map_nextdir1_dest == 3 ) {
+				if ( map_digcheck(locvar_map_nextdir1_tx, locvar_map_nextdir1_ty - 1) ) {
+					locvar_map_nextdir1_dir = 3
+					locvar_map_nextdir1_dest = -2
+				}
+			}
+			if ( locvar_map_nextdir1_dest == 0 ) {
+				if ( map_digcheck(locvar_map_nextdir1_tx, locvar_map_nextdir1_ty + 1) ) {
+					locvar_map_nextdir1_dir = 0
+					locvar_map_nextdir1_dest = -2
+				}
+			}
+			if ( locvar_map_nextdir1_dest == (-2) ) {
+				locvar_map_nextdir1_dest = -1
+				continue
+			}
+			if ( map_digtoentrance1_arg5 == 0 ) {
+				map_nextdir1 map_digtoentrance1_arg3, map_digtoentrance1_arg4
+			}
+			if ( map_digtoentrance1_arg5 == 1 ) {
+				map_nextdir1 map_digtoentrance1_arg3, map_digtoentrance1_arg4
+			}
+		}
+	loop
+	return locvar_map_digtoentrance1_f
+
+#deffunc map_setfog int map_setfog_arg0, int map_setfog_arg1
+	repeat mHeight
+		y = cnt
+		repeat mWidth
+			x = cnt
+			mapIdMemory(x, y) = tile_fog + (rnd(tile_fog(2)) == 0) * rnd(tile_fog(1))
+		loop
+	loop
+	return
+
+#deffunc map_createroomdoor
+	if ( rdpos == 3 | rdpos == 0 ) {
+		p = roomwidth(cr)
+	}
+	else {
+		p = roomheight(cr)
+	}
+	dim rddoorpos
+	repeat p - 2
+		rddoorpos(cnt) = cnt
+	loop
+	rndshuffle rddoorpos
+	repeat p - 2
+		if ( rdpos == 3 ) {
+			x = rddoorpos(cnt) + roomx(cr) + 1
+			y = roomy(cr) + roomheight(cr) - 1
+			p = 0, 0, -1, 1
+		}
+		if ( rdpos == 0 ) {
+			x = rddoorpos(cnt) + roomx(cr) + 1
+			y = roomy(cr)
+			p = 0, 0, -1, 1
+		}
+		if ( rdpos == 1 ) {
+			y = rddoorpos(cnt) + roomy(cr) + 1
+			x = roomx(cr) + roomwidth(cr) - 1
+			p = -1, 1, 0, 0
+		}
+		if ( rdpos == 2 ) {
+			y = rddoorpos(cnt) + roomy(cr) + 1
+			x = roomx(cr)
+			p = -1, 1, 0, 0
+		}
+		f = 1
+		repeat 2
+			dx = x + p(cnt)
+			dy = y + p(cnt + 2)
+			if ( (dx >= 0 & dy >= 0 & dx < mWidth & dy < mHeight) == 0 ) {
+				f = 0
+				break
+			}
+			if ( mapId(dx, dy) == xy2pic(1, 0) ) {
+				f = 0
+				break
+			}
+		loop
+		if ( f == 1 ) {
+			mapId(x, y) = xy2pic(3, 0)
+			if ( roomdoor != 3 ) {
+				if ( oabit(18, gArea ) == 0 ) {
+					cell_featset x, y, tile_doorclosed, CELL_FEATURE_DOOR_CLOSED, rnd(abs(gLevel  * 3 / 2) + 1)
+				}
+				else {
+					p = tile
+					mapId(x, y) = p
+					mapIdMemory(x, y) = p
+				}
+			}
+			break
+		}
+	loop
+	return
+
+#deffunc map_createroom int map_createroom_arg1
+	if ( roomsum >= 30 ) {
+		return 0
+	}
+	if ( map_createroom_arg1 == 0 ) {
+		roompos = 0
+		roomwall = 0
+		roomdoor = 0
+	}
+	if ( map_createroom_arg1 == 1 ) {
+		roompos = 1
+		roomwall = 1
+		roomdoor = 0
+	}
+	if ( map_createroom_arg1 == 2 ) {
+		roompos = 2
+		roomwall = 1
+		roomdoor = 1
+	}
+	if ( map_createroom_arg1 == 3 ) {
+		roompos = 3
+		roomwall = 2
+		roomdoor = 3
+	}
+	if ( map_createroom_arg1 == 4 ) {
+		roompos = 4
+		roomwall = 3
+		roomdoor = 0
+	}
+	cr = roomsum
+	f = 0
+	repeat 100
+		if ( roompos == 0 ) {
+			roomwidth(cr) = rnd(rdroomsizemax) + rdroomsizemin
+			roomheight(cr) = rnd(rdroomsizemax) + rdroomsizemin
+			roomx(cr) = rnd(mWidth) + 2
+			roomy(cr) = rnd(mHeight) + 2
+		}
+		if ( roompos == 1 ) {
+			roomwidth(cr) = (rnd(rdroomsizemax) + rdroomsizemin) / 3 * 3 + 5
+			roomheight(cr) = (rnd(rdroomsizemax) + rdroomsizemin) / 3 * 3 + 5
+			roomx(cr) = rnd(mWidth) / 3 * 3 + 2
+			roomy(cr) = rnd(mHeight) / 3 * 3 + 2
+		}
+		if ( roompos == 2 ) {
+			rdpos = rnd(4)
+			if ( rdpos == 3 | rdpos == 0 ) {
+				roomx(cr) = rnd(mWidth - rdroomsizemin * 3 / 2 - 2) + rdroomsizemin / 2
+				roomwidth(cr) = rnd(rdroomsizemin) + rdroomsizemin / 2 + 3
+				roomheight(cr) = rdroomsizemin
+				if ( rdpos == 3 ) {
+					roomy(cr) = 0
+				}
+				else {
+					roomy(cr) = mHeight - roomheight(cr)
+				}
+			}
+			if ( rdpos == 1 | rdpos == 2 ) {
+				roomy(cr) = rnd(mHeight - rdroomsizemin * 3 / 2 - 2) + rdroomsizemin / 2
+				roomwidth(cr) = rdroomsizemin
+				roomheight(cr) = rnd(rdroomsizemin) + rdroomsizemin / 2 + 3
+				if ( rdpos == 1 ) {
+					roomx(cr) = 0
+				}
+				else {
+					roomx(cr) = mWidth - roomwidth(cr)
+				}
+			}
+		}
+		if ( roompos == 3 ) {
+			roomwidth(cr) = 3
+			roomheight(cr) = 3
+			x = mWidth - rdroomsizemin * 2 - roomwidth(cr) - 2 + 1
+			if ( x < 1 ) {
+				break
+			}
+			y = mHeight - rdroomsizemin * 2 - roomheight(cr) - 2 + 1
+			if ( y < 1 ) {
+				break
+			}
+			roomx(cr) = rdroomsizemin + 1 + rnd(x)
+			roomy(cr) = rdroomsizemin + 1 + rnd(y)
+		}
+		if ( roompos == 4 ) {
+			roomwidth(cr) = rnd(rdroomsizemax) + rdroomsizemin
+			roomheight(cr) = rnd(rdroomsizemax) + rdroomsizemin
+			if ( ogExtravagantParty == 0 ) {
+				roomx(cr) = rnd(mWidth - rdroomsizemax - 8) + 3
+				roomy(cr) = rnd(mHeight - rdroomsizemax - 8) + 3
+			}
+			if ( ogExtravagantParty == 1 ) {
+				roomx(cr) = rnd(mWidth - rdroomsizemax - 10) + 3
+				roomy(cr) = rnd(mHeight - rdroomsizemax - 10) + 3
+			}
+		}
+		x = roomx(cr) + roomwidth(cr) - 1
+		y = roomy(cr) + roomheight(cr) - 1
+		if ( x >= mWidth ) {
+			continue
+		}
+		if ( y >= mHeight ) {
+			continue
+		}
+		if ( roompos == 1 ) {
+			if ( x + 1 >= mWidth ) {
+				continue
+			}
+			if ( y + 1 >= mHeight ) {
+				continue
+			}
+		}
+		if ( roompos == 0 ) {
+			if ( mapId(x, y) != xy2pic(3, 0) ) {
+				continue
+			}
+		}
+		p = 0
+
+*map_createRoom_FOR1
+		exgoto p, 1, roomsum, *map_createRoom_FOR1_BREAK1
+		if ( p == cr ) {
+			goto *map_createRoom_FOR1_CONTINUE
+		}
+		x1 = roomx(p) - 1 - roomx(cr)
+		x2 = -roomwidth(p) - 2 < x1 & x1 < roomwidth(cr)
+		y1 = roomy(p) - 1 - roomy(cr)
+		y2 = -roomheight(p) - 2 < y1 & y1 < roomheight(cr)
+		if ( x2 & y2 ) {
+			continue
+		}
+
+*map_createRoom_FOR1_CONTINUE
+		p += 1
+		goto *map_createRoom_FOR1
+
+*map_createRoom_FOR1_BREAK1
+		roomsum++
+		f = 1
+		break
+	loop
+	if ( f == 0 ) {
+		return 0
+	}
+	if ( rnd(2) == 0 ) {
+		tile(1) = 1 + rnd(2)
+	}
+	else {
+		tile(1) = 0
+	}
+	if ( rnd(2) == 0 ) {
+		tile(2) = 1 + rnd(2)
+	}
+	else {
+		tile(2) = 0
+	}
+	repeat roomheight(cr)
+		y = roomy(cr) + cnt
+		cnt2 = cnt
+		repeat roomwidth(cr)
+			x = roomx(cr) + cnt
+			tile = 3
+			if ( roomwall != 0 ) {
+				if ( cnt == 0 | cnt2 == 0 | cnt == roomwidth(cr) - 1 | cnt2 == roomheight(cr) - 1 ) {
+					if ( roomwall == 1 ) {
+						tile = 1
+					}
+					if ( roomwall == 2 ) {
+						tile = 4
+					}
+					if ( roomwall == 3 ) {
+						tile = 3
+						if ( tile(1) == 1 ) {
+							if ( cnt == 0 ) {
+								tile = 1
+							}
+						}
+						if ( tile(2) == 1 ) {
+							if ( cnt2 == 0 ) {
+								if ( cnt != 0 & cnt != roomwidth(cr) - 1 ) {
+									if ( rnd(3) ) {
+										flt
+										p = 296, 300, 312, 604
+										itemcreate -1, p(rnd(4)), x, y + 1, 0
+									}
+									else {
+										if ( cnt \ 2 == 1 ) {
+											flt
+											itemcreate -1, ITEM_ID_CANDLE, x, y + 1, 0
+										}
+									}
+								}
+								tile = 1
+							}
+						}
+						if ( tile(1) == 2 ) {
+							if ( cnt == roomwidth(cr) - 1 ) {
+								tile = 1
+							}
+						}
+						if ( tile(2) == 2 ) {
+							if ( cnt2 == roomheight(cr) - 1 ) {
+								if ( rnd(3) ) {
+									flt
+									p = 296, 300, 312, 604
+									itemcreate -1, p(rnd(4)), x, y + 1, 0
+								}
+								else {
+									if ( cnt \ 2 == 1 ) {
+										flt
+										itemcreate -1, ITEM_ID_CANDLE, x, y + 1, 0
+									}
+								}
+								tile = 1
+							}
+						}
+					}
+				}
+			}
+			mapId(x, y) = tile
+		loop
+	loop
+	if ( roomdoor == 1 ) {
+		map_createroomdoor
+	}
+	if ( roomdoor == 2 | roomdoor == 3 ) {
+		repeat 4
+			rdpos = cnt
+			map_createroomdoor
+		loop
+	}
+	return 1
+
+#deffunc map_placeupstairs int map_placeupstairs_arg1, int map_placeupstairs_arg2
+	if ( map_placeupstairs_arg1 == 0 ) {
+		locvar_map_placeupstairs_x = rnd(roomwidth(cr) - 2) + roomx(cr) + 1
+		locvar_map_placeupstairs_y = rnd(roomheight(cr) - 2) + roomy(cr) + 1
+	}
+	else {
+		locvar_map_placeupstairs_x = map_placeupstairs_arg1
+		locvar_map_placeupstairs_y = map_placeupstairs_arg2
+	}
+	cell_featset locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, tile_upstairs, CELL_FEATURE_UPSTAIRS
+	mUpStairPos = locvar_map_placeupstairs_y * 1000 + locvar_map_placeupstairs_x
+	rdroomupstair = cr
+	return 1
+
+#deffunc map_placedownstairs int map_placedownstairs_arg1, int map_placedownstairs_arg2
+	if ( gLevel  >= areaCanSave(gArea ) ) {
+		return
+	}
+	if ( map_placedownstairs_arg1 == 0 ) {
+		locvar_map_placeupstairs_x = rnd(roomwidth(cr) - 2) + roomx(cr) + 1
+		locvar_map_placeupstairs_y = rnd(roomheight(cr) - 2) + roomy(cr) + 1
+	}
+	else {
+		locvar_map_placeupstairs_x = map_placedownstairs_arg1
+		locvar_map_placeupstairs_y = map_placedownstairs_arg2
+	}
+	cell_featset locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, tile_downstairs, CELL_FEATURE_DOWNSTAIRS
+	mDownStairPos = locvar_map_placeupstairs_y * 1000 + locvar_map_placeupstairs_x
+	rdroomdownstair = cr
+	return 1
+
+#deffunc map_randsite int map_randsite_arg1, int map_randsite_arg2
+	locvar_map_randsite_f = 0
+	repeat 20
+		if ( map_randsite_arg1 == 0 ) {
+			locvar_map_placeupstairs_x = rnd(mWidth - 5) + 2
+			locvar_map_placeupstairs_y = rnd(mHeight - 5) + 2
+		}
+		else {
+			locvar_map_placeupstairs_x = map_randsite_arg1
+			locvar_map_placeupstairs_y = map_randsite_arg2
+		}
+		if ( (chipm(CHIPM_ATTRIB, mapId(locvar_map_placeupstairs_x, locvar_map_placeupstairs_y)) & CHIPM_ATTRIB_CANT_PASS) == 0 ) {
+			if ( mapFeat(locvar_map_placeupstairs_x, locvar_map_placeupstairs_y) == 0 & mapItems(locvar_map_placeupstairs_x, locvar_map_placeupstairs_y) == 0 ) {
+				locvar_map_randsite_f = 1
+				break
+			}
+		}
+	loop
+	if ( mType == MAP_TYPE_WORLD ) {
+		if ( xy2pic(0, 8) <= mapId(locvar_map_placeupstairs_x, locvar_map_placeupstairs_y) & mapId(locvar_map_placeupstairs_x, locvar_map_placeupstairs_y) < xy2pic(0, 11) | (xy2pic(0, 1) <= mapId(locvar_map_placeupstairs_x, locvar_map_placeupstairs_y) & mapId(locvar_map_placeupstairs_x, locvar_map_placeupstairs_y) < xy2pic(0, 2)) ) {
+			locvar_map_randsite_f = 0
+		}
+	}
+	if ( locvar_map_randsite_f == 0 ) {
+		return
+	}
+	if ( mType >= (20 /*!!!@[MAP_TYPE_DUNGEON @@@ MAP_TYPE_DUNGEON_MIN]@!!! */) & mType <= (23 /*!!!@[MAP_TYPE_DUNGEON_MAX @@@ MAP_TYPE_FORT]@!!! */) ) {
+		if ( mRenew == 0 ) {
+			if ( rnd(25) == 0 ) {
+				flt
+				itemcreate -1, ITEM_ID_FOUNTAIN, locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 0
+				iProperty(ci) = PROP_NPC
+				return
+			}
+			if ( rnd(100) == 0 ) {
+				flt
+				itemcreate -1, ITEM_ID_CEREMONY_ALTAR, locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 0
+				iProperty(ci) = PROP_NPC
+				setgod ci
+				return
+			}
+		}
+	}
+	if ( mType >= (20 /*!!!@[MAP_TYPE_DUNGEON @@@ MAP_TYPE_DUNGEON_MIN]@!!! */) & mType <= (23 /*!!!@[MAP_TYPE_DUNGEON_MAX @@@ MAP_TYPE_FORT]@!!! */) ) {
+		if ( rnd(14) == 0 ) {
+			cell_featset locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 243, CELL_FEATURE_SAMPLING_SPOT_GENE_ENGINEER
+			return
+		}
+		if ( rnd(13) == 0 ) {
+			cell_featset locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 244, CELL_FEATURE_SAMPLING_SPOT_MINING
+			return
+		}
+		if ( rnd(12) == 0 ) {
+			cell_featset locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 245, CELL_FEATURE_SAMPLING_SPOT_FISHING
+			return
+		}
+		if ( rnd(11) == 0 ) {
+			cell_featset locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 246, CELL_FEATURE_SAMPLING_SPOT_GARDENING
+			return
+		}
+		cell_featset locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, tile_re + rnd(3), CELL_FEATURE_SAMPLING_SPOT_DETECTION
+		return
+	}
+	if ( mType == MAP_TYPE_TOWN | mType == MAP_TYPE_VILLAGE ) {
+		if ( gLevel  != 3 ) {
+			if ( rnd(3) == 0 ) {
+				flt
+				itemcreate -1, ITEM_ID_MOON_GATE, locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 0
+				return
+			}
+			if ( rnd(15) == 0 ) {
+				flt
+				itemcreate -1, ITEM_ID_PLATINUM_COIN, locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 0
+				return
+			}
+			if ( rnd(20) == 0 ) {
+				flt
+				itemcreate -1, ITEM_ID_WALLET, locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 0
+				return
+			}
+			if ( rnd(15) == 0 ) {
+				flt
+				itemcreate -1, ITEM_ID_SUITCASE, locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 0
+				return
+			}
+			if ( rnd(18) == 0 ) {
+				flt calcobjlv(rnd(difficulty() + 10)), calcfixlv(FIX_QUALITY_GREAT)
+				flttypemajor = fsetwear(rnd(length(fsetwear)))
+				itemcreate -1, ITEM_ID_DUMMY, locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 0
+				return
+			}
+			flt 10
+			flttypeminor = FILTER_JUNK_TOWN
+			itemcreate -1, ITEM_ID_DUMMY, locvar_map_placeupstairs_x, locvar_map_placeupstairs_y, 0
+		}
+		return
+	}
+	if ( mType == (4 /*!!!@[MAP_TYPE_DUNGEON_RANGE @@@ MAP_TYPE_LOCAL]@!!! */) ) {
+	}
+	return
+
+#deffunc map_trap int map_trap_x, int map_trap_y, int map_trap_arg3, int map_trap_level
+	locvar_map_trap_dx = map_trap_x
+	locvar_map_trap_dy = map_trap_y
+	locvar_map_trap_p = 0
+
+*map_trap_FOR1
+	exgoto locvar_map_trap_p, 1, 3, *map_trap_FOR1_BREAK1
+	if ( map_trap_x == 0 ) {
+		locvar_map_trap_dx = rnd(mWidth - 5) + 2
+		locvar_map_trap_dy = rnd(mHeight - 5) + 2
+	}
+	else {
+		locvar_map_trap_dx = map_trap_x
+		locvar_map_trap_dy = map_trap_y
+	}
+	if ( (chipm(CHIPM_ATTRIB, mapId(locvar_map_trap_dx, locvar_map_trap_dy)) & CHIPM_ATTRIB_CANT_PASS) == 0 ) {
+		if ( mapFeat(locvar_map_trap_dx, locvar_map_trap_dy) == 0 ) {
+			if ( map_trap_level == 0 ) {
+				locvar_map_trap_trap = rnd(8)
+			}
+			else {
+				locvar_map_trap_trap = map_trap_level
+			}
+			if ( gLevel  <= 5 ) {
+				if ( locvar_map_trap_trap == 6 ) {
+					return 0
+				}
+				if ( locvar_map_trap_trap == 1 ) {
+					return 0
+				}
+				if ( locvar_map_trap_trap == 5 ) {
+					return 0
+				}
+			}
+			if ( gLevel  <= 25 ) {
+				if ( locvar_map_trap_trap == 7 ) {
+					return 0
+				}
+			}
+			cell_featset locvar_map_trap_dx, locvar_map_trap_dy, 0, CELL_FEATURE_TRAP, locvar_map_trap_trap
+			return 1
+		}
+	}
+	locvar_map_trap_p += 1
+	goto *map_trap_FOR1
+
+*map_trap_FOR1_BREAK1
+	return 0
+
+#deffunc map_web int map_web_x, int map_web_y, int map_web_difficulty
+	locvar_map_trap_dx = map_web_x
+	locvar_map_trap_dy = map_web_y
+	locvar_map_trap_p = 0
+
+*map_web_FOR1
+	exgoto locvar_map_trap_p, 1, 3, *map_web_FOR1_BREAK1
+	if ( map_web_x == 0 ) {
+		locvar_map_trap_dx = rnd(mWidth - 5) + 2
+		locvar_map_trap_dy = rnd(mHeight - 5) + 2
+	}
+	else {
+		locvar_map_trap_dx = map_web_x
+		locvar_map_trap_dy = map_web_y
+	}
+	if ( (chipm(CHIPM_ATTRIB, mapId(locvar_map_trap_dx, locvar_map_trap_dy)) & CHIPM_ATTRIB_CANT_PASS) == 0 ) {
+		if ( mapFeat(locvar_map_trap_dx, locvar_map_trap_dy) == 0 ) {
+			addmef locvar_map_trap_dx, locvar_map_trap_dy, MEF_TYPE_WEB, xy2pic(11, 0), -1, map_web_difficulty
+			return 1
+		}
+	}
+	locvar_map_trap_p += 1
+	goto *map_web_FOR1
+
+*map_web_FOR1_BREAK1
+	return 0
+
+#deffunc map_barrel int map_barrel_x, int map_barrel_y
+	locvar_map_trap_dx = map_barrel_x
+	locvar_map_trap_dy = map_barrel_y
+	locvar_map_trap_p = 0
+
+*map_barrel_FOR1
+	exgoto locvar_map_trap_p, 1, 3, *map_barrel_FOR1_BREAK1
+	if ( map_barrel_x == 0 ) {
+		locvar_map_trap_dx = rnd(mWidth - 5) + 2
+		locvar_map_trap_dy = rnd(mHeight - 5) + 2
+	}
+	else {
+		locvar_map_trap_dx = map_barrel_x
+		locvar_map_trap_dy = map_barrel_y
+	}
+	if ( (chipm(CHIPM_ATTRIB, mapId(locvar_map_trap_dx, locvar_map_trap_dy)) & CHIPM_ATTRIB_CANT_PASS) == 0 ) {
+		if ( mapFeat(locvar_map_trap_dx, locvar_map_trap_dy) == 0 ) {
+			cell_featset locvar_map_trap_dx, locvar_map_trap_dy, tile_pot, CELL_FEATURE_POT
+			return 1
+		}
+	}
+	locvar_map_trap_p += 1
+	goto *map_barrel_FOR1
+
+*map_barrel_FOR1_BREAK1
+	return 0
+
+#deffunc map_medal int map_medal_prm0, int map_medal_prm1
+	locvar_map_barrel_dx = map_medal_prm0
+	locvar_map_barrel_dy = map_medal_prm1
+	locvar_map_barrel_p = 0
+
+*label_1934
+	exgoto locvar_map_barrel_p, 1, 3, *label_1935
+	if ( map_medal_prm0 == 0 ) {
+		locvar_map_barrel_dx = rnd(mWidth - 5) + 2
+		locvar_map_barrel_dy = rnd(mHeight - 5) + 2
+	}
+	else {
+		locvar_map_barrel_dx = map_medal_prm0
+		locvar_map_barrel_dy = map_medal_prm1
+	}
+	if ( (chipm(CHIPM_ATTRIB, mapId(locvar_map_barrel_dx, locvar_map_barrel_dy)) & CHIPM_ATTRIB_CANT_PASS) == 0 ) {
+		if ( mapFeat(locvar_map_barrel_dx, locvar_map_barrel_dy) == 0 ) {
+			cell_featset locvar_map_barrel_dx, locvar_map_barrel_dy, tile_hidden, CELL_FEATURE_SMALL_MEDAL
+			return 1
+		}
+	}
+	locvar_map_barrel_p += 1
+	goto *label_1934
+
+*label_1935
+	return 0
+
+#deffunc map_zirai int map_zirai_prm0, int map_zirai_prm1
+	locvar_map_barrel_dx = map_zirai_prm0
+	locvar_map_barrel_dy = map_zirai_prm1
+	locvar_map_barrel_p = 0
+	exgoto locvar_map_barrel_p, 1, 3, *label_1935
+	if ( map_zirai_prm0 == 0 ) {
+		locvar_map_barrel_dx = rnd(mWidth - 5) + 2
+		locvar_map_barrel_dy = rnd(mHeight - 5) + 2
+	}
+	else {
+		locvar_map_barrel_dx = map_zirai_prm0
+		locvar_map_barrel_dy = map_zirai_prm1
+	}
+	cell_featread locvar_map_barrel_dx, locvar_map_barrel_dy
+	if ( featId == CELL_FEATURE_UPSTAIRS | featId == CELL_FEATURE_DOWNSTAIRS ) {
+		return
+	}
+	cell_featset locvar_map_barrel_dx, locvar_map_barrel_dy, 0, CELL_FEATURE_TRAP, CELL_SUB_FEATURE_TRAP_QUEST_MINE
+	return
+
+#deffunc map_connectroom
+	cr = 0
+
+*map_connectroom_FOR1
+	exgoto cr, 1, roomsum - 1, *map_connectroom_FOR1_BREAK1
+	p = cr + 1
+	repeat rnd(rdroomentrance + 1) + 1
+		repeat 2
+			if ( cnt == 0 ) {
+				p = cr
+			}
+			else {
+				p = cr + 1
+			}
+			dir = rnd(4)
+			x = dirxy(0, dir)
+			y = dirxy(1, dir)
+			if ( dir == 1 ) {
+				dx = roomx(p)
+				dy = roomy(p) + rnd(roomheight(p) - 2) + 1
+			}
+			if ( dir == 2 ) {
+				dx = roomx(p) + roomwidth(p) - 1
+				dy = roomy(p) + rnd(roomheight(p) - 2) + 1
+			}
+			if ( dir == 3 ) {
+				dx = roomx(p) + rnd(roomwidth(p) - 2) + 1
+				dy = roomy(p)
+			}
+			if ( dir == 0 ) {
+				dx = roomx(p) + rnd(roomwidth(p) - 2) + 1
+				dy = roomy(p) + roomheight(p) - 1
+			}
+			if ( x != 0 ) {
+				if ( mapId(dx, dy - 1) == xy2pic(3, 0) | mapId(dx, dy + 1) == xy2pic(3, 0) ) {
+					continue cnt
+				}
+			}
+			if ( y != 0 ) {
+				if ( mapId(dx - 1, dy) == xy2pic(3, 0) | mapId(dx + 1, dy) == xy2pic(3, 0) ) {
+					continue cnt
+				}
+			}
+			mapId(dx, dy) = xy2pic(3, 0)
+			roomexist(p) = 1
+			dx += x
+			dy += y
+			roomentrancex(p) = dx
+			roomentrancey(p) = dy
+			mapId(dx, dy) = xy2pic(1, 3)
+			if ( cnt == 0 ) {
+				tx = dx
+				ty = dy
+			}
+		loop
+		map_digtoentrance1 tx, ty, dx, dy, 1
+	loop
+	if ( stat == 0 ) {
+		roomexist(cr) = 0
+		roomexist(p) = 0
+		return 0
+	}
+	cr += 1
+	goto *map_connectroom_FOR1
+
+*map_connectroom_FOR1_BREAK1
+	return 1
+
+#deffunc map_makedoor
+	cr = 0
+
+*map_makedoor_FOR1
+	exgoto cr, 1, roomsum, *map_makedoor_FOR1_BREAK1
+	tx = 0
+	ty = 0
+	repeat roomheight(cr) * 2 + roomwidth(cr) * 2
+		if ( tx == 0 ) {
+			if ( cnt != 0 ) {
+				ty--
+			}
+		}
+		if ( ty == roomheight(cr) - 1 ) {
+			tx--
+		}
+		if ( tx == roomwidth(cr) - 1 ) {
+			ty++
+		}
+		if ( ty == 0 ) {
+			tx++
+		}
+		dx = tx + roomx(cr)
+		dy = ty + roomy(cr)
+		if ( mapId(dx, dy) == xy2pic(1, 0) ) {
+			continue
+		}
+		cell_featset dx, dy, tile_doorclosed, CELL_FEATURE_DOOR_CLOSED, rnd(abs(gLevel  * 3 / 2) + 1)
+	loop
+	cr += 1
+	goto *map_makedoor_FOR1
+
+*map_makedoor_FOR1_BREAK1
+	return
+	if ( rdroomdoor >= rnd(100) ) {
+		p = 0
+		repeat 3
+			jy = cnt
+			repeat 3
+				jx = cnt
+				if ( (jx >= 0 & jy >= 0 & jx < mWidth & jy < mHeight) == 0 ) {
+					continue
+				}
+				if ( mapId(jx, jy) != tile_wall ) {
+					p++
+				}
+				if ( p < 2 ) {
+				}
+			loop
+		loop
+	}
+	return
+	p = 0
+	inv_getheader -1
+	repeat invrange, invhead
+		if ( iNum(cnt) > 0 ) {
+			p++
+		}
+	loop
+	rtval = (p * 10 - 1) / 400
+	return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

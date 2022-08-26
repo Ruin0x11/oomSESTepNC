@@ -1,0 +1,48 @@
+#deffunc map_initcustom str map_initcustom_mapname
+	fmapfile = exedir + "map\\" + map_initcustom_mapname
+	ctrlfile 5
+	map_tileset mTileSet
+	nooracle = 1
+	procid = (procid + 1) \ 10
+	proclist(procid) = "map_initCustom:CmapItem" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	repeat 400
+		if ( cmapdata(0, cnt) == 0 ) {
+			continue
+		}
+		if ( cmapdata(4, cnt) == 0 ) {
+			flt
+			itemcreate -1, cmapdata(0, cnt), cmapdata(1, cnt), cmapdata(2, cnt), 0
+			if ( stat != 0 ) {
+				iProperty(ci) = cmapdata(3, cnt)
+			}
+		}
+		if ( cmapdata(4, cnt) == 1 ) {
+			flt
+			characreate -1, cmapdata(0, cnt), cmapdata(1, cnt), cmapdata(2, cnt)
+		}
+		if ( cmapdata(4, cnt) == 2 ) {
+			if ( mapupdate ) {
+				if ( cellobjdata(0, cmapdata(0, cnt)) == 32 ) {
+					continue
+				}
+			}
+			cell_featset cmapdata(1, cnt), cmapdata(2, cnt), cellobjdata(3, cmapdata(0, cnt)), cellobjdata(0, cmapdata(0, cnt)), cmapdata(3, cnt) \ 1000, cmapdata(3, cnt) / 1000
+			if ( cellobjdata(0, cmapdata(0, cnt)) == 10 ) {
+				mUpStairPos = cmapdata(2, cnt) * 1000 + cmapdata(1, cnt)
+			}
+			if ( cellobjdata(0, cmapdata(0, cnt)) == 11 ) {
+				mDownStairPos = cmapdata(2, cnt) * 1000 + cmapdata(1, cnt)
+			}
+		}
+	loop
+	nooracle = 0
+	mWall = 1
+	procid = (procid + 1) \ 10
+	proclist(procid) = "map_initCustom:End" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	return
+
+

@@ -1,0 +1,307 @@
+#deffunc migration_normalizefieldsofjewelofloveandkumiromisexperience int migration_normalizefieldsofjewelofloveandkumiromisexperience_prm0
+	if ( ocOOMSEKumiromiExpNextLevel(migration_normalizefieldsofjewelofloveandkumiromisexperience_prm0) < 517 * 12 * 30 * 24 ) {
+		ocdata(109, migration_normalizefieldsofjewelofloveandkumiromisexperience_prm0) = ocOOMSEKumiromiExpNextLevel(migration_normalizefieldsofjewelofloveandkumiromisexperience_prm0)
+		ocOOMSEKumiromiExpNextLevel(migration_normalizefieldsofjewelofloveandkumiromisexperience_prm0) = 0
+	}
+	else {
+	}
+	return
+
+#defcfunc migration_oomse2oomsestid int migration_oomse2oomsestid_prm0
+	if ( migration_oomse2oomsestid_prm0 == 794 ) {
+		return 900
+	}
+	if ( migration_oomse2oomsestid_prm0 == 795 ) {
+		return 901
+	}
+	if ( migration_oomse2oomsestid_prm0 == 796 ) {
+		return 902
+	}
+	if ( migration_oomse2oomsestid_prm0 == 797 ) {
+		return 903
+	}
+	if ( migration_oomse2oomsestid_prm0 == 798 ) {
+		return 904
+	}
+	if ( migration_oomse2oomsestid_prm0 == 799 ) {
+		return 905
+	}
+	if ( migration_oomse2oomsestid_prm0 == 800 ) {
+		return 906
+	}
+	if ( migration_oomse2oomsestid_prm0 == 801 ) {
+		return 907
+	}
+	if ( migration_oomse2oomsestid_prm0 == 802 ) {
+		return 908
+	}
+	if ( migration_oomse2oomsestid_prm0 == 803 ) {
+		return 909
+	}
+	return migration_oomse2oomsestid_prm0
+
+#deffunc migration_updatesave
+	if ( gVersion != 1220 ) {
+		dialog lang("1.22にしてから出直してきてねお兄ちゃん！", "Come back after changing to 1.22 brother!")
+		goto *exit_game
+	}
+	migration_updateoldvanila
+	migration_updateoldomake
+	migration_updateoldoo
+	migration_updateoldoomsest
+	return
+
+#deffunc migration_updateoldvanila
+	if ( gHeirDeed < 0 ) {
+		gHeirDeed = 1
+	}
+	if ( gTravelTime == 0 ) {
+		gTravelTime = getgametime()
+	}
+	repeat 20
+		if ( gdata(STARTING_GDATA_RANK + cnt) == 0 ) {
+			gdata(STARTING_GDATA_RANK + cnt) = 10000
+		}
+	loop
+	itemmemory(2, ITEM_ID_SPELLBOOK_WISHING) = 0
+	itemmemory(2, ITEM_ID_SPELLBOOK_HARVEST) = 0
+	del_chara 56
+	cbitmod CHARA_BIT_PCC, CHARA_PLAYER, TRUE
+	gosub *label_2523
+	return
+
+#deffunc migration_updateoldomake
+	if ( ogOmakeVersion < 10 ) {
+		gWorldRenew = TRUE
+	}
+	if ( ogOmakeVersion < 20 ) {
+		repeat 11
+			cnt2 = 100 + cnt
+			exist exedir + "save\\" + playerid + "\\cdata_7_" + cnt2 + ".s2"
+			if ( strsize != (-1) ) {
+				mid = "7_" + cnt2
+				ctrlfile 1
+				repeat 245 - 57, 57
+					if ( cRole(cnt) == ROLE_CITIZEN ) {
+						cRole(cnt) = ROLE_PET_SENTRY
+					}
+				loop
+				ctrlfile 2
+			}
+		loop
+	}
+	if ( ogOmakeVersion < 30 ) {
+		repeat 57
+			ocFormerPet(cnt) = 0
+		loop
+	}
+	if ( ogOmakeVersion < 40 ) {
+		ogOOVersion = ogdata(36)
+	}
+	if ( ogOmakeVersion < 50 ) {
+		repeat 11
+			ospact(663 + cnt - 661) = 0
+		loop
+	}
+	ospact(662 - 661) = 1
+	ogOmakeVersion = int(double("0.05") * 1000)
+	return
+
+#deffunc migration_updateoldoo
+	if ( ogOOVersion < 142 ) {
+		gWorldRenew = TRUE
+	}
+	if ( ogOOVersion >= 5 & ogOOVersion < 31 ) {
+		dirlist buff, exedir + "save\\" + playerid + "\\faction*"
+		notesel buff
+		repeat stat
+			noteget file, cnt
+			delete exedir + "save\\" + playerid + "\\" + file
+		loop
+		repeat length(faction)
+			faction(cnt) = ""
+		loop
+		dialog lang("所属を初期化しました。", "Initialized factions")
+	}
+	if ( ogOOVersion >= 40 & ogOOVersion < 61 ) {
+		repeat length2(isetadditionitem)
+			s = isetadditionitem(1, cnt) + ".item"
+			exist exedir + "user\\" + s
+			if ( strsize != (-1) ) {
+				delete exedir + "user\\" + s
+			}
+		loop
+		repeat length2(gsetadditiongod)
+			cnt2 = cnt
+			s = gsetadditiongod(1, cnt2) + ".god"
+			exist exedir + "user\\" + s
+			if ( strsize != (-1) ) {
+				delete exedir + "user\\" + s
+				p = -1
+				repeat usergodmax
+					if ( gsetadditiongod(1, cnt2) == usergoddatan(0, cnt) ) {
+						p = cnt
+						break
+					}
+				loop
+				if ( p != (-1) ) {
+					exist exedir + "user\\" + usergoddatan(7, p) + ".npc"
+					if ( strsize != (-1) ) {
+						delete exedir + "user\\" + usergoddatan(7, p) + ".npc"
+					}
+					exist exedir + "user\\" + usergoddatan(8, p) + ".item"
+					if ( strsize != (-1) ) {
+						delete exedir + "user\\" + usergoddatan(8, p) + ".item"
+					}
+					exist exedir + "user\\" + usergoddatan(9, p) + ".item"
+					if ( strsize != (-1) ) {
+						delete exedir + "user\\" + usergoddatan(9, p) + ".item"
+					}
+				}
+			}
+		loop
+		gosub *label_4514
+		gosub *label_3093
+		gosub *label_4258
+		dialog lang("新しい神をアップデートしました。", "Finished updating new gods.")
+	}
+	if ( ogOOVersion >= 43 & ogOOVersion < 70 ) {
+		exist exedir + "data\\oo_talk.txt"
+		if ( strsize != (-1) ) {
+			delete exedir + "data\\oo_talk.txt"
+		}
+		bcopy "oo_talk.txt", exedir + "data\\oo_talk.txt"
+	}
+	if ( ogOOVersion >= 88 & ogOOVersion < 98 ) {
+		exist exedir + "user\\god\\omake_overhaul\\【【omake用】イナリ神社】.eum"
+		if ( strsize != (-1) ) {
+			delete exedir + "user\\god\\omake_overhaul\\【【omake用】イナリ神社】.eum"
+		}
+	}
+	if ( ogOOVersion >= 1 & ogOOVersion < 105 ) {
+		npcmemory(0, CREATURE_ID_GODA_THE_CAPTAIN_OF_ORC) = 0
+		npcmemory(1, CREATURE_ID_GODA_THE_CAPTAIN_OF_ORC) = 0
+		npcmemory(0, CREATURE_ID_MAD_SCIENTIST) = 0
+		npcmemory(1, CREATURE_ID_MAD_SCIENTIST) = 0
+		npcmemory(0, CREATURE_ID_ISCA_THE_FALLEN_ANGEL) = 0
+		npcmemory(1, CREATURE_ID_ISCA_THE_FALLEN_ANGEL) = 0
+		npcmemory(0, CREATURE_ID_DUNGEON_CLEANER) = 0
+		npcmemory(1, CREATURE_ID_DUNGEON_CLEANER) = 0
+		memset cnpcmemory(0, 0), 0, 3 * 900 * 4
+		cnpcmemorymax = 0
+		dialog lang("ユニークモンスターの出現回数と殺害数を初期化しました。", "Reseted unique monster encounter and kill count.")
+	}
+	if ( ogOOVersion < 114 ) {
+		if ( trait(170) != 0 ) {
+			settrait 0, 170, trait(170)
+			trait(170) = 0
+		}
+		repeat 5, 217
+			if ( trait(cnt) != 0 ) {
+				settrait 0, cnt, trait(cnt)
+				trait(cnt) = 0
+			}
+		loop
+	}
+	if ( ogOOVersion < 125 ) {
+		if ( guildcheck(0) != "mage" ) {
+			ogdata(250) = 0, 0, 0, 0
+		}
+	}
+	if ( ogOOVersion < 130 ) {
+		if ( getcgodno() != (-1) ) {
+			god_no = stat
+			if ( usergoddata(32, god_no) != 0 ) {
+				if ( usergoddata(32, god_no) / 1000 == 0 ) {
+					ospact(781 - 661) = 1
+				}
+			}
+		}
+	}
+	if ( ogOOVersion < 132 ) {
+		if ( eqfaction(0, "dragon") ) {
+			ospact(782 - 661) = 1
+		}
+	}
+	if ( ogOOVersion < 138 ) {
+		repeat 15, 1
+			ocAIRaceSkills(cnt) = 0
+			ocAIClassSkills(cnt) = 0
+			ocAISpecialAmmo(cnt) = AI_SPECIAL_AMMO_NORMAL
+			ocAIDistance(cnt) = 0
+		loop
+	}
+	if ( ogOOVersion < 187 ) {
+		if ( ocdata(200, 0) != 0 ) {
+			delbuff CHARA_PLAYER, BUFF_MIST_OF_SILENCE
+		}
+	}
+	if ( ogOOVersion < 163 ) {
+		file = exedir + "save\\" + playerid + "\\" + "ocdata.s1"
+		exist file
+		if ( strsize != (-1) ) {
+			zOpen hgz, file, 0
+			zRead ocdata, hgz, 57000
+			zClose hgz
+		}
+		dirlist buff, exedir + "save\\" + playerid + "\\ocdata_*"
+		notesel buff
+		repeat stat
+			noteget file, cnt
+			exist file
+			if ( strsize == (-1) ) {
+				bcopy exedir + "save\\" + playerid + "\\" + file, exedir + "save\\" + playerid + "\\" + "o" + file
+			}
+		loop
+	}
+	if ( ogOOVersion >= 64 & ogOOVersion < 193 ) {
+		gCargoLimitOrg = 80000
+		exist exedir + "data\\oo_talk.txt"
+		if ( strsize != (-1) ) {
+			delete exedir + "data\\oo_talk.txt"
+		}
+		bcopy "oo_talk.txt", exedir + "data\\oo_talk.txt"
+	}
+	ogOOVersion = int(ooversionstr)
+	return
+
+#deffunc migration_updateoldoomsest
+	locvar_matdelmain_stversionfilepath = exedir + "save\\" + playerid + "\\st_version.s0"
+	exist locvar_matdelmain_stversionfilepath
+	if ( strsize == (-1) ) {
+		locvar_matdelmain_stversion = 0
+	}
+	else {
+		sdim locvar_matdelmain_buff, strsize
+		bload locvar_matdelmain_stversionfilepath, locvar_matdelmain_buff, strsize
+		locvar_matdelmain_stversion = int(locvar_matdelmain_buff)
+	}
+	procid = (procid + 1) \ 10
+	proclist(procid) = "[Save] version=" + locvar_matdelmain_stversion + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	if ( locvar_matdelmain_stversion < int("20190322") ) {
+		if ( ospact(799 - 661) ) {
+			ospact(799 - 661) = 0
+			ospact(905 - 661) = 1
+		}
+		if ( ospact(800 - 661) ) {
+			ospact(800 - 661) = 0
+			ospact(906 - 661) = 1
+		}
+		if ( ospact(803 - 661) ) {
+			ospact(803 - 661) = 0
+			ospact(909 - 661) = 1
+		}
+	}
+	locvar_matdelmain_releasedayint = int(releaseday)
+	bsave locvar_matdelmain_stversionfilepath, locvar_matdelmain_releasedayint, 4
+	return
+
+
+
+
+
+
+
+

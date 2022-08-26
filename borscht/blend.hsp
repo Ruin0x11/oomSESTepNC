@@ -1,0 +1,2076 @@
+#defcfunc rpmatname int rpmatname_arg1
+	locvar_rpmatname_s = "?????"
+	if ( rpdata(RPDATA_MAT + rpmatname_arg1, rpid) < EXT_RF ) {
+		locvar_rpmatname_s = ioriginalnameref(rpdata(RPDATA_MAT + rpmatname_arg1, rpid))
+	}
+	else {
+		if ( rpdata(RPDATA_MAT + rpmatname_arg1, rpid) < FILTER_WEAPON ) {
+			locvar_rpmatname_s = rfnameorg(RFNAMEORG_NAME, rpdata(RPDATA_MAT + rpmatname_arg1, rpid) - EXT_RF)
+		}
+		else {
+			locvar_rpmatname_s = fltname(rpdata(RPDATA_MAT + rpmatname_arg1, rpid))
+		}
+	}
+	if ( rpdata(RPDATA_MAT_EXT + rpmatname_arg1, rpid) == 0 ) {
+		return locvar_rpmatname_s
+	}
+	if ( rpdata(RPDATA_MAT_EXT + rpmatname_arg1, rpid) >= 10000 ) {
+		locvar_rpmatname_p = rpdata(RPDATA_MAT_EXT + rpmatname_arg1, rpid) \ 10000
+		if ( locvar_rpmatname_p < 0 | locvar_rpmatname_p >= 800 ) {
+			locvar_rpmatname_s += "/bugged/"
+			return locvar_rpmatname_s
+		}
+		if ( rpid == 200 & step <= 0 | (rpid == 202 & step <= 0) ) {
+			locvar_rpmatname_s = lang("未定の", "unknown ") + cnvitemname(rpdata(RPDATA_MAT + rpmatname_arg1, rpid))
+		}
+		else {
+			if ( locvar_rpmatname_p == 343 ) {
+				locvar_rpmatname_p2 = rpdata(RPDATA_ENC + rpmatname_arg1, rpid) \ 10000
+				if ( locvar_rpmatname_p2 != usernpcmax ) {
+					locvar_rpmatname_s = userdatan(1, locvar_rpmatname_p2)
+				}
+				else {
+					locvar_rpmatname_s = lang("残りカス", "garbage")
+				}
+			}
+			else {
+				locvar_rpmatname_s = refchara(locvar_rpmatname_p, DBSPEC_CHARA_NAME_ORG, 1)
+			}
+			locvar_rpmatname_s += lang("の", "'s ") + cnvitemname(rpdata(RPDATA_MAT + rpmatname_arg1, rpid))
+		}
+		return locvar_rpmatname_s
+	}
+	return locvar_rpmatname_s
+
+#deffunc blendcheckext int blendcheckext_arg1, int blendcheckext_arg2
+	if ( rpdata(RPDATA_MAT_EXT + blendcheckext_arg2, rpid) >= 10000 ) {
+		locvar_blendcheckext_p = rpdata(RPDATA_MAT_EXT + blendcheckext_arg2, rpid) \ 10000
+		if ( locvar_blendcheckext_p < 0 | locvar_blendcheckext_p >= 800 ) {
+			return 0
+		}
+		if ( iSubName(blendcheckext_arg1) == locvar_blendcheckext_p ) {
+			if ( locvar_blendcheckext_p == 343 ) {
+				if ( iCNpcId(blendcheckext_arg1) != rpdata(RPDATA_ENC + blendcheckext_arg2, rpid) \ 10000 ) {
+					return 0
+				}
+			}
+			return 1
+		}
+		else {
+			return 0
+		}
+	}
+	return 0
+
+#defcfunc rpsuccessrate int rpsuccessrate_rate
+	if ( rpsuccessrate_rate == 100 ) {
+		return lang("もう完璧！", "Perfect!")
+	}
+	if ( rpsuccessrate_rate >= 90 ) {
+		return lang("朝飯前！", "A piece of cake!")
+	}
+	if ( rpsuccessrate_rate >= 80 ) {
+		return lang("かんたんね", "Very likely")
+	}
+	if ( rpsuccessrate_rate >= 70 ) {
+		return lang("まず大丈夫", "No problem")
+	}
+	if ( rpsuccessrate_rate >= 60 ) {
+		return lang("たぶんいける", "Probably OK")
+	}
+	if ( rpsuccessrate_rate >= 50 ) {
+		return lang("ちょっと不安", "Maybe")
+	}
+	if ( rpsuccessrate_rate >= 40 ) {
+		return lang("だめかも", "Bad")
+	}
+	if ( rpsuccessrate_rate >= 30 ) {
+		return lang("やばい", "Very bad")
+	}
+	if ( rpsuccessrate_rate >= 20 ) {
+		return lang("まず無理", "Almost impossible")
+	}
+	return lang("絶対ムリ！", "Impossible!")
+
+#defcfunc rpdiff int rpdiff_arg0, int rpdiff_arg1, int rpdiff_arg2
+	locvar_rpdiff_p1 = 80
+	if ( rpdiff_arg0 == 204 ) {
+		if ( gettrait(0, 83) ) {
+			locvar_rpdiff_p1 += calctraitscore(stat) * 10
+		}
+	}
+	locvar_rpdiff_f = 100
+	if ( rpdiff_arg1 > 0 ) {
+		repeat rpdiff_arg1
+			locvar_rpdiff_f2 = 0
+			if ( rpref(10 + cnt * 2) == (-1) ) {
+				break
+			}
+			locvar_rpdiff_i = rpref(10 + cnt * 2)
+			if ( iStatus(locvar_rpdiff_i) >= ITEM_STATUS_BLESSED ) {
+				locvar_rpdiff_f2 -= 10
+			}
+			if ( iStatus(locvar_rpdiff_i) <= ITEM_STATUS_CURSED ) {
+				locvar_rpdiff_f2 += 20
+			}
+			if ( rpdiff_arg0 == 204 | rpdiff_arg0 == 211 ) {
+				if ( iLevel(locvar_rpdiff_i) > 0 ) {
+					locvar_rpdiff_f2 += iLevel(locvar_rpdiff_i) * 5
+				}
+			}
+			locvar_rpdiff_f += locvar_rpdiff_f2
+			if ( rpdiff_arg2 == cnt ) {
+				repeat
+					if ( locvar_rpdiff_f2 < 0 ) {
+						txtef COLOR_GREEN
+						txt -1, lang("調合の成功率が上がった。", "The success rate goes up.")
+						break
+					}
+					if ( locvar_rpdiff_f2 > 0 ) {
+						txtef COLOR_RED
+						txt -1, lang("調合の成功率が下がった。", "The success rate goes down.")
+						break
+					}
+					break
+				loop
+			}
+		loop
+	}
+	repeat 5
+		if ( rpdata(RPDATA_SKILL + cnt * 2, rpid) == SKILL_NONE ) {
+			break
+		}
+		if ( sdata(rpdata(RPDATA_SKILL + cnt * 2, rpid), CHARA_PLAYER) <= 0 ) {
+			locvar_rpdiff_p1 -= 125
+			continue
+		}
+		locvar_rpdiff_d = rpdata(RPDATA_SKILL_REQ + cnt * 2, rpid)
+		if ( rpdiff_arg1 > 0 ) {
+			locvar_rpdiff_d = locvar_rpdiff_d * locvar_rpdiff_f / 100
+			if ( locvar_rpdiff_d < 1 ) {
+				locvar_rpdiff_d = 1
+			}
+		}
+		locvar_rpdiff_p = (locvar_rpdiff_d * 200 / sdata(rpdata(RPDATA_SKILL + cnt * 2, rpid), CHARA_PLAYER) - 200) * (-1)
+		if ( locvar_rpdiff_p > 0 ) {
+			locvar_rpdiff_p /= 5
+		}
+		if ( locvar_rpdiff_p < (-125) ) {
+			locvar_rpdiff_p = -125
+		}
+		locvar_rpdiff_p1 += locvar_rpdiff_p
+	loop
+	if ( locvar_rpdiff_p1 < 25 ) {
+		locvar_rpdiff_p1 = 0
+	}
+	if ( locvar_rpdiff_p1 > 100 ) {
+		locvar_rpdiff_p1 = 100
+	}
+	return locvar_rpdiff_p1
+
+#defcfunc blendcheckmat int blendcheckmat_arg1
+	rpid = blendcheckmat_arg1
+	repeat 10
+		if ( rpdata(RPDATA_MAT + cnt, rpid) == (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ ITEM_ID_DUMMY]@!!! */) ) {
+			break
+		}
+		locvar_blendcheckmat_f = 0
+		locvar_blendcheckmat_step = cnt
+		locvar_blendcheckmat_id = rpdata(RPDATA_MAT + cnt, rpid)
+		locvar_blendcheckmat_rp = cnt
+		repeat 2
+			if ( cnt == 0 ) {
+				locvar_blendcheckmat_o = -1
+			}
+			if ( cnt == 1 ) {
+				locvar_blendcheckmat_o = 0
+			}
+			inv_getheader locvar_blendcheckmat_o
+			repeat invrange, invhead
+				if ( iNum(cnt) <= 0 ) {
+					continue
+				}
+				if ( cfg_hideitem & ibit(ITEM_BIT_NO_DROP, cnt) ) {
+					continue
+				}
+				if ( rpdata(RPDATA_TYPE, rpid) > 0 & locvar_blendcheckmat_step == 0 ) {
+				}
+				else {
+					if ( iProperty(cnt) > PROP_NONE ) {
+						continue
+					}
+				}
+				if ( locvar_blendcheckmat_o == (-1) ) {
+					if ( dist(iX(cnt), iY(cnt), cX(CHARA_PLAYER), cY(CHARA_PLAYER)) > 4 ) {
+						continue
+					}
+				}
+				if ( rpdata(RPDATA_MAT_EXT + locvar_blendcheckmat_rp, rpid) ) {
+					blendcheckext cnt, locvar_blendcheckmat_rp
+					if ( stat == 0 ) {
+						continue
+					}
+				}
+				if ( locvar_blendcheckmat_id < 9000 ) {
+					if ( iID(cnt) == locvar_blendcheckmat_id ) {
+						locvar_blendcheckmat_f = 1
+						break
+					}
+					continue
+				}
+				if ( locvar_blendcheckmat_id < 10000 ) {
+					if ( instr(rffilter_item(iID(cnt)), 0, "/" + rfnameorg(RFNAMEORG_ID, locvar_blendcheckmat_id - EXT_RF) + "/") != (-1) | locvar_blendcheckmat_id == 9004 ) {
+						locvar_blendcheckmat_f = 1
+						break
+					}
+					continue
+				}
+				if ( refitem(iID(cnt), DBSPEC_TYPE, cnt) == locvar_blendcheckmat_id ) {
+					locvar_blendcheckmat_f = 1
+					break
+				}
+			loop
+			if ( locvar_blendcheckmat_f == 1 ) {
+				break
+			}
+		loop
+		if ( locvar_blendcheckmat_f == 0 ) {
+			break
+		}
+	loop
+	return locvar_blendcheckmat_f
+
+#deffunc blendmatnum int blendmatnum_arg1, int blendmatnum_arg2
+	locvar_blendmatnum_m = 0
+	repeat 2
+		if ( cnt == 0 ) {
+			locvar_blendmatnum_o = -1
+		}
+		if ( cnt == 1 ) {
+			locvar_blendmatnum_o = 0
+		}
+		inv_getheader locvar_blendmatnum_o
+		repeat invrange, invhead
+			if ( iNum(cnt) <= 0 ) {
+				continue
+			}
+			if ( cfg_hideitem & ibit(ITEM_BIT_NO_DROP, cnt) ) {
+				continue
+			}
+			if ( rpdata(RPDATA_TYPE, rpid) > 0 & blendmatnum_arg2 == 0 ) {
+			}
+			else {
+				if ( iProperty(cnt) > PROP_NONE ) {
+					continue
+				}
+			}
+			if ( locvar_blendmatnum_o == (-1) ) {
+				if ( dist(iX(cnt), iY(cnt), cX(CHARA_PLAYER), cY(CHARA_PLAYER)) > 4 ) {
+					continue
+				}
+			}
+			if ( rpdata(RPDATA_MAT_EXT + blendmatnum_arg2, rpid) ) {
+				blendcheckext cnt, blendmatnum_arg2
+				if ( stat == 0 ) {
+					continue
+				}
+			}
+			if ( blendmatnum_arg1 < 9000 ) {
+				if ( iID(cnt) == blendmatnum_arg1 ) {
+					locvar_blendmatnum_m += iNum(cnt)
+				}
+				continue
+			}
+			if ( blendmatnum_arg1 < 10000 ) {
+				if ( blendmatnum_arg1 == 9006 ) {
+					if ( iID(cnt) != ITEM_ID_CORPSE ) {
+						continue
+					}
+					if ( iSubName(cnt) == 120 | iSubName(cnt) == 121 | iSubName(cnt) == 122 | iSubName(cnt) == 123 | iSubName(cnt) == 124 | iSubName(cnt) == 125 ) {
+					}
+					else {
+						continue
+					}
+					locvar_blendmatnum_m += iNum(cnt)
+					continue
+				}
+				if ( blendmatnum_arg1 == 9007 ) {
+					if ( iID(cnt) != ITEM_ID_HEART ) {
+						continue
+					}
+					if ( iSubName(cnt) == 0 ) {
+						continue
+					}
+					if ( iSubName(cnt) == 285 | iSubName(cnt) == 286 | iSubName(cnt) == 287 | iSubName(cnt) == 327 | iSubName(cnt) == 343 ) {
+						continue
+					}
+					locvar_blendmatnum_m += iNum(cnt)
+					continue
+				}
+				if ( blendmatnum_arg1 == 9010 ) {
+					if ( iID(cnt) != ITEM_ID_HEART ) {
+						if ( iID(cnt) != ITEM_ID_STOMAFILLIA ) {
+							continue
+						}
+					}
+					else {
+						if ( iSubName(cnt) == 0 ) {
+							continue
+						}
+						if ( iSubName(cnt) == 285 | iSubName(cnt) == 286 | iSubName(cnt) == 287 | iSubName(cnt) == 327 | iSubName(cnt) == 343 ) {
+							continue
+						}
+					}
+					locvar_blendmatnum_m += iNum(cnt)
+					continue
+				}
+				if ( instr(rffilter_item(iID(cnt)), 0, "/" + rfnameorg(RFNAMEORG_ID, blendmatnum_arg1 - EXT_RF) + "/") != (-1) | blendmatnum_arg1 == 9004 ) {
+					locvar_blendmatnum_m += iNum(cnt)
+					continue
+				}
+			}
+			if ( refitem(iID(cnt), DBSPEC_TYPE, cnt) == blendmatnum_arg1 ) {
+				locvar_blendmatnum_m += iNum(cnt)
+				continue
+			}
+		loop
+	loop
+	return locvar_blendmatnum_m
+
+#deffunc blendlist array blendlist_arg1, int blendlist_arg2
+	locvar_blendlist_id = rpdata(RPDATA_MAT + blendlist_arg2, rpid)
+	locvar_blendlist_m = 0
+	repeat 2
+		if ( cnt == 0 ) {
+			locvar_blendlist_o = -1
+		}
+		if ( cnt == 1 ) {
+			locvar_blendlist_o = 0
+		}
+		inv_getheader locvar_blendlist_o
+		repeat invrange, invhead
+			if ( locvar_blendlist_m >= 500 ) {
+				break
+			}
+			if ( iNum(cnt) <= 0 ) {
+				continue
+			}
+			if ( cfg_hideitem & ibit(ITEM_BIT_NO_DROP, cnt) ) {
+				continue
+			}
+			if ( rpdata(RPDATA_TYPE, rpid) > 0 & step == 0 ) {
+			}
+			else {
+				if ( iProperty(cnt) > PROP_NONE ) {
+					continue
+				}
+			}
+			if ( locvar_blendlist_o == (-1) ) {
+				if ( dist(iX(cnt), iY(cnt), cX(CHARA_PLAYER), cY(CHARA_PLAYER)) > 4 ) {
+					continue
+				}
+			}
+			locvar_blendlist_reftype = refitem(iID(cnt), DBSPEC_TYPE, cnt)
+			if ( rpdata(RPDATA_MAT_EXT + blendlist_arg2, rpid) ) {
+				blendcheckext cnt, blendlist_arg2
+				if ( stat == 0 ) {
+					continue
+				}
+			}
+			if ( rpid == 204 | rpid == 216 ) {
+				if ( iID(cnt) == ITEM_ID_BOTTLE_MILK & iParam2(cnt) != 0 ) {
+					continue
+				}
+			}
+			if ( rpid == 211 | rpid == 217 ) {
+				if ( iID(cnt) == ITEM_ID_ROD_WISHING & ogTitleBeyondWish != 2 | iID(cnt) == ITEM_ID_ROD_DOMINATION ) {
+					continue
+				}
+			}
+			if ( rpid == 213 & step == 0 ) {
+				if ( ibit(20, cnt) == FALSE ) {
+					continue
+				}
+			}
+			if ( rpid == 216 | rpid == 217 ) {
+				if ( iNum(cnt) < 2 ) {
+					continue
+				}
+				if ( iLevel(cnt) >= sAlchemy(CHARA_PLAYER) ) {
+					continue
+				}
+			}
+			if ( rpid == 218 ) {
+				if ( iParam2(cnt) != 0 | iSubName(cnt) != 30 ) {
+					continue
+				}
+			}
+			if ( locvar_blendlist_id < 9000 ) {
+				if ( iID(cnt) != locvar_blendlist_id ) {
+					continue
+				}
+			}
+			else {
+				if ( locvar_blendlist_id < 10000 ) {
+					if ( rfnameorg(RFNAMEORG_ID, locvar_blendlist_id - EXT_RF) != "" ) {
+						if ( instr(rffilter_item(iID(cnt)), 0, "/" + rfnameorg(RFNAMEORG_ID, locvar_blendlist_id - EXT_RF) + "/") == (-1) ) {
+							continue
+						}
+					}
+					if ( locvar_blendlist_id == 9004 ) {
+						if ( iID(cnt) == ITEM_ID_GOLD_PIECE | iID(cnt) == ITEM_ID_PUFF_PUFF_BREAD ) {
+							if ( gettrait(0, 194) < 0 ) {
+								continue
+							}
+						}
+					}
+					if ( locvar_blendlist_id == 9006 ) {
+						if ( iID(cnt) != ITEM_ID_CORPSE ) {
+							continue
+						}
+						if ( iSubName(cnt) == 120 | iSubName(cnt) == 121 | iSubName(cnt) == 122 | iSubName(cnt) == 123 | iSubName(cnt) == 124 | iSubName(cnt) == 125 ) {
+						}
+						else {
+							continue
+						}
+					}
+					if ( locvar_blendlist_id == 9007 ) {
+						if ( iID(cnt) != ITEM_ID_HEART ) {
+							continue
+						}
+					}
+					if ( locvar_blendlist_id == 9008 ) {
+						if ( locvar_blendlist_reftype != 60000 ) {
+							continue
+						}
+						if ( iCol(cnt) == 1 ) {
+							continue
+						}
+					}
+					if ( locvar_blendlist_id == 9009 ) {
+						if ( contafurniturecheck(iID(cnt)) == (-1) & iID(cnt) != ITEM_ID_FREEZER ) {
+							continue
+						}
+						if ( contafurniturecheck(iID(cnt)) != (-1) ) {
+							if ( inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), cnt) >= 1000 ) {
+								continue
+							}
+						}
+						if ( iID(cnt) == ITEM_ID_FREEZER ) {
+							if ( inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), cnt) != 6 ) {
+								continue
+							}
+						}
+					}
+					if ( locvar_blendlist_id == 9010 ) {
+						if ( iID(cnt) != ITEM_ID_HEART & iID(cnt) != ITEM_ID_STOMAFILLIA ) {
+							continue
+						}
+					}
+				}
+				else {
+					if ( locvar_blendlist_reftype != locvar_blendlist_id ) {
+						continue
+					}
+				}
+			}
+			if ( step > 0 ) {
+				locvar_blendlist_f = cnt
+				repeat step
+					if ( rpid == 204 | rpid == 211 ) {
+						if ( iNum(rpref(10 + cnt * 2)) < 2 & rpref(10 + cnt * 2) == locvar_blendlist_f ) {
+							locvar_blendlist_f = -999
+						}
+					}
+					else {
+						if ( rpref(10 + cnt * 2) == locvar_blendlist_f ) {
+							locvar_blendlist_f = -999
+							break
+						}
+					}
+				loop
+				if ( locvar_blendlist_f == (-999) ) {
+					continue
+				}
+			}
+			blendlist_arg1(0, locvar_blendlist_m) = cnt, locvar_blendlist_reftype * 1000 + iID(cnt)
+			locvar_blendlist_m++
+		loop
+	loop
+	return locvar_blendlist_m
+
+#deffunc window_recipe2
+	locvar_window_recipe2_x = wx + ww
+	locvar_window_recipe2_w = 400
+	gmode 2
+	pos locvar_window_recipe2_x + locvar_window_recipe2_w - 520, 0
+	gcopy BUFFER_INF, 960, 96 + 192, 480, 68
+	locvar_window_recipe2_dx = locvar_window_recipe2_x + locvar_window_recipe2_w - 500
+	locvar_window_recipe2_dy = 10
+	font lang(cfg_font1, cfg_font2), 15 - en * 2, 1
+	locvar_window_recipe2_s = "" + rpsuccessrate(rpdiff(rpid, step, -1))
+	if ( gWizard ) {
+		locvar_window_recipe2_s += ":" + rpdiff(rpid, step, -1)
+	}
+	pos locvar_window_recipe2_dx + 140, locvar_window_recipe2_dy
+	color 30, 30, 30
+	bmes lang("成功率: ", "Success Rate: ") + locvar_window_recipe2_s, 235, 235, 235
+	locvar_window_recipe2_p = rpdata(RPDATA_TIME, rpid)
+	if ( rpmode ) {
+		if ( locvar_window_recipe2_p < 10000 ) {
+			locvar_window_recipe2_p = locvar_window_recipe2_p * val
+		}
+		else {
+			locvar_window_recipe2_p = locvar_window_recipe2_p \ 10000
+		}
+		locvar_window_recipe2_p += rpdata(RPDATA_TIME, rpid) / 10000 * val * 10000
+	}
+	locvar_window_recipe2_s = "" + locvar_window_recipe2_p \ 10000 + lang("ターン", " turns")
+	if ( locvar_window_recipe2_p >= 10000 ) {
+		locvar_window_recipe2_s += lang("と", " and ") + locvar_window_recipe2_p / 10000 + lang("時間", " hours")
+	}
+	pos locvar_window_recipe2_dx + 140, locvar_window_recipe2_dy + 20
+	color 40, 40, 40
+	bmes lang("必要時間: ", "Time: ") + locvar_window_recipe2_s, 235, 235, 235
+	return
+
+#deffunc window_recipe array window_recipe_arg0, int window_recipe_itemid, int window_recipe_arg2, int window_recipe_arg3, int window_recipe_arg4, int window_recipe_arg5
+	sdim locvar_window_recipe_s
+	if ( windowshadow == 1 ) {
+		window window_recipe_arg2 + 4, window_recipe_arg3 + 4, window_recipe_arg4, window_recipe_arg5 - window_recipe_arg5 \ 8, 0, -1
+		pos window_recipe_arg2 + window_recipe_arg4 - 522, 0
+		gfini 486, 69
+		gfdec 40, 40, 40
+		windowshadow = 0
+	}
+	window window_recipe_arg2, window_recipe_arg3, window_recipe_arg4, window_recipe_arg5 - window_recipe_arg5 \ 8, 0, 0
+	window_recipe2
+	gmode 2
+	color 194, 170, 146
+	line window_recipe_arg2 + 50 + locvar_window_recipe_xfix, window_recipe_arg3 + window_recipe_arg5 - 48 - window_recipe_arg5 \ 8, window_recipe_arg2 + window_recipe_arg4 - 40, window_recipe_arg3 + window_recipe_arg5 - 48 - window_recipe_arg5 \ 8
+	color 234, 220, 188
+	line window_recipe_arg2 + 50 + locvar_window_recipe_xfix, window_recipe_arg3 + window_recipe_arg5 - 49 - window_recipe_arg5 \ 8, window_recipe_arg2 + window_recipe_arg4 - 40, window_recipe_arg3 + window_recipe_arg5 - 49 - window_recipe_arg5 \ 8
+	locvar_window_recipe_s = "Page." + (rppage + 1) + "/" + (rppage(1) + 1), "" + key_prev + "," + key_next + "" + lang("[ページ切替]  ", "[Page]  ")
+	if ( step == (-1) ) {
+		locvar_window_recipe_s(1) += strhint3
+	}
+	else {
+		locvar_window_recipe_s(1) += strhint3b
+	}
+	font lang(cfg_font1, cfg_font2), 12 + sizefix - en * 2, 0
+	color 0, 0, 0
+	pos window_recipe_arg2 + 25 + locvar_window_recipe_xfix, window_recipe_arg3 + window_recipe_arg5 - 43 - window_recipe_arg5 \ 8
+	mes locvar_window_recipe_s(1)
+	font lang(cfg_font1, cfg_font2), 12 + sizefix - en * 2, 1
+	color 0, 0, 0
+	pos window_recipe_arg2 + window_recipe_arg4 - strlen(locvar_window_recipe_s) * 7 - 40 - locvar_window_recipe_xfix2, window_recipe_arg3 + window_recipe_arg5 - 65 - window_recipe_arg5 \ 8
+	mes locvar_window_recipe_s
+	locvar_window_recipe_dx = window_recipe_arg2 + 35
+	locvar_window_recipe_dy = window_recipe_arg3 + 48
+	font lang(cfg_font1, cfg_font2), 12 - en * 2, 1
+	color 0, 0, 0
+	pos locvar_window_recipe_dx - 10, locvar_window_recipe_dy
+	mes lang("調合の手順", "Blending Procedure")
+	locvar_window_recipe_dy = locvar_window_recipe_dy + 18
+	font lang(cfg_font1, cfg_font2), 13 - en * 2, 0
+	color 0, 0, 0
+	locvar_window_recipe_i = 1
+	pos locvar_window_recipe_dx - 10, locvar_window_recipe_dy - 2
+	gfini window_recipe_arg4 - 60, 17
+	if ( step == locvar_window_recipe_i - 2 ) {
+		gfdec2 10, 20, 30
+	}
+	else {
+		if ( step > locvar_window_recipe_i - 2 ) {
+			gfdec2 25, 30, 35
+		}
+	}
+	if ( step == (-1) ) {
+		pos locvar_window_recipe_dx, locvar_window_recipe_dy
+		mes "" + locvar_window_recipe_i + "." + lang("レシピを選ぶ", "Choose a recipe")
+	}
+	else {
+		pos locvar_window_recipe_dx, locvar_window_recipe_dy
+		mes "" + locvar_window_recipe_i + "." + lang(rpname(rpid) + "のレシピを選んだ", "Chose the recipe of " + rpname(rpid))
+	}
+	locvar_window_recipe_dy += 17
+	locvar_window_recipe_i++
+	repeat 10
+		if ( rpdata(RPDATA_MAT + cnt, rpid) == (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ ITEM_ID_DUMMY]@!!! */) ) {
+			break
+		}
+		pos locvar_window_recipe_dx - 10, locvar_window_recipe_dy - 2
+		gfini window_recipe_arg4 - 60, 17
+		if ( step == locvar_window_recipe_i - 2 ) {
+			gfdec2 10, 20, 30
+		}
+		else {
+			if ( step > locvar_window_recipe_i - 2 ) {
+				gfdec2 25, 30, 35
+			}
+		}
+		if ( step <= cnt ) {
+			blendmatnum rpdata(RPDATA_MAT + cnt, rpid), cnt
+			locvar_window_recipe_p = stat
+			locvar_window_recipe_s = lang(rpmatname(cnt) + "を加える", "Add " + rpmatname(cnt) + "") + "(" + lang("所持:", "Stock:") + locvar_window_recipe_p + ")"
+		}
+		else {
+			locvar_window_recipe_s = lang("", "Selected ") + itemname(rpref(10 + cnt * 2)) + lang("を選んだ", "")
+			locvar_window_recipe_s = strmid(locvar_window_recipe_s, 0, 44)
+		}
+		pos locvar_window_recipe_dx, locvar_window_recipe_dy
+		mes "" + locvar_window_recipe_i + "." + locvar_window_recipe_s
+		locvar_window_recipe_dy += 17
+		locvar_window_recipe_i++
+	loop
+	pos wx + ww + 243, wy - 4
+	gcopy BUFFER_INF, 1040, 96, 160, 70
+	pos locvar_window_recipe_dx - 10, locvar_window_recipe_dy - 2
+	gfini window_recipe_arg4 - 60, 17
+	if ( step == locvar_window_recipe_i - 2 ) {
+		gfdec2 10, 20, 30
+	}
+	else {
+		if ( step > locvar_window_recipe_i - 2 ) {
+			gfdec2 25, 30, 35
+		}
+	}
+	pos locvar_window_recipe_dx, locvar_window_recipe_dy
+	mes "" + locvar_window_recipe_i + "." + lang("調合を始める！", "Start blending!")
+	locvar_window_recipe_dy += 30
+	if ( rppage == 0 ) {
+		font lang(cfg_font1, cfg_font2), 12 - en * 2, 1
+		color 0, 0, 0
+		pos locvar_window_recipe_dx - 10, locvar_window_recipe_dy
+		mes lang(rpname(rpid) + "のレシピ", "The recipe of " + rpname(rpid))
+		locvar_window_recipe_dy += 20
+		pos locvar_window_recipe_dx - 10, locvar_window_recipe_dy
+		mes lang("必要なスキル:", "Required Skills:")
+		locvar_window_recipe_dy = locvar_window_recipe_dy + 18
+		font lang(cfg_font1, cfg_font2), 13 - en * 2, 0
+		color 0, 0, 0
+		repeat 5
+			if ( rpdata(RPDATA_SKILL + cnt * 2, rpid) == SKILL_NONE ) {
+				break
+			}
+			if ( rpdata(RPDATA_SKILL_REQ + cnt * 2, rpid) > sdata(rpdata(RPDATA_SKILL + cnt * 2, rpid), CHARA_PLAYER) ) {
+				color 150, 0, 0
+			}
+			else {
+				color 0, 120, 0
+			}
+			pos locvar_window_recipe_dx + cnt \ 2 * 140, locvar_window_recipe_dy + cnt / 2 * 17
+			mes skillname(rpdata(RPDATA_SKILL + cnt * 2, rpid)) + "  " + rpdata(RPDATA_SKILL_REQ + cnt * 2, rpid) + "(" + sdata(rpdata(RPDATA_SKILL + cnt * 2, rpid), CHARA_PLAYER) + ")"
+		loop
+		return
+	}
+	if ( window_recipe_itemid == (-1) ) {
+		return
+	}
+	font lang(cfg_font1, cfg_font2), 12 - en * 2, 1
+	color 0, 0, 0
+	pos locvar_window_recipe_dx - 10, locvar_window_recipe_dy
+	mes itemname(window_recipe_itemid)
+	locvar_window_recipe_dy += 20
+	font lang(cfg_font1, cfg_font2), 13 - en * 2, 0
+	color 0, 0, 0
+	if ( iKnown(window_recipe_itemid) < ITEM_KNOWN_QUALITY ) {
+		pos locvar_window_recipe_dx, locvar_window_recipe_dy
+		mes lang("このアイテムは鑑定されていない。", "You haven't identified it yet.")
+		locvar_window_recipe_dy += 16
+		return
+	}
+	getinheritance window_recipe_itemid, locvar_window_recipe_inhlist, locvar_window_recipe_p
+	if ( locvar_window_recipe_p > 0 ) {
+		repeat locvar_window_recipe_p
+			locvar_window_recipe_cnt2 = locvar_window_recipe_inhlist(cnt)
+			if ( inv(STARTING_INV_ITEM_ENCHANT + locvar_window_recipe_cnt2 * 2, window_recipe_itemid) == 0 ) {
+				break
+			}
+			val = inv(STARTING_INV_ITEM_ENCHANT + locvar_window_recipe_cnt2 * 2, window_recipe_itemid), inv(STARTING_INV_ITEM_ENCHANT_POWER + locvar_window_recipe_cnt2 * 2, window_recipe_itemid), 0, refitem(iID(window_recipe_itemid), DBSPEC_TYPE, window_recipe_itemid)
+			gosub *item_encdetail
+			color 0, 0, 100
+			if ( inv(STARTING_INV_ITEM_ENCHANT_POWER + locvar_window_recipe_cnt2 * 2, window_recipe_itemid) < 0 ) {
+				color 180, 0, 0
+			}
+			pos locvar_window_recipe_dx, locvar_window_recipe_dy
+			mes cnven(s)
+			locvar_window_recipe_dy += 16
+		loop
+	}
+	else {
+		pos locvar_window_recipe_dx, locvar_window_recipe_dy
+		mes lang("継承効果なし", "No inheritance effects")
+		locvar_window_recipe_dy += 16
+		locvar_window_recipe_p++
+	}
+	color 0, 0, 0
+	return
+
+#deffunc clear_rprefmat
+	repeat 10
+		rpref(10 + cnt * 2) = -1
+	loop
+	return
+
+*label_2523
+	repeat 8
+		recipememory(200 + cnt) = 1
+	loop
+	recipememory(792 + 400) = 1
+	recipememory(775 + 400) = 1
+	recipememory(200 + 11) = 1
+	recipememory(200 + 12) = 1
+	recipememory(200 + 13) = 1
+	recipememory(200 + 14) = 1
+	recipememory(200 + 16) = 1
+	recipememory(200 + 17) = 1
+	recipememory(200 + 18) = 1
+	recipememory(200 + 19) = 1
+	return
+
+*label_2525
+	dim rpdata, 100, 1200
+	sdim rfnameorg, 20, 2, 9009 - 9000
+	sdim rpdatan, 40, 1200
+	dim rpref, 100
+	rpsourcelist = 498 + 400, 756 + 400, 787 + 400
+	rpid = 200
+	rpdatan(rpid) = lang("人体錬成", "human transmutation")
+	rpdata(RPDATA_ITEM, rpid) = RECIPE_BLEND_ACTION_HERBED_FOOD, 10
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_ALCHEMY, 1
+	rpdata(RPDATA_MAT + 0, rpid) = ITEM_ID_CORPSE, ITEM_ID_SKIN, ITEM_ID_BLOOD, ITEM_ID_EYE, ITEM_ID_HEART, ITEM_ID_BONE
+	rpdata(RPDATA_MAT_EXT + 0, rpid) = 0, 10000, 10000, 10000, 10000, 10000
+	rpdata(RPDATA_ENC + 0, rpid) = 0, 10000, 10000, 10000, 10000, 10000
+	rpid = STARTING_RPID + 1
+	rpdatan(rpid) = lang("矢弾の充填", "reload ammo")
+	rpdata(RPDATA_ITEM, rpid) = RECIPE_BLEND_ACTION_ANOTHER_HEART, 3
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_ATTR_DEX, 10, SKILL_WEAPON_FIREARM, 5
+	rpdata(RPDATA_MAT + 0, rpid) = ITEM_ID_API_NUT, ITEM_ID_BOMB_FISH
+	rpid = STARTING_RPID + 2
+	rpdatan(rpid) = lang("人形作成", "doll")
+	rpdata(RPDATA_ITEM, rpid) = RECIPE_BLEND_ACTION_COFFIN, 15
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_CARPENTRY, 25, SKILL_NORMAL_TAILORING, 25
+	rpdata(RPDATA_MAT + 0, rpid) = ITEM_ID_FIGURINE, ITEM_ID_CORPSE, ITEM_ID_SKIN, ITEM_ID_BLOOD, ITEM_ID_EYE, ITEM_ID_HEART, ITEM_ID_BONE, ITEM_ID_ACIDPROOF_LIQUID, ITEM_ID_FIREPROOF_LIQUID
+	rpdata(RPDATA_MAT_EXT + 0, rpid) = 0, 10000, 10000, 10000, 10000, 10000, 10000
+	rpdata(RPDATA_ENC + 0, rpid) = 0, 10000, 10000, 10000, 10000, 10000, 10000
+	rpid = STARTING_RPID + 3
+	rpdatan(rpid) = lang("収納家具拡張", "expand containers")
+	rpdata(RPDATA_ITEM, rpid) = RECIPE_BLEND_ACTION_FIRE_FROOF, 20
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_CARPENTRY, 15
+	rpdata(RPDATA_MAT + 0, rpid) = RF_VEGE, ITEM_ID_SPELLBOOK_4D_POCKET
+	rpid = STARTING_RPID + 4
+	rpdatan(rpid) = lang("同種ポーション調合", "potion doping")
+	rpdata(RPDATA_ITEM, rpid) = RECIPE_BLEND_ACTION_ACID_PROOF, 15
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_ALCHEMY, 20
+	rpdata(RPDATA_MAT + 0, rpid) = FILTER_ITEM_POTION, FILTER_ITEM_POTION
+	rpid = STARTING_RPID + 5
+	rpdatan(rpid) = lang("釣り餌の装着", "bait attachment")
+	rpdata(RPDATA_ITEM, rpid) = RECIPE_BLEND_ACTION_BAIT, 10, 1
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_FISHING, 2, SKILL_ATTR_DEX, 10
+	rpdata(RPDATA_MAT + 0, rpid) = ITEM_ID_FISHING_POLE, ITEM_ID_BAIT
+	rpid = STARTING_RPID + 6
+	rpdatan(rpid) = lang("アイテムの祝福", "blessed item")
+	rpdata(RPDATA_ITEM, rpid) = RECIPE_BLEND_ACTION_BLESS, 5, 1
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_ATTR_DEX, 5
+	rpdata(RPDATA_MAT + 0, rpid) = RF_ANY, ITEM_ID_BOTTLE_WATER
+	rpid = STARTING_RPID + 7
+	rpdatan(rpid) = lang("井戸水の回復", "well refill")
+	rpdata(RPDATA_ITEM, rpid) = RECIPE_BLEND_ACTION_WELL, 3, 2
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_ATTR_DEX, 3
+	rpdata(RPDATA_MAT + 0, rpid) = FILTER_FURNITURE_WELL, FILTER_ITEM_POTION
+	rpid = STARTING_RPID + 11
+	rpdatan(rpid) = lang("魔道具合成", "rod doping")
+	rpdata(RPDATA_ITEM, rpid) = 10011, 15
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_ALCHEMY, 20, SKILL_NORMAL_MAGIC_DEVICE, 16
+	rpdata(RPDATA_MAT + 0, rpid) = FILTER_ITEM_ROD, FILTER_ITEM_ROD
+	rpid = STARTING_RPID + 12
+	rpdatan(rpid) = lang("転移マーカー付与", "add teleporting marker")
+	rpdata(RPDATA_ITEM, rpid) = 10012, 100, 1
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_SPELL_TELEPORT, 16, SKILL_SPELL_RETURN, 16
+	rpdata(RPDATA_MAT + 0, rpid) = RF_ANY, ITEM_ID_EARTH_CRYSTAL, ITEM_ID_MANA_CRYSTAL
+	rpid = STARTING_RPID + 13
+	rpdatan(rpid) = lang("転移マーカー消去", "remove teleporting marker")
+	rpdata(RPDATA_ITEM, rpid) = 10013, 10, 1
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_SPELL_TELEPORT, 16, SKILL_SPELL_RETURN, 16
+	rpdata(RPDATA_MAT + 0, rpid) = RF_ANY, ITEM_ID_SUN_CRYSTAL
+	rpid = STARTING_RPID + 14
+	rpdatan(rpid) = lang("家具レプリカ作成", "create furniture replica")
+	rpdata(RPDATA_ITEM, rpid) = 10014, 60, 1
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_CARPENTRY, 5, SKILL_NORMAL_TAILORING, 5
+	rpdata(RPDATA_MAT + 0, rpid) = RF_SEED
+	rpid = STARTING_RPID + 15
+	rpdatan(rpid) = lang("家具レプリカ消去", "destroy furniture replica")
+	rpdata(RPDATA_ITEM, rpid) = 10015, 10, 1
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_ATTR_STR, 1
+	rpdata(RPDATA_MAT + 0, rpid) = ITEM_ID_CARPENTERS_TOOL
+	rpid = STARTING_RPID + 16
+	rpdatan(rpid) = lang("同種ポーション濃縮", "potion concentrated")
+	rpdata(RPDATA_ITEM, rpid) = 10017, 15
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_ALCHEMY, 200
+	rpdata(RPDATA_MAT + 0, rpid) = FILTER_ITEM_POTION
+	rpid = STARTING_RPID + 17
+	rpdatan(rpid) = lang("同種魔道具圧縮", "rod concentrated")
+	rpdata(RPDATA_ITEM, rpid) = 10017, 15
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_ALCHEMY, 200, SKILL_NORMAL_MAGIC_DEVICE, 100
+	rpdata(RPDATA_MAT + 0, rpid) = FILTER_ITEM_ROD
+	rpid = STARTING_RPID + 18
+	rpdatan(rpid) = lang("エロ本の合成", "pornbook Synthesis")
+	rpdata(RPDATA_ITEM, rpid) = 10018, 50
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_LITERACY, 15
+	rpdata(RPDATA_MAT + 0, rpid) = ITEM_ID_FISH_JUNK, ITEM_ID_FISH_JUNK
+	rpid = STARTING_RPID + 19
+	rpdatan(rpid) = lang("伝承本の作成", "creating a lore book")
+	rpdata(RPDATA_ITEM, rpid) = 10019, 15
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_LITERACY, 30, SKILL_NORMAL_CASTING, 15
+	rpdata(RPDATA_MAT + 0, rpid) = FILTER_ITEM_SPELLBOOK, ITEM_ID_SCROLL_WONDER
+	rpid = ITEM_ID_FRIED_POTATO + EXT_RP
+	rpdata(RPDATA_ITEM, rpid) = ITEM_ID_FRIED_POTATO, 60 + 15 * 10000
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_DISARM_TRAP, 4, SKILL_SPELL_DOOR_CREATION, 20, SKILL_ATTR_DEX, 8
+	rpdata(RPDATA_EQ + 0, rpid) = 0
+	rpdata(RPDATA_MAT + 0, rpid) = ITEM_ID_SACK_FLOUR, RF_FLAVOR
+	rpid = ITEM_ID_MOCHI + EXT_RP
+	rpdata(RPDATA_ITEM, rpid) = ITEM_ID_MOCHI, 20 + 2 * 10000
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_COOKING, 4, SKILL_NORMAL_JEWELER, 20, SKILL_NORMAL_STEALTH, 8
+	rpdata(RPDATA_EQ + 0, rpid) = 0
+	rpdata(RPDATA_MAT + 0, rpid) = ITEM_ID_SACK_FLOUR
+	rpid++
+	rpid = ITEM_ID_PUFF_PUFF_BREAD + EXT_RP
+	rpdata(RPDATA_ITEM, rpid) = ITEM_ID_PUFF_PUFF_BREAD, 30
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_COOKING, 10, SKILL_NORMAL_ALCHEMY, 5
+	rpdata(RPDATA_EQ + 0, rpid) = 0
+	rpdata(RPDATA_MAT + 0, rpid) = RF_ANY
+	rpid = ITEM_ID_SPECIAL_STEAMED_MEAT_BUN + EXT_RP
+	rpdata(RPDATA_ITEM, rpid) = ITEM_ID_SPECIAL_STEAMED_MEAT_BUN, 30
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_COOKING, 100
+	rpdata(RPDATA_EQ + 0, rpid) = 0
+	rpdata(RPDATA_MAT + 0, rpid) = ITEM_ID_SACK_FLOUR, ITEM_ID_POTION_SALT_SOLUTION, RF_EVITEM, RF_DIARY
+	rpid = ITEM_ID_PUTITORO + EXT_RP
+	rpdata(RPDATA_ITEM, rpid) = ITEM_ID_PUTITORO, 30
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_ALCHEMY, 300, SKILL_NORMAL_MAGIC_DEVICE, 150
+	rpdata(RPDATA_EQ + 0, rpid) = 0
+	rpdata(RPDATA_MAT + 0, rpid) = FILTER_ITEM_POTION, FILTER_ITEM_POTION, FILTER_ITEM_POTION
+	rpid = ITEM_ID_TORCH + EXT_RP
+	rpdata(RPDATA_ITEM, rpid) = ITEM_ID_TORCH, 30
+	rpdata(RPDATA_SKILL + 0 * 2, rpid) = SKILL_NORMAL_CARPENTRY, 5
+	rpdata(RPDATA_MAT + 0, rpid) = ITEM_ID_WOOD_CHIP, ITEM_ID_GARBAGE, ITEM_ID_MOLOTOV
+	rfnameorg(RFNAMEORG_ID, RF_FLAVOR - EXT_RF) = "flavor", lang("適当な調味料", "suitable flavoring")
+	rfnameorg(RFNAMEORG_ID, RF_ORE - EXT_RF) = "ore", lang("適当な鉱石", "any ore")
+	rfnameorg(RFNAMEORG_ID, RF_WOOD - EXT_RF) = "wood", lang("加工前の木", "something made of wood")
+	rfnameorg(RFNAMEORG_ID, RF_ANY - EXT_RF) = "", lang("何か物体", "any item")
+	rfnameorg(RFNAMEORG_ID, RF_FISH - EXT_RF) = "fish", lang("魚介類", "fish")
+	rfnameorg(RFNAMEORG_ID, RF_EVITEM - EXT_RF) = "", lang("ドラゴンの死体", "meat of dragon")
+	rfnameorg(RFNAMEORG_ID, RF_HERB - EXT_RF) = "", lang("モンスターの心臓", "hart of monster")
+	rfnameorg(RFNAMEORG_ID, RF_SEED - EXT_RF) = "", lang("家具", "furniture")
+	rfnameorg(RFNAMEORG_ID, RF_VEGE - EXT_RF) = "", lang("収納家具", "storage furniture")
+	rfnameorg(RFNAMEORG_ID, RF_DIARY - EXT_RF) = "", lang("心臓/ストマフィリア", "hart or stomafillia")
+	return
+
+*com_blend
+	procid = (procid + 1) \ 10
+	proclist(procid) = "com_blend" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	step = -1
+	rpid = 0
+	recipememory(200 + 14) = 1 * (areaId(gArea ) == AREA_HOME | areaId(gArea ) == AREA_DUNGEON | areaId(gArea ) > 100)
+	recipememory(200 + 15) = 1 * (oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0) != 0)
+	gsel BUFFER_INF
+	pos 960, 96
+	picload_ exedir + "graphic\\deco_blend.bmp", 1
+	gsel BUFFER_SCREEN
+	clear_rprefmat
+
+*com_blend_step
+	if ( step == (-1) | step == 0 ) {
+		rsikibetu = 0
+		rpdata(RPDATA_MAT_EXT + 0, 200) = 0, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu
+		rpdata(RPDATA_MAT_EXT + 0, 202) = 0, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu
+		rpdata(RPDATA_MAT + 0, 204) = FILTER_ITEM_POTION, FILTER_ITEM_POTION
+		rpdata(RPDATA_MAT + 0, 211) = FILTER_ITEM_ROD, FILTER_ITEM_ROD
+		rpdata(RPDATA_MAT + 0, 216) = FILTER_ITEM_POTION
+		rsikibetu2 = 0
+		rpdata(RPDATA_ENC + 0, 200) = 0, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2
+		rpdata(RPDATA_ENC + 0, 202) = 0, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2
+	}
+	if ( step != (-1) ) {
+		if ( rpdata(RPDATA_MAT + step, rpid) == (0 /*!!!@[FILTER_NOTHING @@@ FILTER_NOTHING @@@ ITEM_ID_DUMMY]@!!! */) ) {
+			rppage = 0
+			window_recipe list2, -1, wx + ww, wy, 400, wh
+			txtnew
+			txt -1, lang("幾つ作る？", "How many items do you want to create?")
+			promptl(0, promptmax) = lang("調合を始める", "Start blending"), "a", "" + promptmax
+			promptmax++
+			promptl(0, promptmax) = lang("前に戻る", "Go back"), "b", "" + promptmax
+			promptmax++
+			promptl(0, promptmax) = lang("最初から", "From the start"), "c", "" + promptmax
+			promptmax++
+			if ( ogTitleFather == 2 ) {
+				p = 1000 + (sCarpentry(CHARA_PLAYER) + sTailor(CHARA_PLAYER) + sAlchemy(CHARA_PLAYER) + sJeweller(CHARA_PLAYER)) / 10
+			}
+			else {
+				p = 20
+			}
+			if ( rpid == 216 | rpid == 217 | rpid == 219 ) {
+				p = 1
+			}
+			repeat 10
+				if ( rpref(10 + cnt * 2) == (-1) ) {
+					break
+				}
+				if ( rpdata(RPDATA_TYPE, rpid) == 2 & cnt == 0 ) {
+					continue
+				}
+				if ( iNum(rpref(10 + cnt * 2)) < p ) {
+					p = iNum(rpref(10 + cnt * 2))
+				}
+				if ( rpref(10 + cnt * 2) == rpref(10 + (cnt + 1) * 2) ) {
+					if ( iNum(rpref(10 + cnt * 2)) / 2 < p ) {
+						p = iNum(rpref(10 + cnt * 2)) / 2
+					}
+				}
+			loop
+			val = promptx, prompty, 220, 2, p
+			rpmode = 1
+			gosub *prompt_key
+			rpmode = 0
+			if ( rtval == 0 ) {
+				rpref(1) = val
+				rpref(2) = rpdata(RPDATA_TIME, rpid)
+				rpref(3) = rpdiff(rpid, step, -1)
+				gosub *blend
+				goto *label_4158
+			}
+			if ( rtval == 2 ) {
+				step = -1
+				goto *com_blend_step
+			}
+			step--
+			goto *com_blend_step
+		}
+	}
+	page = 0
+	pagesize = 16
+	listmax = 0
+	cs = 0
+	cs_bk = -1
+	cc = CHARA_PLAYER
+	screenupdate = -1
+	gosub *screen_draw
+	if ( step == (-1) ) {
+		rppage = 0, 0
+		listmax = 0
+		repeat 1200
+			if ( rpdata(RPDATA_ITEM, cnt) == ITEM_ID_DUMMY ) {
+				continue
+			}
+			if ( cnt == 201 ) {
+				if ( godcheck() != "mani" ) {
+					continue
+				}
+			}
+			if ( recipememory(cnt) > 0 ) {
+				list(0, listmax) = cnt, cnt
+				listmax++
+			}
+		loop
+		gosub *sort_list
+		windowshadow(1) = 1
+		txtnew
+		txt -1, lang("どのレシピを使う？", "Which recipe do you want to use?")
+		goto *com_blend_recipe_loop
+	}
+	rppage = 1
+	blendlist list, step
+	listmax = stat
+	gosub *sort_list
+	goto *com_blend_recipe_loop_WHILE1_CONTINUE
+
+*com_blend_recipe_loop
+	cs_bk = -1
+	cs = cs_recipe1
+	pagemax = (listmax - 1) / pagesize
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+	dim blendchecklist, pagesize
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		blendchecklist(cnt) = blendcheckmat(list(0, p))
+	loop
+
+*com_blend_recipe_loop_WHILE1
+	procid = (procid + 1) \ 10
+	proclist(procid) = "rpid:" + rpid + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	redraw 0
+	s = lang("レシピの選択", "Choose a recipe"), strhint2
+	windowshadow = windowshadow(1)
+	display_window (windoww - 780) / 2 + inf_screenx, winposy(445), 380, 432, 74
+	display_topic lang("レシピの名称", "Name"), wx + 28, wy + 30
+	s = "" + listmax + " recipes"
+	font lang(cfg_font1, cfg_font2), 12 + sizefix - en * 2, 1
+	pos wx + 130, wy + wh - 65 - wh \ 8
+	mes s
+	keyrange = 0
+	gmode 2
+	gsel BUFFER_ITEM
+	color 0
+	boxf 0, 960, chipi(CHIPI_WIDTH, xy2pic(22, 16)), chipi(CHIPI_HEIGHT, xy2pic(22, 16)) + 960
+	pos 0, 960
+	gcopy BUFFER_ITEM, chipi(CHIPI_X, xy2pic(22, 16)), chipi(CHIPI_Y, xy2pic(22, 16)), chipi(CHIPI_WIDTH, xy2pic(22, 16)), chipi(CHIPI_HEIGHT, xy2pic(22, 16))
+	gfini chipi(CHIPI_WIDTH, xy2pic(22, 16)), chipi(CHIPI_HEIGHT, xy2pic(22, 16))
+	gfdec2 c_col(0, COLOR_DEFAULT), c_col(1, COLOR_DEFAULT), c_col(2, COLOR_DEFAULT)
+	gsel selcur
+	procid = (procid + 1) \ 10
+	proclist(procid) = "TEST1" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+		if ( cnt \ 2 == 0 ) {
+			pos wx + 70, wy + 60 + cnt * 19
+			gfini ww - 100, 18
+			gfdec2 12, 14, 16
+		}
+		pos wx + 37, wy + 70 + cnt * 19
+		gmode 2, chipi(CHIPI_WIDTH, xy2pic(22, 16)), chipi(CHIPI_HEIGHT, xy2pic(22, 16))
+		grotate BUFFER_ITEM, 0, 960, 0, inf_tiles, inf_tiles
+		pos wx + 330, wy + 53 + cnt * 19
+		if ( blendchecklist(cnt) == 1 ) {
+			gcopy BUFFER_INF, 336, 360, 24, 24
+		}
+		rpid = list(0, p)
+		pos wx + 317, wy + 60 + cnt * 19
+		gcopy BUFFER_INF, 64 + (4 - rpdiff(rpid, -1, -1) / 25) * 16, 624, 16, 16
+	loop
+	procid = (procid + 1) \ 10
+	proclist(procid) = "TEST2" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	color 0, 0, 0
+	cs_listbk
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		p = list(0, p)
+		rpid = p
+		s = lang("", "Recipe of ") + cnven(rpname(rpid)) + lang("のレシピ", "")
+		display_key wx + 58, wy + 60 + cnt * 19 - 2, cnt
+		cs_list s, wx + 84, wy + 60 + cnt * 19 - 1, 19, 0, 0, p
+	loop
+	procid = (procid + 1) \ 10
+	proclist(procid) = "TEST3" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	if ( cs_bk != cs ) {
+		if ( pagesize * page + cs < listmax ) {
+			rpid = list(0, pagesize * page + cs)
+			windowshadow = windowshadow(1)
+			window_recipe list2, -1, wx + ww, wy, 400, wh
+		}
+	}
+	if ( keyrange != 0 ) {
+		cs_bk = cs
+		cs_recipe1 = cs
+	}
+	procid = (procid + 1) \ 10
+	proclist(procid) = "TEST4" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	windowshadow(1) = 0
+	pos wx + 10, wy + wh - 100
+	gcopy BUFFER_INF, 960, 96, 80, 90
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			p = list(0, pagesize * page + cnt)
+			break
+		}
+	loop
+	procid = (procid + 1) \ 10
+	proclist(procid) = "TEST5" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	if ( p != (-1) ) {
+		rpid = p
+		step = 0
+		rppage = 1, 1
+		rpref(0) = rpid
+		goto *com_blend_step
+	}
+	if ( key == key_pageup ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page++
+			goto *com_blend_recipe_loop
+		}
+	}
+	if ( key == key_pagedown ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page--
+			goto *com_blend_recipe_loop
+		}
+	}
+	if ( key == key_cancel ) {
+		screenupdate = 0
+		gosub *screen_draw
+		goto *pc_turn
+	}
+	procid = (procid + 1) \ 10
+	proclist(procid) = "TEST6" + " ct:" + ct
+	if ( dbg_outputdebuglog ) {
+	}
+	goto *com_blend_recipe_loop_WHILE1
+
+*com_blend_recipe_loop_WHILE1_CONTINUE
+	cs = cs_recipe2
+	page = page_recipe2
+	windowshadow(1) = 1
+	txtnew
+	txt -1, lang(rpmatname(step) + "を追加しよう。", "Add \"" + rpmatname(step) + "\".")
+
+*com_blend_material_loop
+	cs_bk = -1
+	pagemax = (listmax - 1) / pagesize
+	if ( page < 0 ) {
+		page = pagemax
+	}
+	else {
+		if ( page > pagemax ) {
+			page = 0
+		}
+	}
+	redraw 0
+	if ( jp ) {
+		s = rpmatname(step) + "を追加"
+	}
+	else {
+		s = "Add " + rpmatname(step)
+	}
+	s(1) = strhint2
+	windowshadow = windowshadow(1)
+	display_window (windoww - 780) / 2 + inf_screenx, winposy(445), 380, 432, 74
+	display_topic lang("アイテムの名称", "Name"), wx + 28, wy + 30
+	s = "" + listmax + " items"
+	font lang(cfg_font1, cfg_font2), 12 + sizefix - en * 2, 1
+	pos wx + 130, wy + wh - 65 - wh \ 8
+	mes s
+	keyrange = 0
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		key_list(cnt) = key_select(cnt)
+		keyrange++
+		if ( cnt \ 2 == 0 ) {
+			pos wx + 70, wy + 60 + cnt * 19
+			gfini ww - 100, 18
+			gfdec2 12, 14, 16
+		}
+	loop
+	font lang(cfg_font1, cfg_font2), 14 - en * 2, 0
+	color 0, 0, 0
+	cs_listbk
+	repeat pagesize
+		p = pagesize * page + cnt
+		if ( p >= listmax ) {
+			break
+		}
+		p = list(0, p)
+		s = itemname(p, iNum(p))
+		s = strmid(s, 0, 28)
+		if ( p >= 5080 ) {
+			s += lang("(地面)", " (Ground)")
+		}
+		display_key wx + 58, wy + 60 + cnt * 19 - 2, cnt
+		p(1) = iPic(p) \ 1000
+		gsel BUFFER_ITEM
+		color 0
+		boxf 0, 960, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1)) + 960
+		if ( p(1) == 528 ) {
+			gmode 2
+			pos 0, 960
+			gcopy BUFFER_ITEM, 0, 768, inf_tiles, inf_tiles
+			pos 0, 1008
+			gzoom 22, 20, 5, chipc(CHIPC_X, iCol(p)) + 8, chipc(CHIPC_Y, iCol(p)) + 4 + (chipc(CHIPC_HEIGHT, iCol(p)) > inf_tiles) * 8, chipc(CHIPC_WIDTH, iCol(p)) - 16, chipc(CHIPC_HEIGHT, iCol(p)) - 8 - (chipc(CHIPC_HEIGHT, iCol(p)) > inf_tiles) * 10, 1
+			pos 6, 974
+			gcopy BUFFER_ITEM, 0, 1008, 22, 20
+			gsel selcur
+		}
+		else {
+			if ( p(1) == 531 ) {
+				pos 8, 1058 - chipc(CHIPC_HEIGHT, iCol(p))
+				gcopy BUFFER_CHR, chipc(CHIPC_X, iCol(p)) + 8, chipc(CHIPC_Y, iCol(p)) + 2, chipc(CHIPC_WIDTH, iCol(p)) - 16, chipc(CHIPC_HEIGHT, iCol(p)) - 8
+				gmode 4, , , 150
+				color 0, 0, 0
+				pos 0, 960 + (chipc(CHIPC_HEIGHT, iCol(p)) == inf_tiles) * 48
+				gcopy BUFFER_ITEM, 144, 768 + (chipc(CHIPC_HEIGHT, iCol(p)) > inf_tiles) * 48, inf_tiles, chipc(CHIPC_HEIGHT, iCol(p)) + (chipc(CHIPC_HEIGHT, iCol(p)) > inf_tiles) * 48
+				gmode 2
+				gsel selcur
+			}
+			else {
+				if ( p(1) == 529 ) {
+					pos 0, 1056 - chipc(CHIPC_HEIGHT, iCol(p))
+					gcopy BUFFER_CHR, chipc(CHIPC_X, iCol(p)), chipc(CHIPC_Y, iCol(p)), chipc(CHIPC_WIDTH, iCol(p)), chipc(CHIPC_HEIGHT, iCol(p))
+					gmode 2
+					gsel selcur
+				}
+				else {
+					pos 0, 960
+					gcopy BUFFER_ITEM, chipi(CHIPI_X, p(1)), chipi(CHIPI_Y, p(1)), chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+					gfini chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+					gfdec2 c_col(0, iCol(p)), c_col(1, iCol(p)), c_col(2, iCol(p))
+					gsel selcur
+				}
+			}
+		}
+		pos wx + 37, wy + 69 + cnt * 19
+		gmode 2, chipi(CHIPI_WIDTH, p(1)), chipi(CHIPI_HEIGHT, p(1))
+		grotate BUFFER_ITEM, 0, 960, 0, chipi(CHIPI_WIDTH, p(1)) * inf_tiles / chipi(CHIPI_HEIGHT, p(1)), inf_tiles
+		if ( iEquip(p) != 0 ) {
+			pos wx + 46, wy + 72 + cnt * 18 - 3
+			gcopy BUFFER_INF, 12, 348, 12, 12
+		}
+		cs_list s, wx + 84, wy + 60 + cnt * 19 - 1, 19, 0, 1, p
+	loop
+	p = list(0, pagesize * page + cs)
+	if ( listmax == 0 ) {
+		p = -1
+	}
+	if ( cs_bk != cs ) {
+		windowshadow = windowshadow(1)
+		window_recipe list2, p, wx + ww, wy, 400, wh
+	}
+	if ( keyrange != 0 ) {
+		cs_bk = cs
+		cs_recipe2 = cs
+		page_recipe2 = page
+	}
+	windowshadow(1) = 0
+	pos wx + 10, wy + wh - 100
+	gcopy BUFFER_INF, 960, 96, 80, 90
+	redraw 1
+	await cfg_wait1
+	key_check
+	cursor_check
+	p = -1
+	repeat keyrange
+		if ( key == key_select(cnt) ) {
+			p = list(0, pagesize * page + cnt)
+			break
+		}
+	loop
+	if ( key == key_pageup ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page++
+			goto *com_blend_material_loop_WHILE1
+		}
+	}
+	if ( key == key_pagedown ) {
+		if ( pagemax != 0 ) {
+			snd SOUNDLIST_POP1
+			page--
+			goto *com_blend_material_loop_WHILE1
+		}
+	}
+	if ( p != (-1) ) {
+		ci = p
+		if ( ibit(ITEM_BIT_NO_DROP, ci) ) {
+			snd SOUNDLIST_FAIL1
+			txt -1, lang("それはあなたの大事なものだ。<調べる>メニューから解除できる。", "It's set as no-drop. You can reset it from the <examine> menu.")
+			goto *com_blend_material_loop
+		}
+		if ( rpid == 200 | rpid == 202 ) {
+			if ( iSubName(ci) == 0 & iID(ci) != ITEM_ID_ACIDPROOF_LIQUID & iID(ci) != ITEM_ID_FIREPROOF_LIQUID ) {
+				snd SOUNDLIST_FAIL1
+				txt -1, lang("それは無理だ。", "It's impossible.")
+				goto *com_blend_material_loop
+			}
+		}
+		snd SOUNDLIST_DRINK1
+		rpref(10 + step * 2) = ci, iID(ci)
+		txt -1, lang(itemname(ci) + "を選んだ。", "You add " + itemname(ci) + ".")
+		step++
+		p = rpdiff(rpid, step, step - 1)
+		if ( rpid == 200 ) {
+			rsikibetu = iSubName(ci)
+			rpdata(RPDATA_MAT_EXT + 0, rpid) = 0, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu
+			if ( rsikibetu == 343 ) {
+				rsikibetu2 = iCNpcId(ci)
+				rpdata(RPDATA_ENC + 0, rpid) = 0, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2
+			}
+		}
+		if ( rpid == 202 ) {
+			rsikibetu = iSubName(ci)
+			rpdata(RPDATA_MAT_EXT + 0, rpid) = 0, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu, 10000 + rsikibetu
+			if ( rsikibetu == 343 ) {
+				rsikibetu2 = iCNpcId(ci)
+				rpdata(RPDATA_ENC + 0, rpid) = 0, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2, 10000 + rsikibetu2
+			}
+		}
+		if ( rpid == 204 ) {
+			rsikibetu = iID(ci)
+			rpdata(RPDATA_MAT + 0, 204) = FILTER_ITEM_POTION, rsikibetu
+		}
+		if ( rpid == 211 ) {
+			rsikibetu = iID(ci)
+			rpdata(RPDATA_MAT + 0, 211) = FILTER_ITEM_ROD, rsikibetu
+		}
+		goto *com_blend_step
+	}
+	if ( key == key_prev ) {
+		snd SOUNDLIST_POP1
+		rppage--
+		cs_bk = -1
+		if ( rppage < 0 ) {
+			rppage = rppage(1)
+		}
+	}
+	if ( key == key_next ) {
+		snd SOUNDLIST_POP1
+		rppage++
+		cs_bk = -1
+		if ( rppage > rppage(1) ) {
+			rppage = 0
+		}
+	}
+	if ( key == key_cancel ) {
+		step--
+		goto *com_blend_step
+	}
+
+*com_blend_material_loop_WHILE1
+	goto *com_blend_material_loop
+	goto *pc_turn
+
+*blend_checkMat
+	f = 1
+	repeat 10
+		if ( rpref(10 + cnt * 2) == (-1) ) {
+			break
+		}
+		if ( rpref(10 + cnt * 2) == (-2) ) {
+			f = 0
+			break
+		}
+		if ( iNum(rpref(10 + cnt * 2)) <= 0 | iID(rpref(10 + cnt * 2)) != rpref(11 + cnt * 2) ) {
+			f = 0
+			break
+		}
+	loop
+	return f
+
+*blend_deleteMat
+	p = 0
+	repeat 10
+		if ( rpref(10 + cnt * 2) == (-1) ) {
+			break
+		}
+		if ( rpref(10 + cnt * 2) == (-2) ) {
+			continue
+		}
+		if ( rpdata(RPDATA_TYPE, rpid) > 0 & cnt == 0 ) {
+		}
+		else {
+			if ( rpresult ) {
+				if ( rpdata(RPDATA_ITEM, rpid) != 10017 ) {
+					iNum(rpref(10 + cnt * 2))--
+				}
+			}
+			else {
+				if ( rnd(3) == 0 ) {
+					txt -1, lang(itemname(rpref(10 + cnt * 2), 1) + "を失った。", "You lose " + itemname(rpref(10 + cnt * 2), 1) + ".")
+					iNum(rpref(10 + cnt * 2))--
+				}
+			}
+			chara_unequip rpref(10 + cnt * 2)
+			if ( stat == 1 ) {
+				r1 = 0
+				gosub *charaRefresh
+			}
+		}
+		cell_refresh iX(rpref(10 + cnt * 2)), iY(rpref(10 + cnt * 2))
+	loop
+	gosub *label_1681
+	return 1
+
+*blend_complete
+	rpresult = 1
+	if ( rpref(3) < rnd(100) ) {
+		rpresult = 0
+		txtef COLOR_RED
+		txt -1, lang("調合失敗！", "The blending attempt failed!")
+	}
+	else {
+		if ( rpdata(RPDATA_ITEM, rpid) >= RECIPE_BLEND_ACTION_HERBED_FOOD ) {
+			gosub *blend_act
+		}
+		else {
+			flt
+			nostack = 1
+			itemcreate -1, rpdata(RPDATA_ITEM, rpid), cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+			if ( stat != 0 ) {
+				repeat
+					if ( rpdata(RPDATA_ENC + cnt * 2, rpid) == 0 ) {
+						break
+					}
+					encadd ci, rpdata(RPDATA_ENC + cnt * 2, rpid), rpdata(RPDATA_ENC_POW + cnt * 2, rpid), 0, 1
+				loop
+			}
+			txtef COLOR_GREEN
+			txt -1, lang(itemname(ci, 1) + "の作成に成功した！", "You successfully create " + itemname(ci, 1) + "!")
+			item_stack -1, ci
+			if ( iID(ci) == ITEM_ID_PUTITORO ) {
+				randomize iID(rpref(10 + 0 * 2)) + iID(rpref(10 + 1 * 2)) + iID(rpref(10 + 2 * 2))
+				iParam1(ci) = (rnd(50) + 1) * 10000 + (rnd(20) + 1) * 10
+				randomize iID(rpref(10 + 1 * 2)) * 2 + iID(rpref(10 + 1 * 2)) + iID(rpref(10 + 2 * 2))
+				iParam2(ci) = (rnd(50) + 1) * 10000 + (rnd(20) + 1) * 10
+				randomize iID(rpref(10 + 1 * 2)) * 2 + iID(rpref(10 + 1 * 2)) * 2 + iID(rpref(10 + 2 * 2))
+				iParam3(ci) = (rnd(50) + 1) * 10000 + (rnd(20) + 1) * 10
+				iValue(ci) = (iValue(rpref(10 + 0 * 2)) + iValue(rpref(10 + 1 * 2)) + iValue(rpref(10 + 2 * 2))) / 5
+				randomize
+			}
+			snd SOUNDLIST_DRINK1
+		}
+		repeat 5
+			if ( rpdata(RPDATA_SKILL + cnt * 2, rpid) == SKILL_NONE ) {
+				break
+			}
+			skillexp2 rpdata(RPDATA_SKILL + cnt * 2, rpid), CHARA_PLAYER, 50 + rpdata(RPDATA_SKILL_REQ + cnt * 2, rpid) + rpref(2) / 10000 * 25, 2, 50
+		loop
+	}
+	rpref(1)--
+	gosub *blend_deleteMat
+	return
+
+*blend
+	rpid = rpref(0)
+	if ( rpid == 0 ) {
+		rowactend cc
+		return
+	}
+	if ( cRowAct(cc) == ACTION_NONE ) {
+		txtnew
+		txt -1, lang(name(cc) + "は" + rpname(rpid) + "の調合をはじめた。", name(cc) + " start" + _s(cc) + " blending of " + rpname(rpid) + ".")
+		cRowAct(cc) = ACTION_BLEND
+		cActionPeriod(cc) = rpref(2) \ 10000
+		return
+	}
+	if ( cActionPeriod(cc) > 0 ) {
+		if ( rnd(30) == 0 ) {
+			txtef COLOR_BLUE
+			txt -1, lang(" *こねこね* ", "*pug*"), lang(" *トントン* ", "*clank*")
+		}
+		return
+	}
+	if ( rpref(2) >= 10000 ) {
+		cActionPeriod(cc) = rpref(2) / 10000
+		repeat
+			mode = MODELIST_RP
+			gHour ++
+			gosub *label_4143
+			redraw 0
+			gosub *screen_drawStatus
+			if ( cnt \ 5 == 0 ) {
+				txtef COLOR_BLUE
+				txt -1, lang(" *こねこね* ", "*pug*"), lang(" *トントン* ", "*clank*")
+			}
+			repeat 20
+				redraw 0
+				redraw 1
+				await 30
+			loop
+			gMin  = 0
+			cc = CHARA_PLAYER
+			cActionPeriod(cc)--
+			if ( cActionPeriod(cc) <= 0 ) {
+				gosub *blend_checkMat
+				if ( stat == 0 ) {
+					txt -1, lang("調合に必要な材料が見つからない。", "A required material cannot be found.")
+					break
+				}
+				gosub *blend_complete
+				if ( rpref(1) > 0 ) {
+					cActionPeriod(cc) = rpref(2) / 10000
+					continue 0
+				}
+				else {
+					break
+				}
+			}
+		loop
+		rowactend cc
+		mode = MODELIST_MAIN
+		return
+	}
+	gosub *blend_checkMat
+	if ( stat == 0 ) {
+		txt -1, lang("調合に必要な材料が見つからない。", "A required material cannot be found.")
+		rowactend cc
+		return
+	}
+	gosub *blend_complete
+	if ( rpref(1) > 0 ) {
+		cRowAct(cc) = ACTION_NONE
+		goto *blend
+	}
+	rowactend cc
+	return
+
+*blend_act
+	ci = rpref(10 + 0 * 2)
+	ti = rpref(10 + 1 * 2)
+	_switch_val = rpdata(RPDATA_ITEM, rpid)
+	if ( _switch_val == 10000 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		txt -1, lang("人体錬成に成功した！あなたは禁忌を犯した…", "You successfully performed a human transmutation! You've violated a taboo of alchemy...")
+		modkarma 0, -60
+		flt
+		novoidlv = 1
+		clnum = -1
+		nomagicdevice = 1
+		noenchant = 1
+		noencpfix = 1
+		p = iSubName(ci)
+		if ( p == 343 ) {
+			if ( iCNpcId(ci) != usernpcmax ) {
+				initunid = iCNpcId(ci) + 1
+			}
+		}
+		if ( p == 368 ) {
+			p = 176
+		}
+		characreate MAX_CHARA_NC, p, -3, 0
+		clnum = 0
+		rc = MAX_CHARA_NC
+		if ( cQuality(rc) >= FIX_QUALITY_GODLY ) {
+			cQuality(rc) = FIX_QUALITY_GODLY
+		}
+		gosub *cm_race_loop_WHILE1
+		repeat 245
+			if ( cnt < 16 | cRole(cnt) == ROLE_PET_SENTRY | cRole(cnt) == ROLE_PET_MAID | eqfaction(cnt, "petshop") ) {
+				continue
+			}
+			if ( cExist(cnt) == CHAR_STATE_ALIVE ) {
+				turn_aggro cnt, 0, 80
+			}
+		loop
+		ogTimesDidHumanAlchemy++
+		gosub *label_2665
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10001 | _switch_sw ) {
+		_switch_sw = 0
+		p = calccostreload(0, 1)
+		txtef COLOR_GREEN
+		txt -1, lang("あなたは矢弾を充填した。", "You successfully reloaded all ammo in your inventory.")
+		snd SOUNDLIST_AMMO
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10002 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		txt -1, lang("人形を作った。", "You successfully created a doll.")
+		dbid = iSubName(ci)
+		if ( iSubName(ci) == 343 ) {
+			if ( iCNpcId(ci) != usernpcmax ) {
+				initunid = iCNpcId(ci) + 1
+			}
+		}
+		flt
+		characreate MAX_CHARA_NC, dbid, -3, 0
+		flt
+		itemcreate -1, ITEM_ID_OBJET_HEART, cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+		iMaterial(ci) = ITEM_MATERIAL_RAW
+		collection_make ci, 56
+		chara_vanquish MAX_CHARA_NC
+		cell_refresh cX(CHARA_PLAYER), cY(CHARA_PLAYER)
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10003 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		txt -1, lang("あなたは収納家具を拡張した。", "You successfully extend the capacity of the container.")
+		snd SOUNDLIST_BUILD1
+		itemcreate -1, iID(ci), cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+		gCountShop++
+		inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), ci) = gCountShop
+		ibitmod ITEM_BIT_PRECIOUS, ci, TRUE
+		item_identify ci, ITEM_KNOWN_FULL
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10004 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ci) + "を調合して強化した。", "You successfully mixed and upgraded potions.")
+		if ( iLevel(ci) == 0 & iLevel(ti) == 0 ) {
+			reinforcevalue = 1
+		}
+		else {
+			reinforcevalue = iLevel(ci) + iLevel(ti)
+		}
+		if ( iID(ci) == ITEM_ID_BOTTLE_MILK | iID(ci) == ITEM_ID_VOMIT ) {
+			if ( iSubName(ci) == iSubName(ti) ) {
+				if ( iSubName(ci) == 343 ) {
+					if ( iCNpcId(ci) == iCNpcId(ti) & iCNpcId(ci) != usernpcmax ) {
+						locvar_clear_rprefmat_npcid = 343, iCNpcId(ci)
+					}
+				}
+				else {
+					locvar_clear_rprefmat_npcid = iSubName(ci), 0
+				}
+			}
+		}
+		flt
+		if ( iID(ci) == ITEM_ID_CARNEADES_PLANK ) {
+			inititemid = iCItemIdx(ci) + 1
+		}
+		itemcreate -1, iID(ci), cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+		if ( locvar_clear_rprefmat_npcid ) {
+			iSubName(ci) = locvar_clear_rprefmat_npcid
+			iCNpcId(ci) = locvar_clear_rprefmat_npcid(1)
+			locvar_clear_rprefmat_npcid = 0
+		}
+		if ( iID(ci) == ITEM_ID_PUTITORO ) {
+			iParam1(ci) = iParam1(rpref(10 + 0 * 2))
+			iParam2(ci) = iParam2(rpref(10 + 0 * 2))
+			iParam3(ci) = iParam3(rpref(10 + 0 * 2))
+		}
+		iStatus(ci) = ITEM_STATUS_NORMAL
+		iLevel(ci) = reinforcevalue
+		item_identify ci, ITEM_KNOWN_FULL
+		item_stack -1, ci
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10011 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ci) + "を合成して強化した。", "You successfully upgraded rods.")
+		if ( iLevel(ci) == 0 & iLevel(ti) == 0 ) {
+			reinforcevalue = 1
+		}
+		else {
+			reinforcevalue = iLevel(ci) + iLevel(ti)
+		}
+		reinforcestock = inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), ci) + inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), ti)
+		flt
+		itemcreate -1, iID(ci), cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+		iStatus(ci) = ITEM_STATUS_NORMAL
+		iLevel(ci) = reinforcevalue
+		inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), ci) = reinforcestock
+		item_identify ci, ITEM_KNOWN_FULL
+		item_stack -1, ci
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( rpdata(RPDATA_TYPE, rpid) == 2 ) {
+		item_separate ci
+	}
+	else {
+		if ( iNum(ci) <= 1 ) {
+			rpref(10 + 0 * 2) = -2
+		}
+		else {
+			if ( rpdata(RPDATA_ITEM, rpid) != 10017 ) {
+				item_separate ci
+				if ( rpref(10 + 0 * 2) == stat ) {
+					rpref(10 + 0 * 2) = -2
+				}
+				else {
+					rpref(10 + 0 * 2) = stat
+				}
+			}
+			else {
+				if ( rpref(10 + 0 * 2) == stat ) {
+					rpref(10 + 0 * 2) = -2
+				}
+				else {
+					rpref(10 + 0 * 2) = ci
+				}
+			}
+		}
+	}
+	if ( _switch_val == 10005 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ti, 1) + "を" + itemname(ci) + "に装着した。", "You bait " + itemname(ci) + " with " + itemname(ti, 1) + ".")
+		if ( iParam4(ci) == iParam1(ti) ) {
+			inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), ci) += rnd(10) + 15
+		}
+		else {
+			inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), ci) = rnd(10) + 15
+			iParam4(ci) = iParam1(ti)
+		}
+		snd SOUNDLIST_EQUIP1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10006 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ti, 1) + "を" + itemname(ci) + "に降りかけた。", "You shower " + itemname(ci) + " on " + itemname(ti, 1) + ".")
+		if ( ibit(18, ci) ) {
+			txt -1, lang("何もおきない… ", "Nothing happens...")
+			goto *blend_act_SWEND1
+		}
+		if ( iStatus(ti) >= ITEM_STATUS_BLESSED ) {
+			txtef COLOR_YELLOW
+			txt -1, lang(itemname(ci) + "は銀色に輝いた。", itemname(ci) + " shine" + _s2(iNum(ci)) + " silvery.")
+			iStatus(ci) = ITEM_STATUS_BLESSED
+			item_stack CHARA_PLAYER, ci, 1
+		}
+		if ( iStatus(ti) <= ITEM_STATUS_CURSED ) {
+			txtef COLOR_PURPLE
+			txt -1, lang(itemname(ci) + "は黒いオーラに包まれた。", itemname(ci) + " " + is2(iNum(ci)) + " wrapped by a dark aura.")
+			iStatus(ci) = ITEM_STATUS_CURSED
+			item_stack CHARA_PLAYER, ci, 1
+		}
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10007 | _switch_sw ) {
+		_switch_sw = 0
+		txt -1, lang(itemname(ti, 1) + "を" + itemname(ci) + "に放り込んだ。", "You throw " + itemname(ci) + " into " + itemname(ti, 1) + ".")
+		if ( iID(ti) == ITEM_ID_EMPTY_BOTTLE ) {
+			txt -1, lang("空き瓶の割れる音がした。", "You hear the sound of the empty bottle shatters.")
+			goto *blend_act_SWEND1
+		}
+		snd SOUNDLIST_DRINK1
+		if ( iID(ci) == ITEM_ID_HOLY_WELL ) {
+			txt -1, lang("井戸は汚れた。", "The holy well is polluted.")
+			goto *blend_act_SWEND1
+		}
+		if ( iParam3(ci) >= 20 ) {
+			txt -1, lang(itemname(ci) + "は完全に枯れている。", itemname(ci) + " is completely dry.")
+			goto *blend_act_SWEND1
+		}
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ci) + "は一瞬輝いた。", itemname(ci) + " shines for a moment.")
+		if ( iID(ti) == ITEM_ID_HANDFUL_SNOW ) {
+			txt -1, lang("しかしこんな量では… ", "But the snow just melts.")
+		}
+		else {
+			iParam1(ci) += rnd(3)
+		}
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10008 | _switch_sw ) {
+		_switch_sw = 0
+		if ( iParam1(ci) < (-5) | iParam3(ci) >= 20 | (iID(ci) == ITEM_ID_HOLY_WELL & flagHolyWell <= 0) ) {
+			valn = itemname(ci)
+			txt -1, lang(valn + "は涸れている。", valn + " is dry.")
+			txt -1, lang("あっ！空き瓶を井戸に落としてしまった…", "Oops! You drop the empty bottle into the well...")
+			goto *blend_act_SWEND1
+		}
+		if ( inv_getfreeid(CHARA_PLAYER) == (-1) ) {
+			item_num ti, 1
+			txt -1, lang("バックパックには、もうアイテムを入れる余裕がない。", "Your inventory is full.")
+			goto *blend_act_SWEND1
+		}
+		cibk = ci
+		if ( iID(ci) == ITEM_ID_HOLY_WELL ) {
+			flagHolyWell--
+			flt
+			itemcreate CHARA_PLAYER, ITEM_ID_BOTTLE_WATER, -1, -1, 0
+			if ( stat != 0 ) {
+				iStatus(ci) = ITEM_STATUS_BLESSED
+			}
+		}
+		else {
+			iParam1(ci) -= 3
+			flt 20
+			flttypemajor = FILTER_ITEM_POTION
+			itemcreate CHARA_PLAYER, ITEM_ID_DUMMY, -1, -1, 0
+		}
+		txt -1, lang("空き瓶に水をすくった。", "You draw water from the well into the empty bottle.")
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ci, 1) + "を手に入れた。", "You get " + itemname(ci, 1) + ".")
+		item_stack CHARA_PLAYER, ci, 1
+		item_stack CHARA_PLAYER, ci
+		ci = cibk
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10012 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ci, 1) + "は転移用の目印として機能するようになった。", itemname(ci, 1) + " now works as a teleporting marker.")
+		ibitmod 20, ci, TRUE
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10013 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ci, 1) + "は転移用の目印としての機能を失った。", itemname(ci, 1) + " lost its magical power as a teleporting marker.")
+		ibitmod 20, ci, FALSE
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10014 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ci, 1) + "のレプリカを作成した。", "You successfully created a replica of " + itemname(ci, 1) + ".")
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0) = iID(ci)
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 1) = iPic(ci)
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 2) = iCItemIdx(ci)
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 3) = iCol(ci)
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 4) = ilight(iID(ci))
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 5) = inv(39, ci)
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10015 | _switch_sw ) {
+		_switch_sw = 0
+		txtef COLOR_GREEN
+		if ( oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0) == 743 ) {
+			locvar_addnews_s = useritemdatan(1, oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 2))
+		}
+		else {
+			locvar_addnews_s = ioriginalnameref(oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0))
+		}
+		txt -1, lang(locvar_addnews_s + "のレプリカ（仮）を削除した。", "You successfully destroyed a replica of " + locvar_addnews_s + ".")
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0) = 0
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 1) = 0
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 2) = 0
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 3) = 0
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 4) = 0
+		oommap(cX(CHARA_PLAYER), cY(CHARA_PLAYER), 5) = 0
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+	}
+	if ( _switch_val == 10016 | _switch_sw ) {
+		_switch_sw = 0
+		flt
+		itemcreate -1, ITEM_ID_PUTITORO, cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+		iStatus(ci) = ITEM_STATUS_NORMAL
+		iLevel(ci) = 0
+		item_identify ci, ITEM_KNOWN_FULL
+		item_stack -1, ci
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ci) + "を調合した。", "You successfully Random potions.")
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10017 | _switch_sw ) {
+		_switch_sw = 0
+		rodf = 0
+		if ( refitem(iID(rpref(10)), DBSPEC_TYPE, rpref(10)) == FILTER_ITEM_ROD ) {
+			rodf = 1
+		}
+		nc_intb_100 = 0
+		reinforcestock = 0
+		reinforcevalue = 0
+		txtef COLOR_GREEN
+		if ( rodf == 1 ) {
+			txt -1, lang(itemname(rpref(10)) + "を圧縮して強化した。", "You successfully concentrated and upgraded rods.")
+			reinforcestock = inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), rpref(10))
+		}
+		else {
+			txt -1, lang(itemname(rpref(10)) + "を濃縮して強化した。", "You successfully concentrated and upgraded potions.")
+		}
+		reinforcevalue = iLevel(rpref(10))
+		repeat
+			if ( reinforcevalue >= sAlchemy(CHARA_PLAYER) ) {
+				break
+			}
+			if ( iNum(rpref(10)) >= 2 ) {
+				nc_intb_100 = 1
+				iNum(rpref(10)) -= 2
+				if ( iLevel(rpref(10)) == 0 ) {
+					reinforcevalue += 1
+				}
+				else {
+					if ( cnt == 0 ) {
+						reinforcevalue += iLevel(rpref(10))
+					}
+					else {
+						reinforcevalue += iLevel(rpref(10)) * 2
+					}
+				}
+			}
+			else {
+				break
+			}
+			if ( rodf == 1 ) {
+				if ( reinforcestock > 0 ) {
+					if ( cnt == 0 ) {
+						reinforcestock += inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), rpref(10))
+					}
+					else {
+						reinforcestock += inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), rpref(10)) * 2
+					}
+				}
+			}
+		loop
+		if ( nc_intb_100 ) {
+			if ( iID(rpref(10)) == ITEM_ID_BOTTLE_MILK | iID(rpref(10)) == ITEM_ID_VOMIT ) {
+				if ( iSubName(rpref(10)) == iSubName(ti) ) {
+					if ( iSubName(rpref(10)) == 343 ) {
+						if ( iCNpcId(rpref(10)) == iCNpcId(ti) & iCNpcId(rpref(10)) != usernpcmax ) {
+							locvar_clear_rprefmat_npcid = 343, iCNpcId(rpref(10))
+						}
+					}
+					else {
+						locvar_clear_rprefmat_npcid = iSubName(rpref(10)), 0
+					}
+				}
+			}
+			flt
+			if ( iID(rpref(10)) == ITEM_ID_CARNEADES_PLANK ) {
+				inititemid = iCItemIdx(rpref(10)) + 1
+			}
+			itemcreate -1, iID(rpref(10)), cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+			if ( locvar_clear_rprefmat_npcid ) {
+				iSubName(ci) = locvar_clear_rprefmat_npcid
+				iCNpcId(ci) = locvar_clear_rprefmat_npcid(1)
+				locvar_clear_rprefmat_npcid = 0
+			}
+			if ( iID(ci) == ITEM_ID_PUTITORO ) {
+				iParam1(ci) = iParam1(rpref(10 + 0 * 2))
+				iParam2(ci) = iParam2(rpref(10 + 0 * 2))
+				iParam3(ci) = iParam3(rpref(10 + 0 * 2))
+			}
+			iStatus(ci) = ITEM_STATUS_NORMAL
+			iLevel(ci) = reinforcevalue
+			if ( rodf == 1 ) {
+				inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), ci) = reinforcestock
+			}
+			item_identify ci, ITEM_KNOWN_FULL
+			item_stack -1, ci
+		}
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10018 | _switch_sw ) {
+		_switch_sw = 0
+		pornnpcid = 0, 0, 0, 0, 0, 0
+		pornnpcid(0) = iParam1(ci)
+		pornnpcid(1) = iCNpcId(ci)
+		pornnpcid(2) = ICNpcSerialNo(ci)
+		pornnpcid(3) = iParam1(ti)
+		pornnpcid(4) = iCNpcId(ti)
+		pornnpcid(5) = ICNpcSerialNo(ti)
+		if ( iNum(ci) == 1 ) {
+			iNum(ci)--
+		}
+		flt
+		itemcreate -1, iID(ci), cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+		iSubName(ci) = 30
+		iPic(ci) = xy2pic(0, 13)
+		iCol(ci) = 0
+		iParam1(ci) = pornnpcid(0)
+		iCNpcId(ci) = pornnpcid(1)
+		ICNpcSerialNo(ci) = pornnpcid(2)
+		iParam2(ci) = pornnpcid(3)
+		if ( pornnpcid(3) == 343 ) {
+			iParam3(ci) = pornnpcid(4)
+			iSkillRef(ci) = pornnpcid(5)
+		}
+		iLevel(ci) = rnd(sLiteracy(CHARA_PLAYER) / 10) + sLiteracy(CHARA_PLAYER) / 15
+		iValue(ci) += iLevel(ci) * 150
+		iStatus(ci) = ITEM_STATUS_NORMAL
+		item_identify ci, ITEM_KNOWN_FULL
+		item_stack -1, ci
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ci) + "を作成した。", "Created an" + itemname(ci) + ".")
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+	if ( _switch_val == 10019 | _switch_sw ) {
+		_switch_sw = 0
+		iNum(ci)--
+		flt
+		itemcreate -1, iID(ci), cX(CHARA_PLAYER), cY(CHARA_PLAYER), 0
+		iQuality(ci) = FIX_QUALITY_UNIQUE
+		ibitmod ITEM_BIT_PRECIOUS, ci, TRUE
+		item_identify ci, ITEM_KNOWN_FULL
+		inv((9 /*!!!@[INV_ITEM_AMMO @@@ INV_ITEM_CHARGE @@@ INV_ITEM_CLIENT @@@ INV_ITEM_FILE @@@ INV_ITEM_NEXT_PERIOD]@!!! */), ci) = 1
+		item_stack -1, ci
+		txtef COLOR_GREEN
+		txt -1, lang(itemname(ci) + "を作成した。", "Created an" + itemname(ci) + ".")
+		snd SOUNDLIST_DRINK1
+		goto *blend_act_SWEND1
+		_switch_sw++
+	}
+
+*blend_act_SWEND1
+	item_stack CHARA_PLAYER, ci
+	if ( iEquip(ci) != 0 ) {
+		create_pcpic 0, 1
+	}
+	if ( inv_getowner(ci) == (-1) ) {
+		cell_refresh iX(ci), iY(ci)
+	}
+	r1 = 0
+	gosub *charaRefresh
+	return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

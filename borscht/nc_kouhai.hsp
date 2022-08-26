@@ -1,0 +1,88 @@
+#defcfunc kouhai int kouhai_prm0, int kouhai_prm1
+	if ( kouhai_prm0 == kouhai_prm1 ) {
+		return kouhai_prm0
+	}
+	if ( rnd(5) == 0 ) {
+		if ( kouhai_prm0 == 180 & kouhai_prm1 == 181 | (kouhai_prm0 == 181 & kouhai_prm1 == 180) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 10 ) {
+				return 620
+			}
+		}
+		if ( kouhai_prm0 == 181 & kouhai_prm1 == 192 | (kouhai_prm0 == 192 & kouhai_prm1 == 181) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 10 ) {
+				return 253
+			}
+		}
+		if ( kouhai_prm0 == 192 & kouhai_prm1 == 196 | (kouhai_prm0 == 196 & kouhai_prm1 == 192) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 10 ) {
+				return 477
+			}
+		}
+		if ( kouhai_prm0 == 196 & kouhai_prm1 == 197 | (kouhai_prm0 == 197 & kouhai_prm1 == 196) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 10 ) {
+				return 473
+			}
+		}
+		if ( kouhai_prm0 == 197 & kouhai_prm1 == 183 | (kouhai_prm0 == 183 & kouhai_prm1 == 197) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 10 ) {
+				return 81
+			}
+		}
+		if ( kouhai_prm0 == 620 & kouhai_prm1 == 253 | (kouhai_prm0 == 253 & kouhai_prm1 == 620) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 40 ) {
+				return 619
+			}
+		}
+		if ( kouhai_prm0 == 253 & kouhai_prm1 == 477 | (kouhai_prm0 == 477 & kouhai_prm1 == 253) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 40 ) {
+				return 734
+			}
+		}
+		if ( kouhai_prm0 == 473 & kouhai_prm1 == 477 | (kouhai_prm0 == 477 & kouhai_prm1 == 473) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 40 ) {
+				return 729
+			}
+		}
+		if ( kouhai_prm0 == 473 & kouhai_prm1 == 81 | (kouhai_prm0 == 81 & kouhai_prm1 == 473) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 40 ) {
+				return 419
+			}
+		}
+		if ( kouhai_prm0 == 619 & kouhai_prm1 == 734 | (kouhai_prm0 == 734 & kouhai_prm1 == 619) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 100 ) {
+				return 54
+			}
+		}
+		if ( kouhai_prm0 == 729 & kouhai_prm1 == 419 | (kouhai_prm0 == 419 & kouhai_prm1 == 729) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 100 ) {
+				return 415
+			}
+		}
+		if ( kouhai_prm0 == 734 & kouhai_prm1 == 54 | (kouhai_prm0 == 54 & kouhai_prm1 == 734) ) {
+			if ( rnd(sGardening(CHARA_PLAYER) + 1) > 200 ) {
+				return 732
+			}
+		}
+		if ( rnd(2) == 0 ) {
+			return 418
+		}
+		else {
+			if ( rnd(2) == 0 ) {
+				return 553
+			}
+			else {
+				return 417
+			}
+		}
+	}
+	else {
+		if ( rnd(2) == 0 ) {
+			return kouhai_prm0
+		}
+		else {
+			return kouhai_prm1
+		}
+	}
+	return kouhai_prm0
+
+

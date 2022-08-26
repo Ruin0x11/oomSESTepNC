@@ -1,0 +1,615 @@
+#deffunc netload str netload_filename
+	netrequest netload_filename
+	repeat
+		netexec locvar_netload_res
+		if ( locvar_netload_res ) {
+			break
+		}
+		await 50
+	loop
+	if ( locvar_netload_res > 0 ) {
+		return
+	}
+	neterror locvar_netload_estr
+	dialog "ÉGÉâÅ[:" + locvar_netload_estr
+	return
+
+*label_0290
+	goto *label_0349
+
+#defcfunc alfloat double alfloat_prm0
+	locvar_netload_temp = alfloat_prm0
+	return (alfloat_prm0 < 0) << 31 | (lpeek(locvar_netload_temp, 4) - 939524096 << 3) * (alfloat_prm0 != 0) | (lpeek(locvar_netload_temp, 0) >> 29 & 7)
+
+#deffunc alinitmodule
+	if ( locvar_netload_gdiplustoken == 0 ) {
+		dim locvar_netload_imgvalidarr, 512
+		dim locvar_netload_imgwidtharr, 512
+		dim locvar_netload_imgheightarr, 512
+		dim locvar_netload_imgimagearr, 512
+		dim locvar_netload_imggraphicsarr, 512
+		dim locvar_netload_imgbrusharr, 512
+		dim locvar_netload_imgpenarr, 512
+		dim locvar_netload_imgfontarr, 512
+		if ( varptr(GdiplusStartup) ) {
+			locvar_netload_gsi = 1, 0, 0, 0
+			GdiplusStartup varptr(locvar_netload_gdiplustoken), varptr(locvar_netload_gsi), 0
+			return
+		}
+	}
+	return
+
+#deffunc alselectimage int alselectimage_prm0
+	if ( alselectimage_prm0 < 0 | alselectimage_prm0 >= 512 ) {
+		return -1
+	}
+	alinitmodule
+	if ( locvar_netload_imgvalidarr(alselectimage_prm0) ) {
+		locvar_netload_imgid = alselectimage_prm0
+		dup locvar_netload_imgvalid, locvar_netload_imgvalidarr(locvar_netload_imgid)
+		dup locvar_netload_imgwidth, locvar_netload_imgwidtharr(locvar_netload_imgid)
+		dup locvar_netload_imgheight, locvar_netload_imgheightarr(locvar_netload_imgid)
+		dup locvar_netload_imgimage, locvar_netload_imgimagearr(locvar_netload_imgid)
+		dup locvar_netload_imggraphics, locvar_netload_imggraphicsarr(locvar_netload_imgid)
+		dup locvar_netload_imgbrush, locvar_netload_imgbrusharr(locvar_netload_imgid)
+		dup locvar_netload_imgpen, locvar_netload_imgpenarr(locvar_netload_imgid)
+		dup locvar_netload_imgfont, locvar_netload_imgfontarr(locvar_netload_imgid)
+		return 0
+	}
+	return -1
+
+#deffunc aldeleteimage int aldeleteimage_prm0, int aldeleteimage_prm1
+	if ( aldeleteimage_prm0 < 0 | aldeleteimage_prm0 >= 512 ) {
+		return -1
+	}
+	alinitmodule
+	if ( locvar_netload_imgvalidarr(aldeleteimage_prm0) ) {
+		locvar_netload_imgvalidarr(aldeleteimage_prm0) = 0
+		if ( locvar_netload_imgimagearr(aldeleteimage_prm0) ) {
+			GdipDisposeImage locvar_netload_imgimagearr(aldeleteimage_prm0)
+			locvar_netload_imgimagearr(aldeleteimage_prm0) = 0
+		}
+		if ( locvar_netload_imggraphicsarr(aldeleteimage_prm0) ) {
+			GdipDeleteGraphics locvar_netload_imggraphicsarr(aldeleteimage_prm0)
+			locvar_netload_imggraphicsarr(aldeleteimage_prm0) = 0
+		}
+		if ( locvar_netload_imgbrusharr(aldeleteimage_prm0) ) {
+			GdipDeleteBrush locvar_netload_imgbrusharr(aldeleteimage_prm0)
+			locvar_netload_imgbrusharr(aldeleteimage_prm0) = 0
+		}
+		if ( locvar_netload_imgpenarr(aldeleteimage_prm0) ) {
+			GdipDeletePen locvar_netload_imgpenarr(aldeleteimage_prm0)
+			locvar_netload_imgpenarr(aldeleteimage_prm0) = 0
+		}
+		if ( locvar_netload_imgfontarr(aldeleteimage_prm0) ) {
+			GdipDeleteFont locvar_netload_imgfontarr(aldeleteimage_prm0)
+			locvar_netload_imgfontarr(aldeleteimage_prm0) = 0
+		}
+		if ( aldeleteimage_prm1 != 1 ) {
+			repeat 512 + 1
+				if ( cnt == 512 ) {
+					GdiplusShutdown locvar_netload_gdiplustoken
+					locvar_netload_gdiplustoken = 0
+					break
+				}
+				if ( locvar_netload_imgvalidarr(cnt) ) {
+					break
+				}
+			loop
+		}
+		return 0
+	}
+	return -1
+
+#deffunc alcreateimage_ int alcreateimage__prm0, int alcreateimage__prm1, int alcreateimage__prm2
+	if ( alcreateimage__prm0 < 0 | alcreateimage__prm0 >= 512 ) {
+		return -1
+	}
+	alinitmodule
+	if ( locvar_netload_gdiplustoken ) {
+		aldeleteimage alcreateimage__prm0, 1
+		locvar_netload_imgvalidarr(alcreateimage__prm0) = 1
+		alselectimage alcreateimage__prm0
+		locvar_netload_imgwidth = alcreateimage__prm1
+		locvar_netload_imgheight = alcreateimage__prm2
+		GdipCreateBitmapFromScan0 locvar_netload_imgwidth, locvar_netload_imgheight, 0, 2498570, 0, varptr(locvar_netload_imgimage)
+		GdipGetImageGraphicsContext locvar_netload_imgimage, varptr(locvar_netload_imggraphics)
+		GdipCreateSolidFill -16777216, varptr(locvar_netload_imgbrush)
+		GdipCreatePen2 locvar_netload_imgbrush, 1, 2, varptr(locvar_netload_imgpen)
+		GdipSetSmoothingMode locvar_netload_imggraphics, 2
+		GdipSetPixelOffsetMode locvar_netload_imggraphics, 2
+		GdipSetTextRenderingHint locvar_netload_imggraphics, 4
+		return 0
+	}
+	return -1
+
+#deffunc aldeleteall onexit
+	if ( locvar_netload_gdiplustoken ) {
+		repeat 512
+			aldeleteimage cnt
+		loop
+		return 0
+	}
+	return -1
+
+#defcfunc algetid
+	if ( locvar_netload_imgvalid ) {
+		return locvar_netload_imgid
+	}
+	return -1
+
+#defcfunc algetwidth
+	if ( locvar_netload_imgvalid ) {
+		return locvar_netload_imgwidth
+	}
+	return -1
+
+#defcfunc algetheight
+	if ( locvar_netload_imgvalid ) {
+		return locvar_netload_imgheight
+	}
+	return -1
+
+#deffunc alclipmoderect int alclipmoderect_prm0, int alclipmoderect_prm1, int alclipmoderect_prm2, int alclipmoderect_prm3
+	if ( locvar_netload_imgvalid ) {
+		GdipSetClipRectI locvar_netload_imggraphics, alclipmoderect_prm0, alclipmoderect_prm1, alclipmoderect_prm2, alclipmoderect_prm3, 0
+	}
+	return
+
+#deffunc alresetclipmode
+	if ( locvar_netload_imgvalid ) {
+		GdipResetClip locvar_netload_imggraphics
+	}
+	return
+
+#deffunc alresetcopymode
+	if ( locvar_netload_pimageattr ) {
+		GdipDisposeImageAttributes locvar_netload_pimageattr
+		locvar_netload_pimageattr = 0
+		return 0
+	}
+	return -1
+
+#deffunc alcopymodecolormatrix array alcopymodecolormatrix_prm0
+	if ( locvar_netload_gdiplustoken ) {
+		alresetcopymode
+		GdipCreateImageAttributes varptr(locvar_netload_pimageattr)
+		repeat 25
+			if ( cnt == 24 ) {
+				locvar_netload_arr(cnt) = alfloat(1)
+			}
+			else {
+				if ( cnt \ 5 == 4 ) {
+					locvar_netload_arr(cnt) = 0
+				}
+				else {
+					locvar_netload_arr(cnt) = alfloat(alcopymodecolormatrix_prm0(cnt \ 5 * 5 + cnt / 5))
+				}
+			}
+		loop
+		GdipSetImageAttributesColorMatrix locvar_netload_pimageattr, 1, 1, varptr(locvar_netload_arr), 0, 0
+	}
+	return 0
+
+#deffunc alcopymodealpha double alcopymodealpha_prm0
+	locvar_netload_cmatrix(0) = 1.0, 0.0, 0.0
+	locvar_netload_cmatrix(5) = 0.0, 1.0, 0.0
+	locvar_netload_cmatrix(10) = 0.0, 0.0, 1.0
+	locvar_netload_cmatrix(15) = 0.0, 0.0, 0.0, limitf(alcopymodealpha_prm0, 0, 1), 0.0
+	alcopymodecolormatrix locvar_netload_cmatrix
+	return 0
+
+#deffunc alcopymodegamma double alcopymodegamma_prm0
+	if ( locvar_netload_gdiplustoken ) {
+		alresetcopymode
+		GdipCreateImageAttributes varptr(locvar_netload_pimageattr)
+		GdipSetImageAttributesGamma locvar_netload_pimageattr, 1, 1, alcopymodegamma_prm0
+	}
+	return 0
+
+#deffunc alcopymodecolorkey int alcopymodecolorkey_prm0, int alcopymodecolorkey_prm1
+	if ( locvar_netload_gdiplustoken ) {
+		alresetcopymode
+		GdipCreateImageAttributes varptr(locvar_netload_pimageattr)
+		GdipSetImageAttributesColorKeys locvar_netload_pimageattr, 0, 1, alcopymodecolorkey_prm0, alcopymodecolorkey_prm1
+	}
+	return 0
+
+#deffunc alstretchimagetoimage int alstretchimagetoimage_prm0, int alstretchimagetoimage_prm1, int alstretchimagetoimage_prm2, int alstretchimagetoimage_prm3, int alstretchimagetoimage_prm4, int alstretchimagetoimage_prm5, int alstretchimagetoimage_prm6, int alstretchimagetoimage_prm7, int alstretchimagetoimage_prm8, int alstretchimagetoimage_prm9
+	if ( locvar_netload_imgvalidarr(alstretchimagetoimage_prm1) & locvar_netload_imgvalidarr(alstretchimagetoimage_prm0) ) {
+		GdipDrawImageRectRectI locvar_netload_imggraphicsarr(alstretchimagetoimage_prm1), locvar_netload_imgimagearr(alstretchimagetoimage_prm0), alstretchimagetoimage_prm6, alstretchimagetoimage_prm7, alstretchimagetoimage_prm8, alstretchimagetoimage_prm9, alstretchimagetoimage_prm2, alstretchimagetoimage_prm3, alstretchimagetoimage_prm4, alstretchimagetoimage_prm5, 2, locvar_netload_pimageattr, 0, 0
+		return 0
+	}
+	return -1
+
+#deffunc alstretchimagetoscreen int alstretchimagetoscreen_prm0, int alstretchimagetoscreen_prm1, int alstretchimagetoscreen_prm2, int alstretchimagetoscreen_prm3, int alstretchimagetoscreen_prm4, int alstretchimagetoscreen_prm5, int alstretchimagetoscreen_prm6, int alstretchimagetoscreen_prm7, int alstretchimagetoscreen_prm8, int alstretchimagetoscreen_prm9
+	if ( locvar_netload_imgvalidarr(alstretchimagetoscreen_prm0) ) {
+		gsel alstretchimagetoscreen_prm1
+		GdipCreateFromHDC hdc, varptr(locvar_netload_tmpgraphics)
+		if ( locvar_netload_tmpgraphics ) {
+			GdipDrawImageRectRectI locvar_netload_tmpgraphics, locvar_netload_imgimagearr(alstretchimagetoscreen_prm0), alstretchimagetoscreen_prm6, alstretchimagetoscreen_prm7, alstretchimagetoscreen_prm8, alstretchimagetoscreen_prm9, alstretchimagetoscreen_prm2, alstretchimagetoscreen_prm3, alstretchimagetoscreen_prm4, alstretchimagetoscreen_prm5, 2, locvar_netload_pimageattr, 0, 0
+			GdipDeleteGraphics locvar_netload_tmpgraphics
+			locvar_netload_tmpgraphics = 0
+			return 0
+		}
+	}
+	return -1
+
+#deffunc alstretchscreentoimage int alstretchscreentoimage_prm0, int alstretchscreentoimage_prm1, int alstretchscreentoimage_prm2, int alstretchscreentoimage_prm3, int alstretchscreentoimage_prm4, int alstretchscreentoimage_prm5, int alstretchscreentoimage_prm6, int alstretchscreentoimage_prm7, int alstretchscreentoimage_prm8, int alstretchscreentoimage_prm9
+	if ( locvar_netload_imgvalidarr(alstretchscreentoimage_prm1) ) {
+		gsel alstretchscreentoimage_prm0
+		mref locvar_netload_v, 67
+		GdipCreateBitmapFromGdiDib locvar_netload_v(6), locvar_netload_v(5), varptr(locvar_netload_tmpimage)
+		if ( locvar_netload_tmpimage ) {
+			GdipDrawImageRectRectI locvar_netload_imggraphicsarr(alstretchscreentoimage_prm1), locvar_netload_tmpimage, alstretchscreentoimage_prm6, alstretchscreentoimage_prm7, alstretchscreentoimage_prm8, alstretchscreentoimage_prm9, alstretchscreentoimage_prm2, alstretchscreentoimage_prm3, alstretchscreentoimage_prm4, alstretchscreentoimage_prm5, 2, locvar_netload_pimageattr, 0, 0
+			GdipDisposeImage locvar_netload_tmpimage
+			locvar_netload_tmpimage = 0
+			return 0
+		}
+	}
+	return -1
+
+#defcfunc algetpixel int algetpixel_prm0, int algetpixel_prm1
+	if ( locvar_netload_imgvalid ) {
+		locvar_netload_a = 0
+		GdipBitmapGetPixel locvar_netload_imgimage, algetpixel_prm0, algetpixel_prm1, varptr(locvar_netload_a)
+		return locvar_netload_a
+	}
+	return 0
+
+#deffunc alsetpixel int alsetpixel_prm0, int alsetpixel_prm1, int alsetpixel_prm2
+	if ( locvar_netload_imgvalid ) {
+		GdipBitmapSetPixel locvar_netload_imgimage, alsetpixel_prm0, alsetpixel_prm1, alsetpixel_prm2
+	}
+	return 0
+
+#deffunc algetbitmapvdata var algetbitmapvdata_prm0, var algetbitmapvdata_prm1
+	if ( locvar_netload_imgvalid ) {
+		locvar_netload_rect = 0, 0, locvar_netload_imgwidth, locvar_netload_imgheight
+		dim locvar_netload_bitmapdata, 8
+		GdipBitmapLockBits locvar_netload_imgimage, varptr(locvar_netload_rect), 3, 2498570, varptr(locvar_netload_bitmapdata)
+		GdipBitmapUnlockBits locvar_netload_imgimage, varptr(locvar_netload_bitmapdata)
+		algetbitmapvdata_prm0 = locvar_netload_bitmapdata(0) * locvar_netload_bitmapdata(1) * 4
+		dupptr algetbitmapvdata_prm1, locvar_netload_bitmapdata(4), algetbitmapvdata_prm0
+		return 0
+	}
+	return -1
+
+#deffunc alerase
+	if ( locvar_netload_imgvalid ) {
+		algetbitmapvdata locvar_netload_size, locvar_netload_v
+		memset locvar_netload_v, 0, locvar_netload_size
+		return 0
+	}
+	return -1
+
+#deffunc alloadfile str alloadfile_prm0, int alloadfile_prm1, int alloadfile_prm2
+	if ( locvar_netload_imgvalid ) {
+		GdipLoadImageFromFile alloadfile_prm0, varptr(locvar_netload_tmpimage)
+		if ( locvar_netload_tmpimage ) {
+			GdipGetImageWidth locvar_netload_tmpimage, varptr(locvar_netload_w)
+			GdipGetImageHeight locvar_netload_tmpimage, varptr(locvar_netload_h)
+			GdipDrawImageRectRectI locvar_netload_imggraphics, locvar_netload_tmpimage, alloadfile_prm1, alloadfile_prm2, locvar_netload_w, locvar_netload_h, 0, 0, locvar_netload_w, locvar_netload_h, 2, 0, 0, 0
+			GdipDisposeImage locvar_netload_tmpimage
+			locvar_netload_tmpimage = 0
+			return 0
+		}
+	}
+	return -1
+
+#deffunc alsavefile_ str alsavefile__prm0, str alsavefile__prm1, int alsavefile__prm2, int alsavefile__prm3, int alsavefile__prm4, int alsavefile__prm5
+	if ( locvar_netload_imgvalid ) {
+		dim locvar_netload_clsid, 4
+		GdipGetImageEncodersSize varptr(locvar_netload_numencoders), varptr(locvar_netload_size)
+		if ( locvar_netload_size ) {
+			dim locvar_netload_imagecodecinfo, locvar_netload_size / 4
+			GdipGetImageEncoders locvar_netload_numencoders, locvar_netload_size, varptr(locvar_netload_imagecodecinfo)
+			repeat locvar_netload_numencoders
+				dupptr locvar_netload_v, locvar_netload_imagecodecinfo(cnt * 19 + 12), 128
+				if ( cnvwtos(locvar_netload_v) == alsavefile__prm1 ) {
+					memcpy locvar_netload_clsid, locvar_netload_imagecodecinfo(cnt * 19), 16
+					break
+				}
+			loop
+		}
+		if ( locvar_netload_clsid ) {
+			GdipCreateBitmapFromScan0 alsavefile__prm4, alsavefile__prm5, 0, 2498570, 0, varptr(locvar_netload_tmpimage)
+			GdipGetImageGraphicsContext locvar_netload_tmpimage, varptr(locvar_netload_tmpgraphics)
+			GdipDrawImageI locvar_netload_tmpgraphics, locvar_netload_imgimage, -alsavefile__prm2, -alsavefile__prm3
+			GdipSaveImageToFile locvar_netload_tmpimage, alsavefile__prm0, varptr(locvar_netload_clsid), 0
+			GdipDeleteGraphics locvar_netload_tmpgraphics
+			locvar_netload_tmpgraphics = 0
+			GdipDisposeImage locvar_netload_tmpimage
+			locvar_netload_tmpimage = 0
+			return 0
+		}
+	}
+	return -1
+
+#deffunc algetfilewidth str algetfilewidth_prm0, var algetfilewidth_prm1, var algetfilewidth_prm2
+	alinitmodule
+	if ( locvar_netload_gdiplustoken ) {
+		GdipLoadImageFromFile algetfilewidth_prm0, varptr(locvar_netload_tmpimage)
+		if ( locvar_netload_tmpimage ) {
+			GdipGetImageWidth locvar_netload_tmpimage, varptr(algetfilewidth_prm1)
+			GdipGetImageHeight locvar_netload_tmpimage, varptr(algetfilewidth_prm2)
+			GdipDisposeImage locvar_netload_tmpimage
+			locvar_netload_tmpimage = 0
+			return 0
+		}
+	}
+	return -1
+
+#deffunc alcreateimagebyfile int alcreateimagebyfile_prm0, str alcreateimagebyfile_prm1
+	algetfilewidth alcreateimagebyfile_prm1, locvar_netload_w, locvar_netload_h
+	if ( stat == 0 ) {
+		alcreateimage_ alcreateimagebyfile_prm0, locvar_netload_w, locvar_netload_h
+		alloadfile alcreateimagebyfile_prm1
+		return 0
+	}
+	return -1
+
+#deffunc alpenwidth int alpenwidth_prm0
+	if ( locvar_netload_imgvalid ) {
+		GdipSetPenWidth locvar_netload_imgpen, alfloat(alpenwidth_prm0)
+	}
+	return
+
+#deffunc alpenstyle int alpenstyle_prm0
+	if ( locvar_netload_imgvalid ) {
+		GdipSetPenDashStyle locvar_netload_imgpen, alpenstyle_prm0
+	}
+	return
+
+#deffunc alrenewpen
+	if ( locvar_netload_imgvalid ) {
+		GdipGetPenDashStyle locvar_netload_imgpen, varptr(locvar_netload_a)
+		GdipGetPenWidth locvar_netload_imgpen, varptr(locvar_netload_b)
+		GdipDeletePen locvar_netload_imgpen
+		GdipCreatePen2 locvar_netload_imgbrush, 1, 2, varptr(locvar_netload_imgpen)
+		GdipSetPenDashStyle locvar_netload_imgpen, locvar_netload_a
+		GdipSetPenWidth locvar_netload_imgpen, locvar_netload_b
+		GdipSetCompositingMode locvar_netload_imggraphics, 0
+	}
+	return
+
+#deffunc alcoloralpha_ int alcoloralpha__prm0
+	if ( locvar_netload_imgvalid ) {
+		GdipDeleteBrush locvar_netload_imgbrush
+		GdipCreateSolidFill alcoloralpha__prm0 << 24 | ginfo(16) << 16 | ginfo(17) << 8 | ginfo(18), varptr(locvar_netload_imgbrush)
+		alrenewpen
+	}
+	return
+
+#deffunc algradientcolor_ int algradientcolor__prm0, int algradientcolor__prm1, int algradientcolor__prm2, int algradientcolor__prm3, int algradientcolor__prm4, int algradientcolor__prm5, int algradientcolor__prm6
+	if ( locvar_netload_imgvalid ) {
+		GdipDeleteBrush locvar_netload_imgbrush
+		locvar_netload_point1 = algradientcolor__prm0, algradientcolor__prm1
+		locvar_netload_point2 = algradientcolor__prm2, algradientcolor__prm3
+		GdipCreateLineBrushI varptr(locvar_netload_point1), varptr(locvar_netload_point2), algradientcolor__prm4, algradientcolor__prm5, algradientcolor__prm6, varptr(locvar_netload_imgbrush)
+		alrenewpen
+	}
+	return
+
+#deffunc altextureimage_ int altextureimage__prm0, int altextureimage__prm1
+	if ( locvar_netload_imgvalid & locvar_netload_imgvalidarr(altextureimage__prm0) ) {
+		GdipDeleteBrush locvar_netload_imgbrush
+		GdipCreateTexture locvar_netload_imgimagearr(altextureimage__prm0), altextureimage__prm1, varptr(locvar_netload_imgbrush)
+		alrenewpen
+		return 0
+	}
+	return -1
+
+#deffunc aleraserbrush
+	if ( locvar_netload_imgvalid ) {
+		GdipDeleteBrush locvar_netload_imgbrush
+		GdipCreateSolidFill 0, varptr(locvar_netload_imgbrush)
+		alrenewpen
+		GdipSetCompositingMode locvar_netload_imggraphics, 1
+	}
+	return
+
+#deffunc alfont_ str alfont__prm0, int alfont__prm1, int alfont__prm2
+	if ( locvar_netload_imgvalid ) {
+		font alfont__prm0, alfont__prm1, alfont__prm2
+		if ( locvar_netload_imgfont ) {
+			GdipDeleteFont locvar_netload_imgfont
+		}
+		GdipCreateFontFromDC hdc, varptr(locvar_netload_imgfont)
+	}
+	return
+
+#deffunc aldrawtext_ str aldrawtext__prm0, int aldrawtext__prm1, int aldrawtext__prm2, int aldrawtext__prm3, int aldrawtext__prm4, int aldrawtext__prm5, int aldrawtext__prm6
+	if ( locvar_netload_imgfont ) {
+		GdipCreateStringFormat 0, 0, varptr(locvar_netload_tmpformat)
+		GdipSetStringFormatAlign locvar_netload_tmpformat, aldrawtext__prm5
+		GdipSetStringFormatLineAlign locvar_netload_tmpformat, aldrawtext__prm6
+		locvar_netload_rectf = alfloat(aldrawtext__prm1), alfloat(aldrawtext__prm2), alfloat(aldrawtext__prm3), alfloat(aldrawtext__prm4)
+		GdipDrawString locvar_netload_imggraphics, aldrawtext__prm0, lstrlenW(aldrawtext__prm0), locvar_netload_imgfont, varptr(locvar_netload_rectf), locvar_netload_tmpformat, locvar_netload_imgbrush
+		GdipDeleteStringFormat locvar_netload_tmpformat
+		locvar_netload_tmpformat = 0
+	}
+	return
+
+#deffunc aldrawline int aldrawline_prm0, int aldrawline_prm1, int aldrawline_prm2, int aldrawline_prm3
+	if ( locvar_netload_imgvalid ) {
+		GdipDrawLineI locvar_netload_imggraphics, locvar_netload_imgpen, aldrawline_prm0, aldrawline_prm1, aldrawline_prm2, aldrawline_prm3
+	}
+	return
+
+#deffunc aldrawrect_ int aldrawrect__prm0, int aldrawrect__prm1, int aldrawrect__prm2, int aldrawrect__prm3
+	if ( locvar_netload_imgvalid ) {
+		GdipDrawRectangleI locvar_netload_imggraphics, locvar_netload_imgpen, aldrawrect__prm0, aldrawrect__prm1, aldrawrect__prm2, aldrawrect__prm3
+	}
+	return
+
+#deffunc alfillrect_ int alfillrect__prm0, int alfillrect__prm1, int alfillrect__prm2, int alfillrect__prm3
+	if ( locvar_netload_imgvalid ) {
+		GdipFillRectangleI locvar_netload_imggraphics, locvar_netload_imgbrush, alfillrect__prm0, alfillrect__prm1, alfillrect__prm2, alfillrect__prm3
+	}
+	return
+
+#deffunc aldrawellip_ int aldrawellip__prm0, int aldrawellip__prm1, int aldrawellip__prm2, int aldrawellip__prm3
+	if ( locvar_netload_imgvalid ) {
+		GdipDrawEllipseI locvar_netload_imggraphics, locvar_netload_imgpen, aldrawellip__prm0, aldrawellip__prm1, aldrawellip__prm2, aldrawellip__prm3
+	}
+	return
+
+#deffunc alfillellip_ int alfillellip__prm0, int alfillellip__prm1, int alfillellip__prm2, int alfillellip__prm3
+	if ( locvar_netload_imgvalid ) {
+		GdipFillEllipseI locvar_netload_imggraphics, locvar_netload_imgbrush, alfillellip__prm0, alfillellip__prm1, alfillellip__prm2, alfillellip__prm3
+	}
+	return
+
+#deffunc aldrawlines var aldrawlines_prm0, int aldrawlines_prm1
+	if ( locvar_netload_imgvalid ) {
+		GdipDrawLinesI locvar_netload_imggraphics, locvar_netload_imgpen, varptr(aldrawlines_prm0), aldrawlines_prm1
+	}
+	return
+
+#deffunc aldrawpoly var aldrawpoly_prm0, int aldrawpoly_prm1
+	if ( locvar_netload_imgvalid ) {
+		GdipDrawPolygonI locvar_netload_imggraphics, locvar_netload_imgpen, varptr(aldrawpoly_prm0), aldrawpoly_prm1
+	}
+	return
+
+#deffunc alfillpoly var alfillpoly_prm0, int alfillpoly_prm1
+	if ( locvar_netload_imgvalid ) {
+		GdipFillPolygonI locvar_netload_imggraphics, locvar_netload_imgbrush, varptr(alfillpoly_prm0), alfillpoly_prm1, 1
+	}
+	return
+
+#deffunc aldrawcurve_ var aldrawcurve__prm0, int aldrawcurve__prm1, double aldrawcurve__prm2
+	if ( locvar_netload_imgvalid ) {
+		GdipDrawCurve2I locvar_netload_imggraphics, locvar_netload_imgpen, varptr(aldrawcurve__prm0), aldrawcurve__prm1, aldrawcurve__prm2
+	}
+	return
+
+#deffunc aldrawclosedcurve_ var aldrawclosedcurve__prm0, int aldrawclosedcurve__prm1, double aldrawclosedcurve__prm2
+	if ( locvar_netload_imgvalid ) {
+		GdipDrawClosedCurve2I locvar_netload_imggraphics, locvar_netload_imgpen, varptr(aldrawclosedcurve__prm0), aldrawclosedcurve__prm1, aldrawclosedcurve__prm2
+	}
+	return
+
+#deffunc alfillclosedcurve_ var alfillclosedcurve__prm0, int alfillclosedcurve__prm1, double alfillclosedcurve__prm2
+	if ( locvar_netload_imgvalid ) {
+		GdipFillClosedCurve2I locvar_netload_imggraphics, locvar_netload_imgbrush, varptr(alfillclosedcurve__prm0), alfillclosedcurve__prm1, alfillclosedcurve__prm2, 1
+	}
+	return
+
+#deffunc aldrawarc_ int aldrawarc__prm0, int aldrawarc__prm1, int aldrawarc__prm2, int aldrawarc__prm3, double aldrawarc__prm4, double aldrawarc__prm5
+	if ( locvar_netload_imgvalid ) {
+		GdipDrawArcI locvar_netload_imggraphics, locvar_netload_imgpen, aldrawarc__prm0, aldrawarc__prm1, aldrawarc__prm2, aldrawarc__prm3, aldrawarc__prm4, aldrawarc__prm5
+	}
+	return
+
+#deffunc aldrawpie_ int aldrawpie__prm0, int aldrawpie__prm1, int aldrawpie__prm2, int aldrawpie__prm3, double aldrawpie__prm4, double aldrawpie__prm5
+	if ( locvar_netload_imgvalid ) {
+		GdipDrawPieI locvar_netload_imggraphics, locvar_netload_imgpen, aldrawpie__prm0, aldrawpie__prm1, aldrawpie__prm2, aldrawpie__prm3, aldrawpie__prm4, aldrawpie__prm5
+	}
+	return
+
+#deffunc alfillpie_ int alfillpie__prm0, int alfillpie__prm1, int alfillpie__prm2, int alfillpie__prm3, double alfillpie__prm4, double alfillpie__prm5
+	if ( locvar_netload_imgvalid ) {
+		GdipFillPieI locvar_netload_imggraphics, locvar_netload_imgbrush, alfillpie__prm0, alfillpie__prm1, alfillpie__prm2, alfillpie__prm3, alfillpie__prm4, alfillpie__prm5
+	}
+	return
+
+#deffunc alresettransmode
+	if ( locvar_netload_imgvalid ) {
+		GdipResetWorldTransform locvar_netload_imggraphics
+	}
+	return
+
+#deffunc altransmodematrix double altransmodematrix_prm0, double altransmodematrix_prm1, double altransmodematrix_prm2, double altransmodematrix_prm3, double altransmodematrix_prm4, double altransmodematrix_prm5
+	if ( locvar_netload_imgvalid ) {
+		GdipCreateMatrix2 altransmodematrix_prm0, altransmodematrix_prm1, altransmodematrix_prm2, altransmodematrix_prm3, altransmodematrix_prm4, altransmodematrix_prm5, varptr(locvar_netload_tmpmatrix)
+		GdipSetWorldTransform locvar_netload_imggraphics, locvar_netload_tmpmatrix
+		GdipDeleteMatrix locvar_netload_tmpmatrix
+		locvar_netload_tmpmatrix = 0
+	}
+	return
+
+#deffunc altransmodeoffsetrotatezoom_ int altransmodeoffsetrotatezoom__prm0, int altransmodeoffsetrotatezoom__prm1, double altransmodeoffsetrotatezoom__prm2, double altransmodeoffsetrotatezoom__prm3, double altransmodeoffsetrotatezoom__prm4
+	if ( locvar_netload_imgvalid ) {
+		GdipCreateMatrix varptr(locvar_netload_tmpmatrix)
+		GdipTranslateMatrix locvar_netload_tmpmatrix, altransmodeoffsetrotatezoom__prm0, altransmodeoffsetrotatezoom__prm1, 0
+		GdipRotateMatrix locvar_netload_tmpmatrix, altransmodeoffsetrotatezoom__prm2, 0
+		GdipScaleMatrix locvar_netload_tmpmatrix, altransmodeoffsetrotatezoom__prm3, altransmodeoffsetrotatezoom__prm4, 0
+		GdipSetWorldTransform locvar_netload_imggraphics, locvar_netload_tmpmatrix
+		GdipDeleteMatrix locvar_netload_tmpmatrix
+		locvar_netload_tmpmatrix = 0
+	}
+	return
+
+#deffunc altransmoderotateat double altransmoderotateat_prm0, int altransmoderotateat_prm1, int altransmoderotateat_prm2
+	if ( locvar_netload_imgvalid ) {
+		GdipCreateMatrix varptr(locvar_netload_tmpmatrix)
+		GdipTranslateMatrix locvar_netload_tmpmatrix, altransmoderotateat_prm1, altransmoderotateat_prm2, 0
+		GdipRotateMatrix locvar_netload_tmpmatrix, altransmoderotateat_prm0, 0
+		GdipTranslateMatrix locvar_netload_tmpmatrix, -altransmoderotateat_prm1, -altransmoderotateat_prm2, 0
+		GdipSetWorldTransform locvar_netload_imggraphics, locvar_netload_tmpmatrix
+		GdipDeleteMatrix locvar_netload_tmpmatrix
+		locvar_netload_tmpmatrix = 0
+	}
+	return
+
+*label_0349
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
