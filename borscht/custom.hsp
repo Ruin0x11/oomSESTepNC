@@ -1,9 +1,0 @@
-#defcfunc custom_isgodservant int custom_isgodservant_prm0
-	if ( cId(custom_isgodservant_prm0) == CREATURE_ID_USER ) {
-		if ( userdata2(10, cUNID(custom_isgodservant_prm0)) ) {
-			return 1
-		}
-	}
-	return cnRace(custom_isgodservant_prm0) == "servant"
-
-
