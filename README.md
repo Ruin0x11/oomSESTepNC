@@ -10,8 +10,9 @@ This is the source code for **Elona Omake Overhaul Modify Sukutu Edition South T
 - oomSEST: [https://drive.google.com/drive/folders/1ObWACccjqvaJLcXBfsH2tHEGaYfaD0S_](https://drive.google.com/drive/folders/1ObWACccjqvaJLcXBfsH2tHEGaYfaD0S_)
 2. Download the HSP3.51 SDK (`hsp351.zip`) from [here](http://hsp.tv/make/downlist.html) and extract it somewhere.
 3. Copy `longint.dll` from the `src/` folder into the HSP3.51 SDK folder. Otherwise, you'll get an error saying it's missing when running the game from the editor.
-4. Open `src/main.hsp` with `hsed3.exe` from the HSP3.51 SDK folder. Press <kbd>F5</kbd> to compile and run under debug mode.
-5. Press <kbd>Ctrl+F9</kbd> to create an executable named `oomSESTep_NC.exe`. You can then copy it to the `bin/` folder.
+4. Copy `scene1.hsp` and `scene2.hsp` to the `bin/` folder, or you'll get an `Error 12` when starting a new game.
+5. Open `src/main.hsp` with `hsed3.exe` from the HSP3.51 SDK folder. Press <kbd>F5</kbd> to compile and run under debug mode.
+6. Press <kbd>Ctrl+F9</kbd> to create an executable named `oomSESTep_NC.exe`. You can then copy it to the `bin/` folder.
 
 ## Conditions for Use
 

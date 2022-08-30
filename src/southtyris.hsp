@@ -6166,6 +6166,53 @@
 	gosub *label_1211
 	bsave exedir + "data\\oo_version", ooversionstr, 3
 	goto *label_1606
+
+*ErrorMsgInit
+    sdim ErrorMsg, 2, 42
+
+    ErrorMsg(0, 0) = "",                                            ""
+    ErrorMsg(0, 1) = "システムエラーが発生しました",                "Unknown system error"
+    ErrorMsg(0, 2) = "文法が間違っています",                        "Syntax error"
+    ErrorMsg(0, 3) = "パラメータの値が異常です",                    "Illegal function call"
+    ErrorMsg(0, 4) = "計算式でエラーが発生しました",                "Wrong expression"
+    ErrorMsg(0, 5) = "パラメータの省略はできません",                "Default parameter not allowed"
+    ErrorMsg(0, 6) = "パラメータの型が違います",                    "Type mismatch"
+    ErrorMsg(0, 7) = "配列の要素が無効です",                        "Array overflow"
+    ErrorMsg(0, 8) = "有効なラベルが指定されていません",            "Not a label object"
+    ErrorMsg(0, 9) = "サブルーチンやループのネストが深すぎます",    "Too many nesting"
+    ErrorMsg(0, 10) = "サブルーチン外のreturnは無効です",           "Return without gosub"
+    ErrorMsg(0, 11) = "repeat外でのloopは無効です",                 "Loop without repeat"
+    ErrorMsg(0, 12) = "ファイルが見つからないか無効な名前です",     "File I/O error"
+    ErrorMsg(0, 13) = "画像ファイルがありません",                   "Picture file missing"
+    ErrorMsg(0, 14) = "外部ファイル呼び出し中のエラーです",         "External execute error"
+    ErrorMsg(0, 15) = "計算式でカッコの記述が違います",             "Priority error"
+    ErrorMsg(0, 16) = "パラメータの数が多すぎます",                 "Too many parameters"
+    ErrorMsg(0, 17) = "文字列式で扱える文字数を越えました",         "Temporary buffer overflow"
+    ErrorMsg(0, 18) = "代入できない変数名を指定しています",         "Wrong valiable name"
+    ErrorMsg(0, 19) = "0で除算しました",                            "Divided by zero"
+    ErrorMsg(0, 20) = "バッファオーバーフローが発生しました",       "Buffer Overflow"
+    ErrorMsg(0, 21) = "サポートされない機能を選択しました",         "Unsupported function"
+    ErrorMsg(0, 22) = "計算式のカッコが深すぎます",                 "Expression too complex"
+    ErrorMsg(0, 23) = "変数名が指定されていません",                 "Variable required"
+    ErrorMsg(0, 24) = "整数以外が指定されています",                 "Integer value required"
+    ErrorMsg(0, 25) = "配列の要素書式が間違っています",             "Bad array expression"
+    ErrorMsg(0, 26) = "メモリの確保ができませんでした",             "Out of memory"
+    ErrorMsg(0, 27) = "タイプの初期化に失敗しました",               "Type initalization failed"
+    ErrorMsg(0, 28) = "関数に引数が設定されていません",             "No Function parameters"
+    ErrorMsg(0, 29) = "スタック領域のオーバーフローです",           "Stack overflow"
+    ErrorMsg(0, 30) = "無効な名前がパラメーターに指定されています", "Invalid parameter name"
+    ErrorMsg(0, 31) = "異なる型を持つ配列変数に代入しました",       "Invalid type of array"
+    ErrorMsg(0, 32) = "関数のパラメーター記述が不正です",           "Invalid function parameter"
+    ErrorMsg(0, 33) = "オブジェクト数が多すぎます",                 "Too many window objects"
+    ErrorMsg(0, 34) = "配列・関数として使用できない型です",         "Invalid Array/Function"
+    ErrorMsg(0, 35) = "モジュール変数が指定されていません",         "Structure required"
+    ErrorMsg(0, 36) = "モジュール変数の指定が無効です",             "Illegal structure call"
+    ErrorMsg(0, 37) = "変数型の変換に失敗しました",                 "Invalid type of variable"
+    ErrorMsg(0, 38) = "外部DLLの呼び出しに失敗しました",            "DLL call failed"
+    ErrorMsg(0, 39) = "外部オブジェクトの呼び出しに失敗しました",   "External COM call failed"
+    ErrorMsg(0, 40) = "関数の戻り値が設定されていません。",         "No function result"
+    ErrorMsg(0, 41) = "関数を命令として記述しています。",           "Invalid syntax for function"
+
 *system_quitElona
 	if (cfg_music == 1) {
 		DMEND
@@ -6189,7 +6236,8 @@
 		CloseHandle mutex_handle
 	}
 	end
-*label_0242
+
+*exit_game_error
 	if (errorhack > 1) {
 		goto *system_quitElona
 	} else {
@@ -6197,6 +6245,8 @@
 	}
 	await
 	buf = "Line " + lparam + " HspError " + wparam + " WinError " + GetLastError() + " Ver " + int(double("1.22") * 1000) + " oomEx Sukutu Edition STep Nasuko Custom" + releaseday + " Mode " + mode + "\n"
+	buf += "Message (JP): " + ErrorMsg(0, wparam) + "\n"
+	buf += "Message (EN): " + ErrorMsg(1, wparam) + "\n"
 	buf += "" + oomsest_getHumanReadableErrorReason(wparam) + "\n"
 	buf += "efId " + efid + " efP " + efp + " Area " + gCurrentMap + "(" + mapname(gCurrentMap) + ")\n"
 	buf += "ci "

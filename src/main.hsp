@@ -4,9 +4,9 @@
 #cmpopt varname 1
 
 #ifdef _DEBUG
-dbg_runtimeDirectory = dirinfo(0) + "\\..\\bin\\"
+exedir = dir_cur + "\\..\\bin\\"
 #else
-dbg_runtimeDirectiry = ""
+exedir = dir_cur + "\\"
 #endif
 
 dbg_outputDebuglog = 0
@@ -36,13 +36,13 @@ gosub *config_init
 
 sdim proclist, 50, 4
 ooversionstr = "219"
-if (dbg_runtimeDirectory != "") {
-	exedir = dbg_runtimeDirectory
-}
-else {
-	exedir = dirinfo(0) + "\\"
-}
-onerror goto *label_0242
+
+; HSP only provides the name of the file an error occurred in if it crashes
+; with its default error handler, and only if it's running from the editor.
+#ifndef _DEBUG
+onerror goto *exit_game_error
+#endif
+
 randomize
 randseed = rnd(2000)
 randomize randseed
